@@ -1,4 +1,8 @@
+import { readFileSync } from 'node:fs';
+
 import { defineConfig } from 'tsup';
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf-8')) as { version: string };
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -10,4 +14,7 @@ export default defineConfig({
   splitting: false,
   target: 'es2022',
   minify: false,
+  define: {
+    __SIFA_SDK_VERSION__: JSON.stringify(pkg.version),
+  },
 });
