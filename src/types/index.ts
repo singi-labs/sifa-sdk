@@ -1,5 +1,7 @@
 export interface LocationValue {
   city?: string;
+  /** community.lexicon.location.address field -- preferred over `city`. */
+  locality?: string;
   region?: string;
   country: string;
   countryCode?: string;
@@ -75,7 +77,10 @@ export interface ProfileLocation {
   isPrimary: boolean;
   locationCountry?: string | null;
   locationRegion?: string | null;
+  /** Legacy alias for `locationLocality`; emitted by sifa-api during the additive response window. */
   locationCity?: string | null;
+  /** community.lexicon.location.address field name -- prefer over `locationCity`. */
+  locationLocality?: string | null;
   countryCode?: string | null;
   location?: string | null;
 }
