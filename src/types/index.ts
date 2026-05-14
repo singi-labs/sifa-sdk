@@ -19,6 +19,7 @@ export interface ProfilePosition {
   startedAt: string;
   endedAt?: string;
   location?: LocationValue | null;
+  employmentType?: string;
   workplaceType?: string;
   skills?: SkillRef[];
   linkedSkills?: ProfileSkill[];
