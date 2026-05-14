@@ -46,6 +46,19 @@ describe('exported types', () => {
     expect(position.skills).toHaveLength(1);
   });
 
+  it('ProfilePosition carries employmentType and workplaceType', () => {
+    const position: ProfilePosition = {
+      rkey: 'abc',
+      company: 'Sifa',
+      title: 'Founder',
+      startedAt: '2026-01-01T00:00:00Z',
+      employmentType: 'id.sifa.defs#fullTime',
+      workplaceType: 'id.sifa.defs#remote',
+    };
+    expect(position.employmentType).toBe('id.sifa.defs#fullTime');
+    expect(position.workplaceType).toBe('id.sifa.defs#remote');
+  });
+
   it('LanguageProficiency is a fixed union', () => {
     expectTypeOf<LanguageProficiency>().toEqualTypeOf<
       'elementary' | 'limited_working' | 'professional_working' | 'full_professional' | 'native'
