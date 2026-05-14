@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.3.0
+
+### Minor Changes
+
+- 39ae35c: Add `LocationValue.locality` and `ProfileLocation.locationLocality` to mirror the `community.lexicon.location.address` field names. Both are optional and additive -- existing consumers that use `city` / `locationCity` continue to work during the sifa-api alias window (see singi-labs/sifa-api#440 / #441).
+
 ## 0.2.0
 
 ### Minor Changes
