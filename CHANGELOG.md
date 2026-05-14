@@ -1,5 +1,13 @@
 # @singi-labs/sifa-sdk
 
+## 0.2.0
+
+### Minor Changes
+
+- 3172c1a: Add `employmentType?: string` to `ProfilePosition`. Mirrors the existing `id.sifa.defs#employmentType` lexicon field that the AppView has been indexing and returning for some time. Values are `id.sifa.defs#*` token URIs (e.g. `id.sifa.defs#fullTime`, `id.sifa.defs#fellowship`).
+
+  Refs singi-labs/sifa-workspace#176.
+
 ## 0.1.0
 
 ### Minor Changes
