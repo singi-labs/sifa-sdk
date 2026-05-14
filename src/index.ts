@@ -40,3 +40,25 @@ export type {
   TrustStat,
   VerifiedAccount,
 } from './types/index.js';
+
+export {
+  CATEGORY_LABELS,
+  CATEGORY_ORDER,
+  CONTINENTS,
+  COUNTRIES,
+  INDUSTRY_OPTIONS,
+  PLATFORM_LABELS,
+  PLATFORM_OPTIONS,
+  SKILL_CATEGORIES,
+  dedupeSkills,
+  getContinent,
+  getFaviconUrl,
+  getPlatformLabel,
+  groupSkillsByCategory,
+  isKnownPlatform,
+  type ContinentCode,
+  type IndustryOption,
+  type MergedProfileSkill,
+  type PlatformId,
+  type SkillCategory,
+} from './taxonomy/index.js';
