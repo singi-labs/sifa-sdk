@@ -56,6 +56,25 @@ export const sifaQueryKeys = {
     registry: () => ['sifa', 'apps', 'registry'] as const,
     hidden: () => ['sifa', 'apps', 'hidden'] as const,
   },
+
+  activity: {
+    all: () => ['sifa', 'activity'] as const,
+    heatmap: (handleOrDid: string, days: number) =>
+      ['sifa', 'activity', 'heatmap', handleOrDid, days] as const,
+    teaser: (handleOrDid: string) => ['sifa', 'activity', 'teaser', handleOrDid] as const,
+    feed: (handleOrDid: string, opts: Record<string, unknown>) =>
+      ['sifa', 'activity', 'feed', handleOrDid, opts] as const,
+  },
+
+  endorsement: {
+    all: () => ['sifa', 'endorsement'] as const,
+    count: (did: string) => ['sifa', 'endorsement', 'count', did] as const,
+  },
+
+  stream: {
+    all: () => ['sifa', 'stream'] as const,
+    networkCount: (did: string) => ['sifa', 'stream', 'network-count', did] as const,
+  },
 } as const;
 
 export type SifaQueryKey =
@@ -80,4 +99,12 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.stats.homepage>
   | ReturnType<typeof sifaQueryKeys.apps.all>
   | ReturnType<typeof sifaQueryKeys.apps.registry>
-  | ReturnType<typeof sifaQueryKeys.apps.hidden>;
+  | ReturnType<typeof sifaQueryKeys.apps.hidden>
+  | ReturnType<typeof sifaQueryKeys.activity.all>
+  | ReturnType<typeof sifaQueryKeys.activity.heatmap>
+  | ReturnType<typeof sifaQueryKeys.activity.teaser>
+  | ReturnType<typeof sifaQueryKeys.activity.feed>
+  | ReturnType<typeof sifaQueryKeys.endorsement.all>
+  | ReturnType<typeof sifaQueryKeys.endorsement.count>
+  | ReturnType<typeof sifaQueryKeys.stream.all>
+  | ReturnType<typeof sifaQueryKeys.stream.networkCount>;

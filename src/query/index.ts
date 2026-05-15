@@ -39,6 +39,20 @@ export {
   type SuggestionsResponse,
 } from './fetchers/discovery.js';
 export { fetchFollowing, type FollowProfile, type FollowingResponse } from './fetchers/follow.js';
+export {
+  fetchActivityFeed,
+  fetchActivityTeaser,
+  fetchHeatmapData,
+  type ActivityFeedResponse,
+  type ActivityItem,
+  type ActivityTeaserResponse,
+  type FetchActivityFeedOptions,
+  type FetchActivityTeaserOptions,
+  type HeatmapDay,
+  type HeatmapResponse,
+} from './fetchers/activity.js';
+export { fetchEndorsementCount } from './fetchers/endorsement.js';
+export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './fetchers/stream.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
@@ -52,5 +66,8 @@ export {
   useSuggestions,
 } from './hooks/use-discovery.js';
 export { useFollowing } from './hooks/use-follow.js';
+export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-activity.js';
+export { useEndorsementCount } from './hooks/use-endorsement.js';
+export { useNetworkStreamCount } from './hooks/use-stream.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';
