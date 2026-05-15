@@ -1,10 +1,18 @@
 import type { LocationValue } from '../types/index.js';
 
-/** Format a LocationValue for display */
+/**
+ * Format a LocationValue for display.
+ *
+ * Prefers `locality` (the community.lexicon.location.address field) and
+ * falls back to the legacy `city` slot so values produced before the
+ * sifa-api alias migration still render correctly during the additive
+ * transition window.
+ */
 export function formatLocation(loc: LocationValue | null | undefined): string {
   if (!loc) return '';
-  const parts = [loc.city, loc.region, loc.country].filter(Boolean);
-  if (loc.postalCode && !loc.city) {
+  const locality = loc.locality ?? loc.city;
+  const parts = [locality, loc.region, loc.country].filter(Boolean);
+  if (loc.postalCode && !locality) {
     return `${loc.postalCode}, ${loc.country}`;
   }
   return parts.join(', ');
