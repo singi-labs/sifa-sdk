@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.4.1
+
+### Patch Changes
+
+- c18ed17: `formatLocation` now prefers the new `locality` field (community.lexicon.location.address) over the legacy `city` slot, with a fallback to `city` so values produced before the sifa-api alias migration still render correctly during the additive transition window. No breaking change -- the fallback preserves existing behavior for callers that only set `city`.
+
 ## 0.4.0
 
 ### Minor Changes
