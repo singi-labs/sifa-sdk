@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.4.0
+
+### Minor Changes
+
+- 74a8498: Export `findIndustry` and `getIndustryLabelKey` helpers from the taxonomy module. The functions already lived in the file (extracted as part of `industry-taxonomy.ts` in 0.1.0) but were not re-exported from the package barrel.
+
 ## 0.3.0
 
 ### Minor Changes
