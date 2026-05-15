@@ -61,6 +61,16 @@
         "default": "./dist/query/index.cjs"
       }
     },
+    "./query/fetchers": {
+      "import": {
+        "types": "./dist/query/fetchers/index.d.ts",
+        "default": "./dist/query/fetchers/index.js"
+      },
+      "require": {
+        "types": "./dist/query/fetchers/index.d.cts",
+        "default": "./dist/query/fetchers/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
