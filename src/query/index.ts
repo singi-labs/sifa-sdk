@@ -2,13 +2,30 @@ export {
   ApiError,
   apiFetch,
   apiFetchOrNull,
+  apiWrite,
+  apiWriteCreate,
   type ApiFetchOptions,
+  type CreateResult,
   type SifaApiConfig,
+  type WriteResult,
 } from './client.js';
 export { SifaProvider, useSifaConfig, type SifaProviderProps } from './config.js';
 
 export { fetchAtFundLink, fetchProfile } from './fetchers/profile.js';
-export { createPosition, type CreateResult, type WriteResult } from './fetchers/positions.js';
+export {
+  deleteAvatarOverride,
+  refreshPds,
+  updateProfileOverride,
+  updateProfileSelf,
+  uploadAvatar,
+  type ProfileIndustryInput,
+  type ProfileSelfLocation,
+  type RefreshPdsResult,
+  type UpdateProfileOverrideInput,
+  type UpdateProfileSelfInput,
+  type UploadAvatarResult,
+} from './fetchers/profile-mutations.js';
+export { createPosition } from './fetchers/positions.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -21,6 +38,7 @@ export {
   fetchSearchFilters,
   fetchSearchProfiles,
   fetchSkillSuggestions,
+  searchSkills,
   type FilterOptions,
   type ProfileSearchResult,
   type SearchFilters,
@@ -79,10 +97,22 @@ export {
 } from './fetchers/roadmap.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
+export {
+  useDeleteAvatarOverride,
+  useRefreshPds,
+  useUpdateProfileOverride,
+  useUpdateProfileSelf,
+  useUploadAvatar,
+} from './hooks/use-profile-mutations.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
-export { useSearchFilters, useSearchProfiles, useSkillSuggestions } from './hooks/use-search.js';
+export {
+  useCanonicalSkillSearch,
+  useSearchFilters,
+  useSearchProfiles,
+  useSkillSuggestions,
+} from './hooks/use-search.js';
 export {
   useFeaturedProfile,
   useSimilarProfiles,

@@ -144,3 +144,97 @@ export async function apiFetchOrNull<T>(
     throw e;
   }
 }
+
+/**
+ * Result returned by record-write mutations (create / update / delete).
+ *
+ * Never throws -- writes against the user's PDS can fail in many ways
+ * (network, PDS unreachable, rate limit) and the UI needs structured
+ * results to render appropriate messages.
+ */
+export interface WriteResult {
+  success: boolean;
+  error?: string;
+  /**
+   * PDS hostname returned by sifa-api when a write failed at the user's
+   * Personal Data Server (issue #167). Lets the UI render
+   * "Your data server (eurosky.social) isn't responding" instead of a
+   * generic "Request failed (500)".
+   */
+  pdsHost?: string;
+}
+
+/** Result returned by create mutations. Includes the newly created `rkey`. */
+export interface CreateResult extends WriteResult {
+  rkey?: string;
+}
+
+interface ApiErrorBody {
+  message?: string;
+  pdsHost?: string;
+}
+
+function extractWriteError(data: unknown, status: number): { error: string; pdsHost?: string } {
+  const body = (data ?? {}) as ApiErrorBody;
+  return {
+    error: body.message ?? `Request failed (${status})`,
+    ...(body.pdsHost ? { pdsHost: body.pdsHost } : {}),
+  };
+}
+
+/**
+ * Write mutation against the Sifa AppView. Wraps {@link apiFetch} with the
+ * never-throws contract used by all sifa-web mutations: returns a
+ * structured {@link WriteResult} on both success and failure, and
+ * preserves the `pdsHost` field when the AppView reports a PDS-side
+ * failure (issue #167).
+ *
+ * On success: returns `{ success: true, ...payload }` where `payload` is
+ * whatever the server returned in JSON (or `{}` for 204).
+ *
+ * On failure: returns `{ success: false, error, pdsHost? }`. Never throws.
+ *
+ * Use {@link apiWriteCreate} when you specifically need the `rkey` from a
+ * create response folded into the result shape.
+ */
+export async function apiWrite<TExtra extends object = Record<never, never>>(
+  config: SifaApiConfig,
+  path: string,
+  method: 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+  options: Omit<ApiFetchOptions, 'method'> = {},
+): Promise<WriteResult & TExtra> {
+  try {
+    const data = await apiFetch<TExtra>(config, path, {
+      method,
+      credentials: 'include',
+      ...options,
+    });
+    return { success: true, ...(data ?? ({} as TExtra)) };
+  } catch (e) {
+    if (e instanceof ApiError) {
+      return { success: false, ...extractWriteError(e.body, e.status) } as WriteResult & TExtra;
+    }
+    return { success: false, error: 'Network error' } as WriteResult & TExtra;
+  }
+}
+
+/**
+ * Write mutation that expects the server to return a record key (`rkey`)
+ * in its response body. Wraps {@link apiWrite} and folds the `rkey` into
+ * the result shape so consumers get `{ success, rkey?, error?, pdsHost? }`.
+ *
+ * If the server returns additional fields (e.g. `feedUrl` from external
+ * account creation), pass them via the `TExtra` generic to keep them
+ * typed.
+ */
+export function apiWriteCreate<TExtra extends object = Record<never, never>>(
+  config: SifaApiConfig,
+  path: string,
+  body: unknown,
+  options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
+): Promise<CreateResult & TExtra> {
+  return apiWrite<{ rkey?: string } & TExtra>(config, path, 'POST', {
+    body,
+    ...options,
+  });
+}
