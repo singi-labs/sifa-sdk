@@ -53,6 +53,14 @@ export {
 } from './fetchers/activity.js';
 export { fetchEndorsementCount } from './fetchers/endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './fetchers/stream.js';
+export {
+  checkAppAccount,
+  fetchReactionStatus,
+  type AccountCheckResult,
+  type CheckAppAccountOptions,
+  type FetchReactionStatusOptions,
+  type ReactionStatus,
+} from './fetchers/reactions.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
@@ -69,5 +77,6 @@ export { useFollowing } from './hooks/use-follow.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-activity.js';
 export { useEndorsementCount } from './hooks/use-endorsement.js';
 export { useNetworkStreamCount } from './hooks/use-stream.js';
+export { useAppAccountCheck, useReactionStatus } from './hooks/use-reactions.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';
