@@ -128,7 +128,17 @@ describe('formatLocation', () => {
     );
   });
 
-  it('uses postal code when city is missing', () => {
+  it('prefers locality over the legacy city slot', () => {
+    expect(
+      formatLocation({ city: 'Old', locality: 'Amsterdam', region: 'NH', country: 'NL' }),
+    ).toBe('Amsterdam, NH, NL');
+  });
+
+  it('falls back to city when locality is missing', () => {
+    expect(formatLocation({ city: 'Amsterdam', country: 'NL' })).toBe('Amsterdam, NL');
+  });
+
+  it('uses postal code when both locality and city are missing', () => {
     expect(formatLocation({ postalCode: '1011', country: 'NL' })).toBe('1011, NL');
   });
 
