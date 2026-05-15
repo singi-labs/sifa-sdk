@@ -25,7 +25,18 @@ export {
   type UpdateProfileSelfInput,
   type UploadAvatarResult,
 } from './fetchers/profile-mutations.js';
-export { createPosition } from './fetchers/positions.js';
+export {
+  createPosition,
+  deletePosition,
+  linkSkillToPosition,
+  setPositionPrimary,
+  unlinkSkillFromPosition,
+  unsetPositionPrimary,
+  updatePosition,
+} from './fetchers/positions.js';
+export { createEducation, deleteEducation, updateEducation } from './fetchers/education.js';
+export { createSkill, deleteSkill, updateSkill } from './fetchers/skills.js';
+export { createRecord, deleteRecord, updateRecord } from './fetchers/records.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -105,6 +116,36 @@ export {
   useUploadAvatar,
 } from './hooks/use-profile-mutations.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
+export {
+  useDeletePosition,
+  useLinkSkillToPosition,
+  useSetPositionPrimary,
+  useUnlinkSkillFromPosition,
+  useUnsetPositionPrimary,
+  useUpdatePosition,
+  type PositionSkillLinkVariables,
+  type UpdatePositionVariables,
+} from './hooks/use-position-mutations.js';
+export {
+  useCreateEducation,
+  useDeleteEducation,
+  useUpdateEducation,
+  type UpdateEducationVariables,
+} from './hooks/use-education-mutations.js';
+export {
+  useCreateSkill,
+  useDeleteSkill,
+  useUpdateSkill,
+  type UpdateSkillVariables,
+} from './hooks/use-skill-mutations.js';
+export {
+  useCreateRecord,
+  useDeleteRecord,
+  useUpdateRecord,
+  type CreateRecordVariables,
+  type DeleteRecordVariables,
+  type UpdateRecordVariables,
+} from './hooks/use-record-mutations.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export {
