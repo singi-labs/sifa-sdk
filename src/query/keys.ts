@@ -16,6 +16,8 @@ export const sifaQueryKeys = {
     all: () => ['sifa', 'profile'] as const,
     byHandle: (handleOrDid: string) => ['sifa', 'profile', handleOrDid] as const,
     atFundLink: (did: string) => ['sifa', 'profile', 'at-fund-link', did] as const,
+    externalAccounts: (handleOrDid: string) =>
+      ['sifa', 'profile', 'external-accounts', handleOrDid] as const,
   },
 
   position: {
@@ -96,6 +98,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.profile.all>
   | ReturnType<typeof sifaQueryKeys.profile.byHandle>
   | ReturnType<typeof sifaQueryKeys.profile.atFundLink>
+  | ReturnType<typeof sifaQueryKeys.profile.externalAccounts>
   | ReturnType<typeof sifaQueryKeys.position.all>
   | ReturnType<typeof sifaQueryKeys.position.byOwner>
   | ReturnType<typeof sifaQueryKeys.search.all>
