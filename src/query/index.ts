@@ -37,6 +37,27 @@ export {
 export { createEducation, deleteEducation, updateEducation } from './fetchers/education.js';
 export { createSkill, deleteSkill, updateSkill } from './fetchers/skills.js';
 export { createRecord, deleteRecord, updateRecord } from './fetchers/records.js';
+export {
+  createProfileLocation,
+  deleteProfileLocation,
+  updateProfileLocation,
+  type ProfileLocationAddress,
+  type ProfileLocationInput,
+} from './fetchers/profile-locations.js';
+export {
+  createExternalAccount,
+  deleteExternalAccount,
+  fetchExternalAccounts,
+  setExternalAccountPrimary,
+  unsetExternalAccountPrimary,
+  updateExternalAccount,
+  verifyExternalAccount,
+  type CreateExternalAccountResult,
+  type ExternalAccountInput,
+  type VerifyExternalAccountResult,
+} from './fetchers/external-accounts.js';
+export { createEndorsement, type EndorsementInput } from './fetchers/endorsements.js';
+export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -146,6 +167,24 @@ export {
   type DeleteRecordVariables,
   type UpdateRecordVariables,
 } from './hooks/use-record-mutations.js';
+export {
+  useCreateProfileLocation,
+  useDeleteProfileLocation,
+  useUpdateProfileLocation,
+  type UpdateProfileLocationVariables,
+} from './hooks/use-location-mutations.js';
+export {
+  useCreateExternalAccount,
+  useDeleteExternalAccount,
+  useExternalAccounts,
+  useSetExternalAccountPrimary,
+  useUnsetExternalAccountPrimary,
+  useUpdateExternalAccount,
+  useVerifyExternalAccount,
+  type UpdateExternalAccountVariables,
+} from './hooks/use-external-accounts.js';
+export { useCreateEndorsement } from './hooks/use-endorsement-mutations.js';
+export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export {
