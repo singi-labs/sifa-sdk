@@ -81,6 +81,12 @@ export const sifaQueryKeys = {
     status: (uris: string[]) => ['sifa', 'reactions', 'status', uris] as const,
     accountCheck: (appId: string) => ['sifa', 'reactions', 'account-check', appId] as const,
   },
+
+  roadmap: {
+    all: () => ['sifa', 'roadmap'] as const,
+    votes: () => ['sifa', 'roadmap', 'votes'] as const,
+    myVotes: () => ['sifa', 'roadmap', 'my-votes'] as const,
+  },
 } as const;
 
 export type SifaQueryKey =
@@ -116,4 +122,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.stream.networkCount>
   | ReturnType<typeof sifaQueryKeys.reactions.all>
   | ReturnType<typeof sifaQueryKeys.reactions.status>
-  | ReturnType<typeof sifaQueryKeys.reactions.accountCheck>;
+  | ReturnType<typeof sifaQueryKeys.reactions.accountCheck>
+  | ReturnType<typeof sifaQueryKeys.roadmap.all>
+  | ReturnType<typeof sifaQueryKeys.roadmap.votes>
+  | ReturnType<typeof sifaQueryKeys.roadmap.myVotes>;

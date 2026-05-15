@@ -61,6 +61,13 @@ export {
   type FetchReactionStatusOptions,
   type ReactionStatus,
 } from './fetchers/reactions.js';
+export {
+  fetchMyRoadmapVotes,
+  fetchRoadmapVotes,
+  type FetchMyRoadmapVotesOptions,
+  type RoadmapVoter,
+  type RoadmapVotesResponse,
+} from './fetchers/roadmap.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
@@ -78,5 +85,6 @@ export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-
 export { useEndorsementCount } from './hooks/use-endorsement.js';
 export { useNetworkStreamCount } from './hooks/use-stream.js';
 export { useAppAccountCheck, useReactionStatus } from './hooks/use-reactions.js';
+export { useMyRoadmapVotes, useRoadmapVotes } from './hooks/use-roadmap.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';
