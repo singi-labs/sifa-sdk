@@ -1,6 +1,11 @@
 export { CONTINENTS, getContinent, type ContinentCode } from './continents.js';
 export { COUNTRIES } from './countries.js';
-export { INDUSTRY_OPTIONS, type IndustryOption } from './industry-taxonomy.js';
+export {
+  INDUSTRY_OPTIONS,
+  findIndustry,
+  getIndustryLabelKey,
+  type IndustryOption,
+} from './industry-taxonomy.js';
 export {
   PLATFORM_LABELS,
   PLATFORM_OPTIONS,

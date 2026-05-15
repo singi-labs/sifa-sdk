@@ -47,6 +47,8 @@ export {
   CONTINENTS,
   COUNTRIES,
   INDUSTRY_OPTIONS,
+  findIndustry,
+  getIndustryLabelKey,
   PLATFORM_LABELS,
   PLATFORM_OPTIONS,
   SKILL_CATEGORIES,
