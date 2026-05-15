@@ -51,6 +51,16 @@
         "default": "./dist/schemas/index.cjs"
       }
     },
+    "./query": {
+      "import": {
+        "types": "./dist/query/index.d.ts",
+        "default": "./dist/query/index.js"
+      },
+      "require": {
+        "types": "./dist/query/index.d.cts",
+        "default": "./dist/query/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -73,19 +83,6 @@
     "version-packages": "changeset version",
     "release": "pnpm run build && changeset publish"
   },
-  "devDependencies": {
-    "@changesets/cli": "2.31.0",
-    "@commitlint/cli": "21.0.1",
-    "@commitlint/config-conventional": "21.0.1",
-    "@vitest/coverage-v8": "3.2.1",
-    "eslint": "10.3.0",
-    "husky": "9.1.7",
-    "prettier": "3.8.3",
-    "tsup": "8.5.1",
-    "typescript": "5.9.3",
-    "typescript-eslint": "8.59.3",
-    "vitest": "3.2.1"
-  },
   "engines": {
     "node": ">=22"
   },
@@ -97,5 +94,36 @@
   },
   "dependencies": {
     "zod": "4.4.3"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.100.0",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@changesets/cli": "2.31.0",
+    "@commitlint/cli": "21.0.1",
+    "@commitlint/config-conventional": "21.0.1",
+    "@tanstack/react-query": "5.100.10",
+    "@testing-library/react": "16.3.2",
+    "@types/react": "19.2.14",
+    "@vitest/coverage-v8": "3.2.1",
+    "eslint": "10.3.0",
+    "husky": "9.1.7",
+    "jsdom": "27.0.0",
+    "prettier": "3.8.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.59.3",
+    "vitest": "3.2.1"
   }
 }
