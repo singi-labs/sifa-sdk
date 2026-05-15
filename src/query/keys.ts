@@ -15,6 +15,7 @@ export const sifaQueryKeys = {
   profile: {
     all: () => ['sifa', 'profile'] as const,
     byHandle: (handleOrDid: string) => ['sifa', 'profile', handleOrDid] as const,
+    atFundLink: (did: string) => ['sifa', 'profile', 'at-fund-link', did] as const,
   },
 
   position: {
@@ -44,12 +45,24 @@ export const sifaQueryKeys = {
     all: () => ['sifa', 'follow'] as const,
     following: (opts: Record<string, unknown>) => ['sifa', 'follow', 'following', opts] as const,
   },
+
+  stats: {
+    all: () => ['sifa', 'stats'] as const,
+    homepage: () => ['sifa', 'stats', 'homepage'] as const,
+  },
+
+  apps: {
+    all: () => ['sifa', 'apps'] as const,
+    registry: () => ['sifa', 'apps', 'registry'] as const,
+    hidden: () => ['sifa', 'apps', 'hidden'] as const,
+  },
 } as const;
 
 export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.all>
   | ReturnType<typeof sifaQueryKeys.profile.all>
   | ReturnType<typeof sifaQueryKeys.profile.byHandle>
+  | ReturnType<typeof sifaQueryKeys.profile.atFundLink>
   | ReturnType<typeof sifaQueryKeys.position.all>
   | ReturnType<typeof sifaQueryKeys.position.byOwner>
   | ReturnType<typeof sifaQueryKeys.search.all>
@@ -62,4 +75,9 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.discovery.suggestionCount>
   | ReturnType<typeof sifaQueryKeys.discovery.featured>
   | ReturnType<typeof sifaQueryKeys.follow.all>
-  | ReturnType<typeof sifaQueryKeys.follow.following>;
+  | ReturnType<typeof sifaQueryKeys.follow.following>
+  | ReturnType<typeof sifaQueryKeys.stats.all>
+  | ReturnType<typeof sifaQueryKeys.stats.homepage>
+  | ReturnType<typeof sifaQueryKeys.apps.all>
+  | ReturnType<typeof sifaQueryKeys.apps.registry>
+  | ReturnType<typeof sifaQueryKeys.apps.hidden>;

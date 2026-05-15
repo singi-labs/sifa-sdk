@@ -7,8 +7,16 @@ export {
 } from './client.js';
 export { SifaProvider, useSifaConfig, type SifaProviderProps } from './config.js';
 
-export { fetchProfile } from './fetchers/profile.js';
+export { fetchAtFundLink, fetchProfile } from './fetchers/profile.js';
 export { createPosition, type CreateResult, type WriteResult } from './fetchers/positions.js';
+export { fetchStats, type StatsResponse } from './fetchers/stats.js';
+export {
+  fetchAppsRegistry,
+  fetchHiddenApps,
+  type AppRegistryEntry,
+  type FetchHiddenAppsOptions,
+  type HiddenApp,
+} from './fetchers/apps.js';
 export {
   fetchSearchFilters,
   fetchSearchProfiles,
@@ -32,8 +40,10 @@ export {
 } from './fetchers/discovery.js';
 export { fetchFollowing, type FollowProfile, type FollowingResponse } from './fetchers/follow.js';
 
-export { useProfile } from './hooks/use-profile.js';
+export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
+export { useStats } from './hooks/use-stats.js';
+export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export { useSearchFilters, useSearchProfiles, useSkillSuggestions } from './hooks/use-search.js';
 export {
   useFeaturedProfile,

@@ -4,7 +4,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 import type { Profile } from '../../types/index.js';
 import { useSifaConfig } from '../config.js';
-import { fetchProfile } from '../fetchers/profile.js';
+import { fetchAtFundLink, fetchProfile } from '../fetchers/profile.js';
 import { sifaQueryKeys } from '../keys.js';
 
 /**
@@ -31,6 +31,31 @@ export function useProfile(
     queryKey: sifaQueryKeys.profile.byHandle(handleOrDid ?? ''),
     queryFn: () => fetchProfile(config, handleOrDid ?? ''),
     enabled: Boolean(handleOrDid) && (options?.enabled ?? true),
+    ...options,
+  });
+}
+
+/**
+ * React hook for a profile's AT Fund link. Returns `null` data on error
+ * or when the profile has no link configured.
+ */
+export function useAtFundLink(
+  did: string | undefined | null,
+  options?: Omit<
+    UseQueryOptions<
+      string | null,
+      Error,
+      string | null,
+      ReturnType<typeof sifaQueryKeys.profile.atFundLink>
+    >,
+    'queryKey' | 'queryFn'
+  >,
+) {
+  const config = useSifaConfig();
+  return useQuery({
+    queryKey: sifaQueryKeys.profile.atFundLink(did ?? ''),
+    queryFn: () => fetchAtFundLink(config, did ?? ''),
+    enabled: Boolean(did) && (options?.enabled ?? true),
     ...options,
   });
 }
