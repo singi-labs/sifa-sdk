@@ -58,6 +58,18 @@ export {
 } from './fetchers/external-accounts.js';
 export { createEndorsement, type EndorsementInput } from './fetchers/endorsements.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
+export {
+  bulkHideStandardPublications,
+  bulkUnhideStandardPublications,
+  hideOrcidPublication,
+  hideSifaPublication,
+  hideStandardPublication,
+  refreshOrcidPublications,
+  unhideOrcidPublication,
+  unhideSifaPublication,
+  unhideStandardPublication,
+  type RefreshOrcidPublicationsResult,
+} from './fetchers/publications.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -185,6 +197,17 @@ export {
 } from './hooks/use-external-accounts.js';
 export { useCreateEndorsement } from './hooks/use-endorsement-mutations.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
+export {
+  useBulkHideStandardPublications,
+  useBulkUnhideStandardPublications,
+  useHideOrcidPublication,
+  useHideSifaPublication,
+  useHideStandardPublication,
+  useRefreshOrcidPublications,
+  useUnhideOrcidPublication,
+  useUnhideSifaPublication,
+  useUnhideStandardPublication,
+} from './hooks/use-publication-mutations.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export {
