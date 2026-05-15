@@ -1,3 +1,4 @@
+import type { SkillSuggestion } from '../../types/index.js';
 import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
 /** Profile entry returned by the search endpoint. */
@@ -113,5 +114,32 @@ export async function fetchSearchFilters(
     });
   } catch {
     return EMPTY_FILTERS;
+  }
+}
+
+/**
+ * Canonical-skill search backing the position-editor and similar
+ * skill-pickers. Hits `/api/skills/search` (the canonical-skills DB
+ * lookup) which is distinct from {@link fetchSkillSuggestions}'s
+ * `/api/search/skills` (the profile-skill typeahead).
+ *
+ * Returns `[]` on empty input (no network call) or any error.
+ */
+export async function searchSkills(
+  config: SifaApiConfig,
+  query: string,
+  limit = 10,
+  options: ApiFetchOptions = {},
+): Promise<SkillSuggestion[]> {
+  if (!query.trim()) return [];
+  const path = `/api/skills/search?q=${encodeURIComponent(query)}&limit=${limit}`;
+  try {
+    const data = await apiFetch<{ skills?: SkillSuggestion[] }>(config, path, {
+      cache: 'no-store',
+      ...options,
+    });
+    return data.skills ?? [];
+  } catch {
+    return [];
   }
 }

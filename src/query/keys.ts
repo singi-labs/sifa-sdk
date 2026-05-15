@@ -28,6 +28,8 @@ export const sifaQueryKeys = {
     profiles: (filters: Record<string, unknown>) =>
       ['sifa', 'search', 'profiles', filters] as const,
     skills: (query: string) => ['sifa', 'search', 'skills', query] as const,
+    canonicalSkills: (query: string, limit: number) =>
+      ['sifa', 'search', 'canonical-skills', query, limit] as const,
     filters: () => ['sifa', 'search', 'filters'] as const,
   },
 
@@ -98,6 +100,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.position.byOwner>
   | ReturnType<typeof sifaQueryKeys.search.all>
   | ReturnType<typeof sifaQueryKeys.search.profiles>
+  | ReturnType<typeof sifaQueryKeys.search.canonicalSkills>
   | ReturnType<typeof sifaQueryKeys.search.skills>
   | ReturnType<typeof sifaQueryKeys.search.filters>
   | ReturnType<typeof sifaQueryKeys.discovery.all>

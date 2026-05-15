@@ -82,8 +82,8 @@ describe('useCreatePosition', () => {
     vi.restoreAllMocks();
   });
 
-  it('POSTs to /api/positions and returns the result', async () => {
-    const fetchImpl = jsonFetch({ success: true, rkey: 'abc123' });
+  it('POSTs to /api/profile/position and returns the result', async () => {
+    const fetchImpl = jsonFetch({ rkey: 'abc123' });
 
     const { Wrapper } = makeWrapper(fetchImpl, baseConfig);
     const { result } = renderHook(() => useCreatePosition('did:plc:x'), { wrapper: Wrapper });
@@ -95,7 +95,7 @@ describe('useCreatePosition', () => {
 
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     const [url, init] = getCall(fetchImpl);
-    expect(url).toBe('https://api.example/api/positions');
+    expect(url).toBe('https://api.example/api/profile/position');
     expect(init.method).toBe('POST');
     expect(init.body).toBe(JSON.stringify({ title: 'Founder', company: 'Sifa' }));
   });
