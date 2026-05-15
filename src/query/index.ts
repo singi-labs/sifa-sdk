@@ -62,6 +62,15 @@ export {
   type ReactionStatus,
 } from './fetchers/reactions.js';
 export {
+  QUOTED_POSTS_BATCH_MAX,
+  resolveQuotedPosts,
+  type QuotedPostAuthor,
+  type QuotedPostImage,
+  type QuotedPostResult,
+  type QuotedPostView,
+  type ResolveQuotedPostsOptions,
+} from './fetchers/quoted-posts.js';
+export {
   fetchMyRoadmapVotes,
   fetchRoadmapVotes,
   type FetchMyRoadmapVotesOptions,

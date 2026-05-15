@@ -1,4 +1,5 @@
 import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import type { QuotedPostResult } from './quoted-posts.js';
 
 export interface HeatmapDay {
   date: string;
@@ -22,6 +23,17 @@ export interface ActivityItem {
   appName: string;
   category: string;
   indexedAt: string;
+  /**
+   * Set by the server when an `app.bsky.embed.record` quote was already
+   * resolved upstream (AppView path). Mutually exclusive with `quotedPostUri`.
+   */
+  quotedPost?: QuotedPostResult;
+  /**
+   * Set by the server when an `app.bsky.embed.record` quote needs client-side
+   * resolution (PDS path). Pass batches to {@link resolveQuotedPosts}.
+   * Mutually exclusive with `quotedPost`.
+   */
+  quotedPostUri?: string;
 }
 
 export interface ActivityTeaserResponse {
