@@ -15,6 +15,7 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "verbatimModuleSyntax": true,
+    "jsx": "react-jsx",
     "outDir": "dist",
     "rootDir": "src"
   },

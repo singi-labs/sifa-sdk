@@ -1,0 +1,21 @@
+import { z } from 'zod';
+
+import { datetimeSchema, didSchema, maxGraphemes, selfLabelsSchema } from './shared.js';
+
+/** Zod schema for `id.sifa.profile.education` records. */
+export const ProfileEducationRecordSchema = z.object({
+  institution: z.string().min(1).refine(maxGraphemes(100)).max(1000),
+  institutionDid: didSchema.optional(),
+  degree: z.string().refine(maxGraphemes(100)).max(1000).optional(),
+  fieldOfStudy: z.string().refine(maxGraphemes(100)).max(1000).optional(),
+  grade: z.string().refine(maxGraphemes(50)).max(500).optional(),
+  activities: z.string().refine(maxGraphemes(1000)).max(10000).optional(),
+  description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
+  location: z.unknown().optional(),
+  startedAt: datetimeSchema.optional(),
+  endedAt: datetimeSchema.optional(),
+  labels: selfLabelsSchema.optional(),
+  createdAt: datetimeSchema,
+});
+
+export type ProfileEducationRecord = z.infer<typeof ProfileEducationRecordSchema>;
