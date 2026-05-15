@@ -117,10 +117,14 @@ export { fetchEndorsementCount } from './fetchers/endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './fetchers/stream.js';
 export {
   checkAppAccount,
+  createReaction,
+  deleteReaction,
   fetchReactionStatus,
   type AccountCheckResult,
   type CheckAppAccountOptions,
   type FetchReactionStatusOptions,
+  type ReactionError,
+  type ReactionResult,
   type ReactionStatus,
 } from './fetchers/reactions.js';
 export {
@@ -133,12 +137,15 @@ export {
   type ResolveQuotedPostsOptions,
 } from './fetchers/quoted-posts.js';
 export {
+  castRoadmapVote,
   fetchMyRoadmapVotes,
   fetchRoadmapVotes,
+  retractRoadmapVote,
   type FetchMyRoadmapVotesOptions,
   type RoadmapVoter,
   type RoadmapVotesResponse,
 } from './fetchers/roadmap.js';
+export { deleteAccount, resetProfile, type DeleteAccountResult } from './fetchers/destructive.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export {
@@ -227,6 +234,14 @@ export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-
 export { useEndorsementCount } from './hooks/use-endorsement.js';
 export { useNetworkStreamCount } from './hooks/use-stream.js';
 export { useAppAccountCheck, useReactionStatus } from './hooks/use-reactions.js';
+export {
+  useCreateReaction,
+  useDeleteReaction,
+  type CreateReactionVariables,
+  type DeleteReactionVariables,
+} from './hooks/use-reaction-mutations.js';
 export { useMyRoadmapVotes, useRoadmapVotes } from './hooks/use-roadmap.js';
+export { useCastRoadmapVote, useRetractRoadmapVote } from './hooks/use-roadmap-mutations.js';
+export { useDeleteAccount, useResetProfile } from './hooks/use-destructive.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';

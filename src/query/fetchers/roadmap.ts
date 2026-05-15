@@ -1,4 +1,10 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import {
+  apiFetch,
+  apiWrite,
+  type ApiFetchOptions,
+  type SifaApiConfig,
+  type WriteResult,
+} from '../client.js';
 
 /** Voter on a roadmap item. */
 export interface RoadmapVoter {
@@ -56,4 +62,22 @@ export async function fetchMyRoadmapVotes(
   } catch {
     return [];
   }
+}
+
+/** Cast a vote on a roadmap item by its key. */
+export function castRoadmapVote(
+  config: SifaApiConfig,
+  key: string,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  return apiWrite(config, `/api/roadmap/votes/${encodeURIComponent(key)}`, 'POST', options);
+}
+
+/** Retract a previously-cast roadmap vote. */
+export function retractRoadmapVote(
+  config: SifaApiConfig,
+  key: string,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  return apiWrite(config, `/api/roadmap/votes/${encodeURIComponent(key)}`, 'DELETE', options);
 }
