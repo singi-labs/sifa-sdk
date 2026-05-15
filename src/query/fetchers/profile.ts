@@ -1,5 +1,5 @@
 import type { Profile } from '../../types/index.js';
-import { apiFetchOrNull, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import { apiFetch, apiFetchOrNull, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
 /**
  * Read the aggregated profile for a handle or DID.
@@ -19,4 +19,27 @@ export function fetchProfile(
     retryOn429: true,
     ...options,
   });
+}
+
+/**
+ * Public AT Fund link for a profile, if one is configured. Returns `null`
+ * on any error or when the response payload's `url` field is missing or
+ * non-string.
+ */
+export async function fetchAtFundLink(
+  config: SifaApiConfig,
+  did: string,
+  options: ApiFetchOptions = {},
+): Promise<string | null> {
+  const path = `/api/profiles/${encodeURIComponent(did)}/at-fund-link`;
+  try {
+    const data = await apiFetch<{ url?: unknown }>(config, path, {
+      next: { revalidate: 3600 },
+      timeoutMs: 5000,
+      ...options,
+    });
+    return typeof data.url === 'string' ? data.url : null;
+  } catch {
+    return null;
+  }
 }
