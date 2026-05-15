@@ -5,7 +5,12 @@ import { defineConfig } from 'tsup';
 const pkg = JSON.parse(readFileSync('./package.json', 'utf-8')) as { version: string };
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/schemas/index.ts', 'src/query/index.ts'],
+  entry: [
+    'src/index.ts',
+    'src/schemas/index.ts',
+    'src/query/index.ts',
+    'src/query/fetchers/index.ts',
+  ],
   format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,
