@@ -93,6 +93,13 @@ export {
 } from './format/index.js';
 
 export {
+  COMPLETENESS_MAX_SCORE,
+  completenessPercent,
+  completenessScore,
+  type ProfileCompletion,
+} from './logic/index.js';
+
+export {
   EndorsementConfirmationRecordSchema,
   EndorsementRecordSchema,
   GraphFollowRecordSchema,
