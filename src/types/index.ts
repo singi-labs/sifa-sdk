@@ -251,6 +251,31 @@ export interface Profile {
   industries?: ProfileIndustry[];
   location?: LocationValue | null;
   locations?: ProfileLocation[];
+  /**
+   * @deprecated Flat location field emitted at the response root during the
+   * additive response window for `community.lexicon.location.address`.
+   * Prefer the structured `locations[]` array (use the entry where
+   * `isPrimary` is true).
+   */
+  locationCountry?: string | null;
+  /**
+   * @deprecated See `locationCountry`. Prefer `locations[].locationRegion`.
+   */
+  locationRegion?: string | null;
+  /**
+   * @deprecated Legacy alias for `locationLocality`; emitted alongside it
+   * during the additive response window. Prefer `locations[].locationLocality`.
+   */
+  locationCity?: string | null;
+  /**
+   * @deprecated community.lexicon.location.address field name. Prefer
+   * `locations[].locationLocality`.
+   */
+  locationLocality?: string | null;
+  /**
+   * @deprecated See `locationCountry`. Prefer `locations[].countryCode`.
+   */
+  countryCode?: string | null;
   website?: string;
   openTo?: string[];
   preferredWorkplace?: string[];
