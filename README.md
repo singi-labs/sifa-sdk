@@ -64,7 +64,7 @@ import { colors, spacing } from '@singi-labs/sifa-sdk/tokens';
 
 This SDK is the recommended way to build clients against the Sifa AppView. It does not depend on `react-dom`, `react-native`, `next`, or any browser/Node-only storage API -- it runs anywhere TypeScript runs.
 
-If you have a use case the current public surface does not cover, open a discussion on [`singi-labs/sifa-workspace`](https://github.com/singi-labs/sifa-workspace/discussions).
+If you have a use case the current public surface does not cover, open an issue on [`singi-labs/sifa-workspace`](https://github.com/singi-labs/sifa-workspace/issues).
 
 ---
 
@@ -103,7 +103,7 @@ All changes go through Pull Requests. CI must pass before merge.
 ## Community
 
 - **Website:** [sifa.id](https://sifa.id)
-- **Discussions:** [GitHub Discussions](https://github.com/singi-labs/sifa-workspace/discussions)
+- **Bluesky:** [@sifa.id](https://bsky.app/profile/sifa.id)
 - **Issues:** [Report bugs](https://github.com/singi-labs/sifa-sdk/issues)
 
 ---
