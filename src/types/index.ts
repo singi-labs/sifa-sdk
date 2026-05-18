@@ -283,6 +283,13 @@ export interface Profile {
   availableToUtc?: number;
   pdsProvider?: PdsProviderInfo | null;
   claimed: boolean;
+  /**
+   * User-set opt-out flag from `id.sifa.profile.self.discoverable`. When
+   * `false`, the rendering app emits `noindex` and excludes the page from
+   * sitemaps. Absent means default-true (current behavior for existing
+   * records that predate this field).
+   */
+  discoverable?: boolean;
   isOwnProfile?: boolean;
   createdAt?: string;
   trustStats?: TrustStat[];

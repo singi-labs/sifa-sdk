@@ -195,6 +195,29 @@ describe('ProfileSelfRecordSchema', () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it('accepts discoverable as a boolean', () => {
+    expect(ProfileSelfRecordSchema.safeParse({ discoverable: false, createdAt: NOW }).success).toBe(
+      true,
+    );
+    expect(ProfileSelfRecordSchema.safeParse({ discoverable: true, createdAt: NOW }).success).toBe(
+      true,
+    );
+  });
+
+  it('treats discoverable as optional', () => {
+    const parsed = ProfileSelfRecordSchema.parse({ createdAt: NOW });
+    expect(parsed.discoverable).toBeUndefined();
+  });
+
+  it('rejects non-boolean discoverable values', () => {
+    expect(ProfileSelfRecordSchema.safeParse({ discoverable: 'no', createdAt: NOW }).success).toBe(
+      false,
+    );
+    expect(ProfileSelfRecordSchema.safeParse({ discoverable: 1, createdAt: NOW }).success).toBe(
+      false,
+    );
+  });
 });
 
 describe('ProfileCertificationRecordSchema', () => {

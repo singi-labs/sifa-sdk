@@ -18,6 +18,7 @@ export const ProfileSelfRecordSchema = z.object({
   preferredWorkplace: z.array(z.string()).max(3).optional(),
   langs: z.array(languageTagSchema).max(3).optional(),
   labels: selfLabelsSchema.optional(),
+  discoverable: z.boolean().optional(),
   createdAt: datetimeSchema,
 });
 
