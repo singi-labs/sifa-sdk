@@ -96,7 +96,16 @@ export {
   COMPLETENESS_MAX_SCORE,
   completenessPercent,
   completenessScore,
+  DIMENSIONS_MAX_SCORE,
+  MIN_SKILLS,
+  countFilledDimensions,
+  dimensionsFromInputs,
+  getFilledDimensionsMap,
+  profileToDimensionInputs,
+  type DimensionKey,
+  type DimensionMap,
   type ProfileCompletion,
+  type ProfileDimensionInputs,
 } from './logic/index.js';
 
 export {
