@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.7.9
+
+### Patch Changes
+
+- 4f33f04: Add optional `discoverable` field to `ProfileSelfRecordSchema` and the `Profile` type. Mirrors `id.sifa.profile.self.discoverable` (sifa-lexicons 0.6.1). Absence is treated as default-true. Consumers gate noindex / sitemap exclusion on `discoverable === false`.
+
 ## 0.7.8
 
 ### Patch Changes
