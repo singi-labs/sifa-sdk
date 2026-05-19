@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.7.10
+
+### Patch Changes
+
+- 7fc646a: Internal: release workflow now authenticates the changesets action with a fine-grained PAT (`CHANGESETS_TOKEN`) instead of the default `GITHUB_TOKEN`. This is purely infrastructure: bot-authored "Version Packages" PRs can now trigger the required `check` CI without needing a manual close/reopen. No public API change.
+
 ## 0.7.9
 
 ### Patch Changes
