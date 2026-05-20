@@ -1,11 +1,24 @@
 export { CONTINENTS, getContinent, type ContinentCode } from './continents.js';
 export { COUNTRIES } from './countries.js';
 export {
+  EMPLOYMENT_TYPE_GROUPS,
+  EMPLOYMENT_TYPE_LABELS,
+  getEmploymentTypeLabel,
+  type EmploymentTypeGroup,
+  type EmploymentTypeOption,
+} from './employment-type.js';
+export {
   INDUSTRY_OPTIONS,
   findIndustry,
   getIndustryLabelKey,
   type IndustryOption,
 } from './industry-taxonomy.js';
+export {
+  WORKPLACE_TYPE_LABELS,
+  WORKPLACE_TYPE_OPTIONS,
+  getWorkplaceTypeLabel,
+  type WorkplaceTypeOption,
+} from './workplace-type.js';
 export {
   PLATFORM_LABELS,
   PLATFORM_OPTIONS,

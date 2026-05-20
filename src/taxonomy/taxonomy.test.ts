@@ -4,6 +4,11 @@ import type { ProfileSkill } from '../types/index.js';
 
 import { CONTINENTS, getContinent } from './continents.js';
 import { COUNTRIES } from './countries.js';
+import {
+  EMPLOYMENT_TYPE_GROUPS,
+  EMPLOYMENT_TYPE_LABELS,
+  getEmploymentTypeLabel,
+} from './employment-type.js';
 import { INDUSTRY_OPTIONS } from './industry-taxonomy.js';
 import {
   PLATFORM_LABELS,
@@ -14,6 +19,36 @@ import {
 } from './platforms.js';
 import { CATEGORY_LABELS, CATEGORY_ORDER, SKILL_CATEGORIES } from './skill-categories.js';
 import { dedupeSkills, groupSkillsByCategory } from './skill-grouping.js';
+import {
+  WORKPLACE_TYPE_LABELS,
+  WORKPLACE_TYPE_OPTIONS,
+  getWorkplaceTypeLabel,
+} from './workplace-type.js';
+
+const LEXICON_EMPLOYMENT_TYPE_KNOWN_VALUES = [
+  'id.sifa.defs#fullTime',
+  'id.sifa.defs#partTime',
+  'id.sifa.defs#temporary',
+  'id.sifa.defs#seasonal',
+  'id.sifa.defs#contract',
+  'id.sifa.defs#freelance',
+  'id.sifa.defs#selfEmployed',
+  'id.sifa.defs#independentWork',
+  'id.sifa.defs#internship',
+  'id.sifa.defs#apprenticeship',
+  'id.sifa.defs#fellowship',
+  'id.sifa.defs#trainee',
+  'id.sifa.defs#volunteer',
+] as const;
+
+const LEXICON_WORKPLACE_TYPE_KNOWN_VALUES = [
+  'id.sifa.defs#onSite',
+  'id.sifa.defs#remote',
+  'id.sifa.defs#hybrid',
+  'id.sifa.defs#remoteLocal',
+  'id.sifa.defs#remoteRegion',
+  'id.sifa.defs#remoteGlobal',
+] as const;
 
 describe('continents', () => {
   it('lists seven continents', () => {
@@ -41,6 +76,60 @@ describe('countries', () => {
   it('contains a non-empty list with ISO codes', () => {
     expect(COUNTRIES.length).toBeGreaterThan(100);
     expect(COUNTRIES.every((c) => /^[A-Z]{2}$/.test(c.code))).toBe(true);
+  });
+});
+
+describe('employment-type', () => {
+  it('covers every lexicon knownValue with a label', () => {
+    for (const v of LEXICON_EMPLOYMENT_TYPE_KNOWN_VALUES) {
+      expect(EMPLOYMENT_TYPE_LABELS[v]).toBeDefined();
+    }
+  });
+
+  it('groups cover the same set as the flat label map', () => {
+    const grouped = EMPLOYMENT_TYPE_GROUPS.flatMap((g) => g.items.map((i) => i.value)).sort();
+    const flat = Object.keys(EMPLOYMENT_TYPE_LABELS).sort();
+    expect(grouped).toEqual(flat);
+  });
+
+  it('every option uses the id.sifa.defs# namespace', () => {
+    for (const v of Object.keys(EMPLOYMENT_TYPE_LABELS)) {
+      expect(v.startsWith('id.sifa.defs#')).toBe(true);
+    }
+  });
+
+  it('getEmploymentTypeLabel returns the label for known values', () => {
+    expect(getEmploymentTypeLabel('id.sifa.defs#fullTime')).toBe('Full-time');
+  });
+
+  it('getEmploymentTypeLabel falls back to the raw value for unknown', () => {
+    expect(getEmploymentTypeLabel('id.sifa.defs#unknown')).toBe('id.sifa.defs#unknown');
+  });
+
+  it('getEmploymentTypeLabel returns undefined for nullish input', () => {
+    expect(getEmploymentTypeLabel(undefined)).toBeUndefined();
+    expect(getEmploymentTypeLabel(null)).toBeUndefined();
+    expect(getEmploymentTypeLabel('')).toBeUndefined();
+  });
+});
+
+describe('workplace-type', () => {
+  it('covers every lexicon knownValue with a label', () => {
+    for (const v of LEXICON_WORKPLACE_TYPE_KNOWN_VALUES) {
+      expect(WORKPLACE_TYPE_LABELS[v]).toBeDefined();
+    }
+  });
+
+  it('WORKPLACE_TYPE_OPTIONS excludes the deprecated bare "remote" token', () => {
+    expect(WORKPLACE_TYPE_OPTIONS.map((o) => o.value)).not.toContain('id.sifa.defs#remote');
+  });
+
+  it('WORKPLACE_TYPE_LABELS still labels legacy "remote" for read-only display', () => {
+    expect(WORKPLACE_TYPE_LABELS['id.sifa.defs#remote']).toBe('Remote');
+  });
+
+  it('getWorkplaceTypeLabel falls back to the raw value for unknown', () => {
+    expect(getWorkplaceTypeLabel('id.sifa.defs#unknown')).toBe('id.sifa.defs#unknown');
   });
 });
 
