@@ -31,6 +31,12 @@ jobs:
           node-version: 25
           cache: pnpm
 
+      # Node 25.0.0 ships with npm 11.5.0. Trusted-publisher OIDC publish auth
+      # landed in npm 11.6.0. Pin >=11.6.0 explicitly so publishes work
+      # regardless of which 25.x patch the setup-node cache resolves to.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
       - name: Install
         run: pnpm install --frozen-lockfile
 
