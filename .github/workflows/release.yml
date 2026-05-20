@@ -43,11 +43,32 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Fail fast if the runner isn't actually exposing OIDC to this job.
+      # `id-token: write` permission must be set (it is, at job level), and the
+      # runner must populate ACTIONS_ID_TOKEN_REQUEST_URL/_TOKEN. If either is
+      # missing, npm publish will silently fall back to ENEEDAUTH later — much
+      # easier to debug here than from the changesets/action subprocess output.
+      - name: Verify OIDC environment
+        run: |
+          if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] || [ -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]; then
+            echo "::error::OIDC env vars not present — id-token permission missing or not propagated"
+            exit 1
+          fi
+          echo "OIDC env vars present"
+          echo "npm: $(npm --version)"
+          echo "registry: $(npm config get registry)"
+
       - name: Create release PR or publish
+        id: changesets
         uses: changesets/action@v1
         with:
           version: pnpm version-packages
-          publish: pnpm release
+          # Call npm publish directly (via a small node script) instead of
+          # `pnpm release` → `changeset publish` → `pnpm publish`. The pnpm
+          # chain injects NPM_CONFIG_* env vars that prevent npm 11.6+ from
+          # engaging OIDC trusted publishing (see issue #68 for the full
+          # investigation and failed-run logs).
+          publish: node scripts/publish-if-new.mjs
           commit: 'chore: version packages'
           title: 'chore: version packages'
         env:
