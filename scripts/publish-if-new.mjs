@@ -37,11 +37,9 @@ if (published === version) {
 
 console.log(`Publishing ${name}@${version} (registry currently at: ${published || 'none'})`);
 
-const result = spawnSync(
-  'npm',
-  ['publish', '--access', 'public', '--provenance'],
-  { stdio: 'inherit' }
-);
+const result = spawnSync('npm', ['publish', '--access', 'public', '--provenance'], {
+  stdio: 'inherit',
+});
 
 if (result.status !== 0) {
   process.exit(result.status ?? 1);
