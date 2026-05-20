@@ -45,6 +45,16 @@ if (result.status !== 0) {
   process.exit(result.status ?? 1);
 }
 
+// Create the local git tag that `changeset publish` would have created.
+// changesets/action reads our `New tag:` line below, then pushes
+// `v<version>` to origin (single-package non-monorepo format) and creates
+// a GitHub release for it. The push fails if the tag doesn't exist
+// locally, so create it here. Non-fatal if it already exists (re-runs).
+const tagResult = spawnSync('git', ['tag', `v${version}`], { stdio: 'inherit' });
+if (tagResult.status !== 0) {
+  console.log(`Note: git tag v${version} could not be created (already exists?)`);
+}
+
 // Emit the line changesets/action looks for so its `publishedPackages`
 // output is populated for any downstream consumers.
 console.log(`New tag: ${name}@${version}`);
