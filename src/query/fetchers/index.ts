@@ -158,5 +158,17 @@ export {
   type RoadmapVotesResponse,
 } from './roadmap.js';
 export { deleteAccount, resetProfile, type DeleteAccountResult } from './destructive.js';
+export {
+  checkNetworkMapJobStatus,
+  fetchNetworkMap,
+  initiateNetworkMapGeneration,
+  isNetworkMapResponse,
+  type NetworkMapEdge,
+  type NetworkMapGenerationJob,
+  type NetworkMapGraphData,
+  type NetworkMapNode,
+  type NetworkMapPendingJob,
+  type NetworkMapResponse,
+} from './network-map.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';

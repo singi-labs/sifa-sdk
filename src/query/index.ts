@@ -146,6 +146,18 @@ export {
   type RoadmapVotesResponse,
 } from './fetchers/roadmap.js';
 export { deleteAccount, resetProfile, type DeleteAccountResult } from './fetchers/destructive.js';
+export {
+  checkNetworkMapJobStatus,
+  fetchNetworkMap,
+  initiateNetworkMapGeneration,
+  isNetworkMapResponse,
+  type NetworkMapEdge,
+  type NetworkMapGenerationJob,
+  type NetworkMapGraphData,
+  type NetworkMapNode,
+  type NetworkMapPendingJob,
+  type NetworkMapResponse,
+} from './fetchers/network-map.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export {
