@@ -13,6 +13,7 @@ export {
   getIndustryLabelKey,
   type IndustryOption,
 } from './industry-taxonomy.js';
+export { OPEN_TO_OPTIONS, getOpenToLabelKey, type OpenToOption } from './open-to.js';
 export {
   WORKPLACE_TYPE_LABELS,
   WORKPLACE_TYPE_OPTIONS,

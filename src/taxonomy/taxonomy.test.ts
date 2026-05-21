@@ -10,6 +10,7 @@ import {
   getEmploymentTypeLabel,
 } from './employment-type.js';
 import { INDUSTRY_OPTIONS } from './industry-taxonomy.js';
+import { OPEN_TO_OPTIONS, getOpenToLabelKey } from './open-to.js';
 import {
   PLATFORM_LABELS,
   PLATFORM_OPTIONS,
@@ -39,6 +40,17 @@ const LEXICON_EMPLOYMENT_TYPE_KNOWN_VALUES = [
   'id.sifa.defs#fellowship',
   'id.sifa.defs#trainee',
   'id.sifa.defs#volunteer',
+] as const;
+
+const LEXICON_OPEN_TO_KNOWN_VALUES = [
+  'id.sifa.defs#fullTimeRoles',
+  'id.sifa.defs#partTimeRoles',
+  'id.sifa.defs#contractRoles',
+  'id.sifa.defs#commissions',
+  'id.sifa.defs#boardPositions',
+  'id.sifa.defs#mentoringOthers',
+  'id.sifa.defs#beingMentored',
+  'id.sifa.defs#collaborations',
 ] as const;
 
 const LEXICON_WORKPLACE_TYPE_KNOWN_VALUES = [
@@ -130,6 +142,43 @@ describe('workplace-type', () => {
 
   it('getWorkplaceTypeLabel falls back to the raw value for unknown', () => {
     expect(getWorkplaceTypeLabel('id.sifa.defs#unknown')).toBe('id.sifa.defs#unknown');
+  });
+});
+
+describe('open-to', () => {
+  it('covers every lexicon knownValue with a labelKey', () => {
+    for (const v of LEXICON_OPEN_TO_KNOWN_VALUES) {
+      expect(getOpenToLabelKey(v)).toBeDefined();
+    }
+  });
+
+  it('every option uses the id.sifa.defs# namespace', () => {
+    for (const opt of OPEN_TO_OPTIONS) {
+      expect(opt.value.startsWith('id.sifa.defs#')).toBe(true);
+    }
+  });
+
+  it('OPEN_TO_OPTIONS length matches the lexicon knownValues count', () => {
+    expect(OPEN_TO_OPTIONS).toHaveLength(LEXICON_OPEN_TO_KNOWN_VALUES.length);
+  });
+
+  it('resolves the legacy mentoring alias to mentoringOthers', () => {
+    expect(getOpenToLabelKey('id.sifa.defs#mentoring')).toBe('mentoringOthers');
+  });
+
+  it('getOpenToLabelKey returns the labelKey for known values', () => {
+    expect(getOpenToLabelKey('id.sifa.defs#commissions')).toBe('commissions');
+    expect(getOpenToLabelKey('id.sifa.defs#fullTimeRoles')).toBe('fullTimeRoles');
+  });
+
+  it('getOpenToLabelKey returns undefined for unknown values', () => {
+    expect(getOpenToLabelKey('id.sifa.defs#unknown')).toBeUndefined();
+  });
+
+  it('getOpenToLabelKey returns undefined for nullish input', () => {
+    expect(getOpenToLabelKey(undefined)).toBeUndefined();
+    expect(getOpenToLabelKey(null)).toBeUndefined();
+    expect(getOpenToLabelKey('')).toBeUndefined();
   });
 });
 
