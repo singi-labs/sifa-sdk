@@ -55,6 +55,18 @@ export interface NetworkMapGenerationJob {
   createdAt: string;
   completedAt?: string;
   error?: string;
+  /**
+   * Queue position when the job is still pending and not yet picked up
+   * by the worker. 0 = next to run. Absent for in-flight or terminal
+   * jobs (and for any backend that doesn't yet report position).
+   */
+  position?: number;
+  /**
+   * Estimated remaining seconds, derived server-side from the median
+   * historical duration for the user's follow-count bucket multiplied
+   * by `position + 1`. Absent when no historical data exists yet.
+   */
+  etaSeconds?: number;
 }
 
 /** Returned by `initiateNetworkMapGeneration` when a new job was started or one was already running. */
