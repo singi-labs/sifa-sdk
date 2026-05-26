@@ -218,6 +218,38 @@ describe('ProfileSelfRecordSchema', () => {
       false,
     );
   });
+
+  it('accepts givenName and familyName as optional strings', () => {
+    expect(
+      ProfileSelfRecordSchema.safeParse({
+        givenName: 'Aisha',
+        familyName: 'García-Hernández',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    const parsed = ProfileSelfRecordSchema.parse({ createdAt: NOW });
+    expect(parsed.givenName).toBeUndefined();
+    expect(parsed.familyName).toBeUndefined();
+  });
+
+  it('caps givenName and familyName at 64 graphemes', () => {
+    const long = 'a'.repeat(65);
+    expect(ProfileSelfRecordSchema.safeParse({ givenName: long, createdAt: NOW }).success).toBe(
+      false,
+    );
+    expect(ProfileSelfRecordSchema.safeParse({ familyName: long, createdAt: NOW }).success).toBe(
+      false,
+    );
+  });
+
+  it('rejects non-string givenName/familyName values', () => {
+    expect(ProfileSelfRecordSchema.safeParse({ givenName: 42, createdAt: NOW }).success).toBe(
+      false,
+    );
+    expect(ProfileSelfRecordSchema.safeParse({ familyName: true, createdAt: NOW }).success).toBe(
+      false,
+    );
+  });
 });
 
 describe('ProfileCertificationRecordSchema', () => {

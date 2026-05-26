@@ -239,6 +239,18 @@ export interface Profile {
   did: string;
   handle: string;
   displayName?: string;
+  /**
+   * Given (first) name from `id.sifa.profile.self.givenName`. Schema.org
+   * `Person.givenName`. Optional; absent for users who haven't filled in
+   * structured name fields. Consumers wanting a rendered name should use
+   * `formatStructuredName(givenName, familyName) ?? displayName ?? handle`.
+   */
+  givenName?: string;
+  /**
+   * Family (last) name from `id.sifa.profile.self.familyName`. Schema.org
+   * `Person.familyName`. See `givenName` for fallback guidance.
+   */
+  familyName?: string;
   avatar?: string;
   pronouns?: string;
   headline?: string;

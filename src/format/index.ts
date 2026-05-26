@@ -10,6 +10,7 @@ export { sanitizeHandleInput } from './handle-utils.js';
 export { countryCodeToFlag, formatLocation, parseLocationString } from './location-utils.js';
 export {
   detectPdsProvider,
+  formatStructuredName,
   getDisplayLabel,
   getHandleStem,
   getPdsDisplayName,
