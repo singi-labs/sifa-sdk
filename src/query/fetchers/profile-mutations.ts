@@ -25,6 +25,10 @@ export interface ProfileSelfLocation {
 export interface UpdateProfileSelfInput {
   headline?: string;
   about?: string;
+  /** Schema.org Person.givenName from id.sifa.profile.self.givenName. */
+  givenName?: string;
+  /** Schema.org Person.familyName from id.sifa.profile.self.familyName. */
+  familyName?: string;
   industries?: ProfileIndustryInput[];
   location?: ProfileSelfLocation;
   website?: string;
