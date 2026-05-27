@@ -203,6 +203,10 @@ describe('platforms', () => {
 
   it('falls back to website for unknown platforms', () => {
     expect(getPlatformLabel('github')).toBe('GitHub');
+    expect(getPlatformLabel('codeberg')).toBe('Codeberg');
+    expect(getPlatformLabel('gitlab')).toBe('GitLab');
+    expect(getPlatformLabel('forgejo')).toBe('Forgejo');
+    expect(getPlatformLabel('gitea')).toBe('Gitea');
     expect(getPlatformLabel('unknown')).toBe(PLATFORM_LABELS.website);
   });
 
