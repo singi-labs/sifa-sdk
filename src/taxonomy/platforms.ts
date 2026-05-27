@@ -9,6 +9,10 @@
 export const PLATFORM_LABELS = {
   bluesky: 'Bluesky',
   github: 'GitHub',
+  codeberg: 'Codeberg',
+  gitlab: 'GitLab',
+  forgejo: 'Forgejo',
+  gitea: 'Gitea',
   linkedin: 'LinkedIn',
   youtube: 'YouTube',
   twitter: 'X (Twitter)',
