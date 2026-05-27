@@ -1,5 +1,16 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.4
+
+### Patch Changes
+
+- 62e0af2: Add `codeberg`, `gitlab`, `forgejo`, and `gitea` to the platform taxonomy so users can link non-GitHub forge accounts as labeled external accounts.
+- 89316a6: Add `limitCombiningMarks` and `sanitizeDisplayText` utilities under `format/`.
+  Caps stacked Unicode combining marks (Zalgo defence) and strips bidi
+  formatting controls (LRM/RLM/etc.) from untrusted PDS record text before
+  rendering, preventing vertical-overflow attacks where a single record can
+  visually bleed over neighbouring UI.
+
 ## 0.9.3
 
 ### Patch Changes
