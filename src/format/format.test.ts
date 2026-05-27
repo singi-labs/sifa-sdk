@@ -5,6 +5,7 @@ import { sanitizeHandleInput } from './handle-utils.js';
 import { countryCodeToFlag, formatLocation, parseLocationString } from './location-utils.js';
 import {
   detectPdsProvider,
+  formatStructuredName,
   getDisplayLabel,
   getHandleStem,
   getPdsDisplayName,
@@ -237,6 +238,27 @@ describe('pds-utils', () => {
     expect(getPdsDisplayName('bluesky')).toBe('Bluesky');
     expect(getPdsDisplayName('northsky')).toBe('NorthSky');
     expect(getPdsDisplayName('whatever')).toBe('whatever');
+  });
+
+  describe('formatStructuredName', () => {
+    it('joins given and family with a space', () => {
+      expect(formatStructuredName('Aisha', 'García')).toBe('Aisha García');
+    });
+
+    it('returns only the present field when one is missing', () => {
+      expect(formatStructuredName('Aisha', undefined)).toBe('Aisha');
+      expect(formatStructuredName(undefined, 'García')).toBe('García');
+    });
+
+    it('returns undefined when both are absent or whitespace-only', () => {
+      expect(formatStructuredName(undefined, undefined)).toBeUndefined();
+      expect(formatStructuredName('', '')).toBeUndefined();
+      expect(formatStructuredName('   ', '\t')).toBeUndefined();
+    });
+
+    it('trims surrounding whitespace from inputs', () => {
+      expect(formatStructuredName('  Aisha ', ' García ')).toBe('Aisha García');
+    });
   });
 });
 

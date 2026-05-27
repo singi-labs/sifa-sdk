@@ -50,6 +50,25 @@ export function getDisplayLabel(displayName: string | undefined, handle: string)
   return getHandleStem(handle);
 }
 
+/**
+ * Combine optional structured name fields (`id.sifa.profile.self.givenName`,
+ * `familyName`) into a single string in Schema.org `Person` order — given
+ * before family. Returns `undefined` when both are absent so callers can
+ * fall back to `displayName`. Whitespace-only inputs are treated as absent.
+ * Does not impose cultural ordering: users whose preferred presentation
+ * differs (e.g. Eastern name order) should set `displayName` accordingly,
+ * which this helper deliberately does not consult.
+ */
+export function formatStructuredName(
+  givenName: string | undefined,
+  familyName: string | undefined,
+): string | undefined {
+  const given = givenName?.trim();
+  const family = familyName?.trim();
+  if (given && family) return `${given} ${family}`;
+  return given || family || undefined;
+}
+
 const PDS_DISPLAY_NAMES: Record<string, string> = {
   bluesky: 'Bluesky',
   blacksky: 'BlackSky',
