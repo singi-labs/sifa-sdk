@@ -75,6 +75,18 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
   colibri: { profileUrlPattern: 'https://colibri.social' },
   collectivesocial: { profileUrlPattern: 'https://app.collectivesocial.app' },
   github: {},
+  asq: {
+    // Questions live at /q/{did}/{rkey}. Answer cards build their own URL
+    // from the parsed subject.uri (which points to the question), so the
+    // pattern below is invoked only for question records.
+    urlPattern: 'https://asq.fyi/q/{did}/{rkey}',
+    profileUrlPattern: 'https://asq.fyi',
+  },
+  passports: {
+    // Per-record URLs don't exist on passports.social — its SvelteKit routes
+    // stop at /profile/{handle}/{passport_slug}. Profile-level fallback only.
+    profileUrlPattern: 'https://passports.social/profile/{handle}',
+  },
 });
 
 /**
@@ -113,4 +125,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['app.beaconbits.', 'beaconbits'],
   ['buzz.bookhive.', 'bookhive'],
   ['social.colibri.', 'colibri'],
+  ['social.passports.', 'passports'],
+  ['fyi.asq.', 'asq'],
 ];
