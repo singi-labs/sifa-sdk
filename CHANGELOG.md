@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.9
+
+### Patch Changes
+
+- 9de5272: Fix `Release` workflow: `npm publish` was running the package `prepare` script (which invokes `husky`) inside a lifecycle env where the pnpm-installed husky binary wasn't on PATH, breaking every publish. Pass `--ignore-scripts` to `npm publish` since the dist is already built by the workflow.
+
 ## 0.9.8
 
 ### Patch Changes
