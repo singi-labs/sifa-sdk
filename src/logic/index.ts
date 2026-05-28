@@ -16,3 +16,5 @@ export {
   type DimensionMap,
   type ProfileDimensionInputs,
 } from './profile-dimensions.js';
+
+export { pickPrimaryPosition, type PrimaryPositionCandidate } from './primary-position.js';
