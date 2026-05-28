@@ -119,6 +119,7 @@ export {
   fetchHeatmapData,
   type ActivityFeedResponse,
   type ActivityItem,
+  type ActivityItemLinkHealth,
   type ActivityTeaserResponse,
   type FetchActivityFeedOptions,
   type FetchActivityTeaserOptions,
