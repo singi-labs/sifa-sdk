@@ -35,7 +35,7 @@ Published publicly so third-party developers can build their own AT Protocol cli
 | ATproto     | Wrapper around `@atproto/api` that accepts an authenticated agent                     |
 | Format      | Pure formatters for dates, locations, profile completeness                            |
 | Logic       | Business-logic predicates (display-only; server-side trust logic lives in `sifa-api`) |
-| Taxonomy    | Constants and enums (continents, industries, skill categories, etc.)                  |
+| Taxonomy    | Constants and enums (continents, industries, skill categories, activity tiers)        |
 | Tokens      | Sifa-brand design tokens, exported via `@singi-labs/sifa-sdk/tokens` (optional)       |
 
 ---
@@ -56,6 +56,17 @@ Optional design tokens (skip if you have your own brand):
 
 ```ts
 import { colors, spacing } from '@singi-labs/sifa-sdk/tokens';
+```
+
+Classify an AT Protocol NSID into one of three activity tiers (`creation`,
+`action`, `filtered`). Unknown NSIDs default to `filtered`:
+
+```ts
+import { getActivityTier, getTierMeta } from '@singi-labs/sifa-sdk';
+
+getActivityTier('app.bsky.feed.post'); // 'creation'
+getActivityTier('app.bsky.feed.like'); // 'action'
+getTierMeta('creation'); // { label: 'Made', shownOnPublicProfile: true, ... }
 ```
 
 ---

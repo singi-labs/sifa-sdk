@@ -42,6 +42,7 @@ export type {
 } from './types/index.js';
 
 export {
+  ACTIVITY_TIERS,
   CATEGORY_LABELS,
   CATEGORY_ORDER,
   CONTINENTS,
@@ -51,9 +52,13 @@ export {
   INDUSTRY_OPTIONS,
   OPEN_TO_OPTIONS,
   findIndustry,
+  getActivityTaxonomyVersion,
+  getActivityTier,
   getEmploymentTypeLabel,
   getIndustryLabelKey,
+  getLexiconEntry,
   getOpenToLabelKey,
+  getTierMeta,
   getWorkplaceTypeLabel,
   PLATFORM_LABELS,
   PLATFORM_OPTIONS,
@@ -66,14 +71,18 @@ export {
   getPlatformLabel,
   groupSkillsByCategory,
   isKnownPlatform,
+  type ActivityTaxonomy,
+  type ActivityTier,
   type ContinentCode,
   type EmploymentTypeGroup,
   type EmploymentTypeOption,
   type IndustryOption,
+  type LexiconEntry,
   type MergedProfileSkill,
   type OpenToOption,
   type PlatformId,
   type SkillCategory,
+  type TierMeta,
   type WorkplaceTypeOption,
 } from './taxonomy/index.js';
 
