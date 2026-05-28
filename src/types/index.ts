@@ -26,6 +26,7 @@ export interface ProfilePosition {
   skills?: SkillRef[];
   linkedSkills?: ProfileSkill[];
   primary?: boolean;
+  hidden?: boolean;
 }
 
 export interface ProfileEducation {
@@ -37,6 +38,7 @@ export interface ProfileEducation {
   activities?: string;
   startedAt?: string;
   endedAt?: string;
+  hidden?: boolean;
 }
 
 export interface ProfileSkill {
@@ -92,6 +94,7 @@ export interface ProfileCertification {
   issueDate?: string;
   expiryDate?: string;
   credentialUrl?: string;
+  hidden?: boolean;
 }
 
 export interface ProfileProject {
@@ -101,6 +104,7 @@ export interface ProfileProject {
   url?: string;
   startDate?: string;
   endDate?: string;
+  hidden?: boolean;
 }
 
 export interface PublicationContributor {
@@ -139,6 +143,7 @@ export interface ProfileVolunteering {
   startDate?: string;
   endDate?: string;
   description?: string;
+  hidden?: boolean;
 }
 
 export interface ProfileHonor {
@@ -147,6 +152,7 @@ export interface ProfileHonor {
   issuer?: string;
   date?: string;
   description?: string;
+  hidden?: boolean;
 }
 
 export type LanguageProficiency =
@@ -160,6 +166,7 @@ export interface ProfileLanguage {
   rkey: string;
   language: string;
   proficiency?: LanguageProficiency;
+  hidden?: boolean;
 }
 
 export interface ProfileCourse {
@@ -167,6 +174,7 @@ export interface ProfileCourse {
   name: string;
   institution?: string;
   number?: string;
+  hidden?: boolean;
 }
 
 export interface TrustStat {
