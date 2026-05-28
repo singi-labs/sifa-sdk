@@ -133,9 +133,11 @@ export {
   countFilledDimensions,
   dimensionsFromInputs,
   getFilledDimensionsMap,
+  pickPrimaryPosition,
   profileToDimensionInputs,
   type DimensionKey,
   type DimensionMap,
+  type PrimaryPositionCandidate,
   type ProfileCompletion,
   type ProfileDimensionInputs,
 } from './logic/index.js';
