@@ -37,9 +37,16 @@ if (published === version) {
 
 console.log(`Publishing ${name}@${version} (registry currently at: ${published || 'none'})`);
 
-const result = spawnSync('npm', ['publish', '--access', 'public', '--provenance'], {
-  stdio: 'inherit',
-});
+// --ignore-scripts: `npm publish` would otherwise run the package's `prepare`
+// script (= `husky`), which isn't on PATH inside npm's publish lifecycle env
+// when the install happened via pnpm. The dist artifact is already built by
+// the workflow's `pnpm build` step, so no further publish-time scripts are
+// needed.
+const result = spawnSync(
+  'npm',
+  ['publish', '--access', 'public', '--provenance', '--ignore-scripts'],
+  { stdio: 'inherit' },
+);
 
 if (result.status !== 0) {
   process.exit(result.status ?? 1);
