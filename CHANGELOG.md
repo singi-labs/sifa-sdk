@@ -1,5 +1,41 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.5
+
+### Patch Changes
+
+- 70ab0a7: Add `getActivityTier(nsid)` helper + activity-tier taxonomy types.
+
+  Exposes the canonical `activity-tiers.json` taxonomy from `sifa-lexicons` as
+  typed SDK helpers so consumers (sifa-web today, future sifa-app, third
+  parties) can classify any AT Protocol NSID into one of three tiers
+  (`creation`, `action`, `filtered`) without inlining the JSON.
+
+  New exports: `getActivityTier`, `getLexiconEntry`, `getTierMeta`,
+  `getActivityTaxonomyVersion`, `ACTIVITY_TIERS`, and the supporting types
+  `ActivityTier`, `TierMeta`, `LexiconEntry`, `ActivityTaxonomy`.
+
+  The taxonomy JSON is bundled into the build output (no runtime fetch) and
+  defaults unknown NSIDs to `filtered` so consumers never leak unclassified
+  records to public profile surfaces.
+
+- 684f8a4: Add `resolveCardUrl(item)` and `getAppIdForCollection(collection)` helpers, plus the
+  `APP_URL_PATTERNS` / `COLLECTION_TO_APP` registry, under a new `cards/` module.
+
+  `resolveCardUrl` returns the canonical clickable URL for an activity item (the same URL
+  the sifa-web activity cards render), or `null` when the item is not clickable. This is
+  the single source of truth that both sifa-web (UI) and sifa-api (the upcoming external
+  URL health scanner, singi-labs/sifa-workspace#196) will use, so broken-link detection
+  lines up with what users actually click.
+
+  The helper handles the per-collection bespoke URL patterns currently inlined in the card
+  components: tangled per-repo URLs, kipclip bookmark targets, margin source URLs,
+  smokesignal RSVP/event uri parsing, standard-document siteUrl+path, and generic
+  `record.url` fallback, with pattern-based per-item/profile URLs as the final fallback.
+
+  No behaviour change for existing consumers — this is additive. sifa-web will migrate to
+  the helper in a follow-up.
+
 ## 0.9.4
 
 ### Patch Changes
