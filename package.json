@@ -101,7 +101,8 @@
     "prepare": "husky",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm run build && changeset publish"
+    "release": "pnpm run build && changeset publish",
+    "sync:activity-tiers": "node scripts/sync-activity-tiers.mjs"
   },
   "engines": {
     "node": ">=22"

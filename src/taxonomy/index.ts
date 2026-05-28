@@ -35,3 +35,14 @@ export {
   type SkillCategory,
 } from './skill-categories.js';
 export { dedupeSkills, groupSkillsByCategory, type MergedProfileSkill } from './skill-grouping.js';
+export {
+  ACTIVITY_TIERS,
+  getActivityTaxonomyVersion,
+  getActivityTier,
+  getLexiconEntry,
+  getTierMeta,
+  type ActivityTaxonomy,
+  type ActivityTier,
+  type LexiconEntry,
+  type TierMeta,
+} from './activity-tiers.js';
