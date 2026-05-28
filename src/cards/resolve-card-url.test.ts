@@ -279,6 +279,142 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('tangled slug validation (regression: sifa-web#1071/#1072)', () => {
+    it('falls back to profile URL when record.name contains whitespace', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'sh.tangled.graph.repo',
+          record: { name: 'atproto-snake azurite othername' },
+        }),
+      ).toBe('https://tangled.sh/alice.test');
+    });
+
+    it('falls back to profile URL when record.name contains a slash', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'sh.tangled.graph.repo',
+          record: { name: 'foo/bar' },
+        }),
+      ).toBe('https://tangled.sh/alice.test');
+    });
+
+    it('falls back to profile URL when record.name has URL-encodable chars', () => {
+      for (const bad of ['foo?bar', 'foo#bar', 'foo%20bar']) {
+        expect(
+          resolveCardUrl({
+            ...baseItem,
+            collection: 'sh.tangled.graph.repo',
+            record: { name: bad },
+          }),
+        ).toBe('https://tangled.sh/alice.test');
+      }
+    });
+
+    it('accepts valid slugs with dots, dashes, and underscores', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'sh.tangled.graph.repo',
+          record: { name: 'my.repo_name-1' },
+        }),
+      ).toBe('https://tangled.sh/alice.test/my.repo_name-1');
+    });
+  });
+
+  describe('bluesky collection-aware URLs (regression: sifa-web#1070/#1073)', () => {
+    const blueskyBase = {
+      uri: 'at://did:plc:abc/app.bsky.feed.post/3kpost',
+      rkey: '3kpost',
+      authorDid: 'did:plc:abc',
+      authorHandle: 'alice.test',
+    };
+
+    it('emits per-post URL for app.bsky.feed.post', () => {
+      expect(
+        resolveCardUrl({
+          ...blueskyBase,
+          collection: 'app.bsky.feed.post',
+          record: {},
+        }),
+      ).toBe('https://bsky.app/profile/alice.test/post/3kpost');
+    });
+
+    it('falls back to profile URL for app.bsky.actor.status (rkey=self would 404)', () => {
+      const url = resolveCardUrl({
+        ...blueskyBase,
+        collection: 'app.bsky.actor.status',
+        rkey: 'self',
+        record: {},
+      });
+      expect(url).toBe('https://bsky.app/profile/alice.test');
+      expect(url).not.toContain('/post/');
+    });
+
+    it('falls back to profile URL for app.bsky.graph.cancellation', () => {
+      const url = resolveCardUrl({
+        ...blueskyBase,
+        collection: 'app.bsky.graph.cancellation',
+        rkey: '3mbfqik7dy42s',
+        record: {},
+      });
+      expect(url).toBe('https://bsky.app/profile/alice.test');
+      expect(url).not.toContain('/post/');
+    });
+
+    it('falls back to profile URL for every non-feed.post app.bsky.* collection', () => {
+      const collections = [
+        'app.bsky.feed.generator',
+        'app.bsky.graph.list',
+        'app.bsky.actor.profile',
+        'app.bsky.graph.starterpack',
+        'app.bsky.feed.like',
+        'app.bsky.graph.follow',
+      ];
+      for (const collection of collections) {
+        const url = resolveCardUrl({ ...blueskyBase, collection, record: {} });
+        expect(url, `should not emit /post/ for ${collection}`).toBe(
+          'https://bsky.app/profile/alice.test',
+        );
+      }
+    });
+
+    it('reproduces the 3 broken URLs from sifa-web#1070 and confirms they no longer 404', () => {
+      const cases = [
+        {
+          collection: 'app.bsky.graph.cancellation',
+          authorHandle: 'eti.tf',
+          rkey: '3mbfqik7dy42s',
+          shouldNotMatch: 'https://bsky.app/profile/eti.tf/post/3mbfqik7dy42s',
+        },
+        {
+          collection: 'app.bsky.actor.status',
+          authorHandle: 'harry.eurosky.social',
+          rkey: 'self',
+          shouldNotMatch: 'https://bsky.app/profile/harry.eurosky.social/post/self',
+        },
+        {
+          collection: 'app.bsky.actor.status',
+          authorHandle: 'roelworp.nl',
+          rkey: 'self',
+          shouldNotMatch: 'https://bsky.app/profile/roelworp.nl/post/self',
+        },
+      ];
+      for (const c of cases) {
+        const url = resolveCardUrl({
+          collection: c.collection,
+          authorHandle: c.authorHandle,
+          rkey: c.rkey,
+          uri: `at://did:plc:x/${c.collection}/${c.rkey}`,
+          authorDid: 'did:plc:x',
+          record: {},
+        });
+        expect(url).not.toBe(c.shouldNotMatch);
+      }
+    });
+  });
+
   describe('unsupported / unclickable collections', () => {
     it('returns null for picosky (no URL pattern registered)', () => {
       expect(

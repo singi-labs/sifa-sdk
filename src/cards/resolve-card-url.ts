@@ -47,14 +47,33 @@ function interpolate(pattern: string, vars: Record<string, string | undefined>):
   return result;
 }
 
+/**
+ * Whether the per-item `urlPattern` for `appId` is appropriate for `collection`.
+ *
+ * For bluesky, the per-item URL pattern only matches `app.bsky.feed.post` —
+ * other `app.bsky.*` collections (`actor.status`, `graph.cancellation`, etc.)
+ * use rkeys that would 404 at `bsky.app/profile/{handle}/post/{rkey}`. Fall
+ * back to the profile URL for those. See sifa-web#1070 / sifa-web#1073.
+ *
+ * When `collection` is undefined we err on the safe side for bluesky and
+ * prefer the profile URL.
+ */
+function shouldUseItemPattern(appId: string, collection: string | undefined): boolean {
+  if (appId === 'bluesky') {
+    return collection === 'app.bsky.feed.post';
+  }
+  return true;
+}
+
 function patternUrl(
   appId: string,
   vars: { handle?: string; did?: string; rkey?: string },
+  collection?: string,
 ): string | null {
   const patterns = APP_URL_PATTERNS[appId];
   if (!patterns) return null;
 
-  if (patterns.urlPattern) {
+  if (patterns.urlPattern && shouldUseItemPattern(appId, collection)) {
     const url = interpolate(patterns.urlPattern, vars);
     if (url) return url;
   }
@@ -64,6 +83,14 @@ function patternUrl(
   }
   return null;
 }
+
+/**
+ * Valid tangled repo slug: alphanumeric, dot, dash, underscore. No whitespace,
+ * slashes, or URL-encodable special characters. Multi-segment aggregate `name`
+ * values produce 404 URLs, so callers fall back to the profile URL when
+ * invalid. See sifa-web#1071 / sifa-web#1072.
+ */
+const TANGLED_REPO_SLUG = /^[a-zA-Z0-9._-]+$/;
 
 function stringOrNull(value: unknown): string | null {
   if (typeof value !== 'string') return null;
@@ -104,13 +131,15 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
 
   // --- Per-collection bespoke logic (mirrors the card components) ---
 
-  // Tangled: prefer per-repo URL `https://tangled.sh/{handle}/{record.name}`
+  // Tangled: prefer per-repo URL `https://tangled.sh/{handle}/{record.name}`.
+  // Only when record.name is a valid repo slug — multi-segment aggregate names
+  // (whitespace, slashes, special chars) would 404. See sifa-web#1071.
   if (collection.startsWith('sh.tangled.')) {
     const repoName = stringOrNull(record.name);
-    if (repoName && authorHandle) {
+    if (repoName && authorHandle && TANGLED_REPO_SLUG.test(repoName)) {
       return `https://tangled.sh/${authorHandle}/${repoName}`;
     }
-    return patternUrl('tangled', { handle: authorHandle, did: authorDid, rkey });
+    return patternUrl('tangled', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
   // Kipclip / community.lexicon.bookmarks: the bookmark subject IS the URL
@@ -179,6 +208,7 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
   const recordUrl = stringOrNull(record.url);
   if (recordUrl) return recordUrl;
 
-  // Pattern-based fallback
-  return patternUrl(appId, { handle: authorHandle, did: authorDid, rkey });
+  // Pattern-based fallback. Pass `collection` so app-specific guards (bluesky
+  // restricting /post/{rkey} to app.bsky.feed.post) can apply.
+  return patternUrl(appId, { handle: authorHandle, did: authorDid, rkey }, collection);
 }
