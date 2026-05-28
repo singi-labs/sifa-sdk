@@ -1,6 +1,20 @@
 import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 import type { QuotedPostResult } from './quoted-posts.js';
 
+/**
+ * Reachability of an activity card's external destination, as reported by
+ * sifa-api's `/api/activity` enrichment (see sifa-api `url-health-checker`).
+ *
+ *   ok           -- last HEAD returned 2xx/3xx
+ *   broken       -- confirmed dead (>=2 consecutive 4xx, or >=5 consecutive 5xx)
+ *   unverifiable -- 403/429/network error; anti-bot or rate-limited, NOT dead
+ *   unknown      -- newly seen, not yet checked
+ *
+ * Consumers should only suppress UI on `'broken'`. All other values
+ * (including missing) mean "render normally".
+ */
+export type ActivityItemLinkHealth = 'ok' | 'broken' | 'unverifiable' | 'unknown';
+
 export interface HeatmapDay {
   date: string;
   total: number;
@@ -34,6 +48,12 @@ export interface ActivityItem {
    * Mutually exclusive with `quotedPost`.
    */
   quotedPostUri?: string;
+  /**
+   * Reachability of the card's external destination as last checked by
+   * sifa-api. Undefined for legacy responses; treat as 'unknown'.
+   * See {@link ActivityItemLinkHealth}.
+   */
+  linkHealth?: ActivityItemLinkHealth;
 }
 
 export interface ActivityTeaserResponse {
