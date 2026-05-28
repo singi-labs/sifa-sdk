@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.8
+
+### Patch Changes
+
+- 6c03494: Internal: harden CI release pipeline. All GitHub Actions pinned to commit SHAs, `--ignore-scripts` on every install, and the release workflow split into separate `build` and `publish` jobs so the OIDC-bearing publish job no longer installs project dependencies. No runtime or API changes.
+- 543a493: Add `pickPrimaryPosition` helper that returns the user-flagged primary active position, falling back to the active position with the most recent `startedAt`. Use this in every surface that needs a single "current role" (profile hero, OG image, meta descriptions, JSON-LD) so they no longer diverge.
+
 ## 0.9.7
 
 ### Patch Changes
