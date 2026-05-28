@@ -277,6 +277,37 @@ describe('resolveCardUrl', () => {
         }),
       ).toBe('https://bookhive.buzz/profile/alice.test');
     });
+
+    it('asq question: did + rkey pattern', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'fyi.asq.question',
+          uri: 'at://did:plc:abc/fyi.asq.question/3kq',
+          rkey: '3kq',
+          record: {},
+        }),
+      ).toBe('https://asq.fyi/q/did%3Aplc%3Aabc/3kq');
+    });
+
+    it('passports: handle profile fallback (no per-item URL)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'social.passports.travel.leg',
+          record: {},
+        }),
+      ).toBe('https://passports.social/profile/alice.test');
+    });
+  });
+
+  describe('getAppIdForCollection: newly added prefixes', () => {
+    it('maps social.passports.* and fyi.asq.*', () => {
+      expect(getAppIdForCollection('social.passports.travel.leg')).toBe('passports');
+      expect(getAppIdForCollection('social.passports.fiftyStates.visit')).toBe('passports');
+      expect(getAppIdForCollection('fyi.asq.question')).toBe('asq');
+      expect(getAppIdForCollection('fyi.asq.answer')).toBe('asq');
+    });
   });
 
   describe('tangled slug validation (regression: sifa-web#1071/#1072)', () => {
