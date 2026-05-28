@@ -107,6 +107,15 @@ export {
 } from './format/index.js';
 
 export {
+  APP_URL_PATTERNS,
+  COLLECTION_TO_APP,
+  getAppIdForCollection,
+  resolveCardUrl,
+  type ActivityItemForUrl,
+  type AppUrlPatterns,
+} from './cards/index.js';
+
+export {
   COMPLETENESS_MAX_SCORE,
   completenessPercent,
   completenessScore,
