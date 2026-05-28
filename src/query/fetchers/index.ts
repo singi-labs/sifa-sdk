@@ -82,6 +82,18 @@ export {
   unhideStandardPublication,
   type RefreshOrcidPublicationsResult,
 } from './publications.js';
+export {
+  bulkHideProfileItems,
+  bulkUnhideProfileItems,
+  hideProfileItem,
+  unhideProfileItem,
+  HIDDEN_ITEM_SOURCES,
+  HIDDEN_ITEM_TYPES,
+  type BulkHideProfileItemInput,
+  type HiddenItemSource,
+  type HiddenItemType,
+  type HideProfileItemInput,
+} from './profile-items-hide.js';
 export { fetchStats, type StatsResponse } from './stats.js';
 export {
   fetchAppsRegistry,

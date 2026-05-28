@@ -70,6 +70,18 @@ export {
   unhideStandardPublication,
   type RefreshOrcidPublicationsResult,
 } from './fetchers/publications.js';
+export {
+  bulkHideProfileItems,
+  bulkUnhideProfileItems,
+  hideProfileItem,
+  unhideProfileItem,
+  HIDDEN_ITEM_SOURCES,
+  HIDDEN_ITEM_TYPES,
+  type BulkHideProfileItemInput,
+  type HiddenItemSource,
+  type HiddenItemType,
+  type HideProfileItemInput,
+} from './fetchers/profile-items-hide.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -227,6 +239,12 @@ export {
   useUnhideSifaPublication,
   useUnhideStandardPublication,
 } from './hooks/use-publication-mutations.js';
+export {
+  useBulkHideProfileItems,
+  useBulkUnhideProfileItems,
+  useHideProfileItem,
+  useUnhideProfileItem,
+} from './hooks/use-profile-items-hide.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export {
