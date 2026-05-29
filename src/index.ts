@@ -116,9 +116,11 @@ export {
 } from './format/index.js';
 
 export {
+  ACTIVITY_VISIBILITY_RULES,
   APP_URL_PATTERNS,
   COLLECTION_TO_APP,
   getAppIdForCollection,
+  isVisibleActivityItem,
   resolveCardUrl,
   type ActivityItemForUrl,
   type AppUrlPatterns,
