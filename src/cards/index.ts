@@ -4,3 +4,4 @@ export {
   resolveCardUrl,
   type ActivityItemForUrl,
 } from './resolve-card-url.js';
+export { ACTIVITY_VISIBILITY_RULES, isVisibleActivityItem } from './visibility.js';
