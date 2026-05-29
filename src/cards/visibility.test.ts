@@ -44,7 +44,7 @@ describe('isVisibleActivityItem', () => {
   describe('app.beaconbits.beacon', () => {
     const collection = 'app.beaconbits.beacon';
 
-    it('hides bare location pins (no shout, no postRef)', () => {
+    it('hides bare location pins (no shout, no linked post)', () => {
       expect(isVisibleActivityItem(collection, {})).toBe(false);
       expect(isVisibleActivityItem(collection, { shout: '' })).toBe(false);
       expect(isVisibleActivityItem(collection, { shout: '   ' })).toBe(false);
@@ -54,8 +54,12 @@ describe('isVisibleActivityItem', () => {
       expect(isVisibleActivityItem(collection, { shout: 'Hello from Lisbon' })).toBe(true);
     });
 
-    it('shows pins with a postRef', () => {
-      expect(isVisibleActivityItem(collection, { postRef: 'at://did:plc:x/foo/1' })).toBe(true);
+    it('shows pins with a linked Bluesky post (record.post strongRef)', () => {
+      expect(
+        isVisibleActivityItem(collection, {
+          post: { uri: 'at://did:plc:x/app.bsky.feed.post/1', cid: 'bafy' },
+        }),
+      ).toBe(true);
     });
   });
 

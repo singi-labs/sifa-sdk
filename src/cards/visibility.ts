@@ -31,7 +31,7 @@ function bookhiveHasOpinion(record: Record<string, unknown>): boolean {
 }
 
 function beaconbitsHasContent(record: Record<string, unknown>): boolean {
-  return isNonEmptyString(record.shout) || record.postRef != null;
+  return isNonEmptyString(record.shout) || record.post != null;
 }
 
 function marginBookmarkHasSource(record: Record<string, unknown>): boolean {
