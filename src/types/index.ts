@@ -133,6 +133,16 @@ export interface ProfilePublication {
   orcidCorroborated?: boolean;
   pendingVerification?: boolean;
   appId?: string;
+  /**
+   * AT-URI of the parent `site.standard.publication` for Standard.site
+   * articles — the subscribable unit. Used to group articles by publication
+   * on the profile. Undefined for Sifa/ORCID publications.
+   */
+  publicationUri?: string | null;
+  /** Canonical publication origin — the subscribe / link-out target. */
+  publicationUrl?: string | null;
+  /** Publication display name for the group header (falls back to host). */
+  publicationName?: string | null;
 }
 
 export interface ProfileVolunteering {
