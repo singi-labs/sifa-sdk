@@ -81,6 +81,16 @@
         "default": "./dist/tokens/index.cjs"
       }
     },
+    "./publishing": {
+      "import": {
+        "types": "./dist/publishing/index.d.ts",
+        "default": "./dist/publishing/index.js"
+      },
+      "require": {
+        "types": "./dist/publishing/index.d.cts",
+        "default": "./dist/publishing/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
