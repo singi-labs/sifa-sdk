@@ -11,6 +11,7 @@ export default defineConfig({
     'src/query/index.ts',
     'src/query/fetchers/index.ts',
     'src/tokens/index.ts',
+    'src/publishing/index.ts',
   ],
   format: ['esm', 'cjs'],
   dts: true,
