@@ -23,9 +23,9 @@ describe('isVisibleActivityItem', () => {
       expect(isVisibleActivityItem(collection, {})).toBe(false);
       expect(isVisibleActivityItem(collection, { review: '', stars: 0 })).toBe(false);
       expect(isVisibleActivityItem(collection, { review: '   ', stars: 0 })).toBe(false);
-      expect(
-        isVisibleActivityItem(collection, { status: 'buzz.bookhive.defs#wantToRead' }),
-      ).toBe(false);
+      expect(isVisibleActivityItem(collection, { status: 'buzz.bookhive.defs#wantToRead' })).toBe(
+        false,
+      );
     });
 
     it('shows records with a non-empty review', () => {
