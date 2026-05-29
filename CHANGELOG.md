@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.15
+
+### Patch Changes
+
+- adeee0f: Fix `isVisibleActivityItem` for `app.beaconbits.beacon`: the lexicon field for a linked Bluesky post is `record.post` (a strongRef), not `record.postRef`. Beacons with a linked post but no shout were being hidden incorrectly. Caught while wiring the predicate into sifa-web's BeaconBitsCard.
+
 ## 0.9.14
 
 ### Patch Changes
