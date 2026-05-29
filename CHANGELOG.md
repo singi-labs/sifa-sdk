@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.14
+
+### Patch Changes
+
+- 8672b52: Add `isVisibleActivityItem(collection, record)` and the `ACTIVITY_VISIBILITY_RULES` registry. These let sifa-api and sifa-web share a single source of truth for "this record carries no card-worthy content" rules — e.g. BookHive shelf-adds without a review or stars, BeaconBits pins without a shout, Margin bookmarks without a source, Margin annotations without body text. Unknown collections default to visible, so the rule set is additive.
+
 ## 0.9.13
 
 ### Patch Changes
@@ -59,6 +65,7 @@
 ### Patch Changes
 
 - 3ac2da8: Add URL patterns and collection-prefix mappings for two more atproto apps:
+
   - **ASQ** (`fyi.asq.*`): questions URL `https://asq.fyi/q/{did}/{rkey}`,
     profile fallback `https://asq.fyi`.
   - **Passports** (`social.passports.*`): profile fallback only,
@@ -78,6 +85,7 @@
 - 177cbfb: `resolveCardUrl` now absorbs two URL-correctness guards that previously lived only in
   sifa-web. Both prevent broken URLs that would 404 when users click activity cards (and
   when the upcoming sifa-api scanner HEAD-checks them):
+
   - **Bluesky collection guard** (sifa-web#1070 / sifa-web#1073): the per-item URL
     `https://bsky.app/profile/{handle}/post/{rkey}` is only valid for
     `app.bsky.feed.post`. Other `app.bsky.*` collections (`actor.status` with
@@ -170,6 +178,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 ### Minor Changes
 
 - 295a018: Extend `NetworkMapGenerationJob` with optional `position` and `etaSeconds` fields, surfaced by the backend queue + ETA system landing in singi-labs/sifa-api#529.
+
   - `position?: number` — queue rank when the job is still pending and hasn't been picked up by the worker (0 = next to run).
   - `etaSeconds?: number` — estimated remaining time, derived from the median historical duration for the user's follow-count bucket.
 
@@ -249,6 +258,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   ```
 
   ### What's intentionally NOT in this module
+
   - **Neutral color scales** (background, surface, border, text). These come from Radix Colors at runtime via CSS variables; encoding them as TS constants would misrepresent how they're consumed.
   - **Spacing / breakpoint scales.** sifa-web uses Tailwind's defaults; no Sifa-specific scale exists yet. Add later if needed.
   - **CSS variable strings, Style Dictionary output, design-token JSON formats.** Decision baked in (2026-05-14, reaffirmed 2026-05-16): TS constants only. Consumers translate to their own format.
@@ -369,18 +379,21 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 - 46eeb4c: Phase 5A.3 final -- reactions + roadmap + destructive mutations. Completes the sweep.
 
   ### Reactions
+
   - `createReaction(targetUri, appId, targetCid?)` / `useCreateReaction`. Returns a discriminated-union result instead of the generic `WriteResult` shape because reactions have a distinct `scope_insufficient` failure that triggers an OAuth scope-upgrade flow rather than an error toast. The hook surfaces `requiredScope` on `403 ScopeInsufficient` so the caller can re-authorize.
   - `deleteReaction(targetUri, appId)` / `useDeleteReaction` -- standard `WriteResult` shape.
 
   Both mutation hooks invalidate `sifaQueryKeys.reactions.all()` on success (any cached `useReactionStatus` view containing the affected URI needs a refresh).
 
   ### Roadmap
+
   - `castRoadmapVote(key)` / `useCastRoadmapVote`
   - `retractRoadmapVote(key)` / `useRetractRoadmapVote`
 
   Both invalidate `sifaQueryKeys.roadmap.all()` on success.
 
   ### Destructive operations
+
   - `resetProfile(deletePdsData)` / `useResetProfile` -- wipes the user's Sifa profile. Invalidates `sifaQueryKeys.all()` on success.
   - `deleteAccount(deletePdsData)` / `useDeleteAccount` -- deletes the account. Returns the deleted `handle` for confirmation UIs. Clears the entire query cache (`queryClient.clear()`) on success since the user is effectively logged out.
 
@@ -401,15 +414,18 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 - 4ec960f: Phase 5A.3 foundation -- write-mutation helpers, profile-core mutations, and a `createPosition` endpoint fix.
 
   ### New foundation in `@singi-labs/sifa-sdk/query`
+
   - **`apiWrite` / `apiWriteCreate` helpers** on the `client.js` module. Wrap `apiFetch` with the never-throws contract used by all sifa-web mutations: return a structured `WriteResult` (or `CreateResult`) on both success and failure, and preserve the `pdsHost` field when the AppView reports a PDS-side failure (issue #167).
   - **`WriteResult` / `CreateResult` types moved to `client.js`** and re-exported from `positions.js` for backwards compatibility. Shared across every mutation in this phase.
 
   ### Bug fix: `createPosition`
+
   - **Endpoint fixed:** was `POST /api/positions`, now correctly `POST /api/profile/position` (matches sifa-api).
   - **Return shape fixed:** the fetcher used to throw on errors; it now returns `{ success: false, error, pdsHost? }` like every other mutation. The hook contract is unchanged (still resolves the mutation; consumers inspect `result.success`).
   - The hook was unused in sifa-web, so this is not a breaking change in practice.
 
   ### New profile-core mutations (in `fetchers/profile-mutations.js`)
+
   - **`updateProfileSelf` / `useUpdateProfileSelf`** -- update the authenticated user's `id.sifa.profile.self` record (headline, about, industries, location, openTo, preferredWorkplace, availability).
   - **`updateProfileOverride` / `useUpdateProfileOverride`** -- override aggregated profile fields with sifa-specific values; `null` clears the override.
   - **`refreshPds` / `useRefreshPds`** -- re-pull `app.bsky.actor.profile` from the user's PDS. Returns freshly resolved `displayName` and `avatar`.
@@ -419,6 +435,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   All five hooks accept an `ownerHandleOrDid` argument so they can invalidate the correct profile cache entry on success. Each forwards the TanStack v5 four-arg `onSuccess` signature (`data, variables, onMutateResult, context`).
 
   ### New read: `searchSkills`
+
   - **`searchSkills` / `useCanonicalSkillSearch`** -- canonical-skill DB lookup at `/api/skills/search`. Distinct from the existing `fetchSkillSuggestions` (`/api/search/skills`), which is the profile-skill typeahead. Returns `[]` on empty input or any error.
   - New query key entry: `sifaQueryKeys.search.canonicalSkills(query, limit)`.
 
@@ -429,10 +446,12 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 - eda7851: Phase 5A.3 locations -- profile locations + external accounts + endorsements + keytrace claims.
 
   ### Profile locations
+
   - `createProfileLocation`, `updateProfileLocation`, `deleteProfileLocation` and matching hooks.
   - `ProfileLocationAddress` payload accepts both `{country, locality}` (community.lexicon.location.address) and `{countryCode, city}` (legacy) during the migration; sifa-api's union schema resolves either.
 
   ### External accounts
+
   - `fetchExternalAccounts` / `useExternalAccounts` -- the read endpoint from `sifa-web/src/lib/profile-api.ts` (leftover from 5A.2b).
   - `createExternalAccount` / `useCreateExternalAccount` -- returns `rkey` AND the server-resolved `feedUrl` (sifa-api inspects the target for RSS feeds).
   - `updateExternalAccount`, `deleteExternalAccount` and matching hooks.
@@ -441,9 +460,11 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   - New query key: `sifaQueryKeys.profile.externalAccounts(handleOrDid)`. External-account mutations invalidate both this key and `sifaQueryKeys.profile.byHandle`.
 
   ### Endorsements
+
   - `createEndorsement` / `useCreateEndorsement`. The hook takes the endorsed user's handle/DID (not the endorser's) so it can invalidate the right profile + endorsement-count caches.
 
   ### Keytrace claims
+
   - `hideKeytraceClaim`, `unhideKeytraceClaim` and matching hooks.
 
   ### Versioning
@@ -453,17 +474,20 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 - 1175837: Phase 5A.3 publications -- hide/unhide for ORCID, standard, and Sifa-authored publications + ORCID refresh.
 
   ### ORCID publications
+
   - `hideOrcidPublication(config, putCode)` / `useHideOrcidPublication`
   - `unhideOrcidPublication(config, putCode)` / `useUnhideOrcidPublication`
   - `refreshOrcidPublications` / `useRefreshOrcidPublications` -- re-pulls the user's ORCID publications. Returns `{ added, removed }` counts. The server returns inline `{ error: '...' }` (not via HTTP status) on quota / linkage failures; the SDK folds that into `{ success: false, error }` to keep the contract consistent.
 
   ### Standard publications (auto-imported)
+
   - `hideStandardPublication(config, uri)` / `useHideStandardPublication`
   - `unhideStandardPublication(config, uri)` / `useUnhideStandardPublication`
   - `bulkHideStandardPublications(config, uris[])` / `useBulkHideStandardPublications`
   - `bulkUnhideStandardPublications(config, uris[])` / `useBulkUnhideStandardPublications`
 
   ### Sifa publications (`id.sifa.profile.publication`)
+
   - `hideSifaPublication(config, rkey)` / `useHideSifaPublication`
   - `unhideSifaPublication(config, rkey)` / `useUnhideSifaPublication`
 
@@ -478,6 +502,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   ### Generic record CRUD escape hatch
 
   For sections without a dedicated endpoint (certifications, projects, publications, volunteering, honors, languages, courses):
+
   - `createRecord(config, collection, data)` / `useCreateRecord`
   - `updateRecord(config, collection, rkey, data)` / `useUpdateRecord`
   - `deleteRecord(config, collection, rkey)` / `useDeleteRecord`
@@ -485,14 +510,17 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   Routes to `POST|PUT|DELETE /api/profile/records/<collection>/<rkey?>`.
 
   ### Position mutations (new)
+
   - `updatePosition`, `deletePosition` / `useUpdatePosition`, `useDeletePosition`
   - `setPositionPrimary`, `unsetPositionPrimary` / `useSetPositionPrimary`, `useUnsetPositionPrimary`
   - `linkSkillToPosition`, `unlinkSkillFromPosition` / `useLinkSkillToPosition`, `useUnlinkSkillFromPosition`. `link` is idempotent (no fetch when the skill is already linked) and strips `null` `location` from the PUT body so JSON.stringify drops it.
 
   ### Education mutations (new)
+
   - `createEducation`, `updateEducation`, `deleteEducation` and matching hooks.
 
   ### Skill mutations (new)
+
   - `createSkill`, `updateSkill`, `deleteSkill` and matching hooks.
 
   ### Hook contract
@@ -508,6 +536,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 ### Patch Changes
 
 - 97debea: Add quoted-post batch resolution to `@singi-labs/sifa-sdk/query`:
+
   - **`resolveQuotedPosts(config, uris, options?)`** — batches AT-URIs into chunks of `QUOTED_POSTS_BATCH_MAX` (20) and fires them in parallel against `POST /api/quoted-posts/resolve`. Auto-deduplicates the input. Returns `Record<uri, QuotedPostResult>`; failed URIs are absent from the map. Supports `cookieHeader` for Next.js RSC server-side calls.
   - **Result types**: `QuotedPostView` (resolved snapshot — author, text, createdAt, optional images), `QuotedPostResult` (`'ok' | 'deleted' | 'unavailable'`), `QuotedPostAuthor`, `QuotedPostImage`, `ResolveQuotedPostsOptions`.
   - **`ActivityItem`** gains two optional fields: `quotedPost` (inlined when the server already resolved via the Bluesky AppView) and `quotedPostUri` (when the client needs to lazy-batch via this fetcher).
@@ -519,6 +548,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 ### Patch Changes
 
 - 32a36eb: Add activity, endorsement count, and network stream count read endpoints to `@singi-labs/sifa-sdk/query`:
+
   - **Activity:** `fetchHeatmapData` / `useHeatmapData`, `fetchActivityTeaser` / `useActivityTeaser`, `fetchActivityFeed` / `useActivityFeed`. The teaser and feed support `cookieHeader` for RSC server-side calls; the teaser caps upstream wait at 8s so SSR cannot hang.
   - **Endorsements:** `fetchEndorsementCount` / `useEndorsementCount` -- count of confirmed endorsements for a DID. Returns 0 on error or unexpected shape.
   - **Stream:** `fetchNetworkStreamCount` / `useNetworkStreamCount` -- count of items in the authenticated user's network stream digest. Returns 0 on 404 (the endpoint may not be shipped yet) or any other error.
@@ -530,6 +560,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   Part of the Phase 5A.2b sifa-app readiness work. Reactions and roadmap reads follow in subsequent patch releases.
 
 - 3a560e7: Add reactions read endpoints to `@singi-labs/sifa-sdk/query`:
+
   - **`fetchReactionStatus` / `useReactionStatus`** -- batch-look up reaction state for multiple URIs. Returns `{}` for an empty input (no network call) and `null` on any error.
   - **`checkAppAccount` / `useAppAccountCheck`** -- check whether the authenticated viewer has an account on a given ATproto app. Returns `null` on any error.
 
@@ -542,6 +573,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   Part of the Phase 5A.2b sifa-app readiness work. Roadmap reads follow in the next patch release; reactions mutations land separately in 5A.3.
 
 - fd699ec: Add roadmap vote read endpoints to `@singi-labs/sifa-sdk/query`:
+
   - **`fetchRoadmapVotes` / `useRoadmapVotes`** -- public roadmap vote tallies keyed by item. Returns `{}` on any error.
   - **`fetchMyRoadmapVotes` / `useMyRoadmapVotes`** -- list of roadmap items the authenticated viewer has voted on. Returns `[]` on any error or when the response payload's `voted` field is missing. Supports `cookieHeader` for Next.js RSC server-side calls.
 
@@ -552,6 +584,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   Completes the Phase 5A.2b read-endpoint sweep. Roadmap vote mutations (`castRoadmapVote`, `retractRoadmapVote`) land in 5A.3 alongside the other mutations.
 
 - 0f4e378: Add stats, apps registry, hidden apps, and AT Fund link read endpoints to `@singi-labs/sifa-sdk/query`:
+
   - **Stats:** `fetchStats` / `useStats` -- public homepage stats (profile count, avatar samples, ATproto growth metrics).
   - **Apps:** `fetchAppsRegistry` / `useAppsRegistry` (public catalog of ATproto apps surfaced by Sifa), `fetchHiddenApps` / `useHiddenApps` (the authenticated user's hidden-apps list, with optional `cookieHeader` for RSC server-side calls).
   - **Profile:** `fetchAtFundLink` / `useAtFundLink` -- profile's AT Fund link, indexed by DID.
@@ -567,6 +600,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 ### Minor Changes
 
 - 796bc66: Add discovery and search read endpoints to `@singi-labs/sifa-sdk/query`:
+
   - **Search:** `fetchSearchProfiles` / `useSearchProfiles`, `fetchSkillSuggestions` / `useSkillSuggestions`, `fetchSearchFilters` / `useSearchFilters`
   - **Discovery:** `fetchSimilarProfiles` / `useSimilarProfiles`, `fetchSuggestions` / `useSuggestions`, `fetchSuggestionCount` / `useSuggestionCount`, `fetchFeaturedProfile` / `useFeaturedProfile`
   - **Follow:** `fetchFollowing` / `useFollowing`
@@ -584,11 +618,13 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 - 6ef1c9e: Add the `@singi-labs/sifa-sdk/query` subpath: TanStack Query integration for the Sifa AppView.
 
   **Foundation:**
+
   - `apiFetch` / `apiFetchOrNull` — typed HTTP client with 429 retry, timeout, injectable `fetch`, Next.js cache hints, and `ApiError` for non-2xx
   - `SifaProvider` / `useSifaConfig` — React context for SDK configuration (`baseUrl`, optional custom `fetch`)
   - `sifaQueryKeys` — hierarchical query key factory rooted under `['sifa', ...]`
 
   **Pilot endpoints (more will be added in subsequent releases as part of the full migration):**
+
   - `fetchProfile` / `useProfile` — read a profile by handle or DID
   - `createPosition` / `useCreatePosition` — create a position record, invalidates owner profile cache on success
 
@@ -637,6 +673,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
 ### Minor Changes
 
 - 581cd94: Extract pure formatting and parsing helpers from `sifa-web` into the SDK under `src/format/`:
+
   - `formatRelativeTime(dateString)` -- string-based, validates, returns `""` for invalid/future dates, has seconds + years buckets
   - `formatDistanceToNow(date: Date)` -- Date-based, returns `"just now"` for sub-minute, has weeks bucket, no years bucket
   - `truncateGraphemes(value, maxLen)` -- grapheme-aware truncation with ellipsis, emoji-safe
@@ -649,6 +686,7 @@ familyName)` helper that returns `${given} ${family}` (Schema.org Person
   The two relative-time formatters are intentionally both exported -- they have different signatures, validation behavior, and output buckets. Picking a unified API is out of scope for this PR.
 
 - 2d60366: Extract domain taxonomies from `sifa-web` into the SDK:
+
   - `CONTINENTS` + `getContinent(countryCode)` and `ContinentCode` union
   - `COUNTRIES` (ISO 3166-1 fallback list)
   - `INDUSTRY_OPTIONS` two-level taxonomy and `IndustryOption` type
