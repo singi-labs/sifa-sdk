@@ -3,3 +3,7 @@ node_modules/
 coverage/
 pnpm-lock.yaml
 .changeset/
+# Changesets generates CHANGELOG.md and the formatting (blank lines between
+# list items) keeps colliding with our prettier markdown rules, blocking
+# every version-packages PR. Ignore so the bot's output is the source of truth.
+CHANGELOG.md
