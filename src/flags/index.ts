@@ -5,7 +5,7 @@
  * same flag assets without a CDN dependency at render time. Keys are
  * ISO-3166 alpha-2 lowercase. Values are minified SVG strings.
  *
- * Source: Twemoji v15.1.0 (CC-BY 4.0, see NOTICE).
+ * Source: Twemoji v14.0.2 (CC-BY 4.0, see NOTICE).
  */
 
 import flagData from './data/index.json' with { type: 'json' };

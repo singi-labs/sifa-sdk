@@ -11,6 +11,9 @@
  * extracted into the OS tmpdir and deleted on success.
  *
  * Usage: `node scripts/build-flags.mjs`
+ *
+ * Requires the system `tar` command to be available in PATH (present on
+ * macOS, Linux, and GitHub Actions runners by default).
  */
 
 import {
@@ -29,6 +32,7 @@ import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 import { createGunzip } from 'node:zlib';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 import { optimize } from 'svgo';
 
@@ -37,6 +41,15 @@ import { optimize } from 'svgo';
 // tag — never point at `master`.
 const TWEMOJI_VERSION = 'v14.0.2';
 const TARBALL_URL = `https://github.com/twitter/twemoji/archive/refs/tags/${TWEMOJI_VERSION}.tar.gz`;
+// SHA-256 of the upstream tarball. Verified before extraction to fail closed
+// on a tampered or substituted artifact. To update on a version bump:
+//   curl -L -o /tmp/twemoji.tar.gz <TARBALL_URL>
+//   shasum -a 256 /tmp/twemoji.tar.gz
+// then paste the hex digest below.
+const TWEMOJI_TARBALL_SHA256 = '27dc3087fd067d321aff3e859056773aca748510b18b8b058276f6fa57e7f16c';
+// Twemoji v14.0.2 ships exactly 258 regional-indicator pair SVGs. If upstream
+// adds or drops flags on a future bump, this guard makes the change loud.
+const EXPECTED_FLAG_COUNT = 258;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -85,6 +98,19 @@ async function downloadTarball(url, dest) {
   console.log(`  -> ${dest}`);
 }
 
+function verifyTarballSha256(tarballPath, expectedHex) {
+  const buf = readFileSync(tarballPath);
+  const actual = createHash('sha256').update(buf).digest('hex');
+  if (actual !== expectedHex) {
+    throw new Error(
+      `Tarball SHA-256 mismatch.\n  expected: ${expectedHex}\n  actual:   ${actual}\n` +
+        `Refusing to extract. If upstream has legitimately re-cut the tag, update ` +
+        `TWEMOJI_TARBALL_SHA256 in this script.`,
+    );
+  }
+  console.log(`SHA-256 verified: ${actual}`);
+}
+
 function extractFlagsFromTarball(tarballPath, destDir) {
   // Use system `tar` to extract only the assets/svg directory.
   // The tarball top-level dir is `twemoji-<version-without-v>`.
@@ -110,10 +136,18 @@ async function main() {
 
   try {
     await downloadTarball(TARBALL_URL, tarballPath);
+    verifyTarballSha256(tarballPath, TWEMOJI_TARBALL_SHA256);
     extractFlagsFromTarball(tarballPath, svgDir);
 
     const entries = readdirSync(svgDir).filter((name) => REGIONAL_INDICATOR_PAIR.test(name));
     console.log(`Found ${entries.length} regional-indicator SVG files.`);
+    if (entries.length !== EXPECTED_FLAG_COUNT) {
+      throw new Error(
+        `Expected ${EXPECTED_FLAG_COUNT} regional-indicator SVGs, found ${entries.length} ` +
+          `in ${svgDir}. Upstream Twemoji may have added or removed flags; ` +
+          `audit the change and update EXPECTED_FLAG_COUNT if intentional.`,
+      );
+    }
 
     /** @type {Record<string, string>} */
     const map = {};
