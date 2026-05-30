@@ -12,7 +12,11 @@ export default defineConfig({
     'src/query/fetchers/index.ts',
     'src/tokens/index.ts',
     'src/publishing/index.ts',
+    'src/flags/index.ts',
   ],
+  loader: {
+    '.json': 'json',
+  },
   format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,

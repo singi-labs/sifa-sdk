@@ -7,3 +7,6 @@ pnpm-lock.yaml
 # list items) keeps colliding with our prettier markdown rules, blocking
 # every version-packages PR. Ignore so the bot's output is the source of truth.
 CHANGELOG.md
+# Auto-generated flag map from scripts/build-flags.mjs. Source of truth is
+# upstream Twemoji; formatting would just bloat diffs.
+src/flags/data/index.json

@@ -1,0 +1,12 @@
+@singi-labs/sifa-sdk
+Copyright (c) Singi Labs
+
+This product includes assets from third parties:
+
+Twemoji
+-------
+Country flag SVG assets bundled under the `./flags` subpath are derived from
+Twemoji (https://github.com/twitter/twemoji).
+
+Twemoji by Twitter, Inc and other contributors, licensed under CC-BY 4.0 —
+https://creativecommons.org/licenses/by/4.0/
