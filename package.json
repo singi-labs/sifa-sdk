@@ -28,7 +28,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "exports": {
     ".": {
@@ -91,6 +92,16 @@
         "default": "./dist/publishing/index.cjs"
       }
     },
+    "./flags": {
+      "import": {
+        "types": "./dist/flags/index.d.ts",
+        "default": "./dist/flags/index.js"
+      },
+      "require": {
+        "types": "./dist/flags/index.d.cts",
+        "default": "./dist/flags/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -112,7 +123,8 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm run build && changeset publish",
-    "sync:activity-tiers": "node scripts/sync-activity-tiers.mjs"
+    "sync:activity-tiers": "node scripts/sync-activity-tiers.mjs",
+    "build:flags": "node scripts/build-flags.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -152,6 +164,7 @@
     "prettier": "3.8.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "svgo": "3.3.2",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.60.0",
