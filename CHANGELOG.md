@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.18
+
+### Patch Changes
+
+- f7c8812: Add optional `image` field to `ProfilePublication` for Standard.site article cover images (coverImage blob, with og:image fallback resolved server-side).
+
 ## 0.9.17
 
 ### Patch Changes
