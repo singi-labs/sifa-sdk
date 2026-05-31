@@ -11,7 +11,7 @@ Public TypeScript SDK consumed by `sifa-web` (Next.js) and the upcoming `sifa-ap
 
 | Component   | Technology                                         |
 | ----------- | -------------------------------------------------- |
-| Runtime     | Node.js 25 / TypeScript (strict)                   |
+| Runtime     | Node.js 26 / TypeScript (strict)                   |
 | Build       | tsup (dual ESM + CJS, .d.ts + .d.cts)              |
 | Testing     | Vitest                                             |
 | Linting     | ESLint (typescript-eslint, recommendedTypeChecked) |
