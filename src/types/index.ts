@@ -143,6 +143,12 @@ export interface ProfilePublication {
   publicationUrl?: string | null;
   /** Publication display name for the group header (falls back to host). */
   publicationName?: string | null;
+  /**
+   * Cover image URL for Standard.site articles — the document's `coverImage`
+   * blob (CDN-served), falling back to the article page's og:image. Undefined
+   * for Sifa/ORCID publications, null when none could be resolved.
+   */
+  image?: string | null;
 }
 
 export interface ProfileVolunteering {
