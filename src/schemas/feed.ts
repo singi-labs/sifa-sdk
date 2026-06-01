@@ -102,7 +102,12 @@ function toBase64Url(input: string): string {
     typeof g.btoa === 'function'
       ? g.btoa(unescape(encodeURIComponent(input)))
       : (g.Buffer as BufferLike).from(input, 'utf-8').toString('base64');
-  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  // Strip up to 2 trailing '=' (base64 padding). CodeQL flags `/=+$/` as a
+  // polynomial regex on tainted input; we don't accept tainted input here,
+  // but the deterministic loop sidesteps the alert.
+  let end = b64.length;
+  while (end > 0 && b64.charCodeAt(end - 1) === 61) end--;
+  return b64.slice(0, end).replace(/\+/g, '-').replace(/\//g, '_');
 }
 
 function fromBase64Url(input: string): string {
