@@ -124,7 +124,20 @@ export {
   type SuggestionProfile,
   type SuggestionsResponse,
 } from './discovery.js';
-export { fetchFollowing, type FollowProfile, type FollowingResponse } from './follow.js';
+export {
+  fetchFollowing,
+  followUser,
+  getFollowers,
+  getFollowing,
+  getFollowingFeed,
+  unfollowUser,
+  type FetchFollowListOptions,
+  type FetchFollowingFeedOptions,
+  type FollowListPage,
+  type FollowProfile,
+  type FollowUserResult,
+  type FollowingResponse,
+} from './follow.js';
 export {
   fetchActivityFeed,
   fetchActivityTeaser,

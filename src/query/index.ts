@@ -112,7 +112,20 @@ export {
   type SuggestionProfile,
   type SuggestionsResponse,
 } from './fetchers/discovery.js';
-export { fetchFollowing, type FollowProfile, type FollowingResponse } from './fetchers/follow.js';
+export {
+  fetchFollowing,
+  followUser,
+  getFollowers,
+  getFollowing,
+  getFollowingFeed,
+  unfollowUser,
+  type FetchFollowListOptions,
+  type FetchFollowingFeedOptions,
+  type FollowListPage,
+  type FollowProfile,
+  type FollowUserResult,
+  type FollowingResponse,
+} from './fetchers/follow.js';
 export {
   fetchActivityFeed,
   fetchActivityTeaser,
@@ -260,7 +273,16 @@ export {
   useSuggestionCount,
   useSuggestions,
 } from './hooks/use-discovery.js';
-export { useFollowing } from './hooks/use-follow.js';
+export {
+  useFollow,
+  useFollowers,
+  useFollowing,
+  useFollowingFeed,
+  useFollowingList,
+  useUnfollow,
+  type FollowVariables,
+  type UnfollowVariables,
+} from './hooks/use-follow.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-activity.js';
 export { useEndorsementCount } from './hooks/use-endorsement.js';
 export { useNetworkStreamCount } from './hooks/use-stream.js';

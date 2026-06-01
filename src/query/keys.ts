@@ -48,6 +48,9 @@ export const sifaQueryKeys = {
   follow: {
     all: () => ['sifa', 'follow'] as const,
     following: (opts: Record<string, unknown>) => ['sifa', 'follow', 'following', opts] as const,
+    followers: (handle: string) => ['sifa', 'follow', 'followers', handle] as const,
+    followingOf: (handle: string) => ['sifa', 'follow', 'following-of', handle] as const,
+    feed: (opts: Record<string, unknown>) => ['sifa', 'follow', 'feed', opts] as const,
   },
 
   stats: {
@@ -113,6 +116,9 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.discovery.featured>
   | ReturnType<typeof sifaQueryKeys.follow.all>
   | ReturnType<typeof sifaQueryKeys.follow.following>
+  | ReturnType<typeof sifaQueryKeys.follow.followers>
+  | ReturnType<typeof sifaQueryKeys.follow.followingOf>
+  | ReturnType<typeof sifaQueryKeys.follow.feed>
   | ReturnType<typeof sifaQueryKeys.stats.all>
   | ReturnType<typeof sifaQueryKeys.stats.homepage>
   | ReturnType<typeof sifaQueryKeys.apps.all>

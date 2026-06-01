@@ -72,6 +72,16 @@
         "default": "./dist/query/fetchers/index.cjs"
       }
     },
+    "./query/hooks": {
+      "import": {
+        "types": "./dist/query/hooks/index.d.ts",
+        "default": "./dist/query/hooks/index.js"
+      },
+      "require": {
+        "types": "./dist/query/hooks/index.d.cts",
+        "default": "./dist/query/hooks/index.cjs"
+      }
+    },
     "./tokens": {
       "import": {
         "types": "./dist/tokens/index.d.ts",

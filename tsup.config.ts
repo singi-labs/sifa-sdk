@@ -10,6 +10,7 @@ export default defineConfig({
     'src/schemas/index.ts',
     'src/query/index.ts',
     'src/query/fetchers/index.ts',
+    'src/query/hooks/index.ts',
     'src/tokens/index.ts',
     'src/publishing/index.ts',
     'src/flags/index.ts',

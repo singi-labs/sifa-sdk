@@ -3,7 +3,26 @@ export {
   type EndorsementConfirmationRecord,
 } from './endorsement-confirmation.js';
 export { EndorsementRecordSchema, type EndorsementRecord } from './endorsement.js';
-export { GraphFollowRecordSchema, type GraphFollowRecord } from './graph-follow.js';
+export {
+  GraphFollowRecordSchema,
+  makeGraphFollowRecordSchema,
+  type GraphFollowRecord,
+} from './graph-follow.js';
+export {
+  AtmosphereFeedItemSchema,
+  FeedActorSchema,
+  FollowFeedItemSchema,
+  FollowFeedPageSchema,
+  SifaFeedItemSchema,
+  decodeFeedCursor,
+  encodeFeedCursor,
+  type AtmosphereFeedItem,
+  type FeedActor,
+  type FeedCursor,
+  type FollowFeedItem,
+  type FollowFeedPage,
+  type SifaFeedItem,
+} from './feed.js';
 export {
   ProfileCertificationRecordSchema,
   type ProfileCertificationRecord,
