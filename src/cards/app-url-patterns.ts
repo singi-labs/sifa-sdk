@@ -87,6 +87,15 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // stop at /profile/{handle}/{passport_slug}. Profile-level fallback only.
     profileUrlPattern: 'https://passports.social/profile/{handle}',
   },
+  leaflet: {
+    // Per-document URLs are short and rkey-only: https://leaflet.pub/{rkey}.
+    // Each publication has its own base_path subdomain (e.g. zzstoatzz.leaflet.pub)
+    // but the canonical short URL renders the same document. There is no
+    // per-user profile route on leaflet.pub, so the profile fallback points
+    // at the marketing site.
+    urlPattern: 'https://leaflet.pub/{rkey}',
+    profileUrlPattern: 'https://leaflet.pub',
+  },
 });
 
 /**
@@ -127,4 +136,5 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['social.colibri.', 'colibri'],
   ['social.passports.', 'passports'],
   ['fyi.asq.', 'asq'],
+  ['pub.leaflet.', 'leaflet'],
 ];
