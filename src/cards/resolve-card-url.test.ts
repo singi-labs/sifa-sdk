@@ -299,6 +299,30 @@ describe('resolveCardUrl', () => {
         }),
       ).toBe('https://passports.social/profile/alice.test');
     });
+
+    it('leaflet document: rkey-only pattern', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'pub.leaflet.document',
+          uri: 'at://did:plc:abc/pub.leaflet.document/3mbfhk3bi2c2j',
+          rkey: '3mbfhk3bi2c2j',
+          record: {},
+        }),
+      ).toBe('https://leaflet.pub/3mbfhk3bi2c2j');
+    });
+
+    it('leaflet comment: rkey-only pattern (same shape as document)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'pub.leaflet.comment',
+          uri: 'at://did:plc:abc/pub.leaflet.comment/3mmsrvz3rtc2d',
+          rkey: '3mmsrvz3rtc2d',
+          record: {},
+        }),
+      ).toBe('https://leaflet.pub/3mmsrvz3rtc2d');
+    });
   });
 
   describe('getAppIdForCollection: newly added prefixes', () => {
@@ -307,6 +331,11 @@ describe('resolveCardUrl', () => {
       expect(getAppIdForCollection('social.passports.fiftyStates.visit')).toBe('passports');
       expect(getAppIdForCollection('fyi.asq.question')).toBe('asq');
       expect(getAppIdForCollection('fyi.asq.answer')).toBe('asq');
+    });
+
+    it('maps pub.leaflet.* to leaflet', () => {
+      expect(getAppIdForCollection('pub.leaflet.document')).toBe('leaflet');
+      expect(getAppIdForCollection('pub.leaflet.comment')).toBe('leaflet');
     });
   });
 
