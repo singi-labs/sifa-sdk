@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.19
+
+### Patch Changes
+
+- 8616951: Add Leaflet (`pub.leaflet.*`) URL patterns and collection-to-app mapping. Per-document URL is `https://leaflet.pub/{rkey}`; profile fallback links to the marketing site since leaflet.pub has no per-user profile route. Consumed by sifa-web's upcoming leaflet activity card.
+
 ## 0.9.18
 
 ### Patch Changes
