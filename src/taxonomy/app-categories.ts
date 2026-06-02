@@ -40,7 +40,7 @@ export type AppCategoryId = keyof typeof APP_CATEGORIES;
 export const APP_CATEGORY_IDS = Object.keys(APP_CATEGORIES) as AppCategoryId[];
 
 export function isAppCategory(value: string): value is AppCategoryId {
-  return value in APP_CATEGORIES;
+  return Object.prototype.hasOwnProperty.call(APP_CATEGORIES, value);
 }
 
 export function getAppCategoryIcon(category: AppCategoryId): string {

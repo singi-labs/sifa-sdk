@@ -25,6 +25,8 @@ describe('APP_CATEGORIES', () => {
     expect(isAppCategory('Verification')).toBe(true);
     expect(isAppCategory('articles')).toBe(false);
     expect(isAppCategory('Unknown')).toBe(false);
+    expect(isAppCategory('toString')).toBe(false);
+    expect(isAppCategory('constructor')).toBe(false);
   });
 
   it('getAppCategoryIcon returns the configured icon name', () => {
@@ -56,5 +58,12 @@ describe('APP_CATEGORY_MAP', () => {
   it('isKnownAppId narrows the type', () => {
     expect(isKnownAppId('bluesky')).toBe(true);
     expect(isKnownAppId('nope')).toBe(false);
+    expect(isKnownAppId('toString')).toBe(false);
+    expect(isKnownAppId('constructor')).toBe(false);
+  });
+
+  it('categoryForApp returns undefined for inherited prototype keys', () => {
+    expect(categoryForApp('toString')).toBeUndefined();
+    expect(categoryForApp('hasOwnProperty')).toBeUndefined();
   });
 });

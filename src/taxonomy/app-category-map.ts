@@ -49,7 +49,7 @@ export const APP_CATEGORY_MAP = {
 export type KnownAppId = keyof typeof APP_CATEGORY_MAP;
 
 export function isKnownAppId(appId: string): appId is KnownAppId {
-  return appId in APP_CATEGORY_MAP;
+  return Object.prototype.hasOwnProperty.call(APP_CATEGORY_MAP, appId);
 }
 
 export function categoryForApp(appId: string): AppCategoryId | undefined {
