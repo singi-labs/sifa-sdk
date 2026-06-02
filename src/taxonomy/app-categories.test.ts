@@ -33,6 +33,8 @@ describe('APP_CATEGORIES', () => {
     expect(getAppCategoryIcon('Posts')).toBe('ChatCircle');
     expect(getAppCategoryIcon('Chat')).toBe('ChatsCircle');
     expect(getAppCategoryIcon('Research')).toBe('Path');
+    expect(getAppCategoryIcon('Music')).toBe('MusicNote');
+    expect(getAppCategoryIcon('Q&A')).toBe('Question');
   });
 });
 
@@ -48,7 +50,12 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('semble')).toBe('Research');
     expect(categoryForApp('keytrace')).toBe('Verification');
     expect(categoryForApp('beaconbits')).toBe('Places');
-    expect(categoryForApp('asq')).toBe('Questions');
+    expect(categoryForApp('passports')).toBe('Places');
+    expect(categoryForApp('asq')).toBe('Q&A');
+    expect(categoryForApp('plyr')).toBe('Music');
+    expect(categoryForApp('spark')).toBe('Posts');
+    expect(categoryForApp('nooki')).toBe('Social');
+    expect(categoryForApp('atstore')).toBe('Reviews');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
