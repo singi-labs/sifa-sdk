@@ -158,6 +158,13 @@ export async function getFollowing(
   }
 }
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export interface FetchFollowingFeedOptions extends ApiFetchOptions {
   cursor?: string;
   limit?: number;
@@ -173,6 +180,12 @@ export interface FetchFollowingFeedOptions extends ApiFetchOptions {
  * V5 home feed: Sifa events + curated ATmosphere creation events filtered
  * by the authenticated viewer's followees. Composite cursor (per E5/TR4).
  * Returns an empty page on error.
+ *
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). This fetcher is no
+ *   longer consumed. Scheduled for removal in next major bump.
  */
 export async function getFollowingFeed(
   config: SifaApiConfig,
