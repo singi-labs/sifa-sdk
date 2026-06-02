@@ -180,7 +180,15 @@ export function useFollowingList(
   });
 }
 
-/** Infinite-query hook for the V5 home feed (authenticated viewer). */
+/**
+ * Infinite-query hook for the V5 home feed (authenticated viewer).
+ *
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). This hook is no
+ *   longer consumed. Scheduled for removal in next major bump.
+ */
 export function useFollowingFeed(
   opts: Omit<FetchFollowingFeedOptions, 'cursor'> = {},
   options?: Omit<
