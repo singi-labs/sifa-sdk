@@ -68,7 +68,7 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     profileUrlPattern: 'https://grain.social/profile/{did}',
   },
   youandme: { profileUrlPattern: 'https://youandme.at' },
-  anisota: { profileUrlPattern: 'https://anisota.net' },
+  // anisota: upgraded with per-record URL pattern below.
   margin: { profileUrlPattern: 'https://margin.at' },
   beaconbits: { profileUrlPattern: 'https://beaconbits.app' },
   bookhive: { profileUrlPattern: 'https://bookhive.buzz/profile/{handle}' },
@@ -95,6 +95,29 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // at the marketing site.
     urlPattern: 'https://leaflet.pub/{rkey}',
     profileUrlPattern: 'https://leaflet.pub',
+  },
+  spark: {
+    // Verified live: GET /post/{did}/{rkey} returns 200.
+    urlPattern: 'https://sprk.so/post/{did}/{rkey}',
+    profileUrlPattern: 'https://sprk.so/profile/{handle}',
+  },
+  anisota: {
+    urlPattern: 'https://anisota.net/post/{did}/{rkey}',
+    profileUrlPattern: 'https://anisota.net/profile/{handle}',
+  },
+  nooki: {
+    // Per-post URLs use slug-based routing (e.g. /post/{slug}), not rkey —
+    // can't be constructed from a record. Profile fallback only.
+    profileUrlPattern: 'https://nooki.me/user/{handle}',
+  },
+  atstore: {
+    // SPA — per-record URLs require JS routing. Profile fallback only.
+    profileUrlPattern: 'https://atstore.fyi/@{handle}',
+  },
+  plyr: {
+    // SPA — per-record URLs require JS routing. plyr.fm doesn't expose a
+    // public per-handle profile page server-side either; falls back to root.
+    profileUrlPattern: 'https://plyr.fm',
   },
 });
 
@@ -137,4 +160,8 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['social.passports.', 'passports'],
   ['fyi.asq.', 'asq'],
   ['pub.leaflet.', 'leaflet'],
+  ['so.sprk.', 'spark'],
+  ['community.nooki.', 'nooki'],
+  ['fyi.atstore.', 'atstore'],
+  ['fm.plyr.', 'plyr'],
 ];
