@@ -1,5 +1,50 @@
 # @singi-labs/sifa-sdk
 
+## 0.9.20
+
+### Patch Changes
+
+- b0e71d8: Deprecate `FollowFeedItemSchema`, `SifaFeedItemSchema`, `AtmosphereFeedItemSchema`, `FollowFeedPageSchema`, `FetchFollowingFeedOptions`, `getFollowingFeed`, and `useFollowingFeed` (plus their inferred types). The `/api/following/feed` surface they consumed was reverted in sifa-api#674 after reconciliation against `decisions/activity-data-strategy.md` revealed the V5 feed conflicted with the live-PDS-read + Valkey-cache model and collapsed two distinct surfaces (Sifa Timeline + ATmosphere Stream) into one. Symbols remain exported to avoid a breaking change; scheduled for removal in the next major bump.
+- 8d72625: Add SDK layer for the follow-graph follow-ups landing in `sifa-api#674`.
+
+  Schemas: `FollowProfileSchema` + `FollowProfilePageSchema` (the
+  `{ items, cursor }` page shape shared by mutuals + bluesky-suggestions),
+  `FeatureAllowlistEntrySchema`, and the `FEATURE_FLAGS` const tuple.
+
+  Fetchers (`/query/fetchers`): `getMutuals`, `getBlueskySuggestions`,
+  `listFeatureAllowlist`, `addFeatureAllowlist`, `removeFeatureAllowlist`.
+
+  Hooks (`/query/hooks`): `useMutuals` + `useBlueskySuggestions` (infinite
+  queries), `useFeatureAllowlist` (read) + `useAddFeatureAllowlist` /
+  `useRemoveFeatureAllowlist` (mutations with optimistic cache updates and
+  rollback on failure).
+
+  Query keys: `sifaQueryKeys.follow.mutuals(handle)`,
+  `sifaQueryKeys.follow.blueskySuggestions()`,
+  `sifaQueryKeys.admin.featureAllowlist(flag)`.
+
+  Consumes the `sifa-api#674` contract; that API PR is still open at time of
+  publish — SDK ships independently and `sifa-web` will swap to real endpoints
+  once `api#674` lands.
+
+- b12a498: Add follow + V5 feed query layer.
+
+  Schemas: `makeGraphFollowRecordSchema(followerDid)` (self-follow refine),
+  `note` field on `GraphFollowRecordSchema`, `FollowFeedItemSchema`
+  (discriminated union of `SifaFeedItemSchema` + `AtmosphereFeedItemSchema`),
+  `FollowFeedPageSchema`, plus `encodeFeedCursor` / `decodeFeedCursor`
+  helpers for the composite `(indexedAt, source, id)` cursor.
+
+  Fetchers (`/query/fetchers`): `followUser`, `unfollowUser`, `getFollowers`,
+  `getFollowing`, `getFollowingFeed`. The legacy `fetchFollowing` stays for
+  back-compat.
+
+  Hooks (new `/query/hooks` subpath): `useFollow`, `useUnfollow` (mutations
+  with cache-invalidation rollback), `useFollowers`, `useFollowingList`,
+  `useFollowingFeed` (infinite queries).
+
+  Consumes the sifa-api#673 endpoints; the API contract is locked there.
+
 ## 0.9.19
 
 ### Patch Changes
