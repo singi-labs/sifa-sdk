@@ -29,12 +29,26 @@ const FeedItemBaseSchema = z.object({
   eventType: z.string(),
 });
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export const SifaFeedItemSchema = FeedItemBaseSchema.extend({
   source: z.literal('sifa'),
   appId: z.literal('sifa').optional(),
   payload: z.record(z.string(), z.unknown()),
 });
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export type SifaFeedItem = z.infer<typeof SifaFeedItemSchema>;
 
 /**
@@ -42,6 +56,12 @@ export type SifaFeedItem = z.infer<typeof SifaFeedItemSchema>;
  * a hydrated `app.bsky.embed.*#view` shape that varies by source app. The
  * AppView resolves the hydration; clients render via the existing
  * embed-view union (mirrors `sifa-web/src/components/stream/`).
+ *
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
  */
 export const AtmosphereFeedItemSchema = FeedItemBaseSchema.extend({
   source: z.literal('atmosphere'),
@@ -51,20 +71,55 @@ export const AtmosphereFeedItemSchema = FeedItemBaseSchema.extend({
   payload: z.record(z.string(), z.unknown()),
 });
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export type AtmosphereFeedItem = z.infer<typeof AtmosphereFeedItemSchema>;
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export const FollowFeedItemSchema = z.discriminatedUnion('source', [
   SifaFeedItemSchema,
   AtmosphereFeedItemSchema,
 ]);
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export type FollowFeedItem = z.infer<typeof FollowFeedItemSchema>;
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export const FollowFeedPageSchema = z.object({
   items: z.array(FollowFeedItemSchema),
   cursor: z.string().nullable(),
 });
 
+/**
+ * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
+ *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
+ *   Stream are two distinct surfaces with different data paths (Barazo API
+ *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
+ *   types are no longer consumed. Scheduled for removal in next major bump.
+ */
 export type FollowFeedPage = z.infer<typeof FollowFeedPageSchema>;
 
 /**
