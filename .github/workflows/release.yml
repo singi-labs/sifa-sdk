@@ -110,3 +110,16 @@ jobs:
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
+
+      - name: Trigger sifa-docs rebuild
+        if: steps.changesets.outputs.published == 'true'
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
+        with:
+          token: ${{ secrets.CROSS_REPO_DISPATCH_TOKEN }}
+          repository: singi-labs/sifa-docs
+          event-type: sifa-sdk-released
+          client-payload: |
+            {
+              "version": "${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}",
+              "package": "${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].name }}"
+            }
