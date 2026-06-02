@@ -11,7 +11,7 @@
 import type { AppCategoryId } from './app-categories.js';
 
 export const APP_CATEGORY_MAP = {
-  // API registry (backend-scanned)
+  // Backend-scanned (sifa-api APP_REGISTRY)
   bluesky: 'Posts',
   tangled: 'Code',
   github: 'Code',
@@ -33,17 +33,22 @@ export const APP_CATEGORY_MAP = {
   leaflet: 'Articles',
   colibri: 'Social',
   collectivesocial: 'Lists',
+  bookhive: 'Reviews',
+  beaconbits: 'Places',
+  passports: 'Places',
+  asq: 'Q&A',
+  spark: 'Posts',
+  nooki: 'Social',
+  atstore: 'Reviews',
+  plyr: 'Music',
+  anisota: 'Posts',
 
-  // Web-only (rendered in pills/cards; not scanned as standalone collections yet)
+  // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
+  // no backend scan collection yet)
   linkat: 'Links',
   kipclip: 'Links',
   statusphere: 'Social',
-  bookhive: 'Reviews',
-  passports: 'Social',
-  beaconbits: 'Places',
   margin: 'Research',
-  anisota: 'Posts',
-  asq: 'Questions',
 } as const satisfies Record<string, AppCategoryId>;
 
 export type KnownAppId = keyof typeof APP_CATEGORY_MAP;
