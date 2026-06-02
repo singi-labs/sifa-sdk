@@ -1,5 +1,13 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.1
+
+### Patch Changes
+
+- e5a6909: Fix `Pages` category icon: `BrowserSimple` doesn't exist in `@phosphor-icons/react`. Use `Browser` instead.
+
+  Caught during the sifa-web rewrite (PR 2 of the category-taxonomy series).
+
 ## 0.10.0
 
 ### Minor Changes
