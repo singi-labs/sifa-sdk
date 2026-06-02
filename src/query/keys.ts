@@ -51,6 +51,13 @@ export const sifaQueryKeys = {
     followers: (handle: string) => ['sifa', 'follow', 'followers', handle] as const,
     followingOf: (handle: string) => ['sifa', 'follow', 'following-of', handle] as const,
     feed: (opts: Record<string, unknown>) => ['sifa', 'follow', 'feed', opts] as const,
+    mutuals: (handle: string) => ['sifa', 'follow', 'mutuals', handle] as const,
+    blueskySuggestions: () => ['sifa', 'follow', 'bluesky-suggestions'] as const,
+  },
+
+  admin: {
+    all: () => ['sifa', 'admin'] as const,
+    featureAllowlist: (flag: string) => ['sifa', 'admin', 'feature-allowlist', flag] as const,
   },
 
   stats: {
@@ -119,6 +126,10 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.follow.followers>
   | ReturnType<typeof sifaQueryKeys.follow.followingOf>
   | ReturnType<typeof sifaQueryKeys.follow.feed>
+  | ReturnType<typeof sifaQueryKeys.follow.mutuals>
+  | ReturnType<typeof sifaQueryKeys.follow.blueskySuggestions>
+  | ReturnType<typeof sifaQueryKeys.admin.all>
+  | ReturnType<typeof sifaQueryKeys.admin.featureAllowlist>
   | ReturnType<typeof sifaQueryKeys.stats.all>
   | ReturnType<typeof sifaQueryKeys.stats.homepage>
   | ReturnType<typeof sifaQueryKeys.apps.all>

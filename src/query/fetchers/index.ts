@@ -139,6 +139,19 @@ export {
   type FollowingResponse,
 } from './follow.js';
 export {
+  getBlueskySuggestions,
+  getMutuals,
+  type FetchFollowProfilePageOptions,
+  type FollowProfilePageResponse,
+} from './follow-extras.js';
+export {
+  addFeatureAllowlist,
+  listFeatureAllowlist,
+  removeFeatureAllowlist,
+  type FeatureAllowlistResponse,
+  type ListFeatureAllowlistOptions,
+} from './admin-feature-allowlists.js';
+export {
   fetchActivityFeed,
   fetchActivityTeaser,
   fetchHeatmapData,

@@ -9,6 +9,16 @@ export {
   type GraphFollowRecord,
 } from './graph-follow.js';
 export {
+  FEATURE_FLAGS,
+  FeatureAllowlistEntrySchema,
+  FollowProfilePageSchema,
+  FollowProfileSchema,
+  type FeatureAllowlistEntry,
+  type FeatureFlag,
+  type FollowProfileItem,
+  type FollowProfilePage,
+} from './follow-profile.js';
+export {
   AtmosphereFeedItemSchema,
   FeedActorSchema,
   FollowFeedItemSchema,
