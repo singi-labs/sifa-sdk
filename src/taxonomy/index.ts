@@ -36,6 +36,19 @@ export {
 } from './skill-categories.js';
 export { dedupeSkills, groupSkillsByCategory, type MergedProfileSkill } from './skill-grouping.js';
 export {
+  APP_CATEGORIES,
+  APP_CATEGORY_IDS,
+  getAppCategoryIcon,
+  isAppCategory,
+  type AppCategoryId,
+} from './app-categories.js';
+export {
+  APP_CATEGORY_MAP,
+  categoryForApp,
+  isKnownAppId,
+  type KnownAppId,
+} from './app-category-map.js';
+export {
   ACTIVITY_TIERS,
   getActivityTaxonomyVersion,
   getActivityTier,

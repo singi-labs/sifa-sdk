@@ -1,0 +1,69 @@
+import { describe, expect, it } from 'vitest';
+
+import {
+  APP_CATEGORIES,
+  APP_CATEGORY_IDS,
+  getAppCategoryIcon,
+  isAppCategory,
+} from './app-categories.js';
+import { APP_CATEGORY_MAP, categoryForApp, isKnownAppId } from './app-category-map.js';
+
+describe('APP_CATEGORIES', () => {
+  it('has a phosphorIcon for every category', () => {
+    for (const id of APP_CATEGORY_IDS) {
+      expect(APP_CATEGORIES[id].phosphorIcon).toMatch(/^[A-Z][A-Za-z]+$/);
+    }
+  });
+
+  it('phosphorIcon names are unique per category', () => {
+    const icons = APP_CATEGORY_IDS.map((id) => APP_CATEGORIES[id].phosphorIcon);
+    expect(new Set(icons).size).toBe(icons.length);
+  });
+
+  it('isAppCategory accepts known ids and rejects unknown', () => {
+    expect(isAppCategory('Articles')).toBe(true);
+    expect(isAppCategory('Verification')).toBe(true);
+    expect(isAppCategory('articles')).toBe(false);
+    expect(isAppCategory('Unknown')).toBe(false);
+    expect(isAppCategory('toString')).toBe(false);
+    expect(isAppCategory('constructor')).toBe(false);
+  });
+
+  it('getAppCategoryIcon returns the configured icon name', () => {
+    expect(getAppCategoryIcon('Posts')).toBe('ChatCircle');
+    expect(getAppCategoryIcon('Chat')).toBe('ChatsCircle');
+    expect(getAppCategoryIcon('Research')).toBe('Path');
+  });
+});
+
+describe('APP_CATEGORY_MAP', () => {
+  it('every value is a valid category id', () => {
+    for (const [appId, categoryId] of Object.entries(APP_CATEGORY_MAP)) {
+      expect(isAppCategory(categoryId), `${appId} -> ${categoryId}`).toBe(true);
+    }
+  });
+
+  it('categoryForApp resolves known apps', () => {
+    expect(categoryForApp('bluesky')).toBe('Posts');
+    expect(categoryForApp('semble')).toBe('Research');
+    expect(categoryForApp('keytrace')).toBe('Verification');
+    expect(categoryForApp('beaconbits')).toBe('Places');
+    expect(categoryForApp('asq')).toBe('Questions');
+  });
+
+  it('categoryForApp returns undefined for unknown apps', () => {
+    expect(categoryForApp('does-not-exist')).toBeUndefined();
+  });
+
+  it('isKnownAppId narrows the type', () => {
+    expect(isKnownAppId('bluesky')).toBe(true);
+    expect(isKnownAppId('nope')).toBe(false);
+    expect(isKnownAppId('toString')).toBe(false);
+    expect(isKnownAppId('constructor')).toBe(false);
+  });
+
+  it('categoryForApp returns undefined for inherited prototype keys', () => {
+    expect(categoryForApp('toString')).toBeUndefined();
+    expect(categoryForApp('hasOwnProperty')).toBeUndefined();
+  });
+});
