@@ -16,6 +16,11 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
     expect(typeof Fetchers.fetchActivityFeed).toBe('function');
     expect(typeof Fetchers.fetchAppsRegistry).toBe('function');
     expect(typeof Fetchers.fetchReactionStatus).toBe('function');
+    expect(typeof Fetchers.getMutuals).toBe('function');
+    expect(typeof Fetchers.getBlueskySuggestions).toBe('function');
+    expect(typeof Fetchers.listFeatureAllowlist).toBe('function');
+    expect(typeof Fetchers.addFeatureAllowlist).toBe('function');
+    expect(typeof Fetchers.removeFeatureAllowlist).toBe('function');
   });
 
   it('re-exports a representative sample of mutation fetchers', () => {

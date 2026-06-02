@@ -127,6 +127,19 @@ export {
   type FollowingResponse,
 } from './fetchers/follow.js';
 export {
+  getBlueskySuggestions,
+  getMutuals,
+  type FetchFollowProfilePageOptions,
+  type FollowProfilePageResponse,
+} from './fetchers/follow-extras.js';
+export {
+  addFeatureAllowlist,
+  listFeatureAllowlist,
+  removeFeatureAllowlist,
+  type FeatureAllowlistResponse,
+  type ListFeatureAllowlistOptions,
+} from './fetchers/admin-feature-allowlists.js';
+export {
   fetchActivityFeed,
   fetchActivityTeaser,
   fetchHeatmapData,
@@ -283,6 +296,14 @@ export {
   type FollowVariables,
   type UnfollowVariables,
 } from './hooks/use-follow.js';
+export { useBlueskySuggestions, useMutuals } from './hooks/use-follow-extras.js';
+export {
+  useAddFeatureAllowlist,
+  useFeatureAllowlist,
+  useRemoveFeatureAllowlist,
+  type AddFeatureAllowlistVariables,
+  type RemoveFeatureAllowlistVariables,
+} from './hooks/use-feature-allowlist.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-activity.js';
 export { useEndorsementCount } from './hooks/use-endorsement.js';
 export { useNetworkStreamCount } from './hooks/use-stream.js';

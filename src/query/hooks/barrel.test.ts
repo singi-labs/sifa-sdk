@@ -16,6 +16,11 @@ describe('@singi-labs/sifa-sdk/query/hooks barrel', () => {
     expect(typeof Hooks.useFollowers).toBe('function');
     expect(typeof Hooks.useFollowingList).toBe('function');
     expect(typeof Hooks.useFollowingFeed).toBe('function');
+    expect(typeof Hooks.useMutuals).toBe('function');
+    expect(typeof Hooks.useBlueskySuggestions).toBe('function');
+    expect(typeof Hooks.useFeatureAllowlist).toBe('function');
+    expect(typeof Hooks.useAddFeatureAllowlist).toBe('function');
+    expect(typeof Hooks.useRemoveFeatureAllowlist).toBe('function');
     expect(typeof Hooks.useActivityFeed).toBe('function');
     expect(typeof Hooks.useStats).toBe('function');
   });

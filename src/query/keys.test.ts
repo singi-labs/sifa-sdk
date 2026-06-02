@@ -30,4 +30,26 @@ describe('sifaQueryKeys', () => {
     const one = sifaQueryKeys.profile.byHandle('x');
     expect(one.slice(0, all.length)).toEqual(all);
   });
+
+  it('exposes follow mutuals + bluesky-suggestions keys under follow.*', () => {
+    expect(sifaQueryKeys.follow.mutuals('alice')).toEqual(['sifa', 'follow', 'mutuals', 'alice']);
+    expect(sifaQueryKeys.follow.blueskySuggestions()).toEqual([
+      'sifa',
+      'follow',
+      'bluesky-suggestions',
+    ]);
+    // Mutuals key nests under follow.all() for hierarchical invalidation.
+    const all = sifaQueryKeys.follow.all();
+    const one = sifaQueryKeys.follow.mutuals('alice');
+    expect(one.slice(0, all.length)).toEqual(all);
+  });
+
+  it('exposes admin feature-allowlist key under admin.*', () => {
+    expect(sifaQueryKeys.admin.featureAllowlist('FEED_V5_ENABLED')).toEqual([
+      'sifa',
+      'admin',
+      'feature-allowlist',
+      'FEED_V5_ENABLED',
+    ]);
+  });
 });

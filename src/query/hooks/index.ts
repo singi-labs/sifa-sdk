@@ -110,6 +110,14 @@ export {
   type FollowVariables,
   type UnfollowVariables,
 } from './use-follow.js';
+export { useBlueskySuggestions, useMutuals } from './use-follow-extras.js';
+export {
+  useAddFeatureAllowlist,
+  useFeatureAllowlist,
+  useRemoveFeatureAllowlist,
+  type AddFeatureAllowlistVariables,
+  type RemoveFeatureAllowlistVariables,
+} from './use-feature-allowlist.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './use-activity.js';
 export { useEndorsementCount } from './use-endorsement.js';
 export { useNetworkStreamCount } from './use-stream.js';
