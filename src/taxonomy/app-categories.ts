@@ -23,7 +23,7 @@ export const APP_CATEGORIES = {
   Links: { phosphorIcon: 'LinkSimple' },
   Lists: { phosphorIcon: 'ListBullets' },
   Music: { phosphorIcon: 'MusicNote' },
-  Pages: { phosphorIcon: 'BrowserSimple' },
+  Pages: { phosphorIcon: 'Browser' },
   Pastes: { phosphorIcon: 'Clipboard' },
   Photos: { phosphorIcon: 'Camera' },
   Places: { phosphorIcon: 'MapPin' },
