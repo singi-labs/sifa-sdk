@@ -20,7 +20,6 @@ export const APP_CATEGORY_MAP = {
   grain: 'Photos',
   whitewind: 'Articles',
   frontpage: 'Links',
-  picosky: 'Chat',
   pastesphere: 'Pastes',
   standard: 'Articles',
   aetheros: 'Pages',
