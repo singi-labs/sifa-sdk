@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.3
+
+### Patch Changes
+
+- dc48f06: Add publisher registry as the single source of truth for apps that publish through the shared `site.standard.*` namespace (Leaflet, Pckt, Offprint, WhiteWind, Unthread, Blento). Exposes `PUBLISHERS`, `Publisher`, `STANDARD_PUBLISHER_ID`, and helpers `getPublisherById`, `getPublisherByHost`, `getPublisherFromSiteUrl`. Additive only — no behaviour change for existing consumers.
+
 ## 0.10.2
 
 ### Patch Changes
