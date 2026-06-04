@@ -126,12 +126,16 @@ export {
 
 export {
   ACTIVITY_VISIBILITY_RULES,
+  ADULT_CONTENT_LABELS,
   APP_URL_PATTERNS,
   COLLECTION_TO_APP,
   getAppIdForCollection,
+  hasAdultContent,
   isVisibleActivityItem,
   resolveCardUrl,
   type ActivityItemForUrl,
+  type ActivityLabel,
+  type AdultContentLabel,
   type AppUrlPatterns,
 } from './cards/index.js';
 
