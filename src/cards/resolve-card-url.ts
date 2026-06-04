@@ -193,6 +193,19 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     return null;
   }
 
+  // atstore reviews: no per-review URL exists on atstore.fyi, and user profile
+  // pages don't exist either. Deep-link to the reviewed product instead.
+  // The slug comes from record.listingMeta (enriched by sifa-api from the
+  // review's `subject` at-uri → fyi.atstore.listing.detail record).
+  if (collection === 'fyi.atstore.listing.review') {
+    const listingMeta = record.listingMeta;
+    if (listingMeta != null && typeof listingMeta === 'object') {
+      const slug = stringOrNull((listingMeta as Record<string, unknown>).slug);
+      if (slug) return `https://atstore.fyi/products/${encodeURIComponent(slug)}`;
+    }
+    return APP_URL_PATTERNS.atstore?.profileUrlPattern ?? null;
+  }
+
   // Standard documents: siteUrl + path (or just siteUrl)
   if (collection.startsWith('site.standard.')) {
     const siteUrl = stringOrNull(record.siteUrl);

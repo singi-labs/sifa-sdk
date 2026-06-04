@@ -111,8 +111,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     profileUrlPattern: 'https://nooki.me/user/{handle}',
   },
   atstore: {
-    // SPA — per-record URLs require JS routing. Profile fallback only.
-    profileUrlPattern: 'https://atstore.fyi/@{handle}',
+    // atstore.fyi has no user-profile pages (the legacy `/@{handle}` pattern
+    // resolved to a 404), and no per-review deep link exists. The per-product
+    // page (https://atstore.fyi/products/{slug}) is the most specific URL
+    // available — resolveCardUrl builds it from record.listingMeta.slug,
+    // which sifa-api enriches by resolving the review's `subject` to the
+    // referenced listing.detail record.
+    profileUrlPattern: 'https://atstore.fyi',
   },
   plyr: {
     // SPA — per-record URLs require JS routing. plyr.fm doesn't expose a
