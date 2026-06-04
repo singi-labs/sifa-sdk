@@ -64,7 +64,7 @@ export function useUpdateBskyContentLabelPrefs() {
         // Even on failure, drop the cached value so the next read tries
         // again — a 403 might mean a fresh scope grant succeeded but the
         // local cache still reflects the pre-grant state.
-        queryClient.invalidateQueries({
+        void queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.bskyPreferences.all(),
         });
       }
