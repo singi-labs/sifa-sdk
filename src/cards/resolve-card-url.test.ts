@@ -475,6 +475,75 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('atstore reviews', () => {
+    const atstoreBase = {
+      uri: 'at://did:plc:reviewer/fyi.atstore.listing.review/3kxyz',
+      rkey: '3kxyz',
+      authorDid: 'did:plc:reviewer',
+      authorHandle: 'alice.test',
+    };
+
+    it('deep-links to the per-product page when listingMeta.slug is enriched', () => {
+      expect(
+        resolveCardUrl({
+          ...atstoreBase,
+          collection: 'fyi.atstore.listing.review',
+          record: {
+            text: 'great app',
+            rating: 5,
+            subject: 'at://did:plc:owner/fyi.atstore.listing.detail/3lmn',
+            listingMeta: { slug: 'graze' },
+          },
+        }),
+      ).toBe('https://atstore.fyi/products/graze');
+    });
+
+    it('falls back to https://atstore.fyi when listingMeta is missing', () => {
+      expect(
+        resolveCardUrl({
+          ...atstoreBase,
+          collection: 'fyi.atstore.listing.review',
+          record: {
+            text: 'great app',
+            rating: 5,
+            subject: 'at://did:plc:owner/fyi.atstore.listing.detail/3lmn',
+          },
+        }),
+      ).toBe('https://atstore.fyi');
+    });
+
+    it('falls back to https://atstore.fyi when listingMeta.slug is empty', () => {
+      expect(
+        resolveCardUrl({
+          ...atstoreBase,
+          collection: 'fyi.atstore.listing.review',
+          record: {
+            listingMeta: { slug: '   ' },
+          },
+        }),
+      ).toBe('https://atstore.fyi');
+    });
+
+    it('URI-encodes slugs that contain special characters', () => {
+      expect(
+        resolveCardUrl({
+          ...atstoreBase,
+          collection: 'fyi.atstore.listing.review',
+          record: { listingMeta: { slug: 'my app/v2' } },
+        }),
+      ).toBe('https://atstore.fyi/products/my%20app%2Fv2');
+    });
+
+    it('never returns the legacy /@{handle} URL (regression: profile-page 404)', () => {
+      const url = resolveCardUrl({
+        ...atstoreBase,
+        collection: 'fyi.atstore.listing.review',
+        record: {},
+      });
+      expect(url).not.toContain('/@');
+    });
+  });
+
   describe('unsupported / unclickable collections', () => {
     it('returns null for picosky (no URL pattern registered)', () => {
       expect(
