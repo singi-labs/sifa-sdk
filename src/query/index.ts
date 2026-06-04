@@ -317,5 +317,20 @@ export {
 export { useMyRoadmapVotes, useRoadmapVotes } from './hooks/use-roadmap.js';
 export { useCastRoadmapVote, useRetractRoadmapVote } from './hooks/use-roadmap-mutations.js';
 export { useDeleteAccount, useResetProfile } from './hooks/use-destructive.js';
+export {
+  fetchBskyContentLabelPrefs,
+  updateBskyContentLabelPrefs,
+  effectiveContentVisibility,
+  shouldGateAdultMedia,
+  type BskyContentLabelPrefs,
+  type BskyContentLabelPrefsResponse,
+  type BskyContentLabelVisibility,
+  type BskyPrefsScopeError,
+  type UpdateBskyContentLabelPrefsBody,
+} from './fetchers/bsky-preferences.js';
+export {
+  useBskyContentLabelPrefs,
+  useUpdateBskyContentLabelPrefs,
+} from './hooks/use-bsky-content-prefs.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';
