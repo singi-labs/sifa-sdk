@@ -1,5 +1,8 @@
 name: Release
-
+# Note: auto-merged PRs (GITHUB_TOKEN actor) do not trigger push events on main,
+# so Release is silently skipped. Manually click squash-merge on PRs that need
+# to publish (feature PRs with changesets AND the resulting "version packages"
+# PRs) until #155 is resolved.
 on:
   push:
     branches: [main]
