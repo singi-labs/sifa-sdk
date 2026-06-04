@@ -1,3 +1,4 @@
+import type { ActivityLabel } from '../../cards/adult-content.js';
 import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 import type { QuotedPostResult } from './quoted-posts.js';
 
@@ -54,6 +55,13 @@ export interface ActivityItem {
    * See {@link ActivityItemLinkHealth}.
    */
   linkHealth?: ActivityItemLinkHealth;
+  /**
+   * Content labels from `app.bsky.feed.defs#postView.labels`. Set by
+   * sifa-api for Bluesky posts; undefined for other sources and legacy
+   * responses. Pass items to {@link hasAdultContent} to decide whether to
+   * gate media. See {@link ActivityLabel}.
+   */
+  labels?: ActivityLabel[];
 }
 
 export interface ActivityTeaserResponse {
