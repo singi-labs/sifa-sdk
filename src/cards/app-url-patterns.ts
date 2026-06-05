@@ -124,6 +124,12 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // public per-handle profile page server-side either; falls back to root.
     profileUrlPattern: 'https://plyr.fm',
   },
+  atfund: {
+    // at.fund is auth-gated — `/give/{did}` 307s to `/` when not signed in,
+    // and there's no public per-endorsement permalink. Profile fallback only,
+    // pointing at the main /give listing.
+    profileUrlPattern: 'https://www.at.fund/give',
+  },
 });
 
 /**
@@ -169,4 +175,5 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['community.nooki.', 'nooki'],
   ['fyi.atstore.', 'atstore'],
   ['fm.plyr.', 'plyr'],
+  ['fund.at.', 'atfund'],
 ];
