@@ -48,6 +48,45 @@ describe('fetchSearchProfiles', () => {
     const [url] = getCall(fetchImpl);
     expect(url).toContain('q=C%2B%2B+dev+%26+ML');
   });
+
+  it('appends a single openTo param when one token is provided', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles({ ...baseConfig, fetch: fetchImpl }, { openTo: ['fullTime'] });
+    const [url] = getCall(fetchImpl);
+    expect(url).toContain('openTo=fullTime');
+  });
+
+  it('repeats the openTo param for each selected token', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { openTo: ['fullTime', 'mentor', 'collab'] },
+    );
+    const [url] = getCall(fetchImpl);
+    const matches = url.match(/openTo=/g) ?? [];
+    expect(matches).toHaveLength(3);
+    expect(url).toContain('openTo=fullTime');
+    expect(url).toContain('openTo=mentor');
+    expect(url).toContain('openTo=collab');
+  });
+
+  it('skips the openTo param entirely when the array is empty', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles({ ...baseConfig, fetch: fetchImpl }, { q: 'engineer', openTo: [] });
+    const [url] = getCall(fetchImpl);
+    expect(url).not.toContain('openTo=');
+  });
+
+  it('skips empty / falsy tokens within openTo without emitting blank params', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { openTo: ['fullTime', '', 'mentor'] },
+    );
+    const [url] = getCall(fetchImpl);
+    const matches = url.match(/openTo=/g) ?? [];
+    expect(matches).toHaveLength(2);
+  });
 });
 
 describe('fetchSkillSuggestions', () => {
@@ -72,7 +111,7 @@ describe('fetchSearchFilters', () => {
   it('returns empty defaults on error', async () => {
     const fetchImpl = jsonFetch({}, 500);
     const result = await fetchSearchFilters({ ...baseConfig, fetch: fetchImpl });
-    expect(result).toEqual({ countries: [], industries: [], apps: [] });
+    expect(result).toEqual({ countries: [], industries: [], apps: [], openTo: [] });
   });
 });
 

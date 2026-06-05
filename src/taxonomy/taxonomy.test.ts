@@ -10,7 +10,15 @@ import {
   getEmploymentTypeLabel,
 } from './employment-type.js';
 import { INDUSTRY_OPTIONS } from './industry-taxonomy.js';
-import { OPEN_TO_OPTIONS, getOpenToLabelKey } from './open-to.js';
+import {
+  OPEN_TO_OPTIONS,
+  OPEN_TO_TOKENS,
+  OPEN_TO_TOKEN_TO_VALUE,
+  OPEN_TO_VALUE_TO_TOKEN,
+  getOpenToLabelKey,
+  openToTokenToValue,
+  openToValueToToken,
+} from './open-to.js';
 import {
   PLATFORM_LABELS,
   PLATFORM_OPTIONS,
@@ -179,6 +187,47 @@ describe('open-to', () => {
     expect(getOpenToLabelKey(undefined)).toBeUndefined();
     expect(getOpenToLabelKey(null)).toBeUndefined();
     expect(getOpenToLabelKey('')).toBeUndefined();
+  });
+
+  it('every option has a unique short token', () => {
+    const tokens = OPEN_TO_OPTIONS.map((o) => o.token);
+    expect(new Set(tokens).size).toBe(tokens.length);
+  });
+
+  it('every option has a valid group', () => {
+    for (const opt of OPEN_TO_OPTIONS) {
+      expect(['work', 'mentorship', 'peer']).toContain(opt.group);
+    }
+  });
+
+  it('OPEN_TO_TOKENS exposes every option token', () => {
+    expect(OPEN_TO_TOKENS).toHaveLength(OPEN_TO_OPTIONS.length);
+    for (const opt of OPEN_TO_OPTIONS) {
+      expect(OPEN_TO_TOKENS).toContain(opt.token);
+    }
+  });
+
+  it('token <-> value maps round-trip', () => {
+    for (const opt of OPEN_TO_OPTIONS) {
+      expect(OPEN_TO_TOKEN_TO_VALUE[opt.token]).toBe(opt.value);
+      expect(OPEN_TO_VALUE_TO_TOKEN[opt.value]).toBe(opt.token);
+      expect(openToTokenToValue(opt.token)).toBe(opt.value);
+      expect(openToValueToToken(opt.value)).toBe(opt.token);
+    }
+  });
+
+  it('openToTokenToValue returns undefined for unknown / nullish tokens', () => {
+    expect(openToTokenToValue('nope')).toBeUndefined();
+    expect(openToTokenToValue(undefined)).toBeUndefined();
+    expect(openToTokenToValue(null)).toBeUndefined();
+    expect(openToTokenToValue('')).toBeUndefined();
+  });
+
+  it('openToValueToToken returns undefined for unknown / nullish values', () => {
+    expect(openToValueToToken('id.sifa.defs#unknown')).toBeUndefined();
+    expect(openToValueToToken(undefined)).toBeUndefined();
+    expect(openToValueToToken(null)).toBeUndefined();
+    expect(openToValueToToken('')).toBeUndefined();
   });
 });
 
