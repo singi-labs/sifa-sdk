@@ -29,6 +29,13 @@ export interface SearchFilters {
   domain?: string;
   workplace?: string;
   app?: string;
+  /**
+   * Open-to filter. Values are short tokens (e.g. "fullTime", "mentor",
+   * "collab") matching `OPEN_TO_OPTIONS[].token` from the taxonomy. The
+   * API expands tokens to lex values server-side. Multiple tokens are
+   * OR-combined (profile matches if any selected token is set).
+   */
+  openTo?: string[];
   limit?: number;
 }
 
@@ -51,10 +58,17 @@ export interface FilterOptions {
   countries: { countryCode: string; country: string; count: number }[];
   industries: { industry: string; count: number }[];
   apps: { appId: string; count: number }[];
+  /**
+   * Distribution of openTo selections across indexed profiles. Each entry
+   * maps a short token (see {@link SearchFilters.openTo}) to the number of
+   * profiles that have it set. Omitted from older API responses; treat
+   * absence as "no data" rather than "all zero".
+   */
+  openTo?: { token: string; count: number }[];
 }
 
 const EMPTY_SEARCH: SearchResponse = { profiles: [], total: 0, limit: 20, offset: 0 };
-const EMPTY_FILTERS: FilterOptions = { countries: [], industries: [], apps: [] };
+const EMPTY_FILTERS: FilterOptions = { countries: [], industries: [], apps: [], openTo: [] };
 
 /**
  * Search profiles by free-text query and optional filters. Returns an
@@ -74,6 +88,11 @@ export async function fetchSearchProfiles(
   if (filters.domain) params.set('domain', filters.domain);
   if (filters.workplace) params.set('workplace', filters.workplace);
   if (filters.app) params.set('app', filters.app);
+  if (filters.openTo && filters.openTo.length > 0) {
+    for (const token of filters.openTo) {
+      if (token) params.append('openTo', token);
+    }
+  }
   if (filters.limit !== undefined) params.set('limit', String(filters.limit));
 
   if (params.size === 0) return EMPTY_SEARCH;
