@@ -56,6 +56,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('spark')).toBe('Posts');
     expect(categoryForApp('nooki')).toBe('Social');
     expect(categoryForApp('atstore')).toBe('Reviews');
+    expect(categoryForApp('atfund')).toBe('Endorsements');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
