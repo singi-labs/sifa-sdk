@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.7
+
+### Patch Changes
+
+- 90306d0: Add `Endorsements` app category (Phosphor icon `HandHeart`) and map the `atfund` app id to it. Enables sifa-api to register at.fund (`fund.at.graph.endorse`).
+
 ## 0.10.6
 
 ### Patch Changes

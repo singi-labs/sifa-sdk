@@ -41,6 +41,7 @@ export const APP_CATEGORY_MAP = {
   atstore: 'Reviews',
   plyr: 'Music',
   anisota: 'Posts',
+  atfund: 'Endorsements',
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
