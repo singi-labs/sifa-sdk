@@ -544,6 +544,66 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('crate', () => {
+    const crateBase = {
+      uri: 'at://did:plc:maker/social.crate.content/3mmxmfhdhj52d',
+      rkey: '3mmxmfhdhj52d',
+      authorDid: 'did:plc:maker',
+      authorHandle: 'brittany.test',
+    };
+
+    it('content: links to record.canonicalUrl (the published location)', () => {
+      expect(
+        resolveCardUrl({
+          ...crateBase,
+          collection: 'social.crate.content',
+          record: {
+            title: 'Ardan Labs Podcast',
+            kind: 'podcast',
+            canonicalUrl: 'https://www.youtube.com/embed/omXniEB22Js',
+          },
+        }),
+      ).toBe('https://www.youtube.com/embed/omXniEB22Js');
+    });
+
+    it('content: returns null when canonicalUrl is missing (non-clickable)', () => {
+      expect(
+        resolveCardUrl({
+          ...crateBase,
+          collection: 'social.crate.content',
+          record: { title: 'Untitled', kind: 'article' },
+        }),
+      ).toBeNull();
+    });
+
+    it('content: returns null when canonicalUrl is blank', () => {
+      expect(
+        resolveCardUrl({
+          ...crateBase,
+          collection: 'social.crate.content',
+          record: { canonicalUrl: '   ' },
+        }),
+      ).toBeNull();
+    });
+
+    it('note: returns null — Crate has no public per-record viewer', () => {
+      expect(
+        resolveCardUrl({
+          ...crateBase,
+          uri: 'at://did:plc:maker/social.crate.note/3mloptefjc32q',
+          rkey: '3mloptefjc32q',
+          collection: 'social.crate.note',
+          record: { title: 'Kubernetes', slug: 'kubernetes', body: '## Overview' },
+        }),
+      ).toBeNull();
+    });
+
+    it('getAppIdForCollection maps social.crate.* to crate', () => {
+      expect(getAppIdForCollection('social.crate.content')).toBe('crate');
+      expect(getAppIdForCollection('social.crate.note')).toBe('crate');
+    });
+  });
+
   describe('unsupported / unclickable collections', () => {
     it('returns null for picosky (no URL pattern registered)', () => {
       expect(
