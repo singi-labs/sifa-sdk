@@ -130,6 +130,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // pointing at the main /give listing.
     profileUrlPattern: 'https://www.at.fund/give',
   },
+  crate: {
+    // Crate (app.crate.social) is an authoring dashboard with no public
+    // per-record viewer or per-handle profile page — records are designed to
+    // render on the maker's own site. `content` cards link out via
+    // record.canonicalUrl (handled in resolveCardUrl); `note` records have no
+    // public URL and render non-clickable. So no app-level pattern applies.
+  },
 });
 
 /**
@@ -176,4 +183,5 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['fyi.atstore.', 'atstore'],
   ['fm.plyr.', 'plyr'],
   ['fund.at.', 'atfund'],
+  ['social.crate.', 'crate'],
 ];

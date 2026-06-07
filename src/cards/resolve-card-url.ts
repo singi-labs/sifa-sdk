@@ -206,6 +206,17 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     return APP_URL_PATTERNS.atstore?.profileUrlPattern ?? null;
   }
 
+  // Crate content: link to the canonical published location the maker
+  // recorded (a YouTube/podcast/personal-site URL). Crate is an authoring
+  // dashboard with no public per-record viewer, so `note` records — which
+  // carry no canonicalUrl — render non-clickable (null).
+  if (collection === 'social.crate.content') {
+    return stringOrNull(record.canonicalUrl);
+  }
+  if (collection === 'social.crate.note') {
+    return null;
+  }
+
   // Standard documents: siteUrl + path (or just siteUrl)
   if (collection.startsWith('site.standard.')) {
     const siteUrl = stringOrNull(record.siteUrl);

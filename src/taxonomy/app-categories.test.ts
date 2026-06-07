@@ -57,6 +57,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('nooki')).toBe('Social');
     expect(categoryForApp('atstore')).toBe('Reviews');
     expect(categoryForApp('atfund')).toBe('Endorsements');
+    expect(categoryForApp('crate')).toBe('Articles');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
