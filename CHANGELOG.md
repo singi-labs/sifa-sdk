@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.10
+
+### Patch Changes
+
+- fccc1d2: Add Crate (`social.crate.*`) to the app taxonomy: category mapping (Articles), `social.crate.*` → `crate` collection resolution, and a `resolveCardUrl` rule that links `social.crate.content` cards to their `canonicalUrl` (notes render non-clickable, since Crate has no public per-record viewer).
+
 ## 0.10.9
 
 ### Patch Changes
