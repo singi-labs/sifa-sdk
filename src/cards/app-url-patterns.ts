@@ -137,6 +137,23 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // record.canonicalUrl (handled in resolveCardUrl); `note` records have no
     // public URL and render non-clickable. So no app-level pattern applies.
   },
+  atmorsvp: {
+    // atmo.rsvp events live at /p/{did}/e/{rkey}. The per-item pattern is used
+    // for the event record itself; checkin records build their URL from the
+    // referenced event uri in resolveCardUrl (mirrors smokesignal rsvp).
+    urlPattern: 'https://atmo.rsvp/p/{did}/e/{rkey}',
+    profileUrlPattern: 'https://atmo.rsvp/p/{did}',
+  },
+  opensocial: {
+    // Open Social (opensocial.community) is community-management infrastructure
+    // with no public per-membership permalink. Profile fallback only.
+    profileUrlPattern: 'https://opensocial.community',
+  },
+  kevara: {
+    // Kevara (professional network) has no live public web surface yet — its
+    // domain doesn't resolve and there's no per-record viewer. Recognized so
+    // the speaker-directory card renders with the right pill, but non-clickable.
+  },
 });
 
 /**
@@ -184,4 +201,7 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['fm.plyr.', 'plyr'],
   ['fund.at.', 'atfund'],
   ['social.crate.', 'crate'],
+  ['quest.atmo.', 'atmorsvp'],
+  ['community.opensocial.', 'opensocial'],
+  ['is.kevara.', 'kevara'],
 ];

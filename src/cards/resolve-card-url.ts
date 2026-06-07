@@ -193,6 +193,29 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     return null;
   }
 
+  // atmo.rsvp event itself: use item's own uri -> /p/{did}/e/{rkey}
+  if (collection === 'quest.atmo.event') {
+    const parsed = parseAtUri(uri);
+    if (parsed) {
+      return `https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`;
+    }
+    return null;
+  }
+
+  // atmo.rsvp checkin: parse the linked event uri (record.event) and link to
+  // that event's page (mirrors smokesignal rsvp). The checkin's own rkey is
+  // not addressable, so without a valid event reference it's non-clickable.
+  if (collection === 'quest.atmo.checkin') {
+    const eventUri = stringOrNull(record.event);
+    if (eventUri) {
+      const parsed = parseAtUri(eventUri);
+      if (parsed) {
+        return `https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`;
+      }
+    }
+    return null;
+  }
+
   // atstore reviews: no per-review URL exists on atstore.fyi, and user profile
   // pages don't exist either. Deep-link to the reviewed product instead.
   // The slug comes from record.listingMeta (enriched by sifa-api from the
