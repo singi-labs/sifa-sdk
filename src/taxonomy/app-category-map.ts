@@ -43,6 +43,12 @@ export const APP_CATEGORY_MAP = {
   anisota: 'Posts',
   atfund: 'Endorsements',
   crate: 'Articles',
+  atmorsvp: 'Events',
+  opensocial: 'Social',
+  // Kevara speaker-directory listing — a professional speaking-availability
+  // declaration (talk topics, formats like keynote/panel/conference-talk).
+  // Grouped under Events as the closest fit (speaking engagements).
+  kevara: 'Events',
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)

@@ -58,6 +58,9 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('atstore')).toBe('Reviews');
     expect(categoryForApp('atfund')).toBe('Endorsements');
     expect(categoryForApp('crate')).toBe('Articles');
+    expect(categoryForApp('atmorsvp')).toBe('Events');
+    expect(categoryForApp('opensocial')).toBe('Social');
+    expect(categoryForApp('kevara')).toBe('Events');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

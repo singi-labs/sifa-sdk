@@ -183,6 +183,46 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('atmo.rsvp event', () => {
+    it('builds the per-event URL from the item uri', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:eventowner/quest.atmo.event/3mmwfrca77o25',
+          rkey: '3mmwfrca77o25',
+          authorDid: 'did:plc:eventowner',
+          collection: 'quest.atmo.event',
+          record: { name: 'Test Event' },
+        }),
+      ).toBe('https://atmo.rsvp/p/did:plc:eventowner/e/3mmwfrca77o25');
+    });
+  });
+
+  describe('atmo.rsvp checkin', () => {
+    it('parses record.event into the atmo.rsvp event URL', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'quest.atmo.checkin',
+          record: {
+            event: 'at://did:plc:eventowner/quest.atmo.event/3mmwfrca77o25',
+            checkedInAt: '2026-05-31T14:56:30Z',
+          },
+        }),
+      ).toBe('https://atmo.rsvp/p/did:plc:eventowner/e/3mmwfrca77o25');
+    });
+
+    it('returns null when the event reference is missing', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'quest.atmo.checkin',
+          record: { checkedInAt: '2026-05-31T14:56:30Z' },
+        }),
+      ).toBeNull();
+    });
+  });
+
   describe('standard documents (generic-card siteUrl path)', () => {
     it('joins siteUrl and path when both are present', () => {
       expect(
@@ -336,6 +376,16 @@ describe('resolveCardUrl', () => {
     it('maps pub.leaflet.* to leaflet', () => {
       expect(getAppIdForCollection('pub.leaflet.document')).toBe('leaflet');
       expect(getAppIdForCollection('pub.leaflet.comment')).toBe('leaflet');
+    });
+
+    it('maps quest.atmo.* to atmorsvp and community.opensocial.* to opensocial', () => {
+      expect(getAppIdForCollection('quest.atmo.event')).toBe('atmorsvp');
+      expect(getAppIdForCollection('quest.atmo.checkin')).toBe('atmorsvp');
+      expect(getAppIdForCollection('community.opensocial.membership')).toBe('opensocial');
+    });
+
+    it('maps is.kevara.* to kevara', () => {
+      expect(getAppIdForCollection('is.kevara.directory.speaker')).toBe('kevara');
     });
   });
 
