@@ -115,3 +115,31 @@ export function getOpenToLabelKey(value: string | undefined | null): string | un
   if (!value) return undefined;
   return OPEN_TO_LABEL_KEY_MAP[value];
 }
+
+/**
+ * Legacy `openToWorkStatus` values mapped to their current canonical value.
+ * Mirrors {@link OPEN_TO_LEGACY_ALIASES} but resolves to the full lex value
+ * (not just the `labelKey`) so it can rewrite stored records.
+ */
+export const OPEN_TO_LEGACY_VALUE_ALIASES: Record<string, string> = {
+  'id.sifa.defs#mentoring': 'id.sifa.defs#mentoringOthers',
+};
+
+/**
+ * Normalize a list of `openTo` values: resolve legacy aliases to their
+ * canonical value, then dedup while preserving first-seen order. Unknown tokens
+ * pass through untouched (forward-compat). Used by the editor (so a legacy token
+ * maps onto a real option and migrates forward on save) and by display (so a
+ * record carrying both the legacy and canonical token renders a single badge).
+ */
+export function normalizeOpenTo(values: readonly string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const value of values) {
+    const canonical = OPEN_TO_LEGACY_VALUE_ALIASES[value] ?? value;
+    if (seen.has(canonical)) continue;
+    seen.add(canonical);
+    out.push(canonical);
+  }
+  return out;
+}

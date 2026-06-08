@@ -18,7 +18,9 @@ export {
   OPEN_TO_TOKENS,
   OPEN_TO_TOKEN_TO_VALUE,
   OPEN_TO_VALUE_TO_TOKEN,
+  OPEN_TO_LEGACY_VALUE_ALIASES,
   getOpenToLabelKey,
+  normalizeOpenTo,
   openToTokenToValue,
   openToValueToToken,
   type OpenToGroup,
@@ -27,7 +29,9 @@ export {
 export {
   WORKPLACE_TYPE_LABELS,
   WORKPLACE_TYPE_OPTIONS,
+  WORKPLACE_TYPE_LEGACY_ALIASES,
   getWorkplaceTypeLabel,
+  normalizeWorkplaceTypes,
   type WorkplaceTypeOption,
 } from './workplace-type.js';
 export {

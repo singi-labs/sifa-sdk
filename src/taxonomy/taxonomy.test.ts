@@ -16,6 +16,7 @@ import {
   OPEN_TO_TOKEN_TO_VALUE,
   OPEN_TO_VALUE_TO_TOKEN,
   getOpenToLabelKey,
+  normalizeOpenTo,
   openToTokenToValue,
   openToValueToToken,
 } from './open-to.js';
@@ -32,6 +33,7 @@ import {
   WORKPLACE_TYPE_LABELS,
   WORKPLACE_TYPE_OPTIONS,
   getWorkplaceTypeLabel,
+  normalizeWorkplaceTypes,
 } from './workplace-type.js';
 
 const LEXICON_EMPLOYMENT_TYPE_KNOWN_VALUES = [
@@ -151,6 +153,36 @@ describe('workplace-type', () => {
   it('getWorkplaceTypeLabel falls back to the raw value for unknown', () => {
     expect(getWorkplaceTypeLabel('id.sifa.defs#unknown')).toBe('id.sifa.defs#unknown');
   });
+
+  it('normalizeWorkplaceTypes maps legacy "remote" to the scoped "remoteGlobal"', () => {
+    expect(normalizeWorkplaceTypes(['id.sifa.defs#remote'])).toEqual(['id.sifa.defs#remoteGlobal']);
+  });
+
+  it('normalizeWorkplaceTypes dedups when both legacy "remote" and "remoteGlobal" are present', () => {
+    expect(normalizeWorkplaceTypes(['id.sifa.defs#remote', 'id.sifa.defs#remoteGlobal'])).toEqual([
+      'id.sifa.defs#remoteGlobal',
+    ]);
+  });
+
+  it('normalizeWorkplaceTypes preserves first-seen order and other tokens', () => {
+    expect(
+      normalizeWorkplaceTypes([
+        'id.sifa.defs#hybrid',
+        'id.sifa.defs#remote',
+        'id.sifa.defs#onSite',
+      ]),
+    ).toEqual(['id.sifa.defs#hybrid', 'id.sifa.defs#remoteGlobal', 'id.sifa.defs#onSite']);
+  });
+
+  it('normalizeWorkplaceTypes leaves unknown tokens untouched (forward-compat)', () => {
+    expect(normalizeWorkplaceTypes(['id.sifa.defs#future'])).toEqual(['id.sifa.defs#future']);
+  });
+
+  it('normalizeWorkplaceTypes dedups exact duplicates', () => {
+    expect(normalizeWorkplaceTypes(['id.sifa.defs#onSite', 'id.sifa.defs#onSite'])).toEqual([
+      'id.sifa.defs#onSite',
+    ]);
+  });
 });
 
 describe('open-to', () => {
@@ -172,6 +204,23 @@ describe('open-to', () => {
 
   it('resolves the legacy mentoring alias to mentoringOthers', () => {
     expect(getOpenToLabelKey('id.sifa.defs#mentoring')).toBe('mentoringOthers');
+  });
+
+  it('normalizeOpenTo maps legacy "mentoring" to "mentoringOthers"', () => {
+    expect(normalizeOpenTo(['id.sifa.defs#mentoring'])).toEqual(['id.sifa.defs#mentoringOthers']);
+  });
+
+  it('normalizeOpenTo dedups when both legacy "mentoring" and "mentoringOthers" are present', () => {
+    expect(normalizeOpenTo(['id.sifa.defs#mentoring', 'id.sifa.defs#mentoringOthers'])).toEqual([
+      'id.sifa.defs#mentoringOthers',
+    ]);
+  });
+
+  it('normalizeOpenTo preserves first-seen order and leaves unknown tokens untouched', () => {
+    expect(normalizeOpenTo(['id.sifa.defs#fullTimeRoles', 'id.sifa.defs#future'])).toEqual([
+      'id.sifa.defs#fullTimeRoles',
+      'id.sifa.defs#future',
+    ]);
   });
 
   it('getOpenToLabelKey returns the labelKey for known values', () => {
