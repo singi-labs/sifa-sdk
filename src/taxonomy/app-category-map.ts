@@ -49,6 +49,9 @@ export const APP_CATEGORY_MAP = {
   // declaration (talk topics, formats like keynote/panel/conference-talk).
   // Grouped under Events as the closest fit (speaking engagements).
   kevara: 'Events',
+  // Marque domain registrar — a domain registration record is a dated
+  // identity/ownership action, surfaced as a "registered a domain" event.
+  marque: 'Domains',
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)

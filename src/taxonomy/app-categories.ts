@@ -19,6 +19,7 @@ export const APP_CATEGORIES = {
   Articles: { phosphorIcon: 'Article' },
   Chat: { phosphorIcon: 'ChatsCircle' },
   Code: { phosphorIcon: 'Code' },
+  Domains: { phosphorIcon: 'Globe' },
   Endorsements: { phosphorIcon: 'HandHeart' },
   Events: { phosphorIcon: 'CalendarBlank' },
   Links: { phosphorIcon: 'LinkSimple' },
