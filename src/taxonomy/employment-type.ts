@@ -57,3 +57,24 @@ export function getEmploymentTypeLabel(value: string | undefined | null): string
   if (!value) return undefined;
   return EMPLOYMENT_TYPE_LABELS[value] ?? value;
 }
+
+/**
+ * Employment-type group whose members may omit a company name: independent
+ * workers (contract, freelance, self-employed, independent work) often have no
+ * separately named or registered entity. Derived from the group rather than a
+ * hand-maintained list so it stays in sync if the group's membership changes.
+ */
+export const COMPANY_OPTIONAL_EMPLOYMENT_TYPES: ReadonlySet<string> = new Set(
+  EMPLOYMENT_TYPE_GROUPS.find((g) => g.label === 'Independent')?.items.map((i) => i.value) ?? [],
+);
+
+/**
+ * Whether a company name is required for a position with the given employment
+ * type. Company is optional for the Independent group; required otherwise,
+ * including when the employment type is unspecified (the conservative default,
+ * since most positions are at a named organization).
+ */
+export function isCompanyRequired(employmentType: string | undefined | null): boolean {
+  if (!employmentType) return true;
+  return !COMPANY_OPTIONAL_EMPLOYMENT_TYPES.has(employmentType);
+}

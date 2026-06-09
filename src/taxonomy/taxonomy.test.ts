@@ -5,9 +5,11 @@ import type { ProfileSkill } from '../types/index.js';
 import { CONTINENTS, getContinent } from './continents.js';
 import { COUNTRIES } from './countries.js';
 import {
+  COMPANY_OPTIONAL_EMPLOYMENT_TYPES,
   EMPLOYMENT_TYPE_GROUPS,
   EMPLOYMENT_TYPE_LABELS,
   getEmploymentTypeLabel,
+  isCompanyRequired,
 } from './employment-type.js';
 import { INDUSTRY_OPTIONS } from './industry-taxonomy.js';
 import {
@@ -132,6 +134,35 @@ describe('employment-type', () => {
     expect(getEmploymentTypeLabel(undefined)).toBeUndefined();
     expect(getEmploymentTypeLabel(null)).toBeUndefined();
     expect(getEmploymentTypeLabel('')).toBeUndefined();
+  });
+});
+
+describe('isCompanyRequired', () => {
+  const independentTypes = EMPLOYMENT_TYPE_GROUPS.find((g) => g.label === 'Independent')!.items.map(
+    (i) => i.value,
+  );
+
+  it('is false for every Independent-group type (company optional)', () => {
+    expect(independentTypes.length).toBeGreaterThan(0);
+    for (const value of independentTypes) {
+      expect(isCompanyRequired(value)).toBe(false);
+    }
+  });
+
+  it('is true for employee, training, and volunteer types', () => {
+    expect(isCompanyRequired('id.sifa.defs#fullTime')).toBe(true);
+    expect(isCompanyRequired('id.sifa.defs#internship')).toBe(true);
+    expect(isCompanyRequired('id.sifa.defs#volunteer')).toBe(true);
+  });
+
+  it('is true when employment type is unspecified (conservative default)', () => {
+    expect(isCompanyRequired(undefined)).toBe(true);
+    expect(isCompanyRequired(null)).toBe(true);
+    expect(isCompanyRequired('')).toBe(true);
+  });
+
+  it('COMPANY_OPTIONAL_EMPLOYMENT_TYPES stays in sync with the Independent group', () => {
+    expect([...COMPANY_OPTIONAL_EMPLOYMENT_TYPES].sort()).toEqual([...independentTypes].sort());
   });
 });
 
