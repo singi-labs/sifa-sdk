@@ -58,6 +58,7 @@ export {
 } from './fetchers/external-accounts.js';
 export { createEndorsement, type EndorsementInput } from './fetchers/endorsements.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
+export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
 export {
   bulkHideStandardPublications,
   bulkUnhideStandardPublications,
@@ -255,6 +256,7 @@ export {
 } from './hooks/use-external-accounts.js';
 export { useCreateEndorsement } from './hooks/use-endorsement-mutations.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
+export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';
 export {
   useBulkHideStandardPublications,
   useBulkUnhideStandardPublications,

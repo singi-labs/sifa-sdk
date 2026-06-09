@@ -70,6 +70,7 @@ export {
 } from './external-accounts.js';
 export { createEndorsement, type EndorsementInput } from './endorsements.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './keytrace-claims.js';
+export { revealMarqueDomain, unrevealMarqueDomain } from './marque-domains.js';
 export {
   bulkHideStandardPublications,
   bulkUnhideStandardPublications,
