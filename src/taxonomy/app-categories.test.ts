@@ -35,6 +35,7 @@ describe('APP_CATEGORIES', () => {
     expect(getAppCategoryIcon('Research')).toBe('Path');
     expect(getAppCategoryIcon('Music')).toBe('MusicNote');
     expect(getAppCategoryIcon('Q&A')).toBe('Question');
+    expect(getAppCategoryIcon('Domains')).toBe('Globe');
   });
 });
 
@@ -61,6 +62,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('atmorsvp')).toBe('Events');
     expect(categoryForApp('opensocial')).toBe('Social');
     expect(categoryForApp('kevara')).toBe('Events');
+    expect(categoryForApp('marque')).toBe('Domains');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
