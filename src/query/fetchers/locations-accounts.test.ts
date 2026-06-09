@@ -12,6 +12,7 @@ import {
   verifyExternalAccount,
 } from './external-accounts.js';
 import { hideKeytraceClaim, unhideKeytraceClaim } from './keytrace-claims.js';
+import { revealMarqueDomain, unrevealMarqueDomain } from './marque-domains.js';
 import {
   createProfileLocation,
   deleteProfileLocation,
@@ -185,6 +186,23 @@ describe('keytrace claims', () => {
   it('unhideKeytraceClaim DELETEs /hide', async () => {
     const fetchImpl = jsonFetch({});
     await unhideKeytraceClaim({ ...baseConfig, fetch: fetchImpl }, 'k1');
+    const [, init] = getCall(fetchImpl);
+    expect(init.method).toBe('DELETE');
+  });
+});
+
+describe('marque domains', () => {
+  it('revealMarqueDomain POSTs to /reveal with the domain URL-encoded', async () => {
+    const fetchImpl = jsonFetch({});
+    await revealMarqueDomain({ ...baseConfig, fetch: fetchImpl }, 'sweetbee.gay');
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/marque-domains/sweetbee.gay/reveal');
+    expect(init.method).toBe('POST');
+  });
+
+  it('unrevealMarqueDomain DELETEs /reveal', async () => {
+    const fetchImpl = jsonFetch({});
+    await unrevealMarqueDomain({ ...baseConfig, fetch: fetchImpl }, 'sweetbee.gay');
     const [, init] = getCall(fetchImpl);
     expect(init.method).toBe('DELETE');
   });
