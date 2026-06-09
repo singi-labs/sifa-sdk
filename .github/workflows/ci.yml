@@ -24,7 +24,21 @@ jobs:
           cache: pnpm
 
       - name: Install
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        # Retry transient pnpm copyfile ENOENT races on the shared self-hosted
+        # store (cache: pnpm, shared across jobs on the host). See sifa-web#1261.
+        run: |
+          attempt=1
+          max=3
+          until pnpm install --frozen-lockfile --ignore-scripts; do
+            if [ "$attempt" -ge "$max" ]; then
+              echo "::error::pnpm install failed after ${max} attempts" >&2
+              exit 1
+            fi
+            delay=$((attempt * 5))
+            echo "::warning::pnpm install failed (attempt ${attempt}/${max}); retrying in ${delay}s" >&2
+            attempt=$((attempt + 1))
+            sleep "$delay"
+          done
 
       - name: Format check
         run: pnpm format:check
