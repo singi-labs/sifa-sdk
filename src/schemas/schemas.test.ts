@@ -125,6 +125,26 @@ describe('ProfilePositionRecordSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('accepts a self-employed record without company', () => {
+    const result = ProfilePositionRecordSchema.safeParse({
+      title: 'Independent Consultant',
+      employmentType: 'id.sifa.defs#selfEmployed',
+      startedAt: NOW,
+      createdAt: NOW,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects an empty company string when present', () => {
+    const result = ProfilePositionRecordSchema.safeParse({
+      company: '',
+      title: 'Founder',
+      startedAt: NOW,
+      createdAt: NOW,
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('accepts optional employmentType / workplaceType strings', () => {
     const result = ProfilePositionRecordSchema.safeParse({
       company: 'Sifa',

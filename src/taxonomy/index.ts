@@ -1,9 +1,11 @@
 export { CONTINENTS, getContinent, type ContinentCode } from './continents.js';
 export { COUNTRIES } from './countries.js';
 export {
+  COMPANY_OPTIONAL_EMPLOYMENT_TYPES,
   EMPLOYMENT_TYPE_GROUPS,
   EMPLOYMENT_TYPE_LABELS,
   getEmploymentTypeLabel,
+  isCompanyRequired,
   type EmploymentTypeGroup,
   type EmploymentTypeOption,
 } from './employment-type.js';
