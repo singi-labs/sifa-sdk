@@ -1,6 +1,7 @@
 import type { ExternalAccount } from '../../types/index.js';
 import {
   apiFetch,
+  encodeIdentifier,
   apiWrite,
   type ApiFetchOptions,
   type SifaApiConfig,
@@ -33,7 +34,7 @@ export async function fetchExternalAccounts(
   handleOrDid: string,
   options: ApiFetchOptions = {},
 ): Promise<ExternalAccount[]> {
-  const path = `/api/profile/${encodeURIComponent(handleOrDid)}/external-accounts`;
+  const path = `/api/profile/${encodeIdentifier(handleOrDid)}/external-accounts`;
   try {
     const data = await apiFetch<{ accounts?: ExternalAccount[] }>(config, path, {
       credentials: 'include',

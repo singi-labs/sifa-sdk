@@ -1,5 +1,5 @@
 import type { ActivityLabel } from '../../cards/adult-content.js';
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 import type { QuotedPostResult } from './quoted-posts.js';
 
 /**
@@ -90,7 +90,7 @@ export async function fetchHeatmapData(
   days: number,
   options: ApiFetchOptions = {},
 ): Promise<HeatmapResponse | null> {
-  const path = `/api/activity/${encodeURIComponent(handleOrDid)}/heatmap?days=${days}`;
+  const path = `/api/activity/${encodeIdentifier(handleOrDid)}/heatmap?days=${days}`;
   try {
     return await apiFetch<HeatmapResponse>(config, path, {
       next: { revalidate: 900, tags: [`heatmap-${handleOrDid}`] },
@@ -125,7 +125,7 @@ export async function fetchActivityTeaser(
   try {
     return await apiFetch<ActivityTeaserResponse>(
       config,
-      `/api/activity/${encodeURIComponent(handleOrDid)}/teaser`,
+      `/api/activity/${encodeIdentifier(handleOrDid)}/teaser`,
       {
         credentials: 'include',
         timeoutMs: 8000,
@@ -167,7 +167,7 @@ export async function fetchActivityFeed(
   try {
     return await apiFetch<ActivityFeedResponse>(
       config,
-      `/api/activity/${encodeURIComponent(handleOrDid)}${qs ? `?${qs}` : ''}`,
+      `/api/activity/${encodeIdentifier(handleOrDid)}${qs ? `?${qs}` : ''}`,
       {
         credentials: 'include',
         cache: 'no-store',

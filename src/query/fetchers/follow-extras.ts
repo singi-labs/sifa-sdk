@@ -1,4 +1,4 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 import type { FollowProfileItem } from '../../schemas/follow-profile.js';
 
 /**
@@ -65,7 +65,7 @@ export async function getMutuals(
 ): Promise<FollowProfilePageResponse> {
   return fetchFollowProfilePage(
     config,
-    buildListPath(`/api/profile/${encodeURIComponent(handleOrDid)}/mutuals`, opts),
+    buildListPath(`/api/profile/${encodeIdentifier(handleOrDid)}/mutuals`, opts),
     opts,
   );
 }

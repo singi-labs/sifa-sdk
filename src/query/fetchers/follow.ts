@@ -1,5 +1,6 @@
 import {
   apiFetch,
+  encodeIdentifier,
   apiWrite,
   type ApiFetchOptions,
   type SifaApiConfig,
@@ -72,7 +73,7 @@ export function followUser(
   const { note, ...rest } = opts;
   return apiWrite<{ rkey?: string; subjectDid?: string }>(
     config,
-    `/api/follow/${encodeURIComponent(handle)}`,
+    `/api/follow/${encodeIdentifier(handle)}`,
     'POST',
     {
       body: note !== undefined ? { note } : undefined,
@@ -87,7 +88,7 @@ export function unfollowUser(
   handle: string,
   opts: Omit<ApiFetchOptions, 'method' | 'body'> = {},
 ): Promise<WriteResult> {
-  return apiWrite(config, `/api/follow/${encodeURIComponent(handle)}`, 'DELETE', opts);
+  return apiWrite(config, `/api/follow/${encodeIdentifier(handle)}`, 'DELETE', opts);
 }
 
 export interface FollowListPage {
@@ -129,7 +130,7 @@ export async function getFollowers(
   try {
     const res = await apiFetch<{ follows: FollowProfile[]; cursor?: string | null }>(
       config,
-      buildListPath(`/api/profile/${encodeURIComponent(handle)}/followers`, opts),
+      buildListPath(`/api/profile/${encodeIdentifier(handle)}/followers`, opts),
       { credentials: 'include', cache: 'no-store', ...opts, headers },
     );
     return { follows: res.follows, cursor: res.cursor ?? null };
@@ -149,7 +150,7 @@ export async function getFollowing(
   try {
     const res = await apiFetch<{ follows: FollowProfile[]; cursor?: string | null }>(
       config,
-      buildListPath(`/api/profile/${encodeURIComponent(handle)}/following`, opts),
+      buildListPath(`/api/profile/${encodeIdentifier(handle)}/following`, opts),
       { credentials: 'include', cache: 'no-store', ...opts, headers },
     );
     return { follows: res.follows, cursor: res.cursor ?? null };

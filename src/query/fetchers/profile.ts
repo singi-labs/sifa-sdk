@@ -1,5 +1,11 @@
 import type { Profile } from '../../types/index.js';
-import { apiFetch, apiFetchOrNull, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import {
+  encodeIdentifier,
+  apiFetch,
+  apiFetchOrNull,
+  type ApiFetchOptions,
+  type SifaApiConfig,
+} from '../client.js';
 
 /**
  * Read the aggregated profile for a handle or DID.
@@ -14,7 +20,7 @@ export function fetchProfile(
   handleOrDid: string,
   options: ApiFetchOptions = {},
 ): Promise<Profile | null> {
-  const path = `/api/profile/${encodeURIComponent(handleOrDid)}`;
+  const path = `/api/profile/${encodeIdentifier(handleOrDid)}`;
   return apiFetchOrNull<Profile>(config, path, {
     retryOn429: true,
     ...options,
@@ -31,7 +37,7 @@ export async function fetchAtFundLink(
   did: string,
   options: ApiFetchOptions = {},
 ): Promise<string | null> {
-  const path = `/api/profiles/${encodeURIComponent(did)}/at-fund-link`;
+  const path = `/api/profiles/${encodeIdentifier(did)}/at-fund-link`;
   try {
     const data = await apiFetch<{ url?: unknown }>(config, path, {
       next: { revalidate: 3600 },
