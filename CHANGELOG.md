@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.16
+
+### Patch Changes
+
+- b61be95: Add `'marque'` to the `ExternalAccount.source` union so the profile Links section can surface domains registered through Marque (marque.at) as unverified, owner-controlled links.
+
 ## 0.10.15
 
 ### Patch Changes
