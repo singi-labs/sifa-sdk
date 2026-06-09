@@ -228,7 +228,7 @@ export interface ExternalAccount {
   verifiable: boolean;
   verified: boolean;
   verifiedVia?: string | null;
-  source?: 'sifa' | 'keytrace' | 'keyoxide';
+  source?: 'sifa' | 'keytrace' | 'keyoxide' | 'marque';
   hidden?: boolean;
   keytraceVerified?: boolean;
   keytraceClaim?: ExternalAccountKeytraceClaim;
