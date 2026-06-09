@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.17
+
+### Patch Changes
+
+- 62b0880: Add `revealMarqueDomain` / `unrevealMarqueDomain` fetchers and the `useRevealMarqueDomain` / `useUnrevealMarqueDomain` mutation hooks to the query layer, so sifa-web can toggle the public visibility of Marque-registered domains in the profile Links section.
+
 ## 0.10.16
 
 ### Patch Changes
