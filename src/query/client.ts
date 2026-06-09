@@ -58,6 +58,34 @@ const MAX_RATE_LIMIT_RETRIES = 3;
 const RATE_LIMIT_RETRY_CAP_SECONDS = 3;
 
 /**
+ * Encode a handle or DID for safe interpolation into a request path,
+ * idempotently.
+ *
+ * Plain {@link encodeURIComponent} double-encodes an already-encoded
+ * identifier: Next.js hands route params to RSC pages percent-encoded on a
+ * hard navigation (`did%3Aplc%3A...`) but decoded on client-side navigation
+ * (`did:plc:...`). Encoding the former again turns `%` into `%25`, so the
+ * AppView reads `did%3A...` as a literal handle, finds no match, and 404s —
+ * which is why DID profile links broke on direct visits but worked when
+ * clicked within the app.
+ *
+ * AT identifiers (handles are domain names, DIDs are `did:method:...`) never
+ * contain a literal `%`, so decoding a decoded value is a no-op. A malformed
+ * percent sequence (lone `%`) makes {@link decodeURIComponent} throw; in that
+ * case we keep the original value so behaviour matches the prior bare
+ * `encodeURIComponent`.
+ */
+export function encodeIdentifier(value: string): string {
+  let decoded = value;
+  try {
+    decoded = decodeURIComponent(value);
+  } catch {
+    // Malformed percent-encoding — fall back to the raw value.
+  }
+  return encodeURIComponent(decoded);
+}
+
+/**
  * Generic fetcher used by all SDK query and mutation functions.
  *
  * Returns parsed JSON typed as `T`. Throws {@link ApiError} on non-2xx

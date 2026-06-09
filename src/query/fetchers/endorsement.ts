@@ -1,4 +1,4 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
 /**
  * Counts confirmed endorsements received by a DID. The backend's
@@ -13,7 +13,7 @@ export async function fetchEndorsementCount(
   did: string,
   options: ApiFetchOptions = {},
 ): Promise<number> {
-  const path = `/api/endorsement/${encodeURIComponent(did)}`;
+  const path = `/api/endorsement/${encodeIdentifier(did)}`;
   try {
     const data = await apiFetch<unknown>(config, path, {
       cache: 'no-store',

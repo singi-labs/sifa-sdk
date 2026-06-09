@@ -1,4 +1,4 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
 export interface FetchNetworkStreamCountOptions extends ApiFetchOptions {
   /**
@@ -29,7 +29,7 @@ export async function fetchNetworkStreamCount(
   try {
     const data = await apiFetch<unknown>(
       config,
-      `/api/stream/network?did=${encodeURIComponent(did)}`,
+      `/api/stream/network?did=${encodeIdentifier(did)}`,
       {
         cache: 'no-store',
         timeoutMs: 5000,

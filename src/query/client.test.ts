@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiError, apiFetch, apiFetchOrNull, type SifaApiConfig } from './client.js';
+import {
+  ApiError,
+  apiFetch,
+  apiFetchOrNull,
+  encodeIdentifier,
+  type SifaApiConfig,
+} from './client.js';
 
 const config: SifaApiConfig = { baseUrl: 'https://api.example' };
 
@@ -126,5 +132,30 @@ describe('apiFetch', () => {
       revalidate: 60,
       tags: ['profile-alice'],
     });
+  });
+});
+
+describe('encodeIdentifier', () => {
+  it('encodes a decoded DID exactly once', () => {
+    expect(encodeIdentifier('did:plc:abc123')).toBe('did%3Aplc%3Aabc123');
+  });
+
+  it('does NOT double-encode an already-encoded DID (idempotent)', () => {
+    // Next.js hands route params percent-encoded on a hard navigation.
+    expect(encodeIdentifier('did%3Aplc%3Aabc123')).toBe('did%3Aplc%3Aabc123');
+  });
+
+  it('is a no-op for a plain handle', () => {
+    expect(encodeIdentifier('alice.example.com')).toBe('alice.example.com');
+  });
+
+  it('encodes reserved characters in a handle once', () => {
+    expect(encodeIdentifier('weird name/slash')).toBe('weird%20name%2Fslash');
+  });
+
+  it('falls back to the raw value on malformed percent-encoding', () => {
+    // Lone `%` makes decodeURIComponent throw; behaviour matches a bare
+    // encodeURIComponent so nothing regresses for odd inputs.
+    expect(encodeIdentifier('50%off')).toBe('50%25off');
   });
 });

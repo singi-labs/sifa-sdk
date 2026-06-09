@@ -1,4 +1,4 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
 /** Lightweight profile representation used by discovery endpoints. */
 export interface SimilarProfile {
@@ -67,7 +67,7 @@ export async function fetchSimilarProfiles(
   opts: { limit?: number } & ApiFetchOptions = {},
 ): Promise<SimilarProfile[]> {
   const limit = opts.limit ?? 5;
-  const path = `/api/discover/similar/${encodeURIComponent(did)}?limit=${limit}`;
+  const path = `/api/discover/similar/${encodeIdentifier(did)}?limit=${limit}`;
   try {
     const data = await apiFetch<{ profiles?: SimilarProfile[] }>(config, path, {
       next: { revalidate: 300 },

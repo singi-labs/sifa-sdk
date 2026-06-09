@@ -1,5 +1,6 @@
 import {
   apiFetch,
+  encodeIdentifier,
   apiWrite,
   type ApiFetchOptions,
   type SifaApiConfig,
@@ -75,7 +76,7 @@ export function removeFeatureAllowlist(
 ): Promise<WriteResult> {
   return apiWrite(
     config,
-    `/api/admin/feature-allowlists/${encodeURIComponent(flag)}/${encodeURIComponent(did)}`,
+    `/api/admin/feature-allowlists/${encodeURIComponent(flag)}/${encodeIdentifier(did)}`,
     'DELETE',
     opts,
   );
