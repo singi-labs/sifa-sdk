@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.13
+
+### Patch Changes
+
+- 077add1: Add `Domains` app category (Globe icon) and map the `marque` app id to it, so Marque domain-registration activity is categorized instead of falling through as uncategorized.
+
 ## 0.10.12
 
 ### Patch Changes
