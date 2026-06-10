@@ -3,6 +3,13 @@ name: Auto-enable auto-merge on new PRs
 # Flip GitHub's native auto-merge on for every non-draft PR targeting main.
 # Closes the common failure mode of a PR sitting green forever because nobody
 # ran `gh pr merge --auto --squash`.
+#
+# Auto-merge is enabled with CHANGESETS_TOKEN (a fine-grained PAT), NOT the
+# default GITHUB_TOKEN. A merge that GITHUB_TOKEN enables produces a push to
+# main attributed to github-actions[bot], and bot-token pushes do not trigger
+# downstream workflows -- so Release was silently skipped on auto-merged PRs.
+# A PAT-enabled merge is attributed to a real identity, whose push fires
+# Release. See #155.
 
 on:
   pull_request:
@@ -23,7 +30,7 @@ jobs:
     steps:
       - name: Enable auto-merge
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
