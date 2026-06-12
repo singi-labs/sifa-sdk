@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.10.18
+
+### Patch Changes
+
+- 7ebf296: Add `normalizePlatformId` to map lexicon platform tokens (`id.sifa.defs#platformLinkedin`) to short codes (`linkedin`); `getPlatformLabel` now normalizes first so token-form external accounts render the correct label.
+
 ## 0.10.17
 
 ### Patch Changes
