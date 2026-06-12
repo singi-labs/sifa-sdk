@@ -29,12 +29,32 @@ export const PLATFORM_LABELS = {
 
 export type PlatformId = keyof typeof PLATFORM_LABELS;
 
+/** Prefix of the lexicon platform knownValue tokens (e.g. id.sifa.defs#platformLinkedin). */
+const PLATFORM_TOKEN_PREFIX = 'id.sifa.defs#platform';
+
+/**
+ * Normalize a platform value to the short code used throughout the app (the
+ * editor, the API `VALID_PLATFORMS` enum, the DB, and {@link PLATFORM_LABELS}).
+ *
+ * External-account records may carry `platform` as the raw lexicon knownValue
+ * token (`id.sifa.defs#platformLinkedin`) instead of the short code — written by
+ * some third-party apps. This maps the token to its lowercase suffix
+ * (`linkedin`) and passes short codes / unknown values through unchanged.
+ */
+export function normalizePlatformId(platform: string): string {
+  if (platform.startsWith(PLATFORM_TOKEN_PREFIX)) {
+    return platform.slice(PLATFORM_TOKEN_PREFIX.length).toLowerCase();
+  }
+  return platform;
+}
+
 export function isKnownPlatform(platform: string): platform is PlatformId {
   return platform in PLATFORM_LABELS;
 }
 
 export function getPlatformLabel(platform: string): string {
-  return isKnownPlatform(platform) ? PLATFORM_LABELS[platform] : PLATFORM_LABELS.website;
+  const normalized = normalizePlatformId(platform);
+  return isKnownPlatform(normalized) ? PLATFORM_LABELS[normalized] : PLATFORM_LABELS.website;
 }
 
 /** Platforms excluded from the "Add Links" dropdown (auto-derived or not accepted by API). */

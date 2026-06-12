@@ -42,6 +42,7 @@ export {
   getFaviconUrl,
   getPlatformLabel,
   isKnownPlatform,
+  normalizePlatformId,
   type PlatformId,
 } from './platforms.js';
 export {
