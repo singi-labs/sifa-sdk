@@ -87,6 +87,7 @@ export {
   getPlatformLabel,
   groupSkillsByCategory,
   isKnownPlatform,
+  normalizePlatformId,
   type ActivityTaxonomy,
   type ActivityTier,
   type AppCategoryId,
