@@ -4,23 +4,33 @@ import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/
 
 import { type WriteResult } from '../client.js';
 import { useSifaConfig } from '../config.js';
-import { castRoadmapVote, retractRoadmapVote } from '../fetchers/roadmap.js';
+import {
+  castRoadmapVote,
+  retractRoadmapVote,
+  type CastRoadmapVoteResult,
+} from '../fetchers/roadmap.js';
 import { sifaQueryKeys } from '../keys.js';
 
 async function invalidateRoadmap(queryClient: ReturnType<typeof useQueryClient>): Promise<void> {
   await queryClient.invalidateQueries({ queryKey: sifaQueryKeys.roadmap.all() });
 }
 
-/** React hook for casting a roadmap vote. Variable: the item key. */
+/**
+ * React hook for casting a roadmap vote. Variable: the item key.
+ *
+ * Returns the discriminated-union result so callers can detect
+ * `scope_insufficient` and trigger an OAuth scope-upgrade flow
+ * (see {@link castRoadmapVote}).
+ */
 export function useCastRoadmapVote(
-  options?: Omit<UseMutationOptions<WriteResult, Error, string>, 'mutationFn'>,
+  options?: Omit<UseMutationOptions<CastRoadmapVoteResult, Error, string>, 'mutationFn'>,
 ) {
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (key: string) => castRoadmapVote(config, key),
     onSuccess: async (result, variables, onMutateResult, context) => {
-      if (result.success) {
+      if (result.ok) {
         await invalidateRoadmap(queryClient);
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);

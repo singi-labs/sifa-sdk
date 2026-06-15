@@ -193,7 +193,10 @@ export {
   fetchMyRoadmapVotes,
   fetchRoadmapVotes,
   retractRoadmapVote,
+  type CastRoadmapVoteResult,
   type FetchMyRoadmapVotesOptions,
+  type RoadmapVoteError,
+  type RoadmapVoteResult,
   type RoadmapVoter,
   type RoadmapVotesResponse,
 } from './roadmap.js';
