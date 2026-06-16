@@ -131,11 +131,15 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
 
   // --- Per-collection bespoke logic (mirrors the card components) ---
 
-  // Tangled: prefer per-repo URL `https://tangled.sh/{handle}/{record.name}`.
-  // Only when record.name is a valid repo slug — multi-segment aggregate names
-  // (whitespace, slashes, special chars) would 404. See sifa-web#1071.
+  // Tangled: prefer per-repo URL `https://tangled.sh/{handle}/{slug}`. The slug
+  // is `record.name` (legacy format) or — when `name` is absent — the record's
+  // rkey (newer repos use the slug as the rkey). The rkey fallback is scoped to
+  // `sh.tangled.repo`; other tangled collections (e.g. feed.star) use TID rkeys
+  // that are not repo slugs. Only when the slug is valid — multi-segment
+  // aggregate names (whitespace, slashes, special chars) would 404. See
+  // sifa-web#1071.
   if (collection.startsWith('sh.tangled.')) {
-    const repoName = stringOrNull(record.name);
+    const repoName = stringOrNull(record.name) ?? (collection === 'sh.tangled.repo' ? rkey : null);
     if (repoName && authorHandle && TANGLED_REPO_SLUG.test(repoName)) {
       return `https://tangled.sh/${authorHandle}/${repoName}`;
     }

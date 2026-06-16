@@ -75,6 +75,31 @@ describe('resolveCardUrl', () => {
         }),
       ).toBeNull();
     });
+
+    it('uses the rkey as the repo slug for sh.tangled.repo when record.name is missing (new format)', () => {
+      // Tangled's newer repo records omit `name` and use the slug as the rkey.
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo/bsky-avatar',
+          rkey: 'bsky-avatar',
+          collection: 'sh.tangled.repo',
+          record: { knot: 'knot1.tangled.sh', description: 'Dynamic avatar rotation' },
+        }),
+      ).toBe('https://tangled.sh/alice.test/bsky-avatar');
+    });
+
+    it('does not use the rkey as a repo slug for non-repo tangled collections', () => {
+      // A feed.star rkey is a TID, not a repo slug — building /{handle}/{rkey}
+      // would 404, so fall back to the profile URL.
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'sh.tangled.feed.star',
+          record: {},
+        }),
+      ).toBe('https://tangled.sh/alice.test');
+    });
   });
 
   describe('kipclip / community.lexicon.bookmarks', () => {
