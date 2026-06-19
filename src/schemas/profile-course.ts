@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { datetimeSchema, maxGraphemes, strongRefSchema } from './shared.js';
+import { atUriSchema, datetimeSchema, maxGraphemes, strongRefSchema } from './shared.js';
 
 /** Zod schema for `id.sifa.profile.course` records. */
 export const ProfileCourseRecordSchema = z.object({
@@ -8,6 +8,9 @@ export const ProfileCourseRecordSchema = z.object({
   number: z.string().refine(maxGraphemes(50)).max(500).optional(),
   institution: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   education: strongRefSchema.optional(),
+  // AT-URI of the associated id.sifa.profile.certification record. Plain
+  // at-uri (not a strongRef) so the link tracks the live certification.
+  credential: atUriSchema.optional(),
   createdAt: datetimeSchema,
 });
 

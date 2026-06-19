@@ -190,6 +190,10 @@ export interface ProfileCourse {
   name: string;
   institution?: string;
   number?: string;
+  /** rkey of the associated certification, resolved from the course's
+   * `credential` at-uri. Used to join the course to a certification in the
+   * same profile payload (for the linked-credential date and link). */
+  credentialRkey?: string;
   hidden?: boolean;
 }
 
