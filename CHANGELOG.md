@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.2
+
+### Patch Changes
+
+- 8c03155: Add optional `credential` (at-uri) to `ProfileCourseRecordSchema` and `credentialRkey` to the `ProfileCourse` view type, so a course can reference the certification it earned. Mirrors `id.sifa.profile.course` lexicon 0.7.1.
+
 ## 0.11.1
 
 ### Patch Changes
