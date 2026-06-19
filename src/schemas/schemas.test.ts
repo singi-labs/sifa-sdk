@@ -371,6 +371,23 @@ describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileH
     );
     expect(ProfileCourseRecordSchema.safeParse({ createdAt: NOW }).success).toBe(false);
   });
+
+  it('course: accepts an at-uri credential, rejects a non-at-uri', () => {
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'CS101',
+        credential: 'at://did:plc:abc/id.sifa.profile.certification/xyz',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'CS101',
+        credential: 'not-an-at-uri',
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
 });
 
 describe('EndorsementRecordSchema', () => {
