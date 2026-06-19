@@ -173,7 +173,7 @@
     "jsdom": "29.1.1",
     "prettier": "3.8.4",
     "react": "19.2.7",
-    "react-dom": "19.2.4",
+    "react-dom": "19.2.7",
     "svgo": "4.0.1",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
