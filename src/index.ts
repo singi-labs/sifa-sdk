@@ -129,6 +129,7 @@ export {
   detectPdsProvider,
   formatDistanceToNow,
   formatLocation,
+  formatPresentationDuration,
   formatRelativeTime,
   getDisplayLabel,
   getHandleStem,
@@ -149,6 +150,20 @@ export {
   type PdsProvider,
   type RgbColor,
 } from './format/index.js';
+
+export {
+  parsePresentationDuration,
+  durationFromMinutes,
+  parseIntendedAudiences,
+  stripHtmlToText,
+  normalizePresentationRole,
+  normalizePresentationMode,
+  presentationCsvRowToRecord,
+  presentationDeliveryCsvRowToRecord,
+  type CsvRow,
+  type ParsedPresentation,
+  type ParsedDelivery,
+} from './import/index.js';
 
 export {
   ACTIVITY_VISIBILITY_RULES,
