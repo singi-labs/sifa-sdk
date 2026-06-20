@@ -197,6 +197,49 @@ export interface ProfileCourse {
   hidden?: boolean;
 }
 
+/** A related link on a presentation or delivery, as returned by the AppView. */
+export interface PresentationLinkView {
+  uri: string;
+  label?: string;
+  type?: string;
+}
+
+/** An occasion on which a presentation was delivered (the AppView view-model). */
+export interface ProfilePresentationDelivery {
+  rkey: string;
+  /** rkey of the parent presentation when this delivery references one. */
+  presentationRkey?: string | null;
+  title?: string | null;
+  role?: string | null;
+  eventName?: string | null;
+  /** Day-only date, YYYY-MM-DD. */
+  date?: string | null;
+  location?: string | null;
+  /** Full community.lexicon.calendar.event mode token. */
+  mode?: string | null;
+  /** Full community.lexicon.calendar.event status token. */
+  status?: string | null;
+  links?: PresentationLinkView[];
+  /** at-uri of the linked calendar event, when present. */
+  eventUri?: string | null;
+  hidden?: boolean;
+}
+
+/** A reusable presentation with its deliveries grouped underneath (AppView view-model). */
+export interface ProfilePresentation {
+  rkey: string;
+  title: string;
+  description?: string | null;
+  /** Duration in minutes: a fixed value (min only) or a range. */
+  duration?: { minMinutes: number; maxMinutes?: number } | null;
+  intendedAudiences?: string[];
+  links?: PresentationLinkView[];
+  /** at-uri of a long-form write-up (Leaflet / site.standard document). */
+  writeupUri?: string | null;
+  hidden?: boolean;
+  deliveries?: ProfilePresentationDelivery[];
+}
+
 export interface TrustStat {
   key: string;
   label: string;
@@ -351,5 +394,7 @@ export interface Profile {
   honors?: ProfileHonor[];
   languages?: ProfileLanguage[];
   courses?: ProfileCourse[];
+  presentations?: ProfilePresentation[];
+  presentationDeliveries?: ProfilePresentationDelivery[];
   externalAccounts?: ExternalAccount[];
 }
