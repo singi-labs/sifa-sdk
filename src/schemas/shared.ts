@@ -51,6 +51,17 @@ export const strongRefSchema = z.object({
 });
 
 /**
+ * Reference to a record by AT-URI, with an optional CID. Mirrors
+ * `id.sifa.defs#externalRecordRef`. Unlike a strongRef the CID is optional:
+ * consumers resolve the AT-URI live so the reference tracks edits to the
+ * target, and the CID is a best-effort integrity hint only.
+ */
+export const externalRecordRefSchema = z.object({
+  uri: atUriSchema,
+  cid: cidSchema.optional(),
+});
+
+/**
  * Self-labels shape from `com.atproto.label.defs#selfLabels`. Modelled
  * permissively because clients rarely construct this directly; the AppView
  * handles label validation.

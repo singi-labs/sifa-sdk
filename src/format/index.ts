@@ -1,4 +1,5 @@
 export { formatRelativeTime } from './format-time.js';
+export { formatPresentationDuration } from './format-duration.js';
 export {
   certDateExtractor,
   dateRangeExtractor,
