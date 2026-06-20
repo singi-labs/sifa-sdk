@@ -46,6 +46,18 @@ export {
 export { ProfileHonorRecordSchema, type ProfileHonorRecord } from './profile-honor.js';
 export { ProfileLanguageRecordSchema, type ProfileLanguageRecord } from './profile-language.js';
 export { ProfilePositionRecordSchema, type ProfilePositionRecord } from './profile-position.js';
+export {
+  PresentationDurationSchema,
+  PresentationLinkSchema,
+  ProfilePresentationRecordSchema,
+  type PresentationDuration,
+  type PresentationLink,
+  type ProfilePresentationRecord,
+} from './profile-presentation.js';
+export {
+  ProfilePresentationDeliveryRecordSchema,
+  type ProfilePresentationDeliveryRecord,
+} from './profile-presentation-delivery.js';
 export { ProfileProjectRecordSchema, type ProfileProjectRecord } from './profile-project.js';
 export {
   ProfilePublicationRecordSchema,
@@ -64,6 +76,7 @@ export {
   cidSchema,
   datetimeSchema,
   didSchema,
+  externalRecordRefSchema,
   languageTagSchema,
   maxGraphemes,
   selfLabelsSchema,

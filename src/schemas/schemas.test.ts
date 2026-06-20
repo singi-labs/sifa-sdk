@@ -11,6 +11,8 @@ import {
   ProfileHonorRecordSchema,
   ProfileLanguageRecordSchema,
   ProfilePositionRecordSchema,
+  ProfilePresentationRecordSchema,
+  ProfilePresentationDeliveryRecordSchema,
   ProfileProjectRecordSchema,
   ProfilePublicationRecordSchema,
   ProfileSelfRecordSchema,
@@ -430,5 +432,99 @@ describe('GraphFollowRecordSchema', () => {
     expect(GraphFollowRecordSchema.safeParse({ subject: 'bad', createdAt: NOW }).success).toBe(
       false,
     );
+  });
+});
+
+describe('ProfilePresentationRecordSchema', () => {
+  it('requires title and createdAt', () => {
+    expect(
+      ProfilePresentationRecordSchema.safeParse({ title: 'My talk', createdAt: NOW }).success,
+    ).toBe(true);
+    expect(ProfilePresentationRecordSchema.safeParse({ createdAt: NOW }).success).toBe(false);
+  });
+
+  it('accepts a fixed duration and a min/max range, rejects minMinutes < 1', () => {
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        duration: { minMinutes: 30 },
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        duration: { minMinutes: 20, maxMinutes: 30 },
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        duration: { minMinutes: 0 },
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a duration range where maxMinutes < minMinutes', () => {
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        duration: { minMinutes: 60, maxMinutes: 30 },
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('accepts multiple intendedAudiences, typed links, and a writeupRef with optional cid', () => {
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        intendedAudiences: ['Engineering leaders', 'Beginners'],
+        links: [{ uri: 'https://example.com/slides', type: 'id.sifa.defs#linkSlides' }],
+        writeupRef: { uri: AT_URI },
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+  });
+});
+
+describe('ProfilePresentationDeliveryRecordSchema', () => {
+  it('requires only createdAt and works standalone (eventName/title, no refs)', () => {
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({
+        title: 'My talk',
+        eventName: 'DevConf',
+        date: '2025-09-12',
+        role: 'id.sifa.defs#presenter',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(ProfilePresentationDeliveryRecordSchema.safeParse({ createdAt: NOW }).success).toBe(
+      true,
+    );
+  });
+
+  it('accepts a presentationRef and eventRef without a cid, and community mode/status tokens', () => {
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({
+        presentationRef: { uri: AT_URI },
+        eventRef: { uri: AT_URI, cid: CID },
+        mode: 'community.lexicon.calendar.event#virtual',
+        status: 'community.lexicon.calendar.event#cancelled',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('rejects a date that is not YYYY-MM-DD', () => {
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({ date: '2025-09', createdAt: NOW })
+        .success,
+    ).toBe(false);
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({ date: '2025', createdAt: NOW }).success,
+    ).toBe(false);
   });
 });

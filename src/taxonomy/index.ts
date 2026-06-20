@@ -76,3 +76,21 @@ export {
   type LexiconEntry,
   type TierMeta,
 } from './activity-tiers.js';
+export {
+  PRESENTATION_ROLE_LABELS,
+  PRESENTATION_ROLE_OPTIONS,
+  getPresentationRoleLabel,
+  type PresentationRoleOption,
+} from './presentation-role.js';
+export {
+  PRESENTATION_LINK_TYPE_LABELS,
+  PRESENTATION_LINK_TYPE_OPTIONS,
+  getPresentationLinkTypeLabel,
+  type PresentationLinkTypeOption,
+} from './presentation-link-type.js';
+export {
+  CALENDAR_EVENT_MODE_LABELS,
+  CALENDAR_EVENT_STATUS_LABELS,
+  getCalendarEventModeLabel,
+  getCalendarEventStatusLabel,
+} from './calendar-event.js';
