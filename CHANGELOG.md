@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.3
+
+### Patch Changes
+
+- 7d66262: Add `id.sifa.profile.presentation` and `id.sifa.profile.presentationDelivery` record schemas (the Talks & sessions content and occasion records), the `externalRecordRef` shared schema, presentation role / link-type / calendar-event taxonomy label maps, and a `formatPresentationDuration` helper.
+
 ## 0.11.2
 
 ### Patch Changes
