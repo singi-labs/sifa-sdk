@@ -1,6 +1,10 @@
 export { formatRelativeTime } from './format-time.js';
 export { formatPresentationDuration } from './format-duration.js';
 export {
+  summarizePresentationDeliveries,
+  type PresentationDeliverySummary,
+} from './summarize-deliveries.js';
+export {
   certDateExtractor,
   dateRangeExtractor,
   lexiconDateExtractor,
