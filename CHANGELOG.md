@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.6
+
+### Patch Changes
+
+- f409a06: Add `summarizePresentationDeliveries`: rolls a talk's delivery history into a compact summary (times given, most recent year, keynote count, recent distinct venue sample), excluding cancelled occasions. Powers the collapsed Talks & sessions view on the profile.
+
 ## 0.11.5
 
 ### Patch Changes
