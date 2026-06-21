@@ -146,8 +146,10 @@ export {
   sanitizeHandleInput,
   singleDateExtractor,
   sortByDateDesc,
+  summarizePresentationDeliveries,
   truncateGraphemes,
   type PdsProvider,
+  type PresentationDeliverySummary,
   type RgbColor,
 } from './format/index.js';
 
