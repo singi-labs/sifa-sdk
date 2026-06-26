@@ -1,129 +1,17 @@
 name: AI PR Review
 
-# Self-owned, token-based AI code review (replaces CodeRabbit).
-# Posts a comment + a BLOCKING "AI Review" status check: the check FAILS when a
-# reviewer requests changes (critical/major findings), so merge is gated until
-# they're addressed. Mark "AI Review" as a required check to enforce it.
-#
-# Re-reviews on every push so a flagged PR can recover after fixes. Always posts
-# the status — even on skip/bot/error paths — so a required check never jams the
-# pipeline (the CodeRabbit trap). On reviewer/infra error it FAILS OPEN (success).
-#
-# `deep-review` label (or a large diff) runs a dual general+adversarial pass;
-# `re-review` re-runs on demand. Requires repo/org secret OPENROUTER_API_KEY.
-
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review, labeled]
-
-concurrency:
-  group: ai-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
   pull-requests: write
   statuses: write
 
-env:
-  GENERAL_MODEL: moonshotai/kimi-k2.7-code
-  ADVERSARIAL_MODEL: z-ai/glm-5.2
-
 jobs:
   review:
-    # Skip drafts. On a `labeled` event, only act for our two review labels —
-    # so routine labels don't burn tokens.
-    if: >-
-      ${{ github.event.pull_request.draft == false &&
-      (github.event.action != 'labeled' ||
-       github.event.label.name == 'deep-review' ||
-       github.event.label.name == 're-review') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Scope & fetch diff
-        id: scope
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.pull_request.number }}
-          AUTHOR: ${{ github.event.pull_request.user.login }}
-          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
-        run: |
-          set -euo pipefail
-          case "$AUTHOR" in
-            *"[bot]"|dependabot) echo "skip=true" >> "$GITHUB_OUTPUT"; echo "Skipping: bot author ($AUTHOR)"; exit 0;;
-          esac
-          files=$(gh pr diff "$PR" --name-only)
-          # Trivial = docs / markdown / workflow / lockfiles / snapshots / license
-          nontrivial=$(printf '%s\n' "$files" | grep -vE '(^|/)(docs/|.*\.md$|\.github/|.*\.lock$|.*lock\.json$|.*lock\.ya?ml$|.*\.snap$|LICENSE.*|.*\.txt$)' || true)
-          if [ -z "$(printf '%s' "$nontrivial" | tr -d '[:space:]')" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"; echo "Skipping: only trivial files changed"; exit 0
-          fi
-          echo "skip=false" >> "$GITHUB_OUTPUT"
-          gh pr diff "$PR" --patch > diff.patch
-          lines=$(wc -l < diff.patch)
-          mode=single
-          printf '%s' "$LABELS" | grep -q 'deep-review' && mode=dual || true
-          [ "$lines" -gt 800 ] && mode=dual || true
-          echo "mode=$mode" >> "$GITHUB_OUTPUT"
-          echo "Scoped: mode=$mode, diff lines=$lines"
-
-      - name: Run AI review
-        if: steps.scope.outputs.skip != 'true'
-        id: run
-        continue-on-error: true # never let a reviewer/infra error abort the job
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_REVIEW_MODE: ${{ steps.scope.outputs.mode }}
-          GENERAL_MODEL: ${{ env.GENERAL_MODEL }}
-          ADVERSARIAL_MODEL: ${{ env.ADVERSARIAL_MODEL }}
-          DIFF_FILE: diff.patch
-          STANDARDS_FILE: CLAUDE.md
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-        run: node scripts/ai-review/review.mjs > review.md
-
-      - name: Post review comment
-        if: steps.scope.outputs.skip != 'true' && steps.run.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          body="$(cat review.md)"
-          existing=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
-            --jq '.[] | select(.body | contains("<!-- ai-review -->")) | .id' | head -1)
-          if [ -n "${existing:-}" ]; then
-            gh api -X PATCH "repos/$REPO/issues/comments/$existing" -f body="$body" >/dev/null
-            echo "Updated comment $existing"
-          else
-            gh pr comment "$PR" --body "$body"
-          fi
-
-      - name: Report AI Review status
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SHA: ${{ github.event.pull_request.head.sha }}
-          REPO: ${{ github.repository }}
-          SKIP: ${{ steps.scope.outputs.skip }}
-          OUTCOME: ${{ steps.run.outcome }}
-          VERDICT: ${{ steps.run.outputs.verdict }}
-          SUMMARY: ${{ steps.run.outputs.summary }}
-        run: |
-          set -euo pipefail
-          if [ "$SKIP" = "true" ]; then
-            state=success; desc="Skipped (trivial or bot PR)"
-          elif [ "$OUTCOME" != "success" ]; then
-            # Reviewer or infra error — fail open so our tooling never freezes merges.
-            state=success; desc="Reviewer unavailable — failing open"
-          elif [ "$VERDICT" = "request_changes" ]; then
-            state=failure; desc="Changes requested — ${SUMMARY:-see comment}"
-          else
-            state=success; desc="${SUMMARY:-reviewed}"
-          fi
-          gh api -X POST "repos/$REPO/statuses/$SHA" \
-            -f state="$state" -f context="AI Review" -f description="$desc" >/dev/null
-          echo "AI Review status: $state — $desc"
+    uses: singi-labs/.github/.github/workflows/ai-review-reusable.yml@main
+    secrets: inherit
+    with:
+      profile: backend
