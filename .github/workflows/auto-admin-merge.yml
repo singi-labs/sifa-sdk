@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Admin-merge green maintainer PRs
         env:
-          # Needs a token whose user is a repo/org admin so --admin can bypass
+          # Needs a token whose user is a repo/org admin so the REST merge engages ruleset bypass
           # the review rule. Reuses the PAT the auto-merge workflow already uses.
           GH_TOKEN: ${{ secrets.AUTO_UPDATE_PAT }}
           MAINTAINER: gxjansen
@@ -41,8 +41,8 @@ jobs:
               waiting=$(echo "$pr" | jq '[.statusCheckRollup[]? | select((.status // .state) as $s | $s=="IN_PROGRESS" or $s=="QUEUED" or $s=="PENDING" or $s=="WAITING")] | length')
               if [ "$checks" -gt 0 ] && [ "$bad" -eq 0 ] && [ "$waiting" -eq 0 ]; then
                 echo "All $checks checks green on #$num — admin-merging"
-                gh pr merge "$num" --repo "$GITHUB_REPOSITORY" --squash --admin \
-                  || echo "::warning::admin merge failed for #$num (is AUTO_UPDATE_PAT an admin?)"
+                gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$num/merge" -f merge_method=squash \
+                  || echo "::warning::REST merge failed for #$num (is AUTO_UPDATE_PAT a ruleset bypass actor?)"
               else
                 echo "#$num not ready (checks=$checks bad=$bad waiting=$waiting)"
               fi
