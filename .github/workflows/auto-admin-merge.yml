@@ -1,0 +1,49 @@
+name: Auto-admin-merge maintainer PRs
+
+# Restores fire-and-forget merging for the maintainer's OWN PRs.
+#
+# The "require-review-from-non-admins" ruleset requires a review on main. GitHub
+# auto-merge never uses bypass privileges, and you can't approve your own PR — so
+# native auto-merge can no longer merge the maintainer's solo PRs. This workflow
+# admin-merges (bypass) the maintainer's PRs once every check is green.
+#
+# Contributor PRs are deliberately untouched: they still require a human review
+# before they can merge. Only PRs authored by ${MAINTAINER} are eligible here.
+
+on:
+  check_suite:
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  admin-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Admin-merge green maintainer PRs
+        env:
+          # Needs a token whose user is a repo/org admin so --admin can bypass
+          # the review rule. Reuses the PAT the auto-merge workflow already uses.
+          GH_TOKEN: ${{ secrets.AUTO_UPDATE_PAT }}
+          MAINTAINER: gxjansen
+        run: |
+          set -euo pipefail
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --base main \
+            --json number,author,isDraft,statusCheckRollup \
+            --jq ".[] | select(.author.login==\"$MAINTAINER\") | select(.isDraft==false) | @json" \
+          | while read -r pr; do
+              num=$(echo "$pr" | jq -r '.number')
+              checks=$(echo "$pr"  | jq '[.statusCheckRollup[]?] | length')
+              bad=$(echo "$pr"     | jq '[.statusCheckRollup[]? | select((.conclusion // .state) as $c | $c=="FAILURE" or $c=="ERROR" or $c=="TIMED_OUT" or $c=="CANCELLED" or $c=="ACTION_REQUIRED" or $c=="STARTUP_FAILURE")] | length')
+              waiting=$(echo "$pr" | jq '[.statusCheckRollup[]? | select((.status // .state) as $s | $s=="IN_PROGRESS" or $s=="QUEUED" or $s=="PENDING" or $s=="WAITING")] | length')
+              if [ "$checks" -gt 0 ] && [ "$bad" -eq 0 ] && [ "$waiting" -eq 0 ]; then
+                echo "All $checks checks green on #$num — admin-merging"
+                gh pr merge "$num" --repo "$GITHUB_REPOSITORY" --squash --admin \
+                  || echo "::warning::admin merge failed for #$num (is AUTO_UPDATE_PAT an admin?)"
+              else
+                echo "#$num not ready (checks=$checks bad=$bad waiting=$waiting)"
+              fi
+            done
