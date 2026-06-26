@@ -1,0 +1,4 @@
+# Every change requires review from a code owner.
+# Combined with the "require-review-from-non-admins" ruleset, this forces a
+# maintainer review on contributor PRs while admins keep their bypass.
+* @gxjansen
