@@ -2,13 +2,11 @@ name: Auto-admin-merge maintainer PRs
 
 # Restores fire-and-forget merging for the maintainer's OWN PRs.
 #
-# The "require-review-from-non-admins" ruleset requires a review on main. GitHub
-# auto-merge never uses bypass privileges, and you can't approve your own PR — so
-# native auto-merge can no longer merge the maintainer's solo PRs. This workflow
-# admin-merges (bypass) the maintainer's PRs once every check is green.
-#
-# Contributor PRs are deliberately untouched: they still require a human review
-# before they can merge. Only PRs authored by ${MAINTAINER} are eligible here.
+# The review ruleset requires a review on main; GitHub auto-merge never uses
+# bypass and you can't approve your own PR. This workflow merges the maintainer's
+# green PRs via the REST endpoint (which engages ruleset bypass for an admin
+# token). Contributor PRs are untouched — they still require a human review.
+# Only PRs authored by ${MAINTAINER} are eligible.
 
 on:
   check_suite:
@@ -23,27 +21,31 @@ jobs:
   admin-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Admin-merge green maintainer PRs
+      - name: Merge green maintainer PRs
         env:
-          # Needs a token whose user is a repo/org admin so the REST merge engages ruleset bypass
-          # the review rule. Reuses the PAT the auto-merge workflow already uses.
+          # A token whose user is a ruleset bypass actor (repo/org admin) so the
+          # REST merge engages bypass. Classic `repo`-scope PAT (reads checks + bypass).
           GH_TOKEN: ${{ secrets.AUTO_UPDATE_PAT }}
           MAINTAINER: gxjansen
         run: |
-          set -euo pipefail
-          gh pr list --repo "$GITHUB_REPOSITORY" --state open --base main \
-            --json number,author,isDraft,statusCheckRollup \
-            --jq ".[] | select(.author.login==\"$MAINTAINER\") | select(.isDraft==false) | @json" \
-          | while read -r pr; do
-              num=$(echo "$pr" | jq -r '.number')
-              checks=$(echo "$pr"  | jq '[.statusCheckRollup[]?] | length')
-              bad=$(echo "$pr"     | jq '[.statusCheckRollup[]? | select((.conclusion // .state) as $c | $c=="FAILURE" or $c=="ERROR" or $c=="TIMED_OUT" or $c=="CANCELLED" or $c=="ACTION_REQUIRED" or $c=="STARTUP_FAILURE")] | length')
-              waiting=$(echo "$pr" | jq '[.statusCheckRollup[]? | select((.status // .state) as $s | $s=="IN_PROGRESS" or $s=="QUEUED" or $s=="PENDING" or $s=="WAITING")] | length')
-              if [ "$checks" -gt 0 ] && [ "$bad" -eq 0 ] && [ "$waiting" -eq 0 ]; then
-                echo "All $checks checks green on #$num — admin-merging"
-                gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$num/merge" -f merge_method=squash \
-                  || echo "::warning::REST merge failed for #$num (is AUTO_UPDATE_PAT a ruleset bypass actor?)"
-              else
-                echo "#$num not ready (checks=$checks bad=$bad waiting=$waiting)"
-              fi
-            done
+          set -uo pipefail
+          # List maintainer PRs WITHOUT the deep statusCheckRollup query so one
+          # stale/unreadable PR can't break the whole batch.
+          nums=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --base main \
+            --json number,author,isDraft \
+            --jq ".[] | select(.author.login==\"$MAINTAINER\" and .isDraft==false) | .number")
+          for num in $nums; do
+            # Read each PR's checks in isolation; a read failure skips that PR only.
+            roll=$(gh pr view "$num" --repo "$GITHUB_REPOSITORY" --json statusCheckRollup --jq '.statusCheckRollup' 2>/dev/null) \
+              || { echo "#$num: cannot read checks — skipping"; continue; }
+            checks=$(printf '%s' "$roll"  | jq '[.[]?] | length')
+            bad=$(printf '%s' "$roll"     | jq '[.[]? | select((.conclusion // .state) as $c | $c=="FAILURE" or $c=="ERROR" or $c=="TIMED_OUT" or $c=="CANCELLED" or $c=="ACTION_REQUIRED" or $c=="STARTUP_FAILURE")] | length')
+            waiting=$(printf '%s' "$roll" | jq '[.[]? | select((.status // .state) as $s | $s=="IN_PROGRESS" or $s=="QUEUED" or $s=="PENDING" or $s=="WAITING")] | length')
+            if [ "${checks:-0}" -gt 0 ] && [ "${bad:-1}" -eq 0 ] && [ "${waiting:-1}" -eq 0 ]; then
+              echo "All $checks checks green on #$num — merging"
+              gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$num/merge" -f merge_method=squash \
+                || echo "::warning::REST merge failed for #$num (is AUTO_UPDATE_PAT a ruleset bypass actor?)"
+            else
+              echo "#$num not ready (checks=${checks:-?} bad=${bad:-?} waiting=${waiting:-?})"
+            fi
+          done
