@@ -56,6 +56,23 @@ export const APP_CATEGORY_MAP = {
   // is io.atcr.repo.page (a published repository with a markdown README);
   // manifests and tags are low-level artifacts excluded backend-side.
   atcr: 'Code',
+  // Batch onboard — apps surfaced on high-volume profiles. Each gives its
+  // collections a named pill + category icon instead of a raw NSID.
+  mcp: 'Code', // app.mcp.server — published MCP servers (name/tools/language)
+  userinput: 'Social', // app.userinput — roadmap discussions + replies
+  minomobi: 'Music', // com.minomobi.music.composition — authored music
+  voxport: 'Video', // com.voxport.podcast.series — podcast series
+  badges: 'Verification', // community.lexicon.badge.award — signed earned credentials
+  atvouch: 'Endorsements', // dev.atvouch.graph.vouch — trust vouches
+  watsm: 'Code', // io.calabro.watsm.program — published WASM programs
+  plonk: 'Pastes', // li.plonk.paste — text pastes
+  alternativeproto: 'Links', // net.alternativeproto.submission — app-directory listings
+  papili: 'Links', // one.papili.post — link posts
+  vit: 'Code', // org.v-it.skill — published agent skills
+  lifepo: 'Social', // st.lifepo.lifeEvent — life-event timeline
+  streamthought: 'Posts', // stream.thought.blip — microblog thoughts
+  waow: 'Photos', // tech.waow.* — doodl drawings (dominant), polls, slides
+  lichen: 'Pages', // wiki.lichen — wiki notes + wikis
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)

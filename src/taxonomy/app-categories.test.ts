@@ -64,6 +64,12 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('kevara')).toBe('Events');
     expect(categoryForApp('marque')).toBe('Domains');
     expect(categoryForApp('atcr')).toBe('Code');
+    expect(categoryForApp('mcp')).toBe('Code');
+    expect(categoryForApp('waow')).toBe('Photos');
+    expect(categoryForApp('lichen')).toBe('Pages');
+    expect(categoryForApp('badges')).toBe('Verification');
+    expect(categoryForApp('atvouch')).toBe('Endorsements');
+    expect(categoryForApp('plonk')).toBe('Pastes');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

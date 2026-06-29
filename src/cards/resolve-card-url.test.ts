@@ -429,6 +429,18 @@ describe('resolveCardUrl', () => {
       expect(getAppIdForCollection('io.atcr.repo.page')).toBe('atcr');
       expect(getAppIdForCollection('io.atcr.manifest')).toBe('atcr');
     });
+
+    it('maps batch-onboarded app prefixes to their app ids', () => {
+      expect(getAppIdForCollection('app.mcp.server')).toBe('mcp');
+      expect(getAppIdForCollection('app.userinput.discussion')).toBe('userinput');
+      expect(getAppIdForCollection('community.lexicon.badge.award')).toBe('badges');
+      expect(getAppIdForCollection('dev.atvouch.graph.vouch')).toBe('atvouch');
+      expect(getAppIdForCollection('li.plonk.paste')).toBe('plonk');
+      expect(getAppIdForCollection('tech.waow.doodl.drawing')).toBe('waow');
+      expect(getAppIdForCollection('tech.waow.slides.deck')).toBe('waow');
+      expect(getAppIdForCollection('wiki.lichen.note')).toBe('lichen');
+      expect(getAppIdForCollection('stream.thought.blip')).toBe('streamthought');
+    });
   });
 
   describe('tangled slug validation (regression: sifa-web#1071/#1072)', () => {
