@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.7
+
+### Patch Changes
+
+- faba377: Add ATCR (io.atcr) to the app category map and URL patterns. Published
+  container repositories (io.atcr.repo.page) resolve to https://atcr.io/r/{handle}/{rkey}.
+
 ## 0.11.6
 
 ### Patch Changes
