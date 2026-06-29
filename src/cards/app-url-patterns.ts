@@ -154,6 +154,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // domain doesn't resolve and there's no per-record viewer. Recognized so
     // the speaker-directory card renders with the right pill, but non-clickable.
   },
+  atcr: {
+    // ATCR repositories live at /r/{handle}/{repository}, where the rkey of an
+    // io.atcr.repo.page record is the repository name. Verified live: GET
+    // /r/{handle}/{rkey} and /u/{handle} both return 200.
+    urlPattern: 'https://atcr.io/r/{handle}/{rkey}',
+    profileUrlPattern: 'https://atcr.io/u/{handle}',
+  },
 });
 
 /**
@@ -204,4 +211,5 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['quest.atmo.', 'atmorsvp'],
   ['community.opensocial.', 'opensocial'],
   ['is.kevara.', 'kevara'],
+  ['io.atcr.', 'atcr'],
 ];

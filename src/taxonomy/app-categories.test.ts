@@ -63,6 +63,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('opensocial')).toBe('Social');
     expect(categoryForApp('kevara')).toBe('Events');
     expect(categoryForApp('marque')).toBe('Domains');
+    expect(categoryForApp('atcr')).toBe('Code');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
