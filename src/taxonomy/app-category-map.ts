@@ -52,6 +52,10 @@ export const APP_CATEGORY_MAP = {
   // Marque domain registrar — a domain registration record is a dated
   // identity/ownership action, surfaced as a "registered a domain" event.
   marque: 'Domains',
+  // ATCR (io.atcr) — distributed OCI container registry. The portfolio entry
+  // is io.atcr.repo.page (a published repository with a markdown README);
+  // manifests and tags are low-level artifacts excluded backend-side.
+  atcr: 'Code',
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)

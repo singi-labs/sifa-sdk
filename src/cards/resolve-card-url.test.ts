@@ -388,6 +388,18 @@ describe('resolveCardUrl', () => {
         }),
       ).toBe('https://leaflet.pub/3mmsrvz3rtc2d');
     });
+
+    it('atcr repo.page: handle + rkey (repository name) pattern', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'io.atcr.repo.page',
+          uri: 'at://did:plc:abc/io.atcr.repo.page/relay',
+          rkey: 'relay',
+          record: {},
+        }),
+      ).toBe('https://atcr.io/r/alice.test/relay');
+    });
   });
 
   describe('getAppIdForCollection: newly added prefixes', () => {
@@ -411,6 +423,11 @@ describe('resolveCardUrl', () => {
 
     it('maps is.kevara.* to kevara', () => {
       expect(getAppIdForCollection('is.kevara.directory.speaker')).toBe('kevara');
+    });
+
+    it('maps io.atcr.* to atcr', () => {
+      expect(getAppIdForCollection('io.atcr.repo.page')).toBe('atcr');
+      expect(getAppIdForCollection('io.atcr.manifest')).toBe('atcr');
     });
   });
 
