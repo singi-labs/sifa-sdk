@@ -1,0 +1,21 @@
+name: Dependency Diff
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - '**/package.json'
+      - '**/package-lock.json'
+      - '**/pnpm-lock.yaml'
+
+concurrency:
+  group: dependency-diff-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-diff:
+    uses: singi-labs/.github/.github/workflows/dependency-diff-reusable.yml@main
