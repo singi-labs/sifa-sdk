@@ -70,6 +70,9 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('badges')).toBe('Verification');
     expect(categoryForApp('atvouch')).toBe('Endorsements');
     expect(categoryForApp('plonk')).toBe('Pastes');
+    expect(categoryForApp('kich')).toBe('Recipes');
+    expect(categoryForApp('aetherdocs')).toBe('Slides');
+    expect(categoryForApp('margin')).toBe('Research');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

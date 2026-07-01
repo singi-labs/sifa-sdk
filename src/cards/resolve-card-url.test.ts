@@ -18,6 +18,9 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('com.kipclip.bookmark')).toBe('kipclip');
     expect(getAppIdForCollection('at.margin.bookmark')).toBe('margin');
     expect(getAppIdForCollection('at.margin.annotation')).toBe('margin');
+    expect(getAppIdForCollection('at.margin.note')).toBe('margin');
+    expect(getAppIdForCollection('os.aether.docs.presentation')).toBe('aetherdocs');
+    expect(getAppIdForCollection('io.kich.recipe.recipe')).toBe('kich');
     expect(getAppIdForCollection('buzz.bookhive.book')).toBe('bookhive');
     expect(getAppIdForCollection('social.grain.gallery')).toBe('grain');
     expect(getAppIdForCollection('link.pastesphere.snippet')).toBe('pastesphere');
@@ -165,6 +168,59 @@ describe('resolveCardUrl', () => {
           record: { body: 'note' },
         }),
       ).toBe('https://margin.at');
+    });
+  });
+
+  describe('margin note', () => {
+    it('returns record.target.source (the annotated page) as the per-item URL', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'at.margin.note',
+          record: {
+            target: { source: 'https://karlbode.com/article' },
+            body: { value: 'a note', format: 'text/plain' },
+          },
+        }),
+      ).toBe('https://karlbode.com/article');
+    });
+
+    it('falls back to the margin app URL when target.source is missing', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'at.margin.note',
+          record: { body: { value: 'a note' } },
+        }),
+      ).toBe('https://margin.at');
+    });
+  });
+
+  describe('kich recipe', () => {
+    it('links to the Kich recipe page by rkey, not record.url (import source)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'io.kich.recipe.recipe',
+          uri: 'at://did:plc:abc/io.kich.recipe.recipe/3ml4zymkkx2do',
+          rkey: '3ml4zymkkx2do',
+          record: { name: 'Mountain Fog Lemonade', url: 'https://youtube.com/watch?v=x' },
+        }),
+      ).toBe('https://kich.io/recipes/3ml4zymkkx2do');
+    });
+  });
+
+  describe('aether docs presentation', () => {
+    it('falls back to the author Aether OS space (no public per-record viewer)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'os.aether.docs.presentation',
+          uri: 'at://did:plc:abc/os.aether.docs.presentation/3mgdzgxhr6k2r',
+          rkey: '3mgdzgxhr6k2r',
+          record: { title: 'The AT Protocol' },
+        }),
+      ).toBe('https://aetheros.computer/alice.test');
     });
   });
 

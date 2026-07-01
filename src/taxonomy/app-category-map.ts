@@ -73,13 +73,16 @@ export const APP_CATEGORY_MAP = {
   streamthought: 'Posts', // stream.thought.blip — microblog thoughts
   waow: 'Photos', // tech.waow.* — doodl drawings (dominant), polls, slides
   lichen: 'Pages', // wiki.lichen — wiki notes + wikis
+  // Onboard from aramzs.xyz profile audit — new named pills.
+  aetherdocs: 'Slides', // os.aether.docs.presentation — authored slide decks
+  kich: 'Recipes', // io.kich.recipe.recipe — authored recipes
+  margin: 'Research', // at.margin.{note,annotation} — web-annotation notes with a body
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',
   kipclip: 'Links',
   statusphere: 'Social',
-  margin: 'Research',
 } as const satisfies Record<string, AppCategoryId>;
 
 export type KnownAppId = keyof typeof APP_CATEGORY_MAP;

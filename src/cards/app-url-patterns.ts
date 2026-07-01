@@ -161,6 +161,19 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     urlPattern: 'https://atcr.io/r/{handle}/{rkey}',
     profileUrlPattern: 'https://atcr.io/u/{handle}',
   },
+  kich: {
+    // Kich recipe viewer. Verified: GET /recipes/{rkey} returns 200 (the SPA
+    // renders the recipe by rkey); /recipe/{rkey} 404s. No public per-handle
+    // profile page, so the profile fallback points at the app root.
+    urlPattern: 'https://kich.io/recipes/{rkey}',
+    profileUrlPattern: 'https://kich.io',
+  },
+  aetherdocs: {
+    // Aether OS is a browser OS — presentations open inside it and there's no
+    // public per-record viewer. The card embeds the deck from the record; the
+    // outbound link points at the author's Aether OS space (mirrors aetheros).
+    profileUrlPattern: 'https://aetheros.computer/{handle}',
+  },
 });
 
 /**
@@ -228,4 +241,7 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['stream.thought.', 'streamthought'],
   ['tech.waow.', 'waow'],
   ['wiki.lichen.', 'lichen'],
+  // Onboard from aramzs.xyz profile audit.
+  ['os.aether.', 'aetherdocs'],
+  ['io.kich.recipe.recipe', 'kich'],
 ];

@@ -163,8 +163,9 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     return null;
   }
 
-  // Margin annotation: target.source -> fall back to margin app URL
-  if (collection === 'at.margin.annotation') {
+  // Margin note / annotation: both are W3C web annotations whose `target.source`
+  // is the annotated page URL. Link to that source; fall back to the margin app.
+  if (collection === 'at.margin.annotation' || collection === 'at.margin.note') {
     const target = record.target;
     if (target != null && typeof target === 'object') {
       const source = stringOrNull((target as Record<string, unknown>).source);
@@ -251,6 +252,14 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     if (siteUrl && path) return `${siteUrl}${path}`;
     if (siteUrl) return siteUrl;
     // Fall through to generic record.url / patterns
+  }
+
+  // Kich recipe: always link to the Kich recipe page. record.url is the
+  // *source* the recipe was imported from (a YouTube video, a blog), which the
+  // card shows as secondary attribution — not the primary link. Must run before
+  // the generic record.url fallback below, which would otherwise hijack it.
+  if (collection === 'io.kich.recipe.recipe') {
+    return patternUrl('kich', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
   // --- Generic fallbacks ---
