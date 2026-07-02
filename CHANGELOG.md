@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.10
+
+### Patch Changes
+
+- 5f66b6d: Add recipe.exchange (`exchange.recipe.recipe`) to the app category map and URL patterns. Recipes link to the recipe.exchange viewer by rkey; the profile fallback points at the per-handle author page.
+
 ## 0.11.9
 
 ### Patch Changes
