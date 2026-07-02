@@ -3,12 +3,15 @@ import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } 
 import type { QuotedPostResult } from './quoted-posts.js';
 
 /**
- * Reachability of an activity card's external destination, as reported by
- * sifa-api's `/api/activity` enrichment (see sifa-api `url-health-checker`).
+ * Liveness of an activity card's destination, as reported by sifa-api's
+ * `/api/activity` enrichment (see sifa-api `url-health-checker`). How liveness
+ * is measured depends on the card's health strategy (see `resolveCardHealth`):
+ * first-party permalinks (`record`) are checked by record existence on the PDS;
+ * foreign/derived targets (`url`) by HTTP reachability (HEAD, then GET).
  *
- *   ok           -- last HEAD returned 2xx/3xx
- *   broken       -- confirmed dead (>=2 consecutive 4xx, or >=5 consecutive 5xx)
- *   unverifiable -- 403/429/network error; anti-bot or rate-limited, NOT dead
+ *   ok           -- record exists, or the URL returned 2xx/3xx
+ *   broken       -- confirmed dead (record deleted, or >=2 consecutive 4xx / >=5 consecutive 5xx)
+ *   unverifiable -- 403/429, PDS unreachable, or network error; NOT dead
  *   unknown      -- newly seen, not yet checked
  *
  * Consumers should only suppress UI on `'broken'`. All other values
