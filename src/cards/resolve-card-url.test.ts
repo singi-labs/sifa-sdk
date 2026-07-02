@@ -21,6 +21,7 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('at.margin.note')).toBe('margin');
     expect(getAppIdForCollection('os.aether.docs.presentation')).toBe('aetherdocs');
     expect(getAppIdForCollection('io.kich.recipe.recipe')).toBe('kich');
+    expect(getAppIdForCollection('exchange.recipe.recipe')).toBe('recipe');
     expect(getAppIdForCollection('buzz.bookhive.book')).toBe('bookhive');
     expect(getAppIdForCollection('social.grain.gallery')).toBe('grain');
     expect(getAppIdForCollection('link.pastesphere.snippet')).toBe('pastesphere');
@@ -207,6 +208,23 @@ describe('resolveCardUrl', () => {
           record: { name: 'Mountain Fog Lemonade', url: 'https://youtube.com/watch?v=x' },
         }),
       ).toBe('https://kich.io/recipes/3ml4zymkkx2do');
+    });
+  });
+
+  describe('recipe.exchange recipe', () => {
+    it('links to the recipe.exchange page by rkey, not attribution.url (source)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'exchange.recipe.recipe',
+          uri: 'at://did:plc:abc/exchange.recipe.recipe/01JGBGH49C2EH1564TNWZREANW',
+          rkey: '01JGBGH49C2EH1564TNWZREANW',
+          record: {
+            name: 'Stovetop Popcorn',
+            attribution: { url: 'https://moll.dev/notes/popcorn-recipe/' },
+          },
+        }),
+      ).toBe('https://recipe.exchange/recipes/01JGBGH49C2EH1564TNWZREANW');
     });
   });
 

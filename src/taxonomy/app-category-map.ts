@@ -77,6 +77,8 @@ export const APP_CATEGORY_MAP = {
   aetherdocs: 'Slides', // os.aether.docs.presentation — authored slide decks
   kich: 'Recipes', // io.kich.recipe.recipe — authored recipes
   margin: 'Research', // at.margin.{note,annotation} — web-annotation notes with a body
+  // Onboard from moll.dev profile audit.
+  recipe: 'Recipes', // exchange.recipe.recipe — authored recipes on recipe.exchange
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
