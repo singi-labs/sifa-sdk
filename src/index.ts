@@ -175,11 +175,14 @@ export {
   getAppIdForCollection,
   hasAdultContent,
   isVisibleActivityItem,
+  resolveCardHealth,
   resolveCardUrl,
   type ActivityItemForUrl,
   type ActivityLabel,
   type AdultContentLabel,
   type AppUrlPatterns,
+  type CardHealth,
+  type CardHealthStrategy,
 } from './cards/index.js';
 
 export {

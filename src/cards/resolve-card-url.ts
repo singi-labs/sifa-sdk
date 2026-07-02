@@ -36,6 +36,40 @@ export function getAppIdForCollection(collection: string): string {
   return collection;
 }
 
+/**
+ * How the activity-card health scanner should verify a card is still live.
+ *
+ * - `record`: the URL is a first-party permalink that renders THIS record
+ *   (e.g. a Bluesky post at bsky.app, a tangled repo, a smokesignal event).
+ *   The authoritative liveness check is "does the record still exist on its
+ *   PDS" — `com.atproto.repo.getRecord` on the item's own at-uri — NOT an
+ *   HTTP probe of the rendering app. Rendering apps (bsky.app, tangled.sh)
+ *   frequently answer HEAD with 404/405 while serving GET fine, which
+ *   false-positives every permalink as broken.
+ * - `url`: the URL is a foreign or derived target — a bookmarked page, an
+ *   external publisher, a *different* record's page, or a profile page.
+ *   Its reachability is independent of this record, so probe the URL.
+ * - `none`: the card has no clickable URL; nothing to check.
+ */
+export type CardHealthStrategy = 'record' | 'url' | 'none';
+
+export interface CardHealth {
+  /** The clickable URL the card renders. Null when non-clickable. */
+  url: string | null;
+  /** How the scanner should verify liveness. See {@link CardHealthStrategy}. */
+  strategy: CardHealthStrategy;
+}
+
+/** Build a `url`-strategy result (foreign/derived/profile target). */
+function urlHealth(url: string | null): CardHealth {
+  return url ? { url, strategy: 'url' } : { url: null, strategy: 'none' };
+}
+
+/** Build a `record`-strategy result (self-permalink of this record). */
+function recordHealth(url: string | null): CardHealth {
+  return url ? { url, strategy: 'record' } : { url: null, strategy: 'none' };
+}
+
 function interpolate(pattern: string, vars: Record<string, string | undefined>): string | null {
   let result = pattern;
   for (const [key, value] of Object.entries(vars)) {
@@ -65,23 +99,29 @@ function shouldUseItemPattern(appId: string, collection: string | undefined): bo
   return true;
 }
 
-function patternUrl(
+/**
+ * Resolve a pattern-based URL, reporting which tier produced it:
+ * - `item`: a per-item permalink (renders this specific record) -> record-checkable.
+ * - `profile`: the app's profile page (not this record) -> url-checkable.
+ * - `null`: no pattern applied.
+ */
+function patternHealth(
   appId: string,
   vars: { handle?: string; did?: string; rkey?: string },
   collection?: string,
-): string | null {
+): CardHealth {
   const patterns = APP_URL_PATTERNS[appId];
-  if (!patterns) return null;
+  if (!patterns) return { url: null, strategy: 'none' };
 
   if (patterns.urlPattern && shouldUseItemPattern(appId, collection)) {
     const url = interpolate(patterns.urlPattern, vars);
-    if (url) return url;
+    if (url) return recordHealth(url);
   }
   if (patterns.profileUrlPattern) {
     const url = interpolate(patterns.profileUrlPattern, vars);
-    if (url) return url;
+    if (url) return urlHealth(url);
   }
-  return null;
+  return { url: null, strategy: 'none' };
 }
 
 /**
@@ -107,16 +147,14 @@ function parseAtUri(atUri: string): { did: string; rkey: string } | null {
 }
 
 /**
- * Resolve the canonical clickable URL for an activity item — the same URL
- * the activity-card UI in sifa-web renders.
+ * Resolve the canonical clickable URL for an activity item **and** how its
+ * liveness should be checked — the single source of truth shared by:
+ * - sifa-web activity cards (which render `.url`), and
+ * - the sifa-api link-health scanner (which switches on `.strategy`: probe the
+ *   record's PDS for `record`-strategy cards, probe the URL for `url`).
  *
- * Returns `null` when no link is appropriate (the card would render
- * non-clickable, or hide itself entirely).
- *
- * Used by:
- * - sifa-web activity cards (single source of truth for href)
- * - sifa-api external-URL health scanner (must match what the UI links to,
- *   so broken-link detection lines up with what users actually click)
+ * See {@link CardHealthStrategy} for why self-permalinks (bsky posts, etc.)
+ * must be verified by record existence rather than an HTTP probe of the app.
  *
  * Resolution order:
  * 1. Per-collection bespoke logic (tangled, kipclip, margin, smokesignal
@@ -125,7 +163,7 @@ function parseAtUri(atUri: string): { did: string; rkey: string } | null {
  * 2. Generic `record.url` field (used by hyperboards and similar).
  * 3. Pattern-based per-item / profile URL from the registry.
  */
-export function resolveCardUrl(item: ActivityItemForUrl): string | null {
+export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
   const { collection, record, uri, rkey, authorDid, authorHandle } = item;
   const appId = getAppIdForCollection(collection);
 
@@ -137,30 +175,30 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
   // `sh.tangled.repo`; other tangled collections (e.g. feed.star) use TID rkeys
   // that are not repo slugs. Only when the slug is valid — multi-segment
   // aggregate names (whitespace, slashes, special chars) would 404. See
-  // sifa-web#1071.
+  // sifa-web#1071. The repo record itself is the card's subject, so it is
+  // verified by the record's existence.
   if (collection.startsWith('sh.tangled.')) {
     const repoName = stringOrNull(record.name) ?? (collection === 'sh.tangled.repo' ? rkey : null);
     if (repoName && authorHandle && TANGLED_REPO_SLUG.test(repoName)) {
-      return `https://tangled.sh/${authorHandle}/${repoName}`;
+      return recordHealth(`https://tangled.sh/${authorHandle}/${repoName}`);
     }
-    return patternUrl('tangled', { handle: authorHandle, did: authorDid, rkey }, collection);
+    return patternHealth('tangled', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
-  // Kipclip / community.lexicon.bookmarks: the bookmark subject IS the URL
+  // Kipclip / community.lexicon.bookmarks: the bookmark subject IS the URL —
+  // a foreign page whose reachability is independent of the bookmark record.
   if (
     collection.startsWith('com.kipclip.') ||
     collection.startsWith('community.lexicon.bookmarks.')
   ) {
     const subject = stringOrNull(record.subject);
-    if (subject) return subject;
-    return patternUrl('kipclip', { handle: authorHandle, did: authorDid, rkey });
+    if (subject) return urlHealth(subject);
+    return patternHealth('kipclip', { handle: authorHandle, did: authorDid, rkey });
   }
 
   // Margin bookmark: card returns null entirely without record.source
   if (collection === 'at.margin.bookmark') {
-    const source = stringOrNull(record.source);
-    if (source) return source;
-    return null;
+    return urlHealth(stringOrNull(record.source));
   }
 
   // Margin note / annotation: both are W3C web annotations whose `target.source`
@@ -169,12 +207,13 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     const target = record.target;
     if (target != null && typeof target === 'object') {
       const source = stringOrNull((target as Record<string, unknown>).source);
-      if (source) return source;
+      if (source) return urlHealth(source);
     }
-    return APP_URL_PATTERNS.margin?.profileUrlPattern ?? null;
+    return urlHealth(APP_URL_PATTERNS.margin?.profileUrlPattern ?? null);
   }
 
-  // Smokesignal RSVP: parse the linked event uri
+  // Smokesignal RSVP: parse the linked event uri. The URL points at a
+  // *different* record (the event), so probe the URL, not this RSVP record.
   if (collection === 'community.lexicon.calendar.rsvp') {
     const subject = record.subject;
     if (subject != null && typeof subject === 'object') {
@@ -182,100 +221,114 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
       if (subjectUri) {
         const parsed = parseAtUri(subjectUri);
         if (parsed) {
-          return `https://smokesignal.events/${parsed.did}/${parsed.rkey}`;
+          return urlHealth(`https://smokesignal.events/${parsed.did}/${parsed.rkey}`);
         }
       }
     }
-    return null;
+    return { url: null, strategy: 'none' };
   }
 
-  // Smokesignal event itself: use item's own uri
+  // Smokesignal event itself: use item's own uri -> self-permalink.
   if (collection === 'community.lexicon.calendar.event') {
     const parsed = parseAtUri(uri);
     if (parsed) {
-      return `https://smokesignal.events/${parsed.did}/${parsed.rkey}`;
+      return recordHealth(`https://smokesignal.events/${parsed.did}/${parsed.rkey}`);
     }
-    return null;
+    return { url: null, strategy: 'none' };
   }
 
-  // atmo.rsvp event itself: use item's own uri -> /p/{did}/e/{rkey}
+  // atmo.rsvp event itself: use item's own uri -> self-permalink.
   if (collection === 'quest.atmo.event') {
     const parsed = parseAtUri(uri);
     if (parsed) {
-      return `https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`;
+      return recordHealth(`https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`);
     }
-    return null;
+    return { url: null, strategy: 'none' };
   }
 
   // atmo.rsvp checkin: parse the linked event uri (record.event) and link to
-  // that event's page (mirrors smokesignal rsvp). The checkin's own rkey is
+  // that event's page (mirrors smokesignal rsvp). The URL points at a
+  // *different* record (the event), so probe the URL. The checkin's own rkey is
   // not addressable, so without a valid event reference it's non-clickable.
   if (collection === 'quest.atmo.checkin') {
     const eventUri = stringOrNull(record.event);
     if (eventUri) {
       const parsed = parseAtUri(eventUri);
       if (parsed) {
-        return `https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`;
+        return urlHealth(`https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`);
       }
     }
-    return null;
+    return { url: null, strategy: 'none' };
   }
 
   // atstore reviews: no per-review URL exists on atstore.fyi, and user profile
   // pages don't exist either. Deep-link to the reviewed product instead.
   // The slug comes from record.listingMeta (enriched by sifa-api from the
-  // review's `subject` at-uri → fyi.atstore.listing.detail record).
+  // review's `subject` at-uri → fyi.atstore.listing.detail record). The product
+  // page is a *different* subject, so probe the URL.
   if (collection === 'fyi.atstore.listing.review') {
     const listingMeta = record.listingMeta;
     if (listingMeta != null && typeof listingMeta === 'object') {
       const slug = stringOrNull((listingMeta as Record<string, unknown>).slug);
-      if (slug) return `https://atstore.fyi/products/${encodeURIComponent(slug)}`;
+      if (slug) return urlHealth(`https://atstore.fyi/products/${encodeURIComponent(slug)}`);
     }
-    return APP_URL_PATTERNS.atstore?.profileUrlPattern ?? null;
+    return urlHealth(APP_URL_PATTERNS.atstore?.profileUrlPattern ?? null);
   }
 
   // Crate content: link to the canonical published location the maker
-  // recorded (a YouTube/podcast/personal-site URL). Crate is an authoring
-  // dashboard with no public per-record viewer, so `note` records — which
-  // carry no canonicalUrl — render non-clickable (null).
+  // recorded (a YouTube/podcast/personal-site URL) — a foreign page. Crate is
+  // an authoring dashboard with no public per-record viewer, so `note`
+  // records — which carry no canonicalUrl — render non-clickable (null).
   if (collection === 'social.crate.content') {
-    return stringOrNull(record.canonicalUrl);
+    return urlHealth(stringOrNull(record.canonicalUrl));
   }
   if (collection === 'social.crate.note') {
-    return null;
+    return { url: null, strategy: 'none' };
   }
 
-  // Standard documents: siteUrl + path (or just siteUrl)
+  // Standard documents: siteUrl + path (or just siteUrl) — an external site.
   if (collection.startsWith('site.standard.')) {
     const siteUrl = stringOrNull(record.siteUrl);
     const path = stringOrNull(record.path);
-    if (siteUrl && path) return `${siteUrl}${path}`;
-    if (siteUrl) return siteUrl;
+    if (siteUrl && path) return urlHealth(`${siteUrl}${path}`);
+    if (siteUrl) return urlHealth(siteUrl);
     // Fall through to generic record.url / patterns
   }
 
   // Kich recipe: always link to the Kich recipe page. record.url is the
   // *source* the recipe was imported from (a YouTube video, a blog), which the
   // card shows as secondary attribution — not the primary link. Must run before
-  // the generic record.url fallback below, which would otherwise hijack it.
+  // the generic record.url fallback below, which would otherwise hijack it. The
+  // recipe page is a first-party permalink for this record.
   if (collection === 'io.kich.recipe.recipe') {
-    return patternUrl('kich', { handle: authorHandle, did: authorDid, rkey }, collection);
+    return patternHealth('kich', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
   // recipe.exchange: same shape as Kich — the record's attribution.url points
   // at the original source (a blog/video), not the app. Always link to the
   // recipe.exchange page. Must run before the generic fallback below.
   if (collection === 'exchange.recipe.recipe') {
-    return patternUrl('recipe', { handle: authorHandle, did: authorDid, rkey }, collection);
+    return patternHealth('recipe', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
   // --- Generic fallbacks ---
 
-  // record.url is a common ad-hoc per-item URL (hyperboards, etc.)
+  // record.url is a common ad-hoc per-item URL (hyperboards, etc.). It is an
+  // arbitrary foreign URL, so probe it directly.
   const recordUrl = stringOrNull(record.url);
-  if (recordUrl) return recordUrl;
+  if (recordUrl) return urlHealth(recordUrl);
 
   // Pattern-based fallback. Pass `collection` so app-specific guards (bluesky
-  // restricting /post/{rkey} to app.bsky.feed.post) can apply.
-  return patternUrl(appId, { handle: authorHandle, did: authorDid, rkey }, collection);
+  // restricting /post/{rkey} to app.bsky.feed.post) can apply. The tier
+  // (per-item vs profile) decides record- vs url-strategy.
+  return patternHealth(appId, { handle: authorHandle, did: authorDid, rkey }, collection);
+}
+
+/**
+ * Resolve the canonical clickable URL for an activity item — the same URL
+ * the activity-card UI in sifa-web renders. Thin wrapper over
+ * {@link resolveCardHealth}; returns `null` when no link is appropriate.
+ */
+export function resolveCardUrl(item: ActivityItemForUrl): string | null {
+  return resolveCardHealth(item).url;
 }
