@@ -168,6 +168,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     urlPattern: 'https://kich.io/recipes/{rkey}',
     profileUrlPattern: 'https://kich.io',
   },
+  recipe: {
+    // recipe.exchange viewer. Verified: GET /recipes/{rkey} returns 200 (rkey
+    // alone; no did needed) and /profiles/{handle} returns 200 for the author
+    // page. /recipe/{rkey} 404s.
+    urlPattern: 'https://recipe.exchange/recipes/{rkey}',
+    profileUrlPattern: 'https://recipe.exchange/profiles/{handle}',
+  },
   aetherdocs: {
     // Aether OS is a browser OS — presentations open inside it and there's no
     // public per-record viewer. The card embeds the deck from the record; the
@@ -244,4 +251,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   // Onboard from aramzs.xyz profile audit.
   ['os.aether.', 'aetherdocs'],
   ['io.kich.recipe.recipe', 'kich'],
+  // Onboard from moll.dev profile audit.
+  ['exchange.recipe.recipe', 'recipe'],
 ];

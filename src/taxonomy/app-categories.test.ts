@@ -73,6 +73,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('kich')).toBe('Recipes');
     expect(categoryForApp('aetherdocs')).toBe('Slides');
     expect(categoryForApp('margin')).toBe('Research');
+    expect(categoryForApp('recipe')).toBe('Recipes');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

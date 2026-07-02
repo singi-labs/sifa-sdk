@@ -262,6 +262,13 @@ export function resolveCardUrl(item: ActivityItemForUrl): string | null {
     return patternUrl('kich', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
+  // recipe.exchange: same shape as Kich — the record's attribution.url points
+  // at the original source (a blog/video), not the app. Always link to the
+  // recipe.exchange page. Must run before the generic fallback below.
+  if (collection === 'exchange.recipe.recipe') {
+    return patternUrl('recipe', { handle: authorHandle, did: authorDid, rkey }, collection);
+  }
+
   // --- Generic fallbacks ---
 
   // record.url is a common ad-hoc per-item URL (hyperboards, etc.)
