@@ -59,12 +59,26 @@ describe('stripHtmlToText', () => {
 });
 
 describe('normalizePresentationRole', () => {
-  it('maps friendly values to tokens and passes through tokens/unknowns', () => {
+  it('maps friendly values and existing tokens to tokens', () => {
     expect(normalizePresentationRole('presenter')).toBe('id.sifa.defs#presenter');
+    expect(normalizePresentationRole('speaker')).toBe('id.sifa.defs#presenter');
     expect(normalizePresentationRole('Keynote')).toBe('id.sifa.defs#keynote');
     expect(normalizePresentationRole('id.sifa.defs#host')).toBe('id.sifa.defs#host');
-    expect(normalizePresentationRole('emcee')).toBe('emcee');
     expect(normalizePresentationRole('')).toBeUndefined();
+  });
+
+  it('maps free-text and compound roles to the nearest token by keyword', () => {
+    expect(normalizePresentationRole('Event host/moderator')).toBe('id.sifa.defs#host');
+    expect(normalizePresentationRole('Organizer & co-host/moderator')).toBe('id.sifa.defs#host');
+    expect(normalizePresentationRole('Podcast livestream host')).toBe('id.sifa.defs#host');
+    expect(normalizePresentationRole('emcee')).toBe('id.sifa.defs#host');
+    expect(normalizePresentationRole('Panellist')).toBe('id.sifa.defs#panelist');
+    expect(normalizePresentationRole('Workshop facilitator')).toBe('id.sifa.defs#workshop');
+  });
+
+  it('drops an organizer-only or otherwise unrecognized role rather than storing it raw', () => {
+    expect(normalizePresentationRole('main event organizer')).toBeUndefined();
+    expect(normalizePresentationRole('attendee')).toBeUndefined();
   });
 });
 

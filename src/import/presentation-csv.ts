@@ -95,12 +95,29 @@ const ROLE_TOKENS: Record<string, string> = {
   host: 'id.sifa.defs#host',
 };
 
-/** Map a friendly role value to its token; passes through an existing token or an unknown value. */
+/**
+ * Map a friendly role value to its token. An existing token passes through.
+ * Free-text or compound values (e.g. "Organizer & co-host/moderator") are
+ * mapped to the nearest token by keyword. An organizer-only value has no
+ * speaking token, so it, and any other unrecognized value, is dropped rather
+ * than stored raw -- matching normalizePresentationMode's drop-unknown
+ * behavior, so a fixed role dropdown never has to render arbitrary strings.
+ */
 export function normalizePresentationRole(value: string | undefined): string | undefined {
   const v = clean(value).toLowerCase();
   if (!v) return undefined;
   if (v.startsWith('id.sifa.defs#')) return v;
-  return ROLE_TOKENS[v] ?? v;
+  const exact = ROLE_TOKENS[v];
+  if (exact) return exact;
+  if (v.includes('keynote')) return ROLE_TOKENS.keynote;
+  if (v.includes('workshop') || v.includes('masterclass') || v.includes('training'))
+    return ROLE_TOKENS.workshop;
+  if (v.includes('panel')) return ROLE_TOKENS.panelist;
+  if (v.includes('host') || v.includes('moderat') || v.includes('emcee') || v.includes('chair'))
+    return ROLE_TOKENS.host;
+  if (v.includes('speaker') || v.includes('present') || v.includes('talk'))
+    return ROLE_TOKENS.presenter;
+  return undefined;
 }
 
 const MODE_FRAGMENTS: Record<string, string> = {
