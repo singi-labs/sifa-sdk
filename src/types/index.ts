@@ -204,11 +204,26 @@ export interface PresentationLinkView {
   type?: string;
 }
 
+/**
+ * A co-speaker on a delivery, hydrated from a stored DID to a profile card.
+ * Any atproto account; `hasSifaProfile` is true when they have a claimed Sifa
+ * profile (vs an unclaimed atproto account that still renders at /p/<handle>).
+ */
+export interface CoSpeaker {
+  did: string;
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+  hasSifaProfile?: boolean;
+}
+
 /** An occasion on which a presentation was delivered (the AppView view-model). */
 export interface ProfilePresentationDelivery {
   rkey: string;
   /** rkey of the parent presentation when this delivery references one. */
   presentationRkey?: string | null;
+  /** Co-speakers at this occasion, hydrated from the stored DIDs. */
+  coSpeakers?: CoSpeaker[];
   title?: string | null;
   role?: string | null;
   eventName?: string | null;

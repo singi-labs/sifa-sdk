@@ -28,6 +28,11 @@ export const ProfilePresentationDeliveryRecordSchema = z.object({
   links: z.array(PresentationLinkSchema).max(20).optional(),
   // Optional reference to a community.lexicon.calendar.event for this occasion.
   eventRef: externalRecordRefSchema.optional(),
+  // DIDs of co-speakers who presented alongside the author at this occasion.
+  coSpeakers: z
+    .array(z.string().regex(/^did:[a-z]+:[^\s]+$/, 'must be a DID'))
+    .max(20)
+    .optional(),
   createdAt: datetimeSchema,
 });
 

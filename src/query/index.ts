@@ -57,6 +57,7 @@ export {
   type VerifyExternalAccountResult,
 } from './fetchers/external-accounts.js';
 export { createEndorsement, type EndorsementInput } from './fetchers/endorsements.js';
+export { fetchResolveActor } from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
 export {

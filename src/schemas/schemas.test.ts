@@ -506,6 +506,27 @@ describe('ProfilePresentationDeliveryRecordSchema', () => {
     );
   });
 
+  it('accepts co-speaker DIDs and rejects a too-long or non-DID list', () => {
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({
+        coSpeakers: ['did:plc:abc123', 'did:web:example.com'],
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({
+        coSpeakers: ['not-a-did'],
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({
+        coSpeakers: Array.from({ length: 21 }, (_, i) => `did:plc:x${i}`),
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
+
   it('accepts a presentationRef and eventRef without a cid, and community mode/status tokens', () => {
     expect(
       ProfilePresentationDeliveryRecordSchema.safeParse({

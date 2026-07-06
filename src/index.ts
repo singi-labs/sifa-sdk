@@ -32,6 +32,7 @@ export type {
   ProfileOverrideSource,
   ProfilePosition,
   ProfilePresentation,
+  CoSpeaker,
   ProfilePresentationDelivery,
   ProfileProject,
   ProfilePublication,
