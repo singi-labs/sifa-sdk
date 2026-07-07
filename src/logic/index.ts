@@ -18,3 +18,11 @@ export {
 } from './profile-dimensions.js';
 
 export { pickPrimaryPosition, type PrimaryPositionCandidate } from './primary-position.js';
+
+export { isPseudoEmployer } from './pseudo-employer.js';
+export {
+  entityDisambiguationLabel,
+  searchResultDisambiguation,
+  entityResultKey,
+  type DisambiguationFields,
+} from './entity-disambiguation.js';
