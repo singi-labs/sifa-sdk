@@ -5,22 +5,45 @@ import { z } from 'zod';
  * selection, and grow-on-demand import-search endpoints on sifa-api.
  */
 
-/** A single typeahead row. `source` distinguishes a curated entity from a
- * People Data Labs staging row; the disambiguation fields (domain/country/
- * parentName) drive the dropdown display. */
-export const EntitySearchResultSchema = z.object({
-  source: z.enum(['entity', 'pdl']),
-  /** Present when `source === 'entity'`. */
-  entityId: z.number().int().positive().optional(),
-  /** Present when `source === 'pdl'`. */
-  pdlId: z.string().optional(),
+/**
+ * A nullable string constrained to an http(s) URL. Rejects `javascript:` and
+ * other script-bearing schemes at the SDK boundary so a hostile API response
+ * cannot smuggle an XSS payload into a rendered `href`/`src`. Note: Wikidata
+ * entity URIs are canonically `http://`, so both http and https are allowed.
+ */
+const httpUrlNullable = z
+  .string()
+  .refine((s) => /^https?:\/\//i.test(s), { message: 'must be an http(s) URL' })
+  .nullable();
+
+const searchResultCommon = {
   kind: z.string(),
   name: z.string(),
   domain: z.string().nullable(),
   country: z.string().nullable(),
-  logoUrl: z.string().nullable(),
+  logoUrl: httpUrlNullable,
   parentName: z.string().nullable(),
-});
+};
+
+/**
+ * A single typeahead row. Discriminated on `source`: a curated `entity` row
+ * carries `entityId`, a `pdl` staging row carries `pdlId`. The union guarantees
+ * the identifier for the row's source is always present, so a stable React key
+ * can never be `entity:undefined`. The disambiguation fields
+ * (domain/country/parentName) drive the dropdown display.
+ */
+export const EntitySearchResultSchema = z.discriminatedUnion('source', [
+  z.object({
+    source: z.literal('entity'),
+    entityId: z.number().int().positive(),
+    ...searchResultCommon,
+  }),
+  z.object({
+    source: z.literal('pdl'),
+    pdlId: z.string().min(1),
+    ...searchResultCommon,
+  }),
+]);
 export type EntitySearchResult = z.infer<typeof EntitySearchResultSchema>;
 
 /** Response of `GET /api/entities/search`. */
@@ -30,14 +53,18 @@ export const EntitySearchResponseSchema = z.object({
 });
 export type EntitySearchResponse = z.infer<typeof EntitySearchResponseSchema>;
 
-/** Body of `POST /api/entities/select`: promote a PDL row or bump an entity. */
+/**
+ * Body of `POST /api/entities/select`: promote a PDL row OR bump an entity.
+ * Exactly one of `entityId`/`pdlId` must be present -- supplying both is
+ * ambiguous (the server would have to silently pick one) and is rejected.
+ */
 export const EntitySelectRequestSchema = z
   .object({
     entityId: z.number().int().positive().optional(),
     pdlId: z.string().min(1).optional(),
   })
-  .refine((v) => v.entityId != null || v.pdlId != null, {
-    message: 'entityId or pdlId is required',
+  .refine((v) => (v.entityId != null) !== (v.pdlId != null), {
+    message: 'exactly one of entityId or pdlId is required',
   });
 export type EntitySelectRequest = z.infer<typeof EntitySelectRequestSchema>;
 
@@ -50,7 +77,7 @@ export const EntitySelectResponseSchema = z.object({
   kind: z.string(),
   canonicalName: z.string(),
   domain: z.string().nullable(),
-  entityRef: z.string().nullable(),
+  entityRef: httpUrlNullable,
 });
 export type EntitySelectResponse = z.infer<typeof EntitySelectResponseSchema>;
 

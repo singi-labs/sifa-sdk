@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  EntitySearchResultSchema,
   EntitySearchResponseSchema,
   EntitySelectRequestSchema,
   EntitySelectResponseSchema,
@@ -64,6 +65,41 @@ describe('EntitySelectRequestSchema', () => {
 
   it('rejects an empty body', () => {
     expect(() => EntitySelectRequestSchema.parse({})).toThrow();
+  });
+
+  it('rejects supplying both entityId and pdlId (mutually exclusive)', () => {
+    expect(() => EntitySelectRequestSchema.parse({ entityId: 5, pdlId: 'abc' })).toThrow();
+  });
+});
+
+describe('EntitySearchResultSchema discriminated union', () => {
+  it('requires entityId when source is entity', () => {
+    expect(() =>
+      EntitySearchResultSchema.parse({
+        source: 'entity',
+        kind: 'org',
+        name: 'X',
+        domain: null,
+        country: null,
+        logoUrl: null,
+        parentName: null,
+      }),
+    ).toThrow();
+  });
+
+  it('rejects a javascript: scheme in logoUrl', () => {
+    expect(() =>
+      EntitySearchResultSchema.parse({
+        source: 'entity',
+        entityId: 1,
+        kind: 'org',
+        name: 'X',
+        domain: null,
+        country: null,
+        logoUrl: 'javascript:alert(1)',
+        parentName: null,
+      }),
+    ).toThrow();
   });
 });
 
