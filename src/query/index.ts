@@ -103,6 +103,7 @@ export {
   type SearchResponse,
   type SkillSearchResult,
 } from './fetchers/search.js';
+export { fetchEntitySearch, selectEntity, importSearchEntities } from './fetchers/entities.js';
 export {
   fetchFeaturedProfile,
   fetchSimilarProfiles,
@@ -286,6 +287,13 @@ export {
   useSearchProfiles,
   useSkillSuggestions,
 } from './hooks/use-search.js';
+export {
+  useEntitySearch,
+  useSelectEntity,
+  useImportSearchEntities,
+  useDebouncedValue,
+  type UseEntitySearchOptions,
+} from './hooks/use-entity-search.js';
 export {
   useFeaturedProfile,
   useSimilarProfiles,

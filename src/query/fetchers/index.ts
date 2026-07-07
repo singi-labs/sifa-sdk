@@ -214,4 +214,6 @@ export {
   type NetworkMapResponse,
 } from './network-map.js';
 
+export { fetchEntitySearch, selectEntity, importSearchEntities } from './entities.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';

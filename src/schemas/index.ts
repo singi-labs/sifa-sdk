@@ -2,6 +2,18 @@ export {
   EndorsementConfirmationRecordSchema,
   type EndorsementConfirmationRecord,
 } from './endorsement-confirmation.js';
+export {
+  EntitySearchResultSchema,
+  EntitySearchResponseSchema,
+  EntitySelectRequestSchema,
+  EntitySelectResponseSchema,
+  EntityImportSearchResponseSchema,
+  type EntitySearchResult,
+  type EntitySearchResponse,
+  type EntitySelectRequest,
+  type EntitySelectResponse,
+  type EntityImportSearchResponse,
+} from './entity.js';
 export { EndorsementRecordSchema, type EndorsementRecord } from './endorsement.js';
 export {
   GraphFollowRecordSchema,

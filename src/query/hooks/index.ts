@@ -133,4 +133,12 @@ export { useMyRoadmapVotes, useRoadmapVotes } from './use-roadmap.js';
 export { useCastRoadmapVote, useRetractRoadmapVote } from './use-roadmap-mutations.js';
 export { useDeleteAccount, useResetProfile } from './use-destructive.js';
 
+export {
+  useEntitySearch,
+  useSelectEntity,
+  useImportSearchEntities,
+  useDebouncedValue,
+  type UseEntitySearchOptions,
+} from './use-entity-search.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';

@@ -35,6 +35,11 @@ export const sifaQueryKeys = {
     filters: () => ['sifa', 'search', 'filters'] as const,
   },
 
+  entity: {
+    all: () => ['sifa', 'entity'] as const,
+    search: (query: string, limit: number) => ['sifa', 'entity', 'search', query, limit] as const,
+  },
+
   discovery: {
     all: () => ['sifa', 'discovery'] as const,
     similar: (did: string, limit: number) => ['sifa', 'discovery', 'similar', did, limit] as const,
@@ -121,6 +126,8 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.search.canonicalSkills>
   | ReturnType<typeof sifaQueryKeys.search.skills>
   | ReturnType<typeof sifaQueryKeys.search.filters>
+  | ReturnType<typeof sifaQueryKeys.entity.all>
+  | ReturnType<typeof sifaQueryKeys.entity.search>
   | ReturnType<typeof sifaQueryKeys.discovery.all>
   | ReturnType<typeof sifaQueryKeys.discovery.similar>
   | ReturnType<typeof sifaQueryKeys.discovery.suggestions>
