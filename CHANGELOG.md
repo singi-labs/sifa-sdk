@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.14
+
+### Patch Changes
+
+- a1c9507: Add the organization entity-resolution layer for #159: Zod schemas for the search / select / import-search payloads (`schemas/entity`), the pseudo-employer matcher and disambiguation-display helpers (`logic`), and the query layer — `fetchEntitySearch` / `selectEntity` / `importSearchEntities` fetchers plus the debounced `useEntitySearch` hook and `useSelectEntity` / `useImportSearchEntities` mutations (`query`).
+
 ## 0.11.13
 
 ### Patch Changes
