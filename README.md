@@ -89,6 +89,49 @@ pnpm lint
 pnpm typecheck
 ```
 
+### Testing your changes
+
+For SDK logic in isolation (schemas, formatters, taxonomies, fetchers), write a
+test and run the watcher. No consumer app needed:
+
+```bash
+pnpm test:watch
+```
+
+To test a change end-to-end inside a consumer (sifa-web, sifa-api), link your
+local build in. The SDK ships its compiled `dist/`, not source, so keep a build
+running while you edit:
+
+```bash
+pnpm dev   # tsup --watch, rebuilds dist/ on save
+```
+
+Then point the consumer at your checkout. For a pnpm consumer (sifa-web), an
+override is more reproducible across installs than a bare `pnpm link`:
+
+```jsonc
+// consumer package.json
+"pnpm": { "overrides": { "@singi-labs/sifa-sdk": "link:../sifa-sdk" } }
+```
+
+then `pnpm install`. For an npm consumer (sifa-api), `npm link` works.
+
+`react` and `@tanstack/react-query` are optional peer dependencies. If a linked
+build throws "Invalid hook call" or a missing QueryClient, the consumer is
+resolving two copies of them: run `pnpm dedupe`, or add an override pinning both
+to a single version. Only the `./query/hooks` export needs React, so non-React
+consumers like sifa-api never hit this.
+
+For a publish-faithful check with no watch, pack a tarball instead of linking:
+
+```bash
+pnpm build && pnpm pack   # produces singi-labs-sifa-sdk-x.y.z.tgz
+```
+
+then `pnpm add ./singi-labs-sifa-sdk-x.y.z.tgz` in the consumer. This installs
+exactly what would publish (respects `files: ["dist"]`), with no symlink
+resolution quirks.
+
 Standards:
 
 - Strict TypeScript -- `strict: true`, no `any`
