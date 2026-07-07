@@ -16,6 +16,12 @@ export interface SkillRef {
 export interface ProfilePosition {
   rkey: string;
   company: string;
+  /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) written when the user
+   * picks an organization from the resolver typeahead. Absent for free-text or
+   * independent positions (#159).
+   */
+  entityRef?: string;
   title: string;
   description?: string;
   startedAt: string;
