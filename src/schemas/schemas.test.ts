@@ -335,6 +335,32 @@ describe('ProfilePublicationRecordSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('accepts an optional subtitle', () => {
+    expect(
+      ProfilePublicationRecordSchema.safeParse({
+        title: 'Improving the open cluster census',
+        subtitle: 'III. Using cluster masses to create a cleaned catalogue',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('is valid without a subtitle', () => {
+    expect(
+      ProfilePublicationRecordSchema.safeParse({ title: 'A Paper', createdAt: NOW }).success,
+    ).toBe(true);
+  });
+
+  it('rejects a subtitle over the length limit', () => {
+    expect(
+      ProfilePublicationRecordSchema.safeParse({
+        title: 'A Paper',
+        subtitle: 'x'.repeat(2001),
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
 });
 
 describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileHonorRecordSchema, ProfileProjectRecordSchema, ProfileCourseRecordSchema', () => {
