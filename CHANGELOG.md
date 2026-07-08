@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.16
+
+### Patch Changes
+
+- 4f7ff13: Make `ProfilePosition.company` optional in the type, aligning it with the record schema (`ProfilePositionRecordSchema.company` is already `.optional()`) and the lexicon. Lets consumers represent self-employed / freelance / independent positions that omit a company name.
+
 ## 0.11.15
 
 ### Patch Changes
