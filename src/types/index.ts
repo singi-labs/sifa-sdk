@@ -15,7 +15,11 @@ export interface SkillRef {
 
 export interface ProfilePosition {
   rkey: string;
-  company: string;
+  /**
+   * Optional: omitted for self-employed / freelance / independent positions.
+   * The lexicon and the record schema already make company optional.
+   */
+  company?: string;
   /**
    * Portable org entity identifier (Wikidata/ROR/LEI URI) written when the user
    * picks an organization from the resolver typeahead. Absent for free-text or
