@@ -13,6 +13,7 @@ export type PublicationAuthor = z.infer<typeof PublicationAuthorSchema>;
 /** Zod schema for `id.sifa.profile.publication` records. */
 export const ProfilePublicationRecordSchema = z.object({
   title: z.string().min(1).refine(maxGraphemes(200)).max(2000),
+  subtitle: z.string().refine(maxGraphemes(200)).max(2000).optional(),
   publisher: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   url: uriSchema.optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),

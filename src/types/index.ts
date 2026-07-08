@@ -127,6 +127,7 @@ export interface PublicationContributor {
 export interface ProfilePublication {
   rkey: string;
   title: string;
+  subtitle?: string;
   publisher?: string;
   date?: string;
   url?: string;
