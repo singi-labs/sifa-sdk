@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.18
+
+### Patch Changes
+
+- 7c4a42d: Add `formatCompanyName`: best-effort title-case for company display names. PDL-sourced names are stored all-lowercase ("spryker"); this capitalizes them for display while leaving already-cased names (ROR/Wikidata) untouched.
+
 ## 0.11.17
 
 ### Patch Changes
