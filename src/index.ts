@@ -128,6 +128,7 @@ export {
   countryCodeToFlag,
   dateRangeExtractor,
   detectPdsProvider,
+  formatCompanyName,
   formatDistanceToNow,
   formatLocation,
   formatPresentationDuration,
