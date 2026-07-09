@@ -79,11 +79,14 @@ jobs:
         with:
           node-version: 26
 
-      # Trusted-publisher OIDC publish auth requires npm >=11.6.0.
-      # Pin to latest npm so publishes work regardless of which 26.x
-      # patch the setup-node cache resolves to.
-      - name: Upgrade npm for trusted publishing
-        run: npm install -g --ignore-scripts npm@latest
+      # Trusted-publisher OIDC publish auth requires npm >=11.6.0. Pin to the
+      # newest 11.x rather than @latest: npm 12.0.0 broke `npm publish
+      # --provenance` with "Cannot find module 'sigstore'" (its provenance path
+      # can no longer resolve sigstore), which fails every trusted-publishing
+      # release. 11.9.0 keeps OIDC + provenance working. Revisit once a 12.x
+      # patch restores provenance.
+      - name: Pin npm for trusted publishing
+        run: npm install -g --ignore-scripts npm@11.9.0
 
       # Install only the changeset CLI globally — no project deps and no
       # lifecycle scripts run in this job. The full dep graph stays in the
