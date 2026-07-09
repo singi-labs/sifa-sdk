@@ -1,3 +1,4 @@
+export { formatCompanyName } from './company-name.js';
 export { formatRelativeTime } from './format-time.js';
 export { formatPresentationDuration } from './format-duration.js';
 export {
