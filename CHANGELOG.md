@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.19
+
+### Patch Changes
+
+- a2b1b04: Add `classifyEntityRef` / `isLinked` anchor-quality predicates for a position's entityRef pointer (registry / sifa / unlinked), so surfaces tier the company-link indicator consistently (#159).
+
 ## 0.11.18
 
 ### Patch Changes
