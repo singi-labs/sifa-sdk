@@ -140,6 +140,7 @@ export {
   lexiconDateExtractor,
   limitCombiningMarks,
   meetsContrastAA,
+  normalizeCompanyKey,
   parseLocationString,
   pdsProviderFromApi,
   relativeLuminance,
