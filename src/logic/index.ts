@@ -26,3 +26,9 @@ export {
   entityResultKey,
   type DisambiguationFields,
 } from './entity-disambiguation.js';
+export {
+  classifyEntityRef,
+  isLinked,
+  ENTITY_REF_ANCHORS,
+  type EntityRefAnchor,
+} from './entity-ref-anchor.js';

@@ -211,12 +211,16 @@ export {
   entityDisambiguationLabel,
   searchResultDisambiguation,
   entityResultKey,
+  classifyEntityRef,
+  isLinked,
+  ENTITY_REF_ANCHORS,
   type DimensionKey,
   type DimensionMap,
   type PrimaryPositionCandidate,
   type ProfileCompletion,
   type ProfileDimensionInputs,
   type DisambiguationFields,
+  type EntityRefAnchor,
 } from './logic/index.js';
 
 export {
