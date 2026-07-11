@@ -86,3 +86,43 @@ export const EntityImportSearchResponseSchema = z.object({
   results: z.array(EntitySearchResultSchema),
 });
 export type EntityImportSearchResponse = z.infer<typeof EntityImportSearchResponseSchema>;
+
+/**
+ * Body of the domain grow-on-demand endpoints (`POST /api/entities/resolve-domain`
+ * and `POST /api/entities/mint-domain`). The server re-validates the value as a
+ * registrable domain; 253 is the max DNS name length.
+ */
+export const EntityResolveDomainRequestSchema = z.object({
+  domain: z.string().min(1).max(253),
+});
+export type EntityResolveDomainRequest = z.infer<typeof EntityResolveDomainRequestSchema>;
+
+/**
+ * Response of `POST /api/entities/resolve-domain` (grow-on-demand Branch 1). Any
+ * notable companies whose official website is the domain, imported from Wikidata.
+ * `canMint` is true when nothing notable matched AND the domain is eligible for
+ * the user-initiated mint-from-domain path -- it drives the "Add <domain>"
+ * affordance.
+ */
+export const EntityResolveDomainResponseSchema = z.object({
+  results: z.array(EntitySearchResultSchema),
+  canMint: z.boolean(),
+});
+export type EntityResolveDomainResponse = z.infer<typeof EntityResolveDomainResponseSchema>;
+
+/**
+ * Response of `POST /api/entities/mint-domain` (grow-on-demand Branch 2). The
+ * linkable entity minted from (or already resolved for) the domain. A non-2xx
+ * status (e.g. the domain is not mintable, a confusable look-alike, or the site
+ * yielded nothing usable) surfaces as a thrown error, not a null result.
+ *
+ * `pending` is true when the entity is a fresh hidden-pending mint: the
+ * requesting user's own link resolves to it immediately, but it stays out of
+ * other users' typeahead + aggregation until an admin approves it. Clients should
+ * reflect this ("added -- pending review") rather than "added & live".
+ */
+export const EntityMintDomainResponseSchema = z.object({
+  result: EntitySearchResultSchema,
+  pending: z.boolean(),
+});
+export type EntityMintDomainResponse = z.infer<typeof EntityMintDomainResponseSchema>;

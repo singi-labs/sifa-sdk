@@ -3,10 +3,14 @@ import {
   EntitySearchResponseSchema,
   EntitySelectResponseSchema,
   EntityImportSearchResponseSchema,
+  EntityResolveDomainResponseSchema,
+  EntityMintDomainResponseSchema,
   type EntitySearchResponse,
   type EntitySearchResult,
   type EntitySelectRequest,
   type EntitySelectResponse,
+  type EntityResolveDomainResponse,
+  type EntityMintDomainResponse,
 } from '../../schemas/entity.js';
 
 const EMPTY_SEARCH: EntitySearchResponse = { results: [], hasMore: false };
@@ -68,4 +72,45 @@ export async function importSearchEntities(
     ...options,
   });
   return EntityImportSearchResponseSchema.parse(data).results;
+}
+
+/**
+ * Grow-on-demand by domain, Branch 1: when a domain-shaped typeahead query
+ * misses locally, resolve any notable company whose official website is that
+ * domain (Wikidata reverse P856), importing the matches. Read-only w.r.t.
+ * minting. `canMint` tells the caller whether to offer the user-initiated
+ * "Add <domain>" affordance. Requires a session.
+ */
+export async function resolveEntityDomain(
+  config: SifaApiConfig,
+  domain: string,
+  options: ApiFetchOptions = {},
+): Promise<EntityResolveDomainResponse> {
+  const data = await apiFetch<unknown>(config, '/api/entities/resolve-domain', {
+    method: 'POST',
+    body: { domain },
+    credentials: 'include',
+    ...options,
+  });
+  return EntityResolveDomainResponseSchema.parse(data);
+}
+
+/**
+ * Grow-on-demand by domain, Branch 2 (user-initiated): mint a crawled-tier
+ * entity from the domain's own homepage (or resolve it to a notable company if
+ * one exists). Throws on a non-2xx response (domain not mintable, or the site
+ * yielded nothing usable). Requires a session.
+ */
+export async function mintEntityDomain(
+  config: SifaApiConfig,
+  domain: string,
+  options: ApiFetchOptions = {},
+): Promise<EntityMintDomainResponse> {
+  const data = await apiFetch<unknown>(config, '/api/entities/mint-domain', {
+    method: 'POST',
+    body: { domain },
+    credentials: 'include',
+    ...options,
+  });
+  return EntityMintDomainResponseSchema.parse(data);
 }

@@ -50,6 +50,13 @@ export interface ProfilePosition {
 export interface ProfileEducation {
   rkey: string;
   institution: string;
+  /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) written when the user
+   * links the institution to a resolved organization (#159/#241). Absent for
+   * free-text entries. Mirrors `ProfilePosition.entityRef`; the AppView sends it
+   * for display (the "Linked" badge).
+   */
+  entityRef?: string;
   degree?: string;
   fieldOfStudy?: string;
   description?: string;
@@ -109,6 +116,12 @@ export interface ProfileCertification {
   rkey: string;
   name: string;
   issuingOrg: string;
+  /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) linking the issuing
+   * organization to a resolved entity (#159/#241). Absent for free-text entries.
+   * Mirrors `ProfilePosition.entityRef`; the AppView sends it for display.
+   */
+  entityRef?: string;
   issueDate?: string;
   expiryDate?: string;
   credentialUrl?: string;
@@ -173,6 +186,12 @@ export interface ProfilePublication {
 export interface ProfileVolunteering {
   rkey: string;
   organization: string;
+  /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) linking the
+   * organization to a resolved entity (#159/#241). Absent for free-text entries.
+   * Mirrors `ProfilePosition.entityRef`; the AppView sends it for display.
+   */
+  entityRef?: string;
   role?: string;
   cause?: string;
   startDate?: string;
@@ -185,6 +204,12 @@ export interface ProfileHonor {
   rkey: string;
   title: string;
   issuer?: string;
+  /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) linking the issuer to a
+   * resolved entity (#159/#241). Absent for free-text entries. Mirrors
+   * `ProfilePosition.entityRef`; the AppView sends it for display.
+   */
+  entityRef?: string;
   date?: string;
   description?: string;
   hidden?: boolean;
@@ -256,6 +281,12 @@ export interface ProfileCourse {
   rkey: string;
   name: string;
   institution?: string;
+  /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) linking the institution
+   * to a resolved entity (#159/#241). Absent for free-text entries. Mirrors
+   * `ProfilePosition.entityRef`; the AppView sends it for display.
+   */
+  entityRef?: string;
   number?: string;
   /** rkey of the associated certification, resolved from the course's
    * `credential` at-uri. Used to join the course to a certification in the
