@@ -2,9 +2,14 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
   SIFA_SDK_VERSION,
+  INVOLVEMENT_KIND_OPTIONS,
+  PROFILE_INVOLVEMENT_NSID,
+  getArtifactLinkKindLabel,
+  getInvolvementKindHeading,
   type Endorsement,
   type LanguageProficiency,
   type Profile,
+  type ProfileInvolvement,
   type ProfilePosition,
 } from './index.js';
 
@@ -63,6 +68,22 @@ describe('exported types', () => {
     expectTypeOf<LanguageProficiency>().toEqualTypeOf<
       'elementary' | 'limited_working' | 'professional_working' | 'full_professional' | 'native'
     >();
+  });
+
+  it('re-exports the involvement taxonomy + schema symbols from the main entry', () => {
+    expect(PROFILE_INVOLVEMENT_NSID).toBe('id.sifa.profile.involvement');
+    expect(getInvolvementKindHeading('id.sifa.defs#involvementOpenSource')).toBe('Open Source');
+    expect(getArtifactLinkKindLabel('pull-request')).toBe('Pull request');
+    expect(INVOLVEMENT_KIND_OPTIONS).toHaveLength(5);
+  });
+
+  it('ProfileInvolvement carries kind and links with the rung-2 signal', () => {
+    const involvement: ProfileInvolvement = {
+      rkey: 'abc',
+      kind: 'id.sifa.defs#involvementOpenSource',
+      links: [{ url: 'https://github.com/x/y/pull/1', verified: true, verifiedPlatform: 'github' }],
+    };
+    expect(involvement.links?.[0]?.verified).toBe(true);
   });
 
   it('Endorsement requires endorser identity and createdAt', () => {
