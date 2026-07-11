@@ -86,3 +86,37 @@ export const EntityImportSearchResponseSchema = z.object({
   results: z.array(EntitySearchResultSchema),
 });
 export type EntityImportSearchResponse = z.infer<typeof EntityImportSearchResponseSchema>;
+
+/**
+ * Body of the domain grow-on-demand endpoints (`POST /api/entities/resolve-domain`
+ * and `POST /api/entities/mint-domain`). The server re-validates the value as a
+ * registrable domain; 253 is the max DNS name length.
+ */
+export const EntityResolveDomainRequestSchema = z.object({
+  domain: z.string().min(1).max(253),
+});
+export type EntityResolveDomainRequest = z.infer<typeof EntityResolveDomainRequestSchema>;
+
+/**
+ * Response of `POST /api/entities/resolve-domain` (grow-on-demand Branch 1). Any
+ * notable companies whose official website is the domain, imported from Wikidata.
+ * `canMint` is true when nothing notable matched AND the domain is eligible for
+ * the user-initiated mint-from-domain path -- it drives the "Add <domain>"
+ * affordance.
+ */
+export const EntityResolveDomainResponseSchema = z.object({
+  results: z.array(EntitySearchResultSchema),
+  canMint: z.boolean(),
+});
+export type EntityResolveDomainResponse = z.infer<typeof EntityResolveDomainResponseSchema>;
+
+/**
+ * Response of `POST /api/entities/mint-domain` (grow-on-demand Branch 2). The
+ * linkable entity minted from (or already resolved for) the domain. A non-2xx
+ * status (e.g. the domain is not mintable, or the site yielded nothing usable)
+ * surfaces as a thrown error, not a null result.
+ */
+export const EntityMintDomainResponseSchema = z.object({
+  result: EntitySearchResultSchema,
+});
+export type EntityMintDomainResponse = z.infer<typeof EntityMintDomainResponseSchema>;

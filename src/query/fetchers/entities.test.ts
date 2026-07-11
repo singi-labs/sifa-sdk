@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchEntitySearch, selectEntity, importSearchEntities } from './entities.js';
+import {
+  fetchEntitySearch,
+  selectEntity,
+  importSearchEntities,
+  resolveEntityDomain,
+  mintEntityDomain,
+} from './entities.js';
 import { type SifaApiConfig } from '../client.js';
 
 function jsonFetch(body: unknown, status = 200): typeof fetch {
@@ -96,5 +102,63 @@ describe('importSearchEntities', () => {
     const res = await importSearchEntities({ ...config, fetch: fetchImpl }, '');
     expect(res).toEqual([]);
     expect((fetchImpl as unknown as { mock: { calls: unknown[] } }).mock.calls).toHaveLength(0);
+  });
+});
+
+describe('resolveEntityDomain', () => {
+  it('POSTs the domain and parses results + canMint', async () => {
+    const fetchImpl = jsonFetch({
+      results: [
+        {
+          source: 'entity',
+          entityId: 42,
+          kind: 'org',
+          name: 'Randstad',
+          domain: null,
+          country: 'NL',
+          logoUrl: null,
+          parentName: null,
+        },
+      ],
+      canMint: false,
+    });
+    const res = await resolveEntityDomain({ ...config, fetch: fetchImpl }, 'randstad.com');
+    expect(res.results[0]?.name).toBe('Randstad');
+    expect(res.canMint).toBe(false);
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/entities/resolve-domain');
+    expect(init.method).toBe('POST');
+    expect(init.credentials).toBe('include');
+    expect(JSON.parse(init.body as string)).toEqual({ domain: 'randstad.com' });
+  });
+
+  it('parses an empty result with canMint true (offer the mint affordance)', async () => {
+    const fetchImpl = jsonFetch({ results: [], canMint: true });
+    const res = await resolveEntityDomain({ ...config, fetch: fetchImpl }, 'cxl.com');
+    expect(res.results).toEqual([]);
+    expect(res.canMint).toBe(true);
+  });
+});
+
+describe('mintEntityDomain', () => {
+  it('POSTs the domain and parses the minted result', async () => {
+    const fetchImpl = jsonFetch({
+      result: {
+        source: 'entity',
+        entityId: 77,
+        kind: 'org',
+        name: 'CXL',
+        domain: 'cxl.com',
+        country: null,
+        logoUrl: 'https://cxl.com/logo.png',
+        parentName: null,
+      },
+    });
+    const res = await mintEntityDomain({ ...config, fetch: fetchImpl }, 'cxl.com');
+    expect(res.result.name).toBe('CXL');
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/entities/mint-domain');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual({ domain: 'cxl.com' });
   });
 });

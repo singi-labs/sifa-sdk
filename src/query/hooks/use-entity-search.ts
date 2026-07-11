@@ -9,9 +9,17 @@ import {
 } from '@tanstack/react-query';
 
 import { useSifaConfig } from '../config.js';
-import { fetchEntitySearch, importSearchEntities, selectEntity } from '../fetchers/entities.js';
+import {
+  fetchEntitySearch,
+  importSearchEntities,
+  mintEntityDomain,
+  resolveEntityDomain,
+  selectEntity,
+} from '../fetchers/entities.js';
 import { sifaQueryKeys } from '../keys.js';
 import type {
+  EntityMintDomainResponse,
+  EntityResolveDomainResponse,
   EntitySearchResponse,
   EntitySearchResult,
   EntitySelectRequest,
@@ -86,6 +94,36 @@ export function useImportSearchEntities(
   const config = useSifaConfig();
   return useMutation({
     mutationFn: (query: string) => importSearchEntities(config, query),
+    ...options,
+  });
+}
+
+/**
+ * Mutation: grow-on-demand by domain, Branch 1. Resolve a domain-shaped
+ * typeahead miss to any notable company (Wikidata reverse P856). The response's
+ * `canMint` flag drives the "Add <domain>" affordance.
+ */
+export function useResolveEntityDomain(
+  options?: Omit<UseMutationOptions<EntityResolveDomainResponse, Error, string>, 'mutationFn'>,
+) {
+  const config = useSifaConfig();
+  return useMutation({
+    mutationFn: (domain: string) => resolveEntityDomain(config, domain),
+    ...options,
+  });
+}
+
+/**
+ * Mutation: grow-on-demand by domain, Branch 2 (user-initiated). Mint a
+ * crawled-tier entity from the domain's homepage. Rejects when the domain is not
+ * mintable or the site yields nothing usable.
+ */
+export function useMintEntityDomain(
+  options?: Omit<UseMutationOptions<EntityMintDomainResponse, Error, string>, 'mutationFn'>,
+) {
+  const config = useSifaConfig();
+  return useMutation({
+    mutationFn: (domain: string) => mintEntityDomain(config, domain),
     ...options,
   });
 }

@@ -8,11 +8,17 @@ export {
   EntitySelectRequestSchema,
   EntitySelectResponseSchema,
   EntityImportSearchResponseSchema,
+  EntityResolveDomainRequestSchema,
+  EntityResolveDomainResponseSchema,
+  EntityMintDomainResponseSchema,
   type EntitySearchResult,
   type EntitySearchResponse,
   type EntitySelectRequest,
   type EntitySelectResponse,
   type EntityImportSearchResponse,
+  type EntityResolveDomainRequest,
+  type EntityResolveDomainResponse,
+  type EntityMintDomainResponse,
 } from './entity.js';
 export { EndorsementRecordSchema, type EndorsementRecord } from './endorsement.js';
 export {
