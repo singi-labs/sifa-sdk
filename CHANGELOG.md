@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.21
+
+### Patch Changes
+
+- 957203b: Remove "Volunteer" from the employment-type dropdown (`EMPLOYMENT_TYPE_GROUPS`). Volunteering is a distinct thing rather than a kind of employment, so it belongs in the dedicated `id.sifa.profile.volunteering` section, not on the employment-type axis. The `id.sifa.defs#volunteer` token stays in `EMPLOYMENT_TYPE_LABELS` so any existing positions carrying it still render a human label instead of the raw NSID.
+- ea52904: Add `entityName` to `ProfilePosition`: the resolved current canonical name of a durably-linked company, so consumers can render it over the stored `company` label for linked positions (#240).
+
 ## 0.11.20
 
 ### Patch Changes
