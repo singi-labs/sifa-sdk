@@ -110,10 +110,23 @@ describe('employment-type', () => {
     }
   });
 
-  it('groups cover the same set as the flat label map', () => {
+  it('groups cover the flat label map except legacy read-only tokens', () => {
     const grouped = EMPLOYMENT_TYPE_GROUPS.flatMap((g) => g.items.map((i) => i.value)).sort();
     const flat = Object.keys(EMPLOYMENT_TYPE_LABELS).sort();
-    expect(grouped).toEqual(flat);
+    // Every dropdown option has a label.
+    expect(flat).toEqual(expect.arrayContaining(grouped));
+    // The label map retains exactly the legacy tokens no longer offered in the dropdown.
+    const legacyOnly = flat.filter((v) => !grouped.includes(v));
+    expect(legacyOnly).toEqual(['id.sifa.defs#volunteer']);
+  });
+
+  it('EMPLOYMENT_TYPE_GROUPS excludes the deprecated "volunteer" token', () => {
+    const grouped = EMPLOYMENT_TYPE_GROUPS.flatMap((g) => g.items.map((i) => i.value));
+    expect(grouped).not.toContain('id.sifa.defs#volunteer');
+  });
+
+  it('EMPLOYMENT_TYPE_LABELS still labels legacy "volunteer" for read-only display', () => {
+    expect(EMPLOYMENT_TYPE_LABELS['id.sifa.defs#volunteer']).toBe('Volunteer');
   });
 
   it('every option uses the id.sifa.defs# namespace', () => {

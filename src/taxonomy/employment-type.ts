@@ -42,15 +42,19 @@ export const EMPLOYMENT_TYPE_GROUPS: EmploymentTypeGroup[] = [
       { value: 'id.sifa.defs#trainee', label: 'Trainee' },
     ],
   },
-  {
-    label: 'Other',
-    items: [{ value: 'id.sifa.defs#volunteer', label: 'Volunteer' }],
-  },
 ];
 
-export const EMPLOYMENT_TYPE_LABELS: Record<string, string> = Object.fromEntries(
-  EMPLOYMENT_TYPE_GROUPS.flatMap((g) => g.items).map((o) => [o.value, o.label]),
-);
+export const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
+  ...Object.fromEntries(
+    EMPLOYMENT_TYPE_GROUPS.flatMap((g) => g.items).map((o) => [o.value, o.label]),
+  ),
+  // `volunteer` is retained for legacy records but no longer offered in the
+  // editor dropdown. Volunteering is a distinct thing (no payroll, no formal
+  // role, no obligation) rather than a kind of employment, so it lives in the
+  // dedicated `id.sifa.profile.volunteering` section, not on the employment-type
+  // axis. Kept here so old positions still render a human label, not the raw NSID.
+  'id.sifa.defs#volunteer': 'Volunteer',
+};
 
 /** Resolve a label for an employment-type token. Falls back to the raw value. */
 export function getEmploymentTypeLabel(value: string | undefined | null): string | undefined {
