@@ -1,0 +1,58 @@
+import { z } from 'zod';
+
+import { datetimeSchema, didSchema, maxGraphemes, selfLabelsSchema, uriSchema } from './shared.js';
+
+/** Collection NSID for involvement records. Pass to the generic record helpers. */
+export const PROFILE_INVOLVEMENT_NSID = 'id.sifa.profile.involvement';
+
+/**
+ * Freeform calendar date, mirroring the involvement lexicon's `startedAt` /
+ * `endedAt`. Accepts a bare year, year-month, year-month-day, or a full
+ * datetime (so a legacy `volunteering` record's RFC-3339 date maps through on
+ * backfill without loss). NOT strict `datetime` -- partial OSS dates ("2018")
+ * and importer writes must validate.
+ */
+const partialDateSchema = z
+  .string()
+  .regex(/^\d{4}(-\d{2}(-\d{2}(T.+)?)?)?$/, 'Expected YYYY, YYYY-MM, YYYY-MM-DD, or a datetime');
+
+/**
+ * A public artifact proving a piece of work. Mirrors `id.sifa.defs#artifactLink`.
+ * `kind` is an open enum (bare-string knownValues), so any string is accepted.
+ * `.passthrough()` keeps unknown fields a newer client or co-writer may emit.
+ */
+export const ArtifactLinkSchema = z
+  .object({
+    url: uriSchema,
+    kind: z.string().optional(),
+    label: z.string().refine(maxGraphemes(200)).max(2000).optional(),
+  })
+  .passthrough();
+
+export type ArtifactLink = z.infer<typeof ArtifactLinkSchema>;
+
+/**
+ * Zod schema for `id.sifa.profile.involvement` records.
+ *
+ * `.passthrough()` (not `.strict()`): external apps (Verak, weareonhire)
+ * co-write `id.sifa.*`, so an older SDK must not reject a record carrying a
+ * field it doesn't know yet. `kind` is an open enum matching the lexicon's
+ * knownValues but accepting any string for the same forward-compat reason.
+ */
+export const ProfileInvolvementRecordSchema = z
+  .object({
+    kind: z.string(),
+    upstream: z.string().refine(maxGraphemes(256)).max(2560).optional(),
+    upstreamDid: didSchema.optional(),
+    upstreamUrl: uriSchema.optional(),
+    role: z.string().refine(maxGraphemes(256)).max(2560).optional(),
+    description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
+    startedAt: partialDateSchema.optional(),
+    endedAt: partialDateSchema.optional(),
+    links: z.array(ArtifactLinkSchema).max(50).optional(),
+    labels: selfLabelsSchema.optional(),
+    createdAt: datetimeSchema,
+  })
+  .passthrough();
+
+export type ProfileInvolvementRecord = z.infer<typeof ProfileInvolvementRecordSchema>;
