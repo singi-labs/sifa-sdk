@@ -26,6 +26,14 @@ export interface ProfilePosition {
    * independent positions (#159).
    */
   entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked company (#240),
+   * computed by the AppView at read time. Render this over `company` for a
+   * linked position, so a name correction reaches every linked profile without
+   * a PDS write. Absent for free-text or unresolved positions (fall back to
+   * `company`).
+   */
+  entityName?: string;
   title: string;
   description?: string;
   startedAt: string;
