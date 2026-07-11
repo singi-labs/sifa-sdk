@@ -153,9 +153,11 @@ describe('mintEntityDomain', () => {
         logoUrl: 'https://cxl.com/logo.png',
         parentName: null,
       },
+      pending: true,
     });
     const res = await mintEntityDomain({ ...config, fetch: fetchImpl }, 'cxl.com');
     expect(res.result.name).toBe('CXL');
+    expect(res.pending).toBe(true);
     const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/entities/mint-domain');
     expect(init.method).toBe('POST');

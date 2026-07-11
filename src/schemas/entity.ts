@@ -113,10 +113,16 @@ export type EntityResolveDomainResponse = z.infer<typeof EntityResolveDomainResp
 /**
  * Response of `POST /api/entities/mint-domain` (grow-on-demand Branch 2). The
  * linkable entity minted from (or already resolved for) the domain. A non-2xx
- * status (e.g. the domain is not mintable, or the site yielded nothing usable)
- * surfaces as a thrown error, not a null result.
+ * status (e.g. the domain is not mintable, a confusable look-alike, or the site
+ * yielded nothing usable) surfaces as a thrown error, not a null result.
+ *
+ * `pending` is true when the entity is a fresh hidden-pending mint: the
+ * requesting user's own link resolves to it immediately, but it stays out of
+ * other users' typeahead + aggregation until an admin approves it. Clients should
+ * reflect this ("added -- pending review") rather than "added & live".
  */
 export const EntityMintDomainResponseSchema = z.object({
   result: EntitySearchResultSchema,
+  pending: z.boolean(),
 });
 export type EntityMintDomainResponse = z.infer<typeof EntityMintDomainResponseSchema>;
