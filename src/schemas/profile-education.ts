@@ -6,6 +6,14 @@ import { datetimeSchema, didSchema, maxGraphemes, selfLabelsSchema } from './sha
 export const ProfileEducationRecordSchema = z.object({
   institution: z.string().min(1).refine(maxGraphemes(100)).max(1000),
   institutionDid: didSchema.optional(),
+  // Portable org entity identifier (Wikidata/ROR/LEI URI) from the typeahead.
+  // Constrained to http(s) so a script-bearing scheme is never a valid ref (#159).
+  entityRef: z
+    .string()
+    .url()
+    .refine((s) => /^https?:\/\//i.test(s), { message: 'entityRef must be an http(s) URL' })
+    .max(2048)
+    .optional(),
   degree: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   fieldOfStudy: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   grade: z.string().refine(maxGraphemes(50)).max(500).optional(),
