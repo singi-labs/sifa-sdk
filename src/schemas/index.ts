@@ -56,6 +56,13 @@ export {
   type ProfileExternalAccountRecord,
 } from './profile-external-account.js';
 export { ProfileHonorRecordSchema, type ProfileHonorRecord } from './profile-honor.js';
+export {
+  ArtifactLinkSchema,
+  PROFILE_INVOLVEMENT_NSID,
+  ProfileInvolvementRecordSchema,
+  type ArtifactLink,
+  type ProfileInvolvementRecord,
+} from './profile-involvement.js';
 export { ProfileLanguageRecordSchema, type ProfileLanguageRecord } from './profile-language.js';
 export { ProfilePositionRecordSchema, type ProfilePositionRecord } from './profile-position.js';
 export {

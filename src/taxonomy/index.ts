@@ -94,3 +94,17 @@ export {
   getCalendarEventModeLabel,
   getCalendarEventStatusLabel,
 } from './calendar-event.js';
+export {
+  INVOLVEMENT_KIND_HEADINGS,
+  INVOLVEMENT_KIND_LABELS,
+  INVOLVEMENT_KIND_OPTIONS,
+  getInvolvementKindHeading,
+  getInvolvementKindLabel,
+  type InvolvementKindOption,
+} from './involvement-kind.js';
+export {
+  ARTIFACT_LINK_KIND_LABELS,
+  ARTIFACT_LINK_KIND_OPTIONS,
+  getArtifactLinkKindLabel,
+  type ArtifactLinkKindOption,
+} from './artifact-link-kind.js';

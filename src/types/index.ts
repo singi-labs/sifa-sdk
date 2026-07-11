@@ -190,6 +190,54 @@ export interface ProfileHonor {
   hidden?: boolean;
 }
 
+/**
+ * One proof link on an involvement record, as served by the AppView. Mirrors
+ * `id.sifa.defs#artifactLink`, plus the computed rung-2 verification signal.
+ */
+export interface ProfileInvolvementLink {
+  url: string;
+  kind?: string;
+  label?: string;
+  /**
+   * Rung-2 cross-ref: true when the link host matches one of the owner's
+   * *verified* `externalAccount` records (GitHub, GitLab, ORCID, ...).
+   * Computed by the AppView; deterministic host match, no new primitive.
+   */
+  verified?: boolean;
+  /**
+   * Platform token of the matched verified external account (e.g.
+   * `id.sifa.defs#platformGithub`), for the badge label. Absent when
+   * `verified` is not true.
+   */
+  verifiedPlatform?: string;
+}
+
+/**
+ * An involvement entry as served by the AppView: an `id.sifa.profile.involvement`
+ * record, or a mapped legacy `id.sifa.profile.volunteering` record (`legacy`),
+ * grouped in the UI by `kind` via the SDK's involvement-kind taxonomy.
+ */
+export interface ProfileInvolvement {
+  rkey: string;
+  /** Involvement-kind token; drives the display heading. Legacy rows map to charity. */
+  kind: string;
+  upstream?: string;
+  upstreamDid?: string;
+  upstreamUrl?: string;
+  role?: string;
+  description?: string;
+  startedAt?: string;
+  endedAt?: string;
+  links?: ProfileInvolvementLink[];
+  /**
+   * True when this row is a mapped legacy `id.sifa.profile.volunteering` record
+   * (no `kind`), rendered under "Volunteering". Editing it backfills to an
+   * `involvement` record and deletes the legacy one.
+   */
+  legacy?: boolean;
+  hidden?: boolean;
+}
+
 export type LanguageProficiency =
   | 'elementary'
   | 'limited_working'
@@ -425,6 +473,7 @@ export interface Profile {
   projects?: ProfileProject[];
   publications?: ProfilePublication[];
   volunteering?: ProfileVolunteering[];
+  involvement?: ProfileInvolvement[];
   honors?: ProfileHonor[];
   languages?: ProfileLanguage[];
   courses?: ProfileCourse[];
