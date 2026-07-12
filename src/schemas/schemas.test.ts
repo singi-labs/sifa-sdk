@@ -416,6 +416,23 @@ describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileH
       }).success,
     ).toBe(false);
   });
+
+  it('course: accepts an optional datetime completedAt, rejects a non-datetime', () => {
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'CS101',
+        completedAt: NOW,
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'CS101',
+        completedAt: '2026-05',
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
 });
 
 describe('EndorsementRecordSchema', () => {

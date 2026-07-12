@@ -19,6 +19,9 @@ export const ProfileCourseRecordSchema = z.object({
   // AT-URI of the associated id.sifa.profile.certification record. Plain
   // at-uri (not a strongRef) so the link tracks the live certification.
   credential: atUriSchema.optional(),
+  // Date the course was completed. Stored as an RFC 3339 datetime to match the
+  // other profile date fields; the editor collects month granularity (YYYY-MM).
+  completedAt: datetimeSchema.optional(),
   createdAt: datetimeSchema,
 });
 

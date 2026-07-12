@@ -308,6 +308,9 @@ export interface ProfileCourse {
    * `credential` at-uri. Used to join the course to a certification in the
    * same profile payload (for the linked-credential date and link). */
   credentialRkey?: string;
+  /** Date the course was completed, as an RFC 3339 datetime. Optional; the
+   * editor collects month granularity (YYYY-MM). */
+  completedAt?: string;
   hidden?: boolean;
 }
 
