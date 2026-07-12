@@ -32,8 +32,16 @@ describe('normalizeLegalForm', () => {
     expect(normalizeLegalForm('acme oy')).toBe('acme Oy');
   });
 
-  it('normalizes a designator at the START of the name', () => {
-    expect(normalizeLegalForm('gmbh holding partners')).toBe('GmbH holding partners');
+  it('does not recase a LEADING designator token (likely part of the brand)', () => {
+    // Trailing-only: a leading designator is far more often brand than legal form,
+    // so "INC Research" / "AG Innovations" must not become "Inc Research" etc.
+    expect(normalizeLegalForm('gmbh holding partners')).toBe('gmbh holding partners');
+    expect(normalizeLegalForm('INC Research')).toBe('INC Research');
+    expect(normalizeLegalForm('Ag Innovations')).toBe('Ag Innovations');
+    // A leading designator with a trailing non-designator: neither is touched.
+    expect(normalizeLegalForm('INC Research (United Kingdom)')).toBe(
+      'INC Research (United Kingdom)',
+    );
   });
 
   it('leaves a name with no legal-form token unchanged', () => {

@@ -39,13 +39,6 @@ const CANONICAL_LEGAL_FORMS: Readonly<Record<string, string>> = {
 };
 
 /**
- * Designator keys that are also common English words. These are normalized only
- * when they TRAIL the name; at the START they are far more likely the English
- * word than the legal form ("As You Wish Ltd" must not become "AS You Wish Ltd").
- */
-const AMBIGUOUS_WHEN_LEADING = new Set(['as']);
-
-/**
  * Re-apply `canonical`'s casing onto `token`, letter by letter, keeping every
  * non-letter character (the dots) exactly where the input had them. `token` is
  * guaranteed ASCII (the caller bailed on non-ASCII names) and its letter count
@@ -66,7 +59,7 @@ function recase(token: string, canonical: string): string {
 }
 
 /** Normalize one candidate token, or return it unchanged if it isn't a designator. */
-function normalizeToken(token: string, isLeading: boolean): string {
+function normalizeToken(token: string): string {
   // Strip dots only; a clean designator token is then a pure ASCII-letter run.
   // A hyphen, comma, paren, or digit means it isn't a bare designator -> skip.
   const letters = token.replace(/\./g, '');
@@ -80,14 +73,13 @@ function normalizeToken(token: string, isLeading: boolean): string {
   // not a string, and `recase` would then throw on `.charAt`. This also narrows
   // away the `undefined` from a missing key.
   if (typeof canonical !== 'string') return token;
-  if (isLeading && AMBIGUOUS_WHEN_LEADING.has(key)) return token;
 
   return recase(token, canonical);
 }
 
 /**
  * Normalize the letter-case of a legal-form designator (GmbH, LLC, N.V., B.V.,
- * S.A., ...) appearing as the leading or trailing whole-word token of a company
+ * S.A., ...) appearing as the trailing whole-word token of a company
  * name. Only that one token is touched; the company name itself is never
  * recased, since brand-wordmark casing is not deterministic (see
  * sifa-workspace#235, deliberately distinct from this pass).
@@ -115,23 +107,17 @@ export function normalizeLegalForm(name: string): string {
   }
   if (wordIndices.length === 0) return name;
 
-  const firstIdx = wordIndices[0];
   const lastIdx = wordIndices[wordIndices.length - 1];
-  if (firstIdx === undefined || lastIdx === undefined) return name;
-  // Leading and trailing tokens are the only candidates (deduped when the name
-  // is a single word, where the token is treated as leading).
-  const candidateIndices = firstIdx === lastIdx ? [firstIdx] : [firstIdx, lastIdx];
-
-  let changed = false;
-  for (const idx of candidateIndices) {
-    const original = parts[idx];
-    if (original === undefined) continue;
-    const rewritten = normalizeToken(original, idx === firstIdx);
-    if (rewritten !== original) {
-      parts[idx] = rewritten;
-      changed = true;
-    }
-  }
-
-  return changed ? parts.join('') : name;
+  if (lastIdx === undefined) return name;
+  // Only the TRAILING token is a candidate. Legal-form designators almost always
+  // trail the company name (Acme GmbH, Halma PLC); a LEADING designator token is
+  // far more likely part of the brand ("INC Research", "AG Innovations"), so
+  // recasing it would corrupt the name. Restricting to the trailing token avoids
+  // that whole class of false positives.
+  const original = parts[lastIdx];
+  if (original === undefined) return name;
+  const rewritten = normalizeToken(original);
+  if (rewritten === original) return name;
+  parts[lastIdx] = rewritten;
+  return parts.join('');
 }
