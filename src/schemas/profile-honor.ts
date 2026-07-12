@@ -16,7 +16,9 @@ export const ProfileHonorRecordSchema = z.object({
     .max(2048)
     .optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
-  awardedAt: datetimeSchema.optional(),
+  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
+  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
+  awardedAt: z.string().optional(),
   createdAt: datetimeSchema,
 });
 

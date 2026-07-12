@@ -25,8 +25,10 @@ export const ProfilePositionRecordSchema = z.object({
   employmentType: z.string().optional(),
   workplaceType: z.string().optional(),
   location: z.unknown().optional(),
-  startedAt: datetimeSchema,
-  endedAt: datetimeSchema.optional(),
+  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
+  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
+  startedAt: z.string(),
+  endedAt: z.string().optional(),
   skills: z.array(strongRefSchema).max(50).optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,

@@ -17,8 +17,10 @@ export const ProfileVolunteeringRecordSchema = z.object({
   role: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   cause: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
-  startedAt: datetimeSchema.optional(),
-  endedAt: datetimeSchema.optional(),
+  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
+  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
+  startedAt: z.string().optional(),
+  endedAt: z.string().optional(),
   createdAt: datetimeSchema,
 });
 

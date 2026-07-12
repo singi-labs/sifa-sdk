@@ -17,8 +17,10 @@ export const ProfileCertificationRecordSchema = z.object({
     .optional(),
   credentialId: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   credentialUrl: uriSchema.optional(),
-  issuedAt: datetimeSchema.optional(),
-  expiresAt: datetimeSchema.optional(),
+  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
+  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
+  issuedAt: z.string().optional(),
+  expiresAt: z.string().optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,
 });
