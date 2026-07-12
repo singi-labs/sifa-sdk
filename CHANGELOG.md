@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.28
+
+### Patch Changes
+
+- 04f28aa: Add an optional `completedAt` date to Courses (`id.sifa.profile.course`, lexicons 0.9.2). The `ProfileCourseRecordSchema` validates `completedAt` as an optional RFC 3339 datetime, and the `ProfileCourse` read type gains `completedAt`.
+- c524853: Add `entityName` to the education, certification, volunteering, honor, and course profile read types, matching positions and involvement. The AppView resolves the durably-linked organization's current canonical name at read time, so a name correction reaches every linked profile without a PDS write.
+
 ## 0.11.27
 
 ### Patch Changes
