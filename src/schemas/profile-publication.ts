@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { datetimeSchema, didSchema, maxGraphemes, uriSchema } from './shared.js';
+import { datetimeSchema, didSchema, maxGraphemes, partialDateSchema, uriSchema } from './shared.js';
 
 /** Author shape from `id.sifa.profile.publication#author`. */
 export const PublicationAuthorSchema = z.object({
@@ -18,9 +18,7 @@ export const ProfilePublicationRecordSchema = z.object({
   url: uriSchema.optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   authors: z.array(PublicationAuthorSchema).max(50).optional(),
-  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
-  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
-  publishedAt: z.string().optional(),
+  publishedAt: partialDateSchema.optional(),
   createdAt: datetimeSchema,
 });
 

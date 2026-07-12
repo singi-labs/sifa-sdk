@@ -4,6 +4,7 @@ import {
   datetimeSchema,
   didSchema,
   maxGraphemes,
+  partialDateSchema,
   selfLabelsSchema,
   strongRefSchema,
 } from './shared.js';
@@ -25,10 +26,8 @@ export const ProfilePositionRecordSchema = z.object({
   employmentType: z.string().optional(),
   workplaceType: z.string().optional(),
   location: z.unknown().optional(),
-  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
-  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
-  startedAt: z.string(),
-  endedAt: z.string().optional(),
+  startedAt: partialDateSchema,
+  endedAt: partialDateSchema.optional(),
   skills: z.array(strongRefSchema).max(50).optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,

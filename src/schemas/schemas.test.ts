@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
 
 import {
   EndorsementConfirmationRecordSchema,
@@ -425,7 +426,8 @@ describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileH
         createdAt: NOW,
       }).success,
     ).toBe(true);
-    // Previously rejected; #256 relaxed completedAt to a freeform date string.
+    // Previously rejected as a non-datetime; #256 relaxed completedAt to the
+    // freeform partialDateSchema, which still validates the shape.
     expect(
       ProfileCourseRecordSchema.safeParse({
         name: 'CS101',
@@ -433,90 +435,66 @@ describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileH
         createdAt: NOW,
       }).success,
     ).toBe(true);
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'CS101',
+        completedAt: 'banana',
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
   });
 });
 
-describe('#256 freeform profile date fields accept bare YYYY-MM', () => {
-  it('position: accepts YYYY-MM startedAt/endedAt (startedAt stays required)', () => {
-    expect(
-      ProfilePositionRecordSchema.safeParse({
-        title: 'Engineer',
-        startedAt: '2018-06',
-        endedAt: '2020-03',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-    // startedAt remains required.
+describe('#256 profile date fields use partialDateSchema (validated freeform)', () => {
+  // [record label, schema, minimal valid base, list of relaxed date field names]
+  const cases: Array<[string, z.ZodTypeAny, Record<string, unknown>, string[]]> = [
+    // position.startedAt is required, so the base carries one for the endedAt cases.
+    [
+      'position',
+      ProfilePositionRecordSchema,
+      { title: 'Engineer', startedAt: '2020-01' },
+      ['startedAt', 'endedAt'],
+    ],
+    ['project', ProfileProjectRecordSchema, { name: 'sifa-sdk' }, ['startedAt', 'endedAt']],
+    ['education', ProfileEducationRecordSchema, { institution: 'MIT' }, ['startedAt', 'endedAt']],
+    [
+      'volunteering',
+      ProfileVolunteeringRecordSchema,
+      { organization: 'Red Cross' },
+      ['startedAt', 'endedAt'],
+    ],
+    [
+      'certification',
+      ProfileCertificationRecordSchema,
+      { name: 'AWS Certified' },
+      ['issuedAt', 'expiresAt'],
+    ],
+    ['course', ProfileCourseRecordSchema, { name: 'CS101' }, ['completedAt']],
+    ['honor', ProfileHonorRecordSchema, { title: 'Best Engineer' }, ['awardedAt']],
+    ['publication', ProfilePublicationRecordSchema, { title: 'A Paper' }, ['publishedAt']],
+  ];
+
+  describe.each(cases)('%s', (_label, schema, base, fields) => {
+    for (const field of fields) {
+      it.each(['2018', '2018-06', '2018-06-15', NOW])(`accepts ${field} = %s`, (value) => {
+        expect(schema.safeParse({ ...base, [field]: value, createdAt: NOW }).success).toBe(true);
+      });
+
+      it(`rejects a non-date ${field} ("banana")`, () => {
+        expect(schema.safeParse({ ...base, [field]: 'banana', createdAt: NOW }).success).toBe(
+          false,
+        );
+      });
+    }
+  });
+
+  it('position startedAt stays required', () => {
     expect(
       ProfilePositionRecordSchema.safeParse({ title: 'Engineer', createdAt: NOW }).success,
     ).toBe(false);
   });
 
-  it('project: accepts YYYY-MM startedAt/endedAt', () => {
-    expect(
-      ProfileProjectRecordSchema.safeParse({
-        name: 'sifa-sdk',
-        startedAt: '2021-01',
-        endedAt: '2021-09',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-  });
-
-  it('education: accepts YYYY-MM startedAt/endedAt', () => {
-    expect(
-      ProfileEducationRecordSchema.safeParse({
-        institution: 'MIT',
-        startedAt: '2010-09',
-        endedAt: '2014-06',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-  });
-
-  it('volunteering: accepts YYYY-MM startedAt/endedAt', () => {
-    expect(
-      ProfileVolunteeringRecordSchema.safeParse({
-        organization: 'Red Cross',
-        startedAt: '2018-06',
-        endedAt: '2020-03',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-  });
-
-  it('certification: accepts YYYY-MM issuedAt/expiresAt', () => {
-    expect(
-      ProfileCertificationRecordSchema.safeParse({
-        name: 'AWS Certified',
-        issuedAt: '2021-09',
-        expiresAt: '2024-09',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-  });
-
-  it('honor: accepts a YYYY-MM awardedAt', () => {
-    expect(
-      ProfileHonorRecordSchema.safeParse({
-        title: 'Best Engineer',
-        awardedAt: '2023-11',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-  });
-
-  it('publication: accepts a YYYY-MM publishedAt', () => {
-    expect(
-      ProfilePublicationRecordSchema.safeParse({
-        title: 'A Paper',
-        publishedAt: '2019-04',
-        createdAt: NOW,
-      }).success,
-    ).toBe(true);
-  });
-
-  it('createdAt still requires a strict datetime across these records', () => {
+  it('createdAt still requires a strict datetime (rejects a bare YYYY-MM)', () => {
     expect(
       ProfileHonorRecordSchema.safeParse({ title: 'Best Engineer', createdAt: '2023-11' }).success,
     ).toBe(false);

@@ -289,6 +289,7 @@ export {
   languageTagSchema,
   makeGraphFollowRecordSchema,
   maxGraphemes,
+  partialDateSchema,
   selfLabelsSchema,
   strongRefSchema,
   uriSchema,
