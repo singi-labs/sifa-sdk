@@ -123,7 +123,19 @@ export interface ProfileLocation {
 export interface ProfileCertification {
   rkey: string;
   name: string;
-  issuingOrg: string;
+  /**
+   * Issuing organization. The write contract names this field `authority`
+   * everywhere (record schema, DB column, PDS record); the AppView read view
+   * emits `authority` as the canonical field (#249). Optional during the
+   * deprecation window while consumers migrate off the legacy `issuingOrg`
+   * alias below.
+   */
+  authority?: string;
+  /**
+   * @deprecated Legacy read-view alias for {@link authority} (#249). Carries the
+   * same value; will be dropped once web + SDK consumers read `authority`.
+   */
+  issuingOrg?: string;
   /**
    * Portable org entity identifier (Wikidata/ROR/LEI URI) linking the issuing
    * organization to a resolved entity (#159/#241). Absent for free-text entries.
@@ -132,9 +144,9 @@ export interface ProfileCertification {
   entityRef?: string;
   /**
    * Resolved current canonical name of the durably-linked issuing organization
-   * (#252), computed by the AppView at read time. Render this over `issuingOrg`
+   * (#252), computed by the AppView at read time. Render this over `authority`
    * for a linked entry. Absent for free-text or unresolved entries (fall back to
-   * `issuingOrg`).
+   * `authority`).
    */
   entityName?: string;
   issueDate?: string;
