@@ -89,4 +89,16 @@ describe('normalizeLegalForm', () => {
   it('preserves surrounding whitespace, only recasing the designator token', () => {
     expect(normalizeLegalForm('  acme gmbh  ')).toBe('  acme GmbH  ');
   });
+
+  it('leaves a token matching an Object.prototype member untouched (no proto lookup)', () => {
+    // A bare `map[key]` lookup would resolve inherited members: "constructor"
+    // returns the Object constructor, "__proto__" the prototype -- both truthy
+    // but not strings, which used to crash the recaser. They are not designators.
+    expect(normalizeLegalForm('Elite Constructor')).toBe('Elite Constructor');
+    expect(normalizeLegalForm('constructor')).toBe('constructor');
+    expect(normalizeLegalForm('Acme constructor')).toBe('Acme constructor');
+    expect(normalizeLegalForm('__proto__')).toBe('__proto__');
+    expect(normalizeLegalForm('Widgets toString')).toBe('Widgets toString');
+    expect(normalizeLegalForm('valueof hasownproperty')).toBe('valueof hasownproperty');
+  });
 });
