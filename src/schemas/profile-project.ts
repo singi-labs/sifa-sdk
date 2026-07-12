@@ -14,8 +14,10 @@ export const ProfileProjectRecordSchema = z.object({
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   url: uriSchema.optional(),
   position: strongRefSchema.optional(),
-  startedAt: datetimeSchema.optional(),
-  endedAt: datetimeSchema.optional(),
+  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
+  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
+  startedAt: z.string().optional(),
+  endedAt: z.string().optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,
 });

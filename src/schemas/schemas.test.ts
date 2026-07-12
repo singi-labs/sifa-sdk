@@ -437,6 +437,43 @@ describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileH
 });
 
 describe('#256 freeform profile date fields accept bare YYYY-MM', () => {
+  it('position: accepts YYYY-MM startedAt/endedAt (startedAt stays required)', () => {
+    expect(
+      ProfilePositionRecordSchema.safeParse({
+        title: 'Engineer',
+        startedAt: '2018-06',
+        endedAt: '2020-03',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    // startedAt remains required.
+    expect(
+      ProfilePositionRecordSchema.safeParse({ title: 'Engineer', createdAt: NOW }).success,
+    ).toBe(false);
+  });
+
+  it('project: accepts YYYY-MM startedAt/endedAt', () => {
+    expect(
+      ProfileProjectRecordSchema.safeParse({
+        name: 'sifa-sdk',
+        startedAt: '2021-01',
+        endedAt: '2021-09',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('education: accepts YYYY-MM startedAt/endedAt', () => {
+    expect(
+      ProfileEducationRecordSchema.safeParse({
+        institution: 'MIT',
+        startedAt: '2010-09',
+        endedAt: '2014-06',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+  });
+
   it('volunteering: accepts YYYY-MM startedAt/endedAt', () => {
     expect(
       ProfileVolunteeringRecordSchema.safeParse({
