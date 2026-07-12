@@ -255,6 +255,22 @@ export interface ProfileInvolvement {
   endedAt?: string;
   links?: ProfileInvolvementLink[];
   /**
+   * Portable org entity identifier (Wikidata/ROR/LEI URI) written when the user
+   * picks the upstream from the resolver typeahead. Absent for free-text or
+   * one-off involvement.
+   */
+  entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked upstream, computed by
+   * the AppView at read time. Render over `upstream` when present. Absent for
+   * free-text or unresolved entries.
+   */
+  entityName?: string;
+  location?: LocationValue | null;
+  skills?: SkillRef[];
+  /** Skill records resolved from `skills`, for display. */
+  linkedSkills?: ProfileSkill[];
+  /**
    * True when this row is a mapped legacy `id.sifa.profile.volunteering` record
    * (no `kind`), rendered under "Volunteering". Editing it backfills to an
    * `involvement` record and deletes the legacy one.
