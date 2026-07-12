@@ -153,6 +153,7 @@ export {
   limitCombiningMarks,
   meetsContrastAA,
   normalizeCompanyKey,
+  normalizeLegalForm,
   parseLocationString,
   pdsProviderFromApi,
   relativeLuminance,
