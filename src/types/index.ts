@@ -57,6 +57,14 @@ export interface ProfileEducation {
    * for display (the "Linked" badge).
    */
   entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked institution (#252),
+   * computed by the AppView at read time. Render this over `institution` for a
+   * linked entry, so a name correction reaches every linked profile without a
+   * PDS write. Absent for free-text or unresolved entries (fall back to
+   * `institution`).
+   */
+  entityName?: string;
   degree?: string;
   fieldOfStudy?: string;
   description?: string;
@@ -122,6 +130,13 @@ export interface ProfileCertification {
    * Mirrors `ProfilePosition.entityRef`; the AppView sends it for display.
    */
   entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked issuing organization
+   * (#252), computed by the AppView at read time. Render this over `issuingOrg`
+   * for a linked entry. Absent for free-text or unresolved entries (fall back to
+   * `issuingOrg`).
+   */
+  entityName?: string;
   issueDate?: string;
   expiryDate?: string;
   credentialUrl?: string;
@@ -192,6 +207,13 @@ export interface ProfileVolunteering {
    * Mirrors `ProfilePosition.entityRef`; the AppView sends it for display.
    */
   entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked organization (#252),
+   * computed by the AppView at read time. Render this over `organization` for a
+   * linked entry. Absent for free-text or unresolved entries (fall back to
+   * `organization`).
+   */
+  entityName?: string;
   role?: string;
   cause?: string;
   startDate?: string;
@@ -210,6 +232,12 @@ export interface ProfileHonor {
    * `ProfilePosition.entityRef`; the AppView sends it for display.
    */
   entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked issuer (#252),
+   * computed by the AppView at read time. Render this over `issuer` for a linked
+   * entry. Absent for free-text or unresolved entries (fall back to `issuer`).
+   */
+  entityName?: string;
   date?: string;
   description?: string;
   hidden?: boolean;
@@ -303,6 +331,13 @@ export interface ProfileCourse {
    * `ProfilePosition.entityRef`; the AppView sends it for display.
    */
   entityRef?: string;
+  /**
+   * Resolved current canonical name of the durably-linked institution (#252),
+   * computed by the AppView at read time. Render this over `institution` for a
+   * linked entry. Absent for free-text or unresolved entries (fall back to
+   * `institution`).
+   */
+  entityName?: string;
   number?: string;
   /** rkey of the associated certification, resolved from the course's
    * `credential` at-uri. Used to join the course to a certification in the
