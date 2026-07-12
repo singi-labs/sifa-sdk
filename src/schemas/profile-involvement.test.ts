@@ -69,6 +69,23 @@ describe('ProfileInvolvementRecordSchema', () => {
     expect(parsed.futureField).toBe('from a newer client');
   });
 
+  it('accepts entityRef (http(s)), a location object, and skill refs', () => {
+    const parsed = ProfileInvolvementRecordSchema.parse({
+      ...base,
+      entityRef: 'http://www.wikidata.org/entity/Q9135',
+      location: { country: 'NL', locality: 'Utrecht' },
+      skills: [{ uri: 'at://did:plc:x/id.sifa.profile.skill/abc' }],
+    });
+    expect(parsed.entityRef).toBe('http://www.wikidata.org/entity/Q9135');
+    expect(parsed.skills?.[0]?.uri).toBe('at://did:plc:x/id.sifa.profile.skill/abc');
+  });
+
+  it('rejects a javascript: scheme entityRef', () => {
+    expect(() =>
+      ProfileInvolvementRecordSchema.parse({ ...base, entityRef: 'javascript:alert(1)' }),
+    ).toThrow();
+  });
+
   it('requires createdAt in datetime format', () => {
     expect(() => ProfileInvolvementRecordSchema.parse({ kind: base.kind })).toThrow();
     expect(() =>

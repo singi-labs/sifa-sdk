@@ -50,6 +50,21 @@ export const ProfileInvolvementRecordSchema = z
     startedAt: partialDateSchema.optional(),
     endedAt: partialDateSchema.optional(),
     links: z.array(ArtifactLinkSchema).max(50).optional(),
+    // Portable org entity identifier (Wikidata/ROR/LEI URI) from the resolver
+    // typeahead, constrained to http(s) so a script scheme is never a valid ref.
+    entityRef: z
+      .string()
+      .url()
+      .refine((s) => /^https?:\/\//i.test(s), { message: 'entityRef must be an http(s) URL' })
+      .max(2048)
+      .optional(),
+    // community.lexicon.location.address — validated at the app layer.
+    location: z.unknown().optional(),
+    // id.sifa.defs#skillRef references (at-uri to a skill record in the same repo).
+    skills: z
+      .array(z.object({ uri: z.string() }))
+      .max(50)
+      .optional(),
     labels: selfLabelsSchema.optional(),
     createdAt: datetimeSchema,
   })
