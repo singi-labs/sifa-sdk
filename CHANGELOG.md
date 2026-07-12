@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.29
+
+### Patch Changes
+
+- 34928b1: Fix `normalizeLegalForm` crashing on a token that matches an `Object.prototype` member (for example a company name ending in "Constructor", or "**proto**"). The designator lookup now checks own properties, so such tokens are correctly treated as non-designators and returned unchanged.
+
 ## 0.11.28
 
 ### Patch Changes
