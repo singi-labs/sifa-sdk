@@ -25,6 +25,19 @@ export const didSchema = z.string().regex(/^did:[a-z]+:[a-zA-Z0-9._:%-]+$/, 'Inv
 /** RFC 3339 datetime with timezone offset, AT Protocol `format: datetime`. */
 export const datetimeSchema = z.string().datetime({ offset: true });
 
+/**
+ * Freeform calendar date for user-facing profile dates (start/end, issued,
+ * completed, awarded, published, etc.). Accepts a bare year, year-month,
+ * year-month-day, or a full datetime (so a legacy record's RFC-3339 date maps
+ * through on backfill without loss). NOT strict `datetime` -- users typically
+ * remember only month/year, and LinkedIn-importer writes carry partial dates,
+ * so the lexicons document these as freeform `YYYY-MM` / `YYYY-MM-DD`. Record
+ * metadata like `createdAt` stays on `datetimeSchema`.
+ */
+export const partialDateSchema = z
+  .string()
+  .regex(/^\d{4}(-\d{2}(-\d{2}(T.+)?)?)?$/, 'Expected YYYY, YYYY-MM, YYYY-MM-DD, or a datetime');
+
 /** Generic AT-URI, AT Protocol `format: at-uri`. */
 export const atUriSchema = z.string().regex(/^at:\/\/[^\s]+$/, 'Invalid AT-URI');
 

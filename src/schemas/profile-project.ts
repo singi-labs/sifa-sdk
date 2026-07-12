@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   datetimeSchema,
   maxGraphemes,
+  partialDateSchema,
   selfLabelsSchema,
   strongRefSchema,
   uriSchema,
@@ -14,10 +15,8 @@ export const ProfileProjectRecordSchema = z.object({
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   url: uriSchema.optional(),
   position: strongRefSchema.optional(),
-  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
-  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
-  startedAt: z.string().optional(),
-  endedAt: z.string().optional(),
+  startedAt: partialDateSchema.optional(),
+  endedAt: partialDateSchema.optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,
 });

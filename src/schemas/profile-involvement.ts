@@ -1,20 +1,16 @@
 import { z } from 'zod';
 
-import { datetimeSchema, didSchema, maxGraphemes, selfLabelsSchema, uriSchema } from './shared.js';
+import {
+  datetimeSchema,
+  didSchema,
+  maxGraphemes,
+  partialDateSchema,
+  selfLabelsSchema,
+  uriSchema,
+} from './shared.js';
 
 /** Collection NSID for involvement records. Pass to the generic record helpers. */
 export const PROFILE_INVOLVEMENT_NSID = 'id.sifa.profile.involvement';
-
-/**
- * Freeform calendar date, mirroring the involvement lexicon's `startedAt` /
- * `endedAt`. Accepts a bare year, year-month, year-month-day, or a full
- * datetime (so a legacy `volunteering` record's RFC-3339 date maps through on
- * backfill without loss). NOT strict `datetime` -- partial OSS dates ("2018")
- * and importer writes must validate.
- */
-const partialDateSchema = z
-  .string()
-  .regex(/^\d{4}(-\d{2}(-\d{2}(T.+)?)?)?$/, 'Expected YYYY, YYYY-MM, YYYY-MM-DD, or a datetime');
 
 /**
  * A public artifact proving a piece of work. Mirrors `id.sifa.defs#artifactLink`.

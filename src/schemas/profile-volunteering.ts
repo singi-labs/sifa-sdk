@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { datetimeSchema, didSchema, maxGraphemes } from './shared.js';
+import { datetimeSchema, didSchema, maxGraphemes, partialDateSchema } from './shared.js';
 
 /** Zod schema for `id.sifa.profile.volunteering` records. */
 export const ProfileVolunteeringRecordSchema = z.object({
@@ -17,10 +17,8 @@ export const ProfileVolunteeringRecordSchema = z.object({
   role: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   cause: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
-  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
-  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
-  startedAt: z.string().optional(),
-  endedAt: z.string().optional(),
+  startedAt: partialDateSchema.optional(),
+  endedAt: partialDateSchema.optional(),
   createdAt: datetimeSchema,
 });
 

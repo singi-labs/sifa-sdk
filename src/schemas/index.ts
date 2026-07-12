@@ -104,6 +104,7 @@ export {
   externalRecordRefSchema,
   languageTagSchema,
   maxGraphemes,
+  partialDateSchema,
   selfLabelsSchema,
   strongRefSchema,
   uriSchema,

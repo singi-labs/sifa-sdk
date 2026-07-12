@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
-import { atUriSchema, datetimeSchema, maxGraphemes, strongRefSchema } from './shared.js';
+import {
+  atUriSchema,
+  datetimeSchema,
+  maxGraphemes,
+  partialDateSchema,
+  strongRefSchema,
+} from './shared.js';
 
 /** Zod schema for `id.sifa.profile.course` records. */
 export const ProfileCourseRecordSchema = z.object({
@@ -19,10 +25,7 @@ export const ProfileCourseRecordSchema = z.object({
   // AT-URI of the associated id.sifa.profile.certification record. Plain
   // at-uri (not a strongRef) so the link tracks the live certification.
   credential: atUriSchema.optional(),
-  // Date the course was completed. Freeform YYYY-MM or YYYY-MM-DD (not a strict
-  // datetime) so month-granularity and partial dates are accepted. See
-  // sifa-lexicons#256.
-  completedAt: z.string().optional(),
+  completedAt: partialDateSchema.optional(),
   createdAt: datetimeSchema,
 });
 
