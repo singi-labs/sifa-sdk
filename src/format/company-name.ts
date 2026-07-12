@@ -39,7 +39,7 @@ const SMALL_WORDS = new Set([
  * Iterating by code point (not `.length`) matters for astral-plane
  * characters (e.g. some CJK), which are represented as surrogate pairs.
  */
-function hasNonAsciiLetter(value: string): boolean {
+export function hasNonAsciiLetter(value: string): boolean {
   for (const char of value) {
     const codePoint = char.codePointAt(0) ?? 0;
     if (codePoint > 0x7f && /\p{L}/u.test(char)) return true;
