@@ -74,7 +74,12 @@ function normalizeToken(token: string, isLeading: boolean): string {
 
   const key = letters.toLowerCase();
   const canonical = CANONICAL_LEGAL_FORMS[key];
-  if (!canonical) return token;
+  // Require a string value, not merely truthy: a bare `map[key]` lookup resolves
+  // inherited Object.prototype members, so a token like "Constructor" (key
+  // `constructor`) or "__proto__" returns a function/object that is truthy but
+  // not a string, and `recase` would then throw on `.charAt`. This also narrows
+  // away the `undefined` from a missing key.
+  if (typeof canonical !== 'string') return token;
   if (isLeading && AMBIGUOUS_WHEN_LEADING.has(key)) return token;
 
   return recase(token, canonical);
