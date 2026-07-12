@@ -18,7 +18,9 @@ export const ProfilePublicationRecordSchema = z.object({
   url: uriSchema.optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   authors: z.array(PublicationAuthorSchema).max(50).optional(),
-  publishedAt: datetimeSchema.optional(),
+  // Freeform YYYY-MM or YYYY-MM-DD (not a strict datetime) so partial dates
+  // and LinkedIn-importer writes are accepted. See sifa-lexicons#256.
+  publishedAt: z.string().optional(),
   createdAt: datetimeSchema,
 });
 
