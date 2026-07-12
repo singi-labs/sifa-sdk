@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.26
+
+### Patch Changes
+
+- 18f6bc5: Add `entityRef`, `location`, and `skills` to `id.sifa.profile.involvement` (matching `position`). The write schema validates an http(s) `entityRef`, an optional `location`, and up to 50 skill refs; the `ProfileInvolvement` read type gains `entityRef`, the AppView-resolved `entityName`, `location`, `skills`, and `linkedSkills`.
+
 ## 0.11.25
 
 ### Patch Changes
