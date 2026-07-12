@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.11.30
+
+### Patch Changes
+
+- 9fe4393: Restrict `normalizeLegalForm` to the trailing designator token only. A leading designator token is almost always part of the brand ("INC Research", "AG Innovations") rather than a legal form, so recasing it would corrupt the name. Trailing-only removes that class of false positive.
+
 ## 0.11.29
 
 ### Patch Changes
