@@ -9,6 +9,7 @@ import {
   type Endorsement,
   type LanguageProficiency,
   type Profile,
+  type ProfileCertification,
   type ProfileInvolvement,
   type ProfilePosition,
 } from './index.js';
@@ -62,6 +63,19 @@ describe('exported types', () => {
     };
     expect(position.employmentType).toBe('id.sifa.defs#fullTime');
     expect(position.workplaceType).toBe('id.sifa.defs#remote');
+  });
+
+  it('ProfileCertification carries authority as the canonical issuing-org field (#249)', () => {
+    const cert: ProfileCertification = {
+      rkey: 'abc',
+      name: 'AWS Certified Solutions Architect',
+      authority: 'Amazon Web Services',
+    };
+    expect(cert.authority).toBe('Amazon Web Services');
+    // The legacy `issuingOrg` alias stays assignable during the deprecation
+    // window but is no longer required to construct a certification.
+    expectTypeOf<ProfileCertification['authority']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<ProfileCertification['issuingOrg']>().toEqualTypeOf<string | undefined>();
   });
 
   it('LanguageProficiency is a fixed union', () => {
