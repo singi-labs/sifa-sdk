@@ -90,7 +90,10 @@ export const VERIFICATION_PROVIDERS: Record<VerificationProviderId, Verification
 };
 
 export function isKnownVerificationProvider(id: string): id is VerificationProviderId {
-  return id in VERIFICATION_PROVIDERS;
+  // Object.hasOwn, not `in`: `in` also matches inherited Object.prototype keys
+  // ('toString', 'constructor', ...), which would wrongly narrow those strings
+  // and make getVerificationProvider return a prototype function.
+  return Object.hasOwn(VERIFICATION_PROVIDERS, id);
 }
 
 export function getVerificationProvider(id: string): VerificationProvider | undefined {

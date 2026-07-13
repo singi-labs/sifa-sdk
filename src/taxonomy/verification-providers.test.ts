@@ -43,6 +43,12 @@ describe('isKnownVerificationProvider', () => {
   it('rejects an unknown provider id', () => {
     expect(isKnownVerificationProvider('twitter')).toBe(false);
   });
+
+  it('rejects inherited Object.prototype keys', () => {
+    expect(isKnownVerificationProvider('toString')).toBe(false);
+    expect(isKnownVerificationProvider('constructor')).toBe(false);
+    expect(isKnownVerificationProvider('hasOwnProperty')).toBe(false);
+  });
 });
 
 describe('getVerificationProvider', () => {
@@ -92,6 +98,8 @@ describe('primaryVerification (D1: one badge, rest in popover)', () => {
   });
 
   it('ignores verifications from unknown providers', () => {
+    // Intentionally bypasses the type checker to simulate a verification whose
+    // provider is not in the registry (a shape the API layer could still emit).
     const unknown = { provider: 'twitter', verifiedAt: null } as unknown as AccountVerification;
     expect(primaryVerification([unknown, mu])).toEqual(mu);
     expect(primaryVerification([unknown])).toBeNull();
