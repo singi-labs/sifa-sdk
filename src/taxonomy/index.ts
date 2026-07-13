@@ -108,3 +108,14 @@ export {
   getArtifactLinkKindLabel,
   type ArtifactLinkKindOption,
 } from './artifact-link-kind.js';
+export {
+  VERIFICATION_PROVIDERS,
+  getVerificationProvider,
+  isKnownVerificationProvider,
+  resolveVerifierProvider,
+  primaryVerification,
+  type AccountVerification,
+  type VerificationProvider,
+  type VerificationProviderId,
+  type VerificationSource,
+} from './verification-providers.js';
