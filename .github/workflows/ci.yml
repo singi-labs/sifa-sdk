@@ -60,5 +60,11 @@ jobs:
         run: pnpm build
 
       - name: Audit
+        # npm retired the audit endpoints `pnpm audit` calls (HTTP 410, see
+        # https://api-docs.npmjs.com/#tag/Audit), so this step now always
+        # errors on the endpoint rather than on real advisories -- it blocks
+        # every PR. Keep it running for visibility but non-blocking until
+        # auditing is restored via a maintained path (bulk advisory endpoint /
+        # Dependabot / Socket). Follow-up: singi-labs/sifa-sdk#298.
         run: pnpm audit --prod --audit-level=high
-        continue-on-error: false
+        continue-on-error: true
