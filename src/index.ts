@@ -150,10 +150,12 @@ export {
   dateRangeExtractor,
   detectPdsProvider,
   formatCompanyName,
+  formatDateRange,
   formatDistanceToNow,
   formatLocation,
   formatPresentationDuration,
   formatRelativeTime,
+  formatTimelineDate,
   getDisplayLabel,
   getHandleStem,
   getPdsDisplayName,
@@ -246,6 +248,34 @@ export {
   type DisambiguationFields,
   type EntityRefAnchor,
 } from './logic/index.js';
+
+// Profile section model: which sections render, in what order, their nav
+// grouping, per-section sorts, and involvement grouping. Shared by the HTML
+// profile page, the Markdown/DOCX/print exports, and the personal-site renderer.
+export {
+  ALL_SECTIONS,
+  INVOLVEMENT_HEADING_ORDER,
+  SECTION_GROUPS,
+  SECTION_LABELS,
+  filterHidden,
+  getVisibleSectionIds,
+  groupInvolvementByHeading,
+  hoistPrimary,
+  isSectionPopulated,
+  sortByActiveDateRange,
+  sortCertifications,
+  sortEducation,
+  sortHonors,
+  sortLanguages,
+  sortLanguagesByProficiency,
+  sortPositions,
+  sortProjects,
+  sortPublications,
+  visibleItems,
+  type InvolvementGroup,
+  type SectionGroupId,
+  type SectionId,
+} from './profile/index.js';
 
 export {
   AtmosphereFeedItemSchema,
