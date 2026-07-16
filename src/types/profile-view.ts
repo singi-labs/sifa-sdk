@@ -256,9 +256,9 @@ export interface ProfileView {
   locations?: ProfileLocationView[];
   website?: string;
   openTo?: string[];
-  preferredWorkplace?: string;
-  availableFromUtc?: string;
-  availableToUtc?: string;
+  preferredWorkplace?: string[];
+  availableFromUtc?: number;
+  availableToUtc?: number;
   langs?: string[];
   createdAt?: string;
   positions?: PositionView[];
