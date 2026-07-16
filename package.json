@@ -52,6 +52,16 @@
         "default": "./dist/schemas/index.cjs"
       }
     },
+    "./schemas/write": {
+      "import": {
+        "types": "./dist/schemas/write/index.d.ts",
+        "default": "./dist/schemas/write/index.js"
+      },
+      "require": {
+        "types": "./dist/schemas/write/index.d.cts",
+        "default": "./dist/schemas/write/index.cjs"
+      }
+    },
     "./query": {
       "import": {
         "types": "./dist/query/index.d.ts",

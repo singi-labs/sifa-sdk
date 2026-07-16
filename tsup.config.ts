@@ -8,6 +8,7 @@ export default defineConfig({
   entry: [
     'src/index.ts',
     'src/schemas/index.ts',
+    'src/schemas/write/index.ts',
     'src/query/index.ts',
     'src/query/fetchers/index.ts',
     'src/query/hooks/index.ts',
