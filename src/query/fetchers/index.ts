@@ -24,6 +24,7 @@ export {
 } from '../client.js';
 
 export { fetchAtFundLink, fetchProfile } from './profile.js';
+export { fetchGetProfileView } from './get-profile-view.js';
 export {
   deleteAvatarOverride,
   refreshPds,
