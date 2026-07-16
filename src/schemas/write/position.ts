@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { skillRefSchema, writeLocationSchema } from './shared.js';
+import { entityRefSchema, skillRefSchema, writeLocationSchema } from './shared.js';
 
 /**
  * Schema enforced by `POST /profile/positions` on sifa-api.
@@ -10,16 +10,14 @@ import { skillRefSchema, writeLocationSchema } from './shared.js';
  * round-trip. If it passes here, the API will accept the write modulo
  * transport / auth failures.
  *
- * `company` is intentionally optional to support freelancer / independent
- * employment types where the position has no employer. The current
- * `sifa-api/src/routes/schemas.ts` requires `company` (`.min(1)`); the
- * sifa-api adoption PR that consumes this schema will therefore be a
- * behavior change that unblocks the freelancer flow. The SDK's lexicon
- * schema (`ProfilePositionRecordSchema`) has treated `company` as optional
- * since sifa-sdk #184.
+ * `company` is optional to support freelancer / independent employment types
+ * where the position has no employer. This matches sifa-api's current
+ * behavior in `src/routes/schemas.ts` and the SDK's lexicon schema
+ * (`ProfilePositionRecordSchema`) since sifa-sdk #184.
  */
 export const PositionWriteSchema = z.object({
   company: z.string().min(1).max(256).nullable().optional(),
+  entityRef: entityRefSchema,
   title: z.string().min(1).max(256),
   description: z.string().max(50000).nullable().optional(),
   employmentType: z.string().nullable().optional(),

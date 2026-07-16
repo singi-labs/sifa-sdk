@@ -20,8 +20,14 @@
  */
 
 export {
+  artifactLinkSchema,
+  entityRefSchema,
+  externalRecordRefSchema,
+  httpUrlOrNull,
+  isValidDateOnly,
   normalizeUrl,
   optionalUrl,
+  presentationLinkSchema,
   skillRefSchema,
   VALID_PLATFORMS,
   writeLocationSchema,
@@ -33,8 +39,19 @@ export { CourseWriteSchema, type CourseWriteInput } from './course.js';
 export { EducationWriteSchema, type EducationWriteInput } from './education.js';
 export { ExternalAccountWriteSchema, type ExternalAccountWriteInput } from './external-account.js';
 export { HonorWriteSchema, type HonorWriteInput } from './honor.js';
+export { InvolvementWriteSchema, type InvolvementWriteInput } from './involvement.js';
 export { LanguageWriteSchema, type LanguageWriteInput } from './language.js';
+export {
+  OrgEmploymentAttestationWriteSchema,
+  type OrgEmploymentAttestationWriteInput,
+} from './org-employment-attestation.js';
+export { OrgProfileWriteSchema, type OrgProfileWriteInput } from './org-profile.js';
 export { PositionWriteSchema, type PositionWriteInput } from './position.js';
+export {
+  PresentationDeliveryWriteSchema,
+  type PresentationDeliveryWriteInput,
+} from './presentation-delivery.js';
+export { PresentationWriteSchema, type PresentationWriteInput } from './presentation.js';
 export { ProfileLocationWriteSchema, type ProfileLocationWriteInput } from './profile-location.js';
 export { ProfileSelfWriteSchema, type ProfileSelfWriteInput } from './profile-self.js';
 export { ProjectWriteSchema, type ProjectWriteInput } from './project.js';

@@ -91,3 +91,87 @@ export const VALID_PLATFORMS = [
 ] as const;
 
 export type ValidPlatform = (typeof VALID_PLATFORMS)[number];
+
+// ---- pure sanitization primitives (previously in sifa-api/src/lib/sanitize.ts) ----
+
+/**
+ * Returns `input` when it is an http(s) URL string, else `null`. Blocks
+ * dangerous schemes (`javascript:`, `data:`, etc.) from being stored and
+ * later rendered.
+ */
+export function httpUrlOrNull(input: unknown): string | null {
+  if (typeof input !== 'string') return null;
+  try {
+    const url = new URL(input);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? input : null;
+  } catch {
+    return null;
+  }
+}
+
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Strict calendar-date validator. Returns `true` for `YYYY-MM-DD` strings
+ * that name a real day, rejecting impossible values (`2024-02-30`, `2024-13-01`)
+ * by requiring the JavaScript `Date` round-trip to preserve the input.
+ */
+export function isValidDateOnly(input: unknown): boolean {
+  if (typeof input !== 'string' || !DATE_ONLY_RE.test(input)) return false;
+  const parsed = new Date(`${input}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(input);
+}
+
+// ---- shared write-schema fragments used by multiple sections ----
+
+/**
+ * Portable org entity identifier (Wikidata / ROR / LEI / sifa.id URI) chosen
+ * from the typeahead. Constrained to http(s) so a script-bearing scheme can't
+ * be written to the PDS record. Absent for free-text / unlinked records.
+ * Shared by the org-bearing sections (position, education, certification,
+ * volunteering, course, honor).
+ */
+export const entityRefSchema = z
+  .string()
+  .url()
+  .refine((s) => /^https?:\/\//i.test(s), { message: 'entityRef must be an http(s) URL' })
+  .max(2048)
+  .optional();
+
+/**
+ * One proof link on an involvement record (`id.sifa.defs#artifactLink`).
+ * Only http(s) URLs are accepted so a dangerous scheme is never written to
+ * the PDS.
+ */
+export const artifactLinkSchema = z.object({
+  url: z
+    .string()
+    .max(2048)
+    .refine((v) => httpUrlOrNull(v) !== null, 'must be an http(s) URL'),
+  kind: z.string().max(64).nullable().optional(),
+  label: z.string().max(2000).nullable().optional(),
+});
+
+/**
+ * Reference to a record by at-uri, with an optional CID
+ * (`id.sifa.defs#externalRecordRef`).
+ */
+export const externalRecordRefSchema = z.object({
+  uri: z.string().regex(/^at:\/\/[^/\s]+\/[^/\s]+\/[^/\s]+$/, 'must be an at-uri'),
+  // CIDv0 (`Qm…`) or CIDv1 (base32, `b…`). Loose but rejects arbitrary strings.
+  cid: z
+    .string()
+    .max(256)
+    .regex(/^(Qm[1-9A-HJ-NP-Za-km-z]{44}|b[A-Za-z2-7]+)$/, 'must be a CID')
+    .optional(),
+});
+
+/** Link attached to a presentation record. */
+export const presentationLinkSchema = z.object({
+  uri: z
+    .string()
+    .max(2048)
+    .refine((v) => httpUrlOrNull(v) !== null, 'must be an http(s) URL'),
+  label: z.string().max(640).nullable().optional(),
+  type: z.string().max(256).nullable().optional(),
+});
