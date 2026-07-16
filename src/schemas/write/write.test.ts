@@ -6,8 +6,13 @@ import {
   EducationWriteSchema,
   ExternalAccountWriteSchema,
   HonorWriteSchema,
+  InvolvementWriteSchema,
   LanguageWriteSchema,
+  OrgEmploymentAttestationWriteSchema,
+  OrgProfileWriteSchema,
   PositionWriteSchema,
+  PresentationDeliveryWriteSchema,
+  PresentationWriteSchema,
   ProfileLocationWriteSchema,
   ProfileSelfWriteSchema,
   ProjectWriteSchema,
@@ -15,6 +20,8 @@ import {
   SkillWriteSchema,
   VALID_PLATFORMS,
   VolunteeringWriteSchema,
+  httpUrlOrNull,
+  isValidDateOnly,
   normalizeUrl,
   optionalUrl,
 } from './index.js';
@@ -189,5 +196,191 @@ describe('normalizeUrl + optionalUrl', () => {
     expect(schema.parse('https://x.com')).toBe('https://x.com');
     expect(schema.parse('not a url')).toBeUndefined();
     expect(schema.parse(undefined)).toBeUndefined();
+  });
+});
+
+describe('httpUrlOrNull', () => {
+  it('returns the string for http(s)', () => {
+    expect(httpUrlOrNull('https://x.com')).toBe('https://x.com');
+    expect(httpUrlOrNull('http://x.com')).toBe('http://x.com');
+  });
+  it('blocks dangerous schemes and garbage', () => {
+    expect(httpUrlOrNull('javascript:alert(1)')).toBeNull();
+    expect(httpUrlOrNull('data:text/html,x')).toBeNull();
+    expect(httpUrlOrNull('not a url')).toBeNull();
+    expect(httpUrlOrNull(42)).toBeNull();
+  });
+});
+
+describe('isValidDateOnly', () => {
+  it('accepts real dates in YYYY-MM-DD form', () => {
+    expect(isValidDateOnly('2024-01-15')).toBe(true);
+    expect(isValidDateOnly('2000-02-29')).toBe(true); // leap year
+  });
+  it('rejects impossible dates and wrong shapes', () => {
+    expect(isValidDateOnly('2024-02-30')).toBe(false);
+    expect(isValidDateOnly('2024-13-01')).toBe(false);
+    expect(isValidDateOnly('2024-1-1')).toBe(false);
+    expect(isValidDateOnly('not a date')).toBe(false);
+    expect(isValidDateOnly(1234)).toBe(false);
+  });
+});
+
+describe('PositionWriteSchema (entityRef added in this PR)', () => {
+  it('accepts a valid https entityRef', () => {
+    expect(
+      PositionWriteSchema.safeParse({
+        title: 'Engineer',
+        entityRef: 'https://www.wikidata.org/wiki/Q123',
+      }).success,
+    ).toBe(true);
+  });
+  it('rejects an ftp:// entityRef', () => {
+    expect(
+      PositionWriteSchema.safeParse({
+        title: 'Engineer',
+        entityRef: 'ftp://example.com/x',
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('CourseWriteSchema (credential + completedAt added in this PR)', () => {
+  it('accepts a course with an at-uri credential reference', () => {
+    expect(
+      CourseWriteSchema.safeParse({
+        name: 'Algorithms',
+        credential: 'at://did:plc:x/id.sifa.profile.certification/y',
+        completedAt: '2024-01-15T00:00:00.000Z',
+      }).success,
+    ).toBe(true);
+  });
+  it('rejects a non-at-uri credential', () => {
+    expect(
+      CourseWriteSchema.safeParse({
+        name: 'Algorithms',
+        credential: 'https://example.com/cert',
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('PublicationWriteSchema (subtitle added in this PR)', () => {
+  it('accepts subtitle up to 2000 chars', () => {
+    expect(
+      PublicationWriteSchema.safeParse({
+        title: 'Paper',
+        subtitle: 'A subtitle',
+      }).success,
+    ).toBe(true);
+    expect(
+      PublicationWriteSchema.safeParse({
+        title: 'Paper',
+        subtitle: 'x'.repeat(2001),
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('InvolvementWriteSchema', () => {
+  it('accepts minimum kind + rejects non-DID upstreamDid', () => {
+    expect(InvolvementWriteSchema.safeParse({ kind: 'maintainer' }).success).toBe(true);
+    expect(
+      InvolvementWriteSchema.safeParse({
+        kind: 'maintainer',
+        upstreamDid: 'not-a-did',
+      }).success,
+    ).toBe(false);
+  });
+  it('accepts artifact links with http(s) URLs; rejects javascript:', () => {
+    expect(
+      InvolvementWriteSchema.safeParse({
+        kind: 'contributor',
+        links: [{ url: 'https://github.com/x/y/pull/1' }],
+      }).success,
+    ).toBe(true);
+    expect(
+      InvolvementWriteSchema.safeParse({
+        kind: 'contributor',
+        links: [{ url: 'javascript:alert(1)' }],
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('PresentationWriteSchema', () => {
+  it('accepts a minimum presentation', () => {
+    expect(PresentationWriteSchema.safeParse({ title: 'On distributed systems' }).success).toBe(
+      true,
+    );
+  });
+  it('rejects maxMinutes < minMinutes', () => {
+    expect(
+      PresentationWriteSchema.safeParse({
+        title: 'Talk',
+        duration: { minMinutes: 30, maxMinutes: 20 },
+      }).success,
+    ).toBe(false);
+  });
+  it('accepts maxMinutes >= minMinutes', () => {
+    expect(
+      PresentationWriteSchema.safeParse({
+        title: 'Talk',
+        duration: { minMinutes: 30, maxMinutes: 45 },
+      }).success,
+    ).toBe(true);
+  });
+});
+
+describe('PresentationDeliveryWriteSchema', () => {
+  it('accepts a date in YYYY-MM-DD; rejects an impossible date', () => {
+    expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-06-15' }).success).toBe(true);
+    expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-02-30' }).success).toBe(false);
+  });
+  it('rejects coSpeakers that are not DIDs', () => {
+    expect(
+      PresentationDeliveryWriteSchema.safeParse({
+        coSpeakers: ['did:plc:x', 'not-a-did'],
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('OrgProfileWriteSchema', () => {
+  it('requires name and createdAt', () => {
+    expect(OrgProfileWriteSchema.safeParse({ name: 'Acme', createdAt: '2024-01-01' }).success).toBe(
+      true,
+    );
+    expect(OrgProfileWriteSchema.safeParse({ name: '', createdAt: '2024-01-01' }).success).toBe(
+      false,
+    );
+    expect(OrgProfileWriteSchema.safeParse({ name: 'Acme' }).success).toBe(false);
+  });
+});
+
+describe('OrgEmploymentAttestationWriteSchema', () => {
+  it('accepts a minimal attestation', () => {
+    expect(
+      OrgEmploymentAttestationWriteSchema.safeParse({
+        subject: 'did:plc:sub',
+        position: { uri: 'at://did:plc:x/id.sifa.profile.position/y' },
+        status: 'current',
+        title: 'Engineer',
+        startedAt: '2024-01',
+        createdAt: '2024-01-01T00:00:00Z',
+      }).success,
+    ).toBe(true);
+  });
+  it('rejects status outside enum', () => {
+    expect(
+      OrgEmploymentAttestationWriteSchema.safeParse({
+        subject: 'did:plc:sub',
+        position: { uri: 'at://did:plc:x/id.sifa.profile.position/y' },
+        status: 'lapsed',
+        title: 'Engineer',
+        startedAt: '2024-01',
+        createdAt: '2024-01-01T00:00:00Z',
+      }).success,
+    ).toBe(false);
   });
 });
