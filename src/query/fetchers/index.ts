@@ -216,4 +216,21 @@ export {
 
 export { fetchEntitySearch, selectEntity, importSearchEntities } from './entities.js';
 
+export {
+  submitOrgClaim,
+  updateOrgProfile,
+  requestOrgDomainChallenge,
+  verifyOrgDomain,
+  addOrgNotificationEmail,
+  removeOrgNotificationEmail,
+  type OrgClaimBinding,
+  type OrgProfileEcho,
+  type OrgClaimResult,
+  type OrgProfileUpdateResult,
+  type OrgDomainChallengeResult,
+  type OrgDomainVerifyResult,
+  type OrgNotificationEmailAddResult,
+  type OrgNotificationEmailRemoveResult,
+} from './org.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';

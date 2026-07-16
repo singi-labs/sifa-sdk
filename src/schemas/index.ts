@@ -21,6 +21,11 @@ export {
   type EntityMintDomainResponse,
 } from './entity.js';
 export { EndorsementRecordSchema, type EndorsementRecord } from './endorsement.js';
+export { OrgProfileRecordSchema, type OrgProfileRecord } from './org-profile.js';
+export {
+  OrgEmploymentAttestationRecordSchema,
+  type OrgEmploymentAttestationRecord,
+} from './org-employment-attestation.js';
 export {
   GraphFollowRecordSchema,
   makeGraphFollowRecordSchema,

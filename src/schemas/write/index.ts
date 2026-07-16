@@ -46,6 +46,17 @@ export {
   type OrgEmploymentAttestationWriteInput,
 } from './org-employment-attestation.js';
 export { OrgProfileWriteSchema, type OrgProfileWriteInput } from './org-profile.js';
+export { OrgClaimRequestSchema, type OrgClaimRequestInput } from './org-claim.js';
+export {
+  OrgProfileUpdateRequestSchema,
+  type OrgProfileUpdateRequestInput,
+  OrgDomainChallengeRequestSchema,
+  type OrgDomainChallengeRequestInput,
+  OrgDomainVerifyRequestSchema,
+  type OrgDomainVerifyRequestInput,
+  OrgNotificationEmailRequestSchema,
+  type OrgNotificationEmailRequestInput,
+} from './org-settings.js';
 export { PositionWriteSchema, type PositionWriteInput } from './position.js';
 export {
   PresentationDeliveryWriteSchema,

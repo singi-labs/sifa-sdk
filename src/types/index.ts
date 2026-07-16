@@ -485,9 +485,41 @@ export interface ProfileOverrideSource {
   avatarUrl?: string;
 }
 
+/**
+ * The org-profile fields exposed on the profile resolve when the org rendering
+ * floor is met. Narrow on purpose: `contact` is never included (not rendered
+ * publicly); record URI/CID are internal. Mirrors sifa-api's `OrgProfileView`.
+ */
+export interface OrgProfileView {
+  name: string;
+  description: string | null;
+  website: string | null;
+  /** Blob CID (or resolved URL) of the org logo, when present. */
+  logoBlob: string | null;
+  entityRefs: string[] | null;
+}
+
+/**
+ * Server-computed org rendering-floor verdict (#160), carried on the profile
+ * resolve so clients need no extra round-trip. `isOrg` is true when the account
+ * has an `id.sifa.org.profile` record AND its handle is a custom registrable
+ * domain (the authoritative, PSL-backed check lives server-side). Read it via
+ * the `useOrgProfile` hook.
+ */
+export interface OrgFloorVerdict {
+  isOrg: boolean;
+  orgProfile?: OrgProfileView;
+}
+
 export interface Profile {
   did: string;
   handle: string;
+  /**
+   * Org rendering-floor verdict (#160). Present on the profile resolve; absent
+   * on payloads that predate the field. When `org.isOrg` is true the account
+   * renders as an organization (`/c/`).
+   */
+  org?: OrgFloorVerdict;
   displayName?: string;
   /**
    * Given (first) name from `id.sifa.profile.self.givenName`. Schema.org

@@ -355,4 +355,29 @@ export {
   useUpdateBskyContentLabelPrefs,
 } from './hooks/use-bsky-content-prefs.js';
 
+export {
+  submitOrgClaim,
+  updateOrgProfile,
+  requestOrgDomainChallenge,
+  verifyOrgDomain,
+  addOrgNotificationEmail,
+  removeOrgNotificationEmail,
+  type OrgClaimBinding,
+  type OrgProfileEcho,
+  type OrgClaimResult,
+  type OrgProfileUpdateResult,
+  type OrgDomainChallengeResult,
+  type OrgDomainVerifyResult,
+  type OrgNotificationEmailAddResult,
+  type OrgNotificationEmailRemoveResult,
+} from './fetchers/org.js';
+export { useOrgProfile } from './hooks/use-org-profile.js';
+export { useOrgClaim } from './hooks/use-org-claim.js';
+export { useUpdateOrgProfile } from './hooks/use-org-profile-settings.js';
+export { useOrgDomainChallenge, useOrgDomainVerify } from './hooks/use-org-domains.js';
+export {
+  useAddOrgNotificationEmail,
+  useRemoveOrgNotificationEmail,
+} from './hooks/use-org-notification-emails.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';

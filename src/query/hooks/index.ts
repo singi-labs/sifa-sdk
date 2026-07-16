@@ -141,4 +141,13 @@ export {
   type UseEntitySearchOptions,
 } from './use-entity-search.js';
 
+export { useOrgProfile } from './use-org-profile.js';
+export { useOrgClaim } from './use-org-claim.js';
+export { useUpdateOrgProfile } from './use-org-profile-settings.js';
+export { useOrgDomainChallenge, useOrgDomainVerify } from './use-org-domains.js';
+export {
+  useAddOrgNotificationEmail,
+  useRemoveOrgNotificationEmail,
+} from './use-org-notification-emails.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';
