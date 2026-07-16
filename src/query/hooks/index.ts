@@ -13,6 +13,7 @@
 export { SifaProvider, useSifaConfig, type SifaProviderProps } from '../config.js';
 
 export { useAtFundLink, useProfile } from './use-profile.js';
+export { useGetProfileView } from './use-get-profile-view.js';
 export {
   useDeleteAvatarOverride,
   useRefreshPds,

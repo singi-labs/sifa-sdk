@@ -16,6 +16,7 @@ export const sifaQueryKeys = {
     all: () => ['sifa', 'profile'] as const,
     byHandle: (handleOrDid: string) => ['sifa', 'profile', handleOrDid] as const,
     atFundLink: (did: string) => ['sifa', 'profile', 'at-fund-link', did] as const,
+    view: (actor: string) => ['sifa', 'profile', 'view', actor] as const,
     externalAccounts: (handleOrDid: string) =>
       ['sifa', 'profile', 'external-accounts', handleOrDid] as const,
   },

@@ -49,6 +49,33 @@ export type {
   VerifiedAccount,
 } from './types/index.js';
 
+// Aggregated public profile view (`id.sifa.getProfileView` XRPC query).
+export type {
+  ProfileView,
+  IndustryDomain,
+  ProfileLocationView,
+  PositionView,
+  EducationView,
+  SkillView,
+  CertificationView,
+  ProjectView,
+  VolunteeringView,
+  InvolvementView,
+  InvolvementLinkView,
+  PublicationView,
+  ContributorView,
+  CourseView,
+  DurationView,
+  CoSpeakerView,
+  PresentationDeliveryView,
+  PresentationView,
+  HonorView,
+  LanguageView,
+  ExternalAccountView,
+  ActiveAppView,
+  AtfundLinkView,
+} from './types/profile-view.js';
+
 export {
   ACTIVITY_TIERS,
   APP_CATEGORIES,

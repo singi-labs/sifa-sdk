@@ -12,6 +12,7 @@ export {
 export { SifaProvider, useSifaConfig, type SifaProviderProps } from './config.js';
 
 export { fetchAtFundLink, fetchProfile } from './fetchers/profile.js';
+export { fetchGetProfileView } from './fetchers/get-profile-view.js';
 export {
   deleteAvatarOverride,
   refreshPds,
@@ -211,6 +212,7 @@ export {
 } from './fetchers/network-map.js';
 
 export { useAtFundLink, useProfile } from './hooks/use-profile.js';
+export { useGetProfileView } from './hooks/use-get-profile-view.js';
 export {
   useDeleteAvatarOverride,
   useRefreshPds,
