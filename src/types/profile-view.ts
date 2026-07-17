@@ -6,9 +6,9 @@
  * @singi-labs/sifa-lexicons.
  */
 
-import type { PresentationLinkView } from './index.js';
+import type { PresentationLinkView, PdsProviderInfo } from './index.js';
 
-export type { PresentationLinkView };
+export type { PresentationLinkView, PdsProviderInfo };
 
 export interface IndustryDomain {
   industry: string;
@@ -256,9 +256,9 @@ export interface ProfileView {
   locations?: ProfileLocationView[];
   website?: string;
   openTo?: string[];
-  preferredWorkplace?: string;
-  availableFromUtc?: string;
-  availableToUtc?: string;
+  preferredWorkplace?: string[];
+  availableFromUtc?: number;
+  availableToUtc?: number;
   langs?: string[];
   createdAt?: string;
   positions?: PositionView[];
@@ -284,6 +284,6 @@ export interface ProfileView {
   blueskyVerified?: boolean;
   blueskyVerifiedAt?: string;
   activeApps?: ActiveAppView[];
-  pdsProvider?: string;
+  pdsProvider?: PdsProviderInfo;
   claimed?: boolean;
 }
