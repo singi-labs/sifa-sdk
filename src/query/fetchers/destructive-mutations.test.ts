@@ -139,4 +139,54 @@ describe('deleteAccount', () => {
     expect(result.success).toBe(false);
     expect(result.pdsHost).toBe('eurosky.social');
   });
+
+  // A deletion can succeed for the account while leaving records on the PDS:
+  // the server wipes each collection independently and reports the survivors.
+  // Without these, `success: true` is all a UI can see, and it would tell
+  // someone their data is gone while it is still on their data server.
+  it('surfaces which collections survived a partial wipe', async () => {
+    const fetchImpl = jsonFetch({
+      ok: true,
+      handle: 'alice.sifa.id',
+      pds: { deleted: ['id.sifa.profile.self'], remaining: ['id.sifa.meeting'], unknown: false },
+    });
+
+    const result = await deleteAccount({ ...baseConfig, fetch: fetchImpl }, true);
+
+    expect(result.success).toBe(true);
+    expect(result.pds?.remaining).toEqual(['id.sifa.meeting']);
+    expect(result.pds?.deleted).toEqual(['id.sifa.profile.self']);
+  });
+
+  it('surfaces that the server could not tell what survived', async () => {
+    const fetchImpl = jsonFetch({
+      ok: true,
+      handle: 'alice.sifa.id',
+      pds: { deleted: [], remaining: [], unknown: true },
+    });
+
+    const result = await deleteAccount({ ...baseConfig, fetch: fetchImpl }, true);
+
+    // Indistinguishable from "nothing to delete" without this flag.
+    expect(result.pds?.unknown).toBe(true);
+  });
+
+  it('leaves pds undefined when the PDS was not touched', async () => {
+    const fetchImpl = jsonFetch({ ok: true, handle: 'alice.sifa.id' });
+    const result = await deleteAccount({ ...baseConfig, fetch: fetchImpl }, false);
+    expect(result.pds).toBeUndefined();
+  });
+});
+
+describe('resetProfile PDS outcome', () => {
+  it('surfaces survivors on reset too', async () => {
+    const fetchImpl = jsonFetch({
+      ok: true,
+      pds: { deleted: [], remaining: ['id.sifa.meeting'], unknown: false },
+    });
+
+    const result = await resetProfile({ ...baseConfig, fetch: fetchImpl }, true);
+
+    expect(result.pds?.remaining).toEqual(['id.sifa.meeting']);
+  });
 });
