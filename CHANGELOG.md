@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.7
+
+### Patch Changes
+
+- 435cac0: Correct `ProfileView` field types to match the AppView output: `preferredWorkplace` is `string[]` (not `string`), `availableFromUtc`/`availableToUtc` are `number` (not `string`), and `pdsProvider` is a `PdsProviderInfo` object (not `string`).
+
 ## 0.12.6
 
 ### Patch Changes
