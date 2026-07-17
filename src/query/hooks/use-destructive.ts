@@ -2,9 +2,13 @@
 
 import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/react-query';
 
-import { type WriteResult } from '../client.js';
 import { useSifaConfig } from '../config.js';
-import { deleteAccount, resetProfile, type DeleteAccountResult } from '../fetchers/destructive.js';
+import {
+  deleteAccount,
+  resetProfile,
+  type DeleteAccountResult,
+  type ResetProfileResult,
+} from '../fetchers/destructive.js';
 import { sifaQueryKeys } from '../keys.js';
 
 /**
@@ -15,7 +19,7 @@ import { sifaQueryKeys } from '../keys.js';
  * (everything Sifa-related needs a refresh after a reset).
  */
 export function useResetProfile(
-  options?: Omit<UseMutationOptions<WriteResult, Error, boolean>, 'mutationFn'>,
+  options?: Omit<UseMutationOptions<ResetProfileResult, Error, boolean>, 'mutationFn'>,
 ) {
   const config = useSifaConfig();
   const queryClient = useQueryClient();

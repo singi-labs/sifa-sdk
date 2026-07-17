@@ -201,7 +201,13 @@ export {
   type RoadmapVoter,
   type RoadmapVotesResponse,
 } from './roadmap.js';
-export { deleteAccount, resetProfile, type DeleteAccountResult } from './destructive.js';
+export {
+  deleteAccount,
+  resetProfile,
+  type DeleteAccountResult,
+  type ResetProfileResult,
+  type PdsWipeOutcome,
+} from './destructive.js';
 export {
   checkNetworkMapJobStatus,
   fetchNetworkMap,
