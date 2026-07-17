@@ -119,6 +119,40 @@ describe('positions: skill linking', () => {
     const body = JSON.parse(init.body as string) as Record<string, unknown>;
     expect(body.location).toBeUndefined();
   });
+
+  it('linkSkillToPosition preserves employmentType, workplaceType, and entityRef', async () => {
+    const fetchImpl = jsonFetch({});
+    const position: ProfilePosition = {
+      ...basePosition,
+      employmentType: 'id.sifa.defs#fullTime',
+      workplaceType: 'id.sifa.defs#remote',
+      entityRef: 'http://www.wikidata.org/entity/Q42',
+    };
+    const skill: SkillRef = { uri: 'at://did:plc:x/id.sifa.profile.skill/new' };
+    await linkSkillToPosition({ ...baseConfig, fetch: fetchImpl }, position, skill);
+    const [, init] = getCall(fetchImpl);
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body.employmentType).toBe('id.sifa.defs#fullTime');
+    expect(body.workplaceType).toBe('id.sifa.defs#remote');
+    expect(body.entityRef).toBe('http://www.wikidata.org/entity/Q42');
+  });
+
+  it('unlinkSkillFromPosition preserves employmentType, workplaceType, and entityRef', async () => {
+    const fetchImpl = jsonFetch({});
+    const position: ProfilePosition = {
+      ...basePosition,
+      employmentType: 'id.sifa.defs#fullTime',
+      workplaceType: 'id.sifa.defs#remote',
+      entityRef: 'http://www.wikidata.org/entity/Q42',
+    };
+    const skill: SkillRef = { uri: 'at://did:plc:x/id.sifa.profile.skill/existing' };
+    await unlinkSkillFromPosition({ ...baseConfig, fetch: fetchImpl }, position, skill);
+    const [, init] = getCall(fetchImpl);
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body.employmentType).toBe('id.sifa.defs#fullTime');
+    expect(body.workplaceType).toBe('id.sifa.defs#remote');
+    expect(body.entityRef).toBe('http://www.wikidata.org/entity/Q42');
+  });
 });
 
 describe('education mutations', () => {

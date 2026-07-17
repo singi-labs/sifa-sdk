@@ -95,6 +95,13 @@ function buildPositionPayload(
     startedAt: position.startedAt,
     endedAt: position.endedAt,
     location: position.location ?? undefined,
+    // Carry the form-controlled optional fields the AppView merge would
+    // otherwise clear when absent from the PUT body. Omitting them here made
+    // every link/unlink strip employmentType, workplaceType, and entityRef
+    // off the position (id.sifa.profile.position#skills round-trip).
+    employmentType: position.employmentType,
+    workplaceType: position.workplaceType,
+    entityRef: position.entityRef,
     skills,
   };
 }
