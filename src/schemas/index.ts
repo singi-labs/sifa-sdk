@@ -1,3 +1,4 @@
+export { BlobRefSchema, type BlobRef } from './blob-ref.js';
 export {
   EndorsementConfirmationRecordSchema,
   type EndorsementConfirmationRecord,

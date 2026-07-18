@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-import { externalRecordRefSchema, isValidDateOnly, presentationLinkSchema } from './shared.js';
+import {
+  externalRecordRefSchema,
+  isValidDateOnly,
+  presentationLinkSchema,
+  writeLocationSchema,
+} from './shared.js';
 
 /**
  * Schema enforced by the generic-record write endpoint for `id.sifa.profile.presentationDelivery`.
@@ -17,6 +22,9 @@ export const PresentationDeliveryWriteSchema = z.object({
   eventName: z.string().max(3000).nullable().optional(),
   date: z.string().refine(isValidDateOnly, 'must be a valid YYYY-MM-DD date').nullable().optional(),
   location: z.string().max(2560).nullable().optional(),
+  // Structured community.lexicon.location.address; `location` above stays as
+  // the legacy free-text fallback. writeLocationSchema is already nullable+optional.
+  address: writeLocationSchema,
   mode: z.string().max(256).nullable().optional(),
   status: z.string().max(256).nullable().optional(),
   links: z.array(presentationLinkSchema).max(20).optional(),

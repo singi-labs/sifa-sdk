@@ -597,6 +597,31 @@ describe('ProfilePresentationRecordSchema', () => {
       }).success,
     ).toBe(true);
   });
+
+  it('accepts an optional coverImage blob and is omitted-safe when absent', () => {
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        coverImage: {
+          $type: 'blob',
+          ref: { $link: 'bafyreiabc' },
+          mimeType: 'image/png',
+          size: 1234,
+        },
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(ProfilePresentationRecordSchema.safeParse({ title: 'T', createdAt: NOW }).success).toBe(
+      true,
+    );
+    expect(
+      ProfilePresentationRecordSchema.safeParse({
+        title: 'T',
+        coverImage: { $type: 'image', ref: { $link: 'x' }, mimeType: 'image/png', size: 1 },
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
 });
 
 describe('ProfilePresentationDeliveryRecordSchema', () => {
@@ -656,5 +681,25 @@ describe('ProfilePresentationDeliveryRecordSchema', () => {
     expect(
       ProfilePresentationDeliveryRecordSchema.safeParse({ date: '2025', createdAt: NOW }).success,
     ).toBe(false);
+  });
+
+  it('accepts a structured community address and is omitted-safe when absent', () => {
+    expect(
+      ProfilePresentationDeliveryRecordSchema.safeParse({
+        location: 'Berlin, Germany',
+        address: {
+          country: 'DE',
+          postalCode: '10115',
+          region: 'Berlin',
+          locality: 'Berlin',
+          street: 'Chausseestraße 1',
+          name: 'bcc Berlin',
+        },
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(ProfilePresentationDeliveryRecordSchema.safeParse({ createdAt: NOW }).success).toBe(
+      true,
+    );
   });
 });
