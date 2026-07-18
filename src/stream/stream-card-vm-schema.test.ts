@@ -67,6 +67,40 @@ describe('streamCardVMSchema', () => {
     ).toBe(false);
   });
 
+  it('accepts each app-specific body variant', () => {
+    const bodies: StreamCardVM['body'][] = [
+      {
+        kind: 'github-pr',
+        repoOwner: 'a',
+        repoName: 'b',
+        prNumber: 1,
+        title: 't',
+        additions: 3,
+        deletions: 1,
+      },
+      { kind: 'book', title: 'B', authors: ['A'], stars: 8 },
+      { kind: 'media-review', reviewKind: 'review', isRevisit: false, rating: 7 },
+      { kind: 'event-rsvp', rsvpStatus: 'going', mode: 'inperson' },
+      { kind: 'verification', platform: 'github', verified: true },
+      { kind: 'membership', communityName: 'C' },
+      { kind: 'location', venueName: 'V', geo: { latitude: 52, longitude: 5 } },
+      { kind: 'travel', origin: 'AMS', destination: 'JFK' },
+      { kind: 'standard-site', title: 'Doc', readingTime: 3 },
+    ];
+    for (const body of bodies) {
+      expect(streamCardVMSchema.safeParse({ ...baseVM, body }).success).toBe(true);
+    }
+  });
+
+  it('rejects an invalid rsvpStatus enum', () => {
+    expect(
+      streamCardVMSchema.safeParse({
+        ...baseVM,
+        body: { kind: 'event-rsvp', rsvpStatus: 'maybe' },
+      }).success,
+    ).toBe(false);
+  });
+
   it('rejects an out-of-range theme channel', () => {
     const bad = streamCardVMSchema.safeParse({
       ...baseVM,

@@ -9,10 +9,12 @@ export {
   type StreamVerb,
 } from './verbs.js';
 export type {
+  StreamAddress,
   StreamCardBody,
   StreamCardSubject,
   StreamCardVM,
   StreamExternalLink,
+  StreamGeo,
   StreamMedia,
   StreamMediaBase,
   StreamMediaBlob,
@@ -21,10 +23,12 @@ export type {
   StreamTheme,
 } from './stream-card-vm.js';
 export {
+  streamAddressSchema,
   streamCardBodySchema,
   streamCardSubjectSchema,
   streamCardVMSchema,
   streamExternalLinkSchema,
+  streamGeoSchema,
   streamMediaSchema,
   streamSourceSchema,
   streamThemeSchema,

@@ -56,18 +56,145 @@ export interface StreamExternalLink {
   thumb?: string;
 }
 
+/** A geo coordinate pair (beacon `location`). */
+export interface StreamGeo {
+  latitude: number;
+  longitude: number;
+}
+
+/** A structured postal address (beacon `addressDetails`). All parts optional. */
+export interface StreamAddress {
+  name?: string;
+  street?: string;
+  locality?: string;
+  region?: string;
+  country?: string;
+  postalCode?: string;
+}
+
 /**
  * The primary content body. A small discriminated union so both the React and
  * the string-HTML renderer switch on one field. `track` is reserved (dame
- * music scrobbles; no sifa-web card uses it yet). App-specific variants
- * (github-pr, book, event-rsvp, ...) layer in additively in later milestones.
+ * music scrobbles; no sifa-web card uses it yet). The app-specific variants
+ * (`github-pr`, `book`, ...) carry only structured data — enums, raw NSIDs,
+ * dates, blob/URL refs — never pre-localized strings or built URLs, so each
+ * surface renders identically.
  */
 export type StreamCardBody =
   | { kind: 'text'; text: string }
   | { kind: 'media'; text?: string }
   | { kind: 'link'; text?: string }
   | { kind: 'track'; text?: string; trackTitle?: string; artist?: string }
-  | { kind: 'generic'; text?: string };
+  | { kind: 'generic'; text?: string }
+  // github.pull_request — a merged pull request with diff stats.
+  | {
+      kind: 'github-pr';
+      repoOwner: string;
+      repoName: string;
+      prNumber: number;
+      title: string;
+      url?: string;
+      /** GitHub language name (renderer maps to a color dot). */
+      language?: string;
+      additions: number;
+      deletions: number;
+      /** The card's display date is `mergedAt`, not `createdAt`. */
+      mergedAt?: string;
+    }
+  // buzz.bookhive.book — a book log with an optional review and rating.
+  | {
+      kind: 'book';
+      title: string;
+      authors: string[];
+      /** Rating on the lexicon's 1-10 scale. */
+      stars?: number;
+      /** Raw reading-status NSID, e.g. `buzz.bookhive.defs#finished`. */
+      status?: string;
+      review?: string;
+    }
+  // social.popfeed.feed.{post,note,review} — a media review / post / note.
+  | {
+      kind: 'media-review';
+      /** Which popfeed collection this came from (drives the action label). */
+      reviewKind: 'review' | 'post' | 'note' | 'other';
+      title?: string;
+      /** Raw creative-work type, e.g. `movie` (renderer maps to a label + icon). */
+      mediaType?: string;
+      /** Rating on the 1-10 scale. */
+      rating?: number;
+      mainCredit?: string;
+      reviewText?: string;
+      isRevisit: boolean;
+    }
+  // community.lexicon.calendar.rsvp — an RSVP to a calendar event.
+  | {
+      kind: 'event-rsvp';
+      rsvpStatus: 'going' | 'interested' | 'notgoing' | 'unknown';
+      eventName?: string;
+      startsAt?: string;
+      endsAt?: string;
+      mode?: 'inperson' | 'virtual' | 'hybrid';
+      locationName?: string;
+      locationLocality?: string;
+      locationCountry?: string;
+    }
+  // dev.keytrace.claim + app.bsky.graph.verification — an identity verification.
+  | {
+      kind: 'verification';
+      /** Keytrace claim type (`github`, `dns`, ...) or `bluesky` for a bsky verification. */
+      platform: string;
+      verified: boolean;
+      subjectLabel?: string;
+      /** The verified handle (Bluesky verifications only). */
+      handle?: string;
+      profileUrl?: string;
+    }
+  // social.colibri.membership — joining a Colibri community.
+  | {
+      kind: 'membership';
+      communityName?: string;
+      description?: string;
+      /** The community record's at-uri (renderer builds the outbound link). */
+      communityUri?: string;
+    }
+  // app.beaconbits.beacon — a location check-in.
+  | {
+      kind: 'location';
+      venueName?: string;
+      shout?: string;
+      address?: StreamAddress;
+      geo?: StreamGeo;
+    }
+  // social.passports.travel.leg — a travel leg between two points.
+  | {
+      kind: 'travel';
+      origin?: string;
+      destination?: string;
+      /** Raw transportation mode, e.g. `flight` (renderer maps to a label). */
+      transportation?: string;
+      carrier?: string;
+      carrierCode?: string;
+      startDate?: string;
+      endDate?: string;
+    }
+  // site.standard.document — a Standard.site publication document.
+  | {
+      kind: 'standard-site';
+      title?: string;
+      description?: string;
+      /** Publication base URL (renderer derives host / builds the canonical link). */
+      siteUrl?: string;
+      path?: string;
+      /** Resolved from the publisher registry when the host is allowlisted. */
+      publisherName?: string;
+      /** Publication icon — a resolved CDN URL added by AppView enrichment. */
+      icon?: string;
+      /** Document cover — a resolved CDN URL added by AppView enrichment. */
+      coverImageUrl?: string;
+      /** Estimated reading time in minutes. */
+      readingTime?: number;
+      publishedAt?: string;
+    };
 
 /**
  * A repost / reply / quote target. Three shapes: a full post (normalized

@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
 import type {
+  StreamAddress,
   StreamCardBody,
   StreamCardSubject,
   StreamCardVM,
   StreamExternalLink,
+  StreamGeo,
   StreamMedia,
   StreamSource,
   StreamTheme,
@@ -62,6 +64,20 @@ export const streamExternalLinkSchema: z.ZodType<StreamExternalLink> = z.object(
   thumb: z.string().optional(),
 });
 
+export const streamGeoSchema: z.ZodType<StreamGeo> = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+});
+
+export const streamAddressSchema: z.ZodType<StreamAddress> = z.object({
+  name: z.string().optional(),
+  street: z.string().optional(),
+  locality: z.string().optional(),
+  region: z.string().optional(),
+  country: z.string().optional(),
+  postalCode: z.string().optional(),
+});
+
 export const streamCardBodySchema: z.ZodType<StreamCardBody> = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('text'), text: z.string() }),
   z.object({ kind: z.literal('media'), text: z.string().optional() }),
@@ -73,6 +89,90 @@ export const streamCardBodySchema: z.ZodType<StreamCardBody> = z.discriminatedUn
     artist: z.string().optional(),
   }),
   z.object({ kind: z.literal('generic'), text: z.string().optional() }),
+  z.object({
+    kind: z.literal('github-pr'),
+    repoOwner: z.string(),
+    repoName: z.string(),
+    prNumber: z.number(),
+    title: z.string(),
+    url: z.string().optional(),
+    language: z.string().optional(),
+    additions: z.number(),
+    deletions: z.number(),
+    mergedAt: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal('book'),
+    title: z.string(),
+    authors: z.array(z.string()),
+    stars: z.number().optional(),
+    status: z.string().optional(),
+    review: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal('media-review'),
+    reviewKind: z.enum(['review', 'post', 'note', 'other']),
+    title: z.string().optional(),
+    mediaType: z.string().optional(),
+    rating: z.number().optional(),
+    mainCredit: z.string().optional(),
+    reviewText: z.string().optional(),
+    isRevisit: z.boolean(),
+  }),
+  z.object({
+    kind: z.literal('event-rsvp'),
+    rsvpStatus: z.enum(['going', 'interested', 'notgoing', 'unknown']),
+    eventName: z.string().optional(),
+    startsAt: z.string().optional(),
+    endsAt: z.string().optional(),
+    mode: z.enum(['inperson', 'virtual', 'hybrid']).optional(),
+    locationName: z.string().optional(),
+    locationLocality: z.string().optional(),
+    locationCountry: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal('verification'),
+    platform: z.string(),
+    verified: z.boolean(),
+    subjectLabel: z.string().optional(),
+    handle: z.string().optional(),
+    profileUrl: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal('membership'),
+    communityName: z.string().optional(),
+    description: z.string().optional(),
+    communityUri: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal('location'),
+    venueName: z.string().optional(),
+    shout: z.string().optional(),
+    address: streamAddressSchema.optional(),
+    geo: streamGeoSchema.optional(),
+  }),
+  z.object({
+    kind: z.literal('travel'),
+    origin: z.string().optional(),
+    destination: z.string().optional(),
+    transportation: z.string().optional(),
+    carrier: z.string().optional(),
+    carrierCode: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  }),
+  z.object({
+    kind: z.literal('standard-site'),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    siteUrl: z.string().optional(),
+    path: z.string().optional(),
+    publisherName: z.string().optional(),
+    icon: z.string().optional(),
+    coverImageUrl: z.string().optional(),
+    readingTime: z.number().optional(),
+    publishedAt: z.string().optional(),
+  }),
 ]);
 
 /**
