@@ -19,6 +19,7 @@ export type {
   StreamMediaBase,
   StreamMediaBlob,
   StreamMediaResolved,
+  StreamRichSegment,
   StreamSource,
   StreamTheme,
 } from './stream-card-vm.js';
@@ -30,6 +31,7 @@ export {
   streamExternalLinkSchema,
   streamGeoSchema,
   streamMediaSchema,
+  streamRichSegmentSchema,
   streamSourceSchema,
   streamThemeSchema,
 } from './stream-card-vm-schema.js';
