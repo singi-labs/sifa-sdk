@@ -250,6 +250,39 @@ export {
   type Publisher,
 } from './publishers/index.js';
 
+// Shared activity-stream view-model: the normalized, framework-free feed both
+// sifa-web (React cards) and page.sifa.id (string-HTML renderer) consume.
+export {
+  ACTIVITY_VERBS,
+  STREAM_VERBS,
+  getActivityVerbsVersion,
+  streamVerbSchema,
+  verbForCollection,
+  streamCardBodySchema,
+  streamCardSubjectSchema,
+  streamCardVMSchema,
+  streamExternalLinkSchema,
+  streamMediaSchema,
+  streamSourceSchema,
+  streamThemeSchema,
+  toStreamCardVM,
+  toStreamCardVMs,
+  type ActivityItem,
+  type ActivityVerbMap,
+  type StreamCardBody,
+  type StreamCardSubject,
+  type StreamCardVM,
+  type StreamExternalLink,
+  type StreamMedia,
+  type StreamMediaBase,
+  type StreamMediaBlob,
+  type StreamMediaResolved,
+  type StreamSource,
+  type StreamTheme,
+  type StreamVerb,
+  type ToStreamCardVMOptions,
+} from './stream/index.js';
+
 export {
   COMPLETENESS_MAX_SCORE,
   completenessPercent,
