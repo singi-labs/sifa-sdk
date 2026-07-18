@@ -394,6 +394,10 @@ export interface ProfilePresentationDelivery {
   /** Day-only date, YYYY-MM-DD. */
   date?: string | null;
   location?: string | null;
+  locationCountry?: string | null;
+  locationRegion?: string | null;
+  locationLocality?: string | null;
+  countryCode?: string | null;
   /** Full community.lexicon.calendar.event mode token. */
   mode?: string | null;
   /** Full community.lexicon.calendar.event status token. */
@@ -415,6 +419,8 @@ export interface ProfilePresentation {
   links?: PresentationLinkView[];
   /** at-uri of a long-form write-up (Leaflet / site.standard document). */
   writeupUri?: string | null;
+  /** Resolved URL of the uploaded cover image, when present. */
+  coverImageUrl?: string | null;
   hidden?: boolean;
   deliveries?: ProfilePresentationDelivery[];
 }

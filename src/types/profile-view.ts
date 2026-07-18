@@ -178,6 +178,10 @@ export interface PresentationDeliveryView {
   eventName?: string;
   date?: string;
   location?: string;
+  locationCountry?: string;
+  locationRegion?: string;
+  locationLocality?: string;
+  countryCode?: string;
   mode?: string;
   status?: string;
   links?: PresentationLinkView[];
@@ -193,6 +197,7 @@ export interface PresentationView {
   intendedAudiences?: string[];
   links?: PresentationLinkView[];
   writeupUri?: string;
+  coverImageUrl?: string;
   deliveries: PresentationDeliveryView[];
 }
 

@@ -330,12 +330,34 @@ describe('PresentationWriteSchema', () => {
       }).success,
     ).toBe(true);
   });
+  it('accepts a coverImage blob, an explicit null, and omission', () => {
+    expect(
+      PresentationWriteSchema.safeParse({
+        title: 'Talk',
+        coverImage: { $type: 'blob', ref: { $link: 'bafyx' }, mimeType: 'image/png', size: 10 },
+      }).success,
+    ).toBe(true);
+    expect(PresentationWriteSchema.safeParse({ title: 'Talk', coverImage: null }).success).toBe(
+      true,
+    );
+    expect(PresentationWriteSchema.safeParse({ title: 'Talk' }).success).toBe(true);
+  });
 });
 
 describe('PresentationDeliveryWriteSchema', () => {
   it('accepts a date in YYYY-MM-DD; rejects an impossible date', () => {
     expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-06-15' }).success).toBe(true);
     expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-02-30' }).success).toBe(false);
+  });
+  it('accepts a structured address, an explicit null, and omission', () => {
+    expect(
+      PresentationDeliveryWriteSchema.safeParse({
+        location: 'Berlin',
+        address: { country: 'Germany', region: 'Berlin', locality: 'Berlin' },
+      }).success,
+    ).toBe(true);
+    expect(PresentationDeliveryWriteSchema.safeParse({ address: null }).success).toBe(true);
+    expect(PresentationDeliveryWriteSchema.safeParse({}).success).toBe(true);
   });
   it('rejects coSpeakers that are not DIDs', () => {
     expect(

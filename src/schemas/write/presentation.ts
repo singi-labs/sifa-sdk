@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { BlobRefSchema } from '../blob-ref.js';
 import { externalRecordRefSchema, presentationLinkSchema } from './shared.js';
 
 /**
@@ -25,6 +26,7 @@ export const PresentationWriteSchema = z.object({
   intendedAudiences: z.array(z.string().max(1000)).max(20).optional(),
   links: z.array(presentationLinkSchema).max(20).optional(),
   writeupRef: externalRecordRefSchema.optional(),
+  coverImage: BlobRefSchema.nullable().optional(),
 });
 
 export type PresentationWriteInput = z.infer<typeof PresentationWriteSchema>;

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { BlobRefSchema } from './blob-ref.js';
 import { datetimeSchema, externalRecordRefSchema, maxGraphemes, uriSchema } from './shared.js';
 
 /**
@@ -45,6 +46,8 @@ export const ProfilePresentationRecordSchema = z.object({
   // Optional reference to a long-form write-up (pub.leaflet.document or
   // site.standard.document). Plain at-uri + optional cid so it tracks edits.
   writeupRef: externalRecordRefSchema.optional(),
+  // Optional uploaded cover image for the talk page.
+  coverImage: BlobRefSchema.optional(),
   createdAt: datetimeSchema,
 });
 
