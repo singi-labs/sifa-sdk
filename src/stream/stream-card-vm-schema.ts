@@ -8,6 +8,7 @@ import type {
   StreamExternalLink,
   StreamGeo,
   StreamMedia,
+  StreamRichSegment,
   StreamSource,
   StreamTheme,
 } from './stream-card-vm.js';
@@ -78,17 +79,41 @@ export const streamAddressSchema: z.ZodType<StreamAddress> = z.object({
   postalCode: z.string().optional(),
 });
 
+export const streamRichSegmentSchema: z.ZodType<StreamRichSegment> = z.object({
+  text: z.string(),
+  link: z.string().optional(),
+  mention: z.string().optional(),
+  tag: z.string().optional(),
+});
+
 export const streamCardBodySchema: z.ZodType<StreamCardBody> = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('text'), text: z.string() }),
-  z.object({ kind: z.literal('media'), text: z.string().optional() }),
-  z.object({ kind: z.literal('link'), text: z.string().optional() }),
+  z.object({
+    kind: z.literal('text'),
+    text: z.string(),
+    richSegments: z.array(streamRichSegmentSchema).optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+  z.object({
+    kind: z.literal('media'),
+    text: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+  z.object({
+    kind: z.literal('link'),
+    text: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  }),
   z.object({
     kind: z.literal('track'),
     text: z.string().optional(),
     trackTitle: z.string().optional(),
     artist: z.string().optional(),
   }),
-  z.object({ kind: z.literal('generic'), text: z.string().optional() }),
+  z.object({
+    kind: z.literal('generic'),
+    text: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  }),
   z.object({
     kind: z.literal('github-pr'),
     repoOwner: z.string(),

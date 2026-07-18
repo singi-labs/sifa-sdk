@@ -56,6 +56,20 @@ export interface StreamExternalLink {
   thumb?: string;
 }
 
+/**
+ * One span of a rich-text body. Built from `app.bsky.richtext.facet`-style
+ * facets (byte-offset ranges over the plain `text`). Plain runs carry only
+ * `text`; enriched runs additionally carry exactly one of `link` (resolved
+ * URL), `mention` (DID), or `tag` (hashtag). `body.text` always holds the full
+ * plain string, so a renderer can ignore `richSegments` and still show content.
+ */
+export interface StreamRichSegment {
+  text: string;
+  link?: string;
+  mention?: string;
+  tag?: string;
+}
+
 /** A geo coordinate pair (beacon `location`). */
 export interface StreamGeo {
   latitude: number;
@@ -81,11 +95,18 @@ export interface StreamAddress {
  * surface renders identically.
  */
 export type StreamCardBody =
-  | { kind: 'text'; text: string }
-  | { kind: 'media'; text?: string }
-  | { kind: 'link'; text?: string }
+  | {
+      kind: 'text';
+      text: string;
+      /** Facet-derived spans over `text` (links/mentions/tags). Additive. */
+      richSegments?: StreamRichSegment[];
+      /** Hashtags carried alongside the text (e.g. asq questions). */
+      tags?: string[];
+    }
+  | { kind: 'media'; text?: string; tags?: string[] }
+  | { kind: 'link'; text?: string; tags?: string[] }
   | { kind: 'track'; text?: string; trackTitle?: string; artist?: string }
-  | { kind: 'generic'; text?: string }
+  | { kind: 'generic'; text?: string; tags?: string[] }
   // github.pull_request — a merged pull request with diff stats.
   | {
       kind: 'github-pr';

@@ -38,11 +38,20 @@ describe('toStreamCardVM — generic / unknown', () => {
     record: { name: 'a widget' },
   };
 
-  it('produces a schema-valid VM with the default verb and a generic body', () => {
+  it('produces a schema-valid VM with the default verb and extracts record text', () => {
     const vm = toStreamCardVM(item);
     expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
     expect(vm.verb).toBe('created');
+    // `name` is a recognized human-visible field → a text body.
+    expect(vm.body).toEqual({ kind: 'text', text: 'a widget' });
+  });
+
+  it('degrades to an empty generic body when no content field is present', () => {
+    const vm = toStreamCardVM({ ...item, record: { createdAt: '2026-07-17T09:00:00.000Z' } });
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
     expect(vm.body).toEqual({ kind: 'generic' });
+    expect(vm.media).toBeUndefined();
+    expect(vm.externalLink).toBeUndefined();
   });
 
   it('defaults source.color to a token name (not a hex literal)', () => {

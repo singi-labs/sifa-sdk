@@ -6,10 +6,12 @@ import type { ActivityItem } from './activity-item.js';
 import type {
   StreamAddress,
   StreamCardBody,
+  StreamCardSubject,
   StreamCardVM,
   StreamExternalLink,
   StreamGeo,
   StreamMedia,
+  StreamRichSegment,
   StreamSource,
   StreamTheme,
 } from './stream-card-vm.js';
@@ -546,6 +548,283 @@ function applyAsqAnswer(vm: StreamCardVM, record: Record<string, unknown>): Stre
 }
 
 // ---------------------------------------------------------------------------
+// Generic content extraction (base collections + unknown / future apps)
+// ---------------------------------------------------------------------------
+//
+// Collections without a typed body variant (Margin, Tangled, KipClip, Grain,
+// asq questions, Semble, Passports fifty-states, Streamplace, and every
+// unrecognized/future app) fall here. The rules below are GROUNDED in the
+// sifa-web card sources so each base collection reproduces the visible content
+// its dedicated card renders; for genuinely unknown records the same shapes act
+// as a best-effort heuristic, degrading to an empty generic body when a record
+// carries no recognizable text, media, link, or subject.
+
+/** A string with at least one non-whitespace character, else undefined. */
+function nonBlankString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+}
+
+/** Read a `body` field that is a plain string OR `{ value: string }` (Margin). */
+function readBodyField(value: unknown): string | undefined {
+  const direct = nonBlankString(value);
+  if (direct) return direct;
+  return nonBlankString(asRecord(value)?.value);
+}
+
+/** An http(s) URL string, else undefined. */
+function httpUrl(value: unknown): string | undefined {
+  return typeof value === 'string' && /^https?:\/\//i.test(value) ? value : undefined;
+}
+
+/**
+ * Ordered human-visible text fields. `body` (handled specially for the
+ * `{ value }` shape) sits between `content` and `message`. Mirrors the union of
+ * fields the base cards read (generic `text|title|name|description|content`,
+ * Tangled `name|title|text|message`, Margin `body`, asq `title|body`).
+ */
+const GENERIC_TEXT_ORDER = [
+  'text',
+  'title',
+  'name',
+  'description',
+  'content',
+  'body',
+  'message',
+  'note',
+  'caption',
+  'summary',
+  'status',
+] as const;
+
+/** The record's primary human-visible text, or undefined. */
+function genericText(collection: string, record: Record<string, unknown>): string | undefined {
+  // Passports fifty-states carries no free-text field — its card composes
+  // "Visited {city}, {state}". Only `city` is a real record string; the state
+  // name mapping (US-NC → North Carolina) and the verb are surface concerns, so
+  // the VM text is just the city (intentionally partial, never invented).
+  if (collection === 'social.passports.fiftyStates.visit') {
+    return nonBlankString(record.city);
+  }
+  for (const field of GENERIC_TEXT_ORDER) {
+    if (field === 'body') {
+      const body = readBodyField(record.body);
+      if (body) return body;
+      continue;
+    }
+    const value = nonBlankString(record[field]);
+    if (value) return value;
+  }
+  return undefined;
+}
+
+/** Non-empty string tags off `record.tags`, or undefined. */
+function genericTags(record: Record<string, unknown>): string[] | undefined {
+  const tags = record.tags;
+  if (!Array.isArray(tags)) return undefined;
+  const out = tags.filter((t): t is string => typeof t === 'string' && t.length > 0);
+  return out.length > 0 ? out : undefined;
+}
+
+/**
+ * Blob-ref image media from the common record shapes (reuses M1's blob helpers;
+ * never builds a URL). Prefers an `images[]` / `embed.images[]` array (all
+ * valid items), then single-blob fields, then Grain's bare `galleryMeta
+ * .coverPhotoCid`.
+ */
+function genericMedia(record: Record<string, unknown>, did: string, alt: string): StreamMedia[] {
+  const fromArray = (raw: unknown): StreamMedia | undefined => {
+    const img = asRecord(raw);
+    if (!img) return undefined;
+    return blobMedia(img.image ?? raw, did, asNonEmptyString(img.alt) ?? alt);
+  };
+
+  const images = record.images;
+  if (Array.isArray(images)) {
+    const out = images.map(fromArray).filter((m): m is StreamMedia => m !== undefined);
+    if (out.length > 0) return out;
+  }
+
+  const embed = asRecord(record.embed);
+  if (embed && Array.isArray(embed.images)) {
+    const out = embed.images.map(fromArray).filter((m): m is StreamMedia => m !== undefined);
+    if (out.length > 0) return out;
+  }
+
+  const single =
+    blobMedia(record.image, did, alt) ??
+    blobMedia(record.thumbnail, did, alt) ??
+    blobMedia(record.thumb, did, alt) ??
+    blobMedia(record.photo, did, alt) ??
+    (embed ? blobMedia(embed.thumbnail, did, alt) : undefined);
+  if (single) return [single];
+
+  // Grain galleries store the cover as a bare CID string, not a blob object.
+  const coverCid = asRecord(record.galleryMeta)?.coverPhotoCid;
+  if (typeof coverCid === 'string' && coverCid.length > 0) {
+    return [{ did, cid: coverCid, alt }];
+  }
+  return [];
+}
+
+/**
+ * An outbound link from the common shapes: a Bluesky-style `embed.external`,
+ * then a bare URL in `source` (Margin bookmark), `subject` (KipClip), or `url`.
+ */
+function genericExternalLink(record: Record<string, unknown>): StreamExternalLink | undefined {
+  const embed = asRecord(record.embed);
+  if (embed) {
+    const fromEmbed = bskyExternal(embed);
+    if (fromEmbed) return fromEmbed;
+  }
+  const url = httpUrl(record.source) ?? httpUrl(record.subject) ?? httpUrl(record.url);
+  return url ? { url } : undefined;
+}
+
+/**
+ * A reply/quote/answer target from common reference shapes: `subject` as an
+ * `at://` uri or a bare `did:` (person), or `subject.uri` (strongRef). A bare
+ * http(s) `subject` is a bookmark target, handled as `externalLink` instead.
+ */
+function genericSubject(record: Record<string, unknown>): StreamCardSubject | undefined {
+  const subject = record.subject;
+  if (typeof subject === 'string') {
+    if (subject.startsWith('at://')) return { kind: 'record', uri: subject };
+    if (subject.startsWith('did:')) return { kind: 'person', did: subject };
+    return undefined;
+  }
+  const uri = nonBlankString(asRecord(subject)?.uri);
+  if (uri && uri.startsWith('at://')) return { kind: 'record', uri };
+  return undefined;
+}
+
+/** Recognize one facet feature (link / mention / tag), tolerating a missing $type. */
+function parseFacetFeature(
+  features: unknown[],
+): Pick<StreamRichSegment, 'link' | 'mention' | 'tag'> | undefined {
+  for (const raw of features) {
+    const feat = asRecord(raw);
+    if (!feat) continue;
+    const type = asNonEmptyString(feat['$type']) ?? '';
+    const uri = asNonEmptyString(feat.uri);
+    const did = asNonEmptyString(feat.did);
+    const tag = asNonEmptyString(feat.tag);
+    if (type.endsWith('#link') && uri) return { link: uri };
+    if (type.endsWith('#mention') && did) return { mention: did };
+    if (type.endsWith('#tag') && tag) return { tag };
+    // No / unknown $type: fall back to whichever identifying field is present.
+    if (uri) return { link: uri };
+    if (did) return { mention: did };
+    if (tag) return { tag };
+  }
+  return undefined;
+}
+
+/**
+ * Slice `text` into rich segments using `app.bsky.richtext.facet`-style
+ * byte-offset facets. Heuristic and additive: `body.text` always holds the full
+ * plain string, so a renderer may ignore this. Returns undefined unless at least
+ * one enriched (link/mention/tag) span is produced.
+ */
+function genericRichSegments(
+  text: string,
+  record: Record<string, unknown>,
+): StreamRichSegment[] | undefined {
+  const facets = record.facets;
+  if (!Array.isArray(facets)) return undefined;
+
+  const parsed: { start: number; end: number; link?: string; mention?: string; tag?: string }[] =
+    [];
+  for (const raw of facets) {
+    const facet = asRecord(raw);
+    const index = asRecord(facet?.index);
+    const start = asFiniteNumber(index?.byteStart);
+    const end = asFiniteNumber(index?.byteEnd);
+    if (start === undefined || end === undefined || start < 0 || end <= start) continue;
+    const features = facet?.features;
+    if (!Array.isArray(features)) continue;
+    const feature = parseFacetFeature(features);
+    if (!feature) continue;
+    parsed.push({ start, end, ...feature });
+  }
+  if (parsed.length === 0) return undefined;
+
+  const bytes = new TextEncoder().encode(text);
+  const decoder = new TextDecoder();
+  parsed.sort((a, b) => a.start - b.start);
+
+  const segments: StreamRichSegment[] = [];
+  let cursor = 0;
+  for (const span of parsed) {
+    if (span.start < cursor || span.start > bytes.length) continue; // overlap / OOB
+    const end = Math.min(span.end, bytes.length);
+    if (span.start > cursor) {
+      const plain = decoder.decode(bytes.slice(cursor, span.start));
+      if (plain) segments.push({ text: plain });
+    }
+    const seg: StreamRichSegment = { text: decoder.decode(bytes.slice(span.start, end)) };
+    if (span.link) seg.link = span.link;
+    if (span.mention) seg.mention = span.mention;
+    if (span.tag) seg.tag = span.tag;
+    segments.push(seg);
+    cursor = end;
+  }
+  if (cursor < bytes.length) {
+    const rest = decoder.decode(bytes.slice(cursor));
+    if (rest) segments.push({ text: rest });
+  }
+
+  return segments.some((s) => s.link ?? s.mention ?? s.tag) ? segments : undefined;
+}
+
+/**
+ * Populate a generic body with any real content the record carries — text,
+ * media (blob refs), an external link, and a reply/quote/answer subject —
+ * choosing `body.kind` the same way the Bluesky path does (text, else media,
+ * else link, else generic).
+ */
+function applyGeneric(
+  vm: StreamCardVM,
+  item: ActivityItem,
+  record: Record<string, unknown> | null,
+): StreamCardVM {
+  if (!record) return withGeneric(vm);
+
+  const text = genericText(item.collection, record);
+  const tags = genericTags(record);
+  const did = didFromUri(item.uri);
+  if (did) {
+    const media = genericMedia(record, did, text ?? '');
+    if (media.length > 0) vm.media = media;
+  }
+  const externalLink = genericExternalLink(record);
+  if (externalLink) vm.externalLink = externalLink;
+  // Don't clobber a repost/reply subject already normalized from item.subject.
+  if (!vm.subject) {
+    const subject = genericSubject(record);
+    if (subject) vm.subject = subject;
+  }
+
+  let body: StreamCardBody;
+  if (text) {
+    body = { kind: 'text', text };
+    const richSegments = genericRichSegments(text, record);
+    if (richSegments) body.richSegments = richSegments;
+    if (tags) body.tags = tags;
+  } else if (vm.media) {
+    body = { kind: 'media' };
+    if (tags) body.tags = tags;
+  } else if (vm.externalLink) {
+    body = { kind: 'link' };
+    if (tags) body.tags = tags;
+  } else {
+    body = { kind: 'generic' };
+    if (tags) body.tags = tags;
+  }
+  vm.body = body;
+  return vm;
+}
+
+// ---------------------------------------------------------------------------
 // Entry points
 // ---------------------------------------------------------------------------
 
@@ -560,7 +839,9 @@ function applyAsqAnswer(vm: StreamCardVM, record: Record<string, unknown>): Stre
  * (`github-pr`, `book`, `media-review`, `event-rsvp`, `verification`,
  * `membership`, `location`, `travel`, `standard-site`) are enriched from their
  * raw record below; `at.youandme.connection` and `fyi.asq.answer` populate a
- * person / record `subject`. Everything else falls through to `generic`.
+ * person / record `subject`. Everything else (base collections + unknown apps)
+ * flows through {@link applyGeneric}, which extracts text / media / link /
+ * subject from common record shapes, degrading to an empty generic body.
  */
 export function toStreamCardVM(
   item: ActivityItem,
@@ -621,7 +902,8 @@ export function toStreamCardVM(
     return applyMediaReview(vm, item, record);
   }
 
-  return withGeneric(vm);
+  // Base collections + unknown / future apps: extract real content generically.
+  return applyGeneric(vm, item, record);
 }
 
 /**
