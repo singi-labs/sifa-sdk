@@ -26,7 +26,7 @@ export {
   pdsProviderFromApi,
   type PdsProvider,
 } from './pds-utils.js';
-export { resolveEmbed, type EmbedResult } from './embed.js';
+export { resolveEmbed, youtubeVideoId, youtubeThumbnailUrl, type EmbedResult } from './embed.js';
 export { buildTalkSlug, parseTalkRkey, slugifyTitle } from './talk-slug.js';
 export { limitCombiningMarks, sanitizeDisplayText } from './text-sanitize.js';
 export { truncateGraphemes } from './text-truncate.js';

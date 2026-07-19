@@ -1,19 +1,61 @@
 /**
- * Resolve a slide / video URL to an embeddable iframe, or fall back to a plain
- * link. Pure and offline: only URLs that carry everything an embed needs in the
- * URL itself are recognized. Anything unrecognized, malformed, non-https, or
- * requiring a network lookup (oEmbed, data-id) returns `{ kind: 'link' }`.
+ * Resolve a slide / video URL to an embed descriptor. Pure and offline.
+ *
+ * Three outcomes:
+ * - `iframe`: the URL carries everything an embed needs, so the iframe `src` is
+ *   known offline (YouTube, Vimeo, Google Slides, Loom, Canva).
+ * - `oembed`: the URL is a known embeddable provider whose iframe `src` is NOT
+ *   in the URL and needs a server-side oEmbed lookup (SlideShare, SpeakerDeck
+ *   public deck URLs). The caller resolves the src via its own oEmbed step.
+ * - `link`: not embeddable; render a plain link.
  */
 
-/** A resolved embed: an iframe with a provider + src + aspect ratio, or a plain link. */
+/**
+ * A resolved embed: an iframe whose src is known offline, an `oembed` provider
+ * whose src needs a server lookup (carries the original page URL), or a plain
+ * link.
+ */
 export type EmbedResult =
   | { kind: 'iframe'; provider: string; src: string; aspectRatio: '16:9' | '4:3' }
+  | { kind: 'oembed'; provider: string; aspectRatio: '16:9' | '4:3'; pageUrl: string }
   | { kind: 'link' };
 
 const LINK: EmbedResult = { kind: 'link' };
 
 /** YouTube video IDs: 11 chars in practice, but accept the documented charset. */
 const YOUTUBE_ID = /^[A-Za-z0-9_-]{6,}$/;
+
+/**
+ * Extract a YouTube video id from any recognized YouTube URL (`youtu.be/ID`,
+ * `youtube.com/watch?v=ID`, `/embed/ID`, `/shorts/ID`), or null. Pure/offline.
+ */
+export function youtubeVideoId(url: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  if (parsed.protocol !== 'https:') return null;
+  const host = bareHost(parsed.hostname);
+  const segments = parsed.pathname.split('/').filter(Boolean);
+  let id: string | null = null;
+  if (host === 'youtu.be') id = segments[0] ?? null;
+  else if (host === 'youtube.com' || host === 'm.youtube.com') {
+    if (parsed.pathname === '/watch') id = parsed.searchParams.get('v');
+    else if (segments[0] === 'embed' || segments[0] === 'shorts') id = segments[1] ?? null;
+  }
+  return id && YOUTUBE_ID.test(id) ? id : null;
+}
+
+/**
+ * The public thumbnail URL for a YouTube video id (`i.ytimg.com`). Derivable
+ * offline. NOTE: this host is Google — never load it directly in a privacy
+ * context; fetch and re-serve it from your own origin.
+ */
+export function youtubeThumbnailUrl(videoId: string): string {
+  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+}
 
 /** Strip a leading `www.` so host matching is scheme/subdomain tolerant. */
 function bareHost(hostname: string): string {
@@ -37,24 +79,9 @@ export function resolveEmbed(url: string): EmbedResult {
   const segments = parsed.pathname.split('/').filter(Boolean);
 
   // --- YouTube -> privacy-enhanced nocookie embed ---
-  if (host === 'youtu.be') {
-    const id = segments[0];
-    if (id && YOUTUBE_ID.test(id)) {
-      return youtubeEmbed(id);
-    }
-    return LINK;
-  }
-  if (host === 'youtube.com' || host === 'm.youtube.com') {
-    if (parsed.pathname === '/watch') {
-      const id = parsed.searchParams.get('v');
-      if (id && YOUTUBE_ID.test(id)) return youtubeEmbed(id);
-      return LINK;
-    }
-    if (segments[0] === 'embed' || segments[0] === 'shorts') {
-      const id = segments[1];
-      if (id && YOUTUBE_ID.test(id)) return youtubeEmbed(id);
-    }
-    return LINK;
+  if (host === 'youtu.be' || host === 'youtube.com' || host === 'm.youtube.com') {
+    const id = youtubeVideoId(url);
+    return id ? youtubeEmbed(id) : LINK;
   }
 
   // --- Vimeo ---
@@ -83,23 +110,29 @@ export function resolveEmbed(url: string): EmbedResult {
   }
 
   // --- SpeakerDeck ---
-  // SpeakerDeck embeds need the data-id, which is NOT present in a public
-  // `speakerdeck.com/USER/SLUG` URL (it requires an oEmbed lookup we can't do
-  // offline). Only an already-resolved `speakerdeck.com/player/HEXID` embed URL
-  // is embeddable here.
+  // An already-resolved `speakerdeck.com/player/HEXID` embed URL is embeddable
+  // offline. A public `speakerdeck.com/USER/SLUG` deck URL needs a server oEmbed
+  // lookup for the data-id, so it is `oembed`, not a dead link.
   if (host === 'speakerdeck.com') {
     if (segments[0] === 'player' && segments[1]) {
       return { kind: 'iframe', provider: 'speakerdeck', src: parsed.href, aspectRatio: '4:3' };
+    }
+    if (segments.length >= 2) {
+      return { kind: 'oembed', provider: 'speakerdeck', aspectRatio: '4:3', pageUrl: parsed.href };
     }
     return LINK;
   }
 
   // --- SlideShare ---
-  // Public slideshare.net URLs need an oEmbed lookup for the embed_code id, which
-  // we can't do offline. Only an already-resolved embed URL is embeddable.
+  // An already-resolved `slideshow/embed_code/...` URL is embeddable offline. A
+  // public deck URL needs a server oEmbed lookup for the embed_code id, so it is
+  // `oembed`.
   if (host === 'slideshare.net') {
     if (segments[0] === 'slideshow' && segments[1] === 'embed_code') {
       return { kind: 'iframe', provider: 'slideshare', src: parsed.href, aspectRatio: '4:3' };
+    }
+    if (segments.length >= 2) {
+      return { kind: 'oembed', provider: 'slideshare', aspectRatio: '4:3', pageUrl: parsed.href };
     }
     return LINK;
   }
