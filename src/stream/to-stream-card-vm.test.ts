@@ -257,6 +257,87 @@ describe('toStreamCardVM — repost', () => {
   });
 });
 
+describe('toStreamCardVM — sourceUrl', () => {
+  it('links a Bluesky post to its bsky.app permalink from the AppView-injected authorHandle', () => {
+    // resolveCardUrl's bluesky pattern keys on the handle
+    // (https://bsky.app/profile/{handle}/post/{rkey}). The per-author snapshot
+    // lets the api inject item.authorHandle so posts resolve.
+    const vm = toStreamCardVM(bskyPost({ authorHandle: 'alice.test' }));
+    expect(vm.sourceUrl).toBe('https://bsky.app/profile/alice.test/post/3kpost');
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('falls back to a handle carried on the record when item.authorHandle is absent', () => {
+    const vm = toStreamCardVM(
+      bskyPost({
+        record: {
+          $type: 'app.bsky.feed.post',
+          text: 'hello sky',
+          handle: 'bob.test',
+          createdAt: '2026-07-17T11:59:00.000Z',
+        },
+      }),
+    );
+    expect(vm.sourceUrl).toBe('https://bsky.app/profile/bob.test/post/3kpost');
+  });
+
+  it('omits sourceUrl for a Bluesky post when no handle is available', () => {
+    // The transform only has the author DID (from the uri); the bluesky pattern
+    // needs a handle, so resolveCardUrl returns null and sourceUrl is absent.
+    const vm = toStreamCardVM(bskyPost());
+    expect(vm.sourceUrl).toBeUndefined();
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('resolves sourceUrl from the record uri for a did-addressable app', () => {
+    const event = bskyPost({
+      uri: `at://${DID}/community.lexicon.calendar.event/3kevent`,
+      collection: 'community.lexicon.calendar.event',
+      rkey: '3kevent',
+      appId: 'smokesignal',
+      appName: 'Smoke Signal',
+      record: { name: 'ATmosphereConf', createdAt: '2026-07-17T11:00:00.000Z' },
+    });
+    const vm = toStreamCardVM(event);
+    expect(vm.sourceUrl).toBe(`https://smokesignal.events/${DID}/3kevent`);
+  });
+
+  it('omits sourceUrl for an unknown / unlinkable collection', () => {
+    const vm = toStreamCardVM({
+      uri: `at://${DID}/com.example.widget/1`,
+      cid: 'bafyreiwidget',
+      collection: 'com.example.widget',
+      rkey: '1',
+      appId: 'com.example',
+      appName: 'Example',
+      category: 'Other',
+      indexedAt: '2026-07-17T09:00:00.000Z',
+      record: { name: 'a widget' },
+    });
+    expect(vm.sourceUrl).toBeUndefined();
+  });
+
+  it('computes sourceUrl for the repost subject from the subject item authorHandle', () => {
+    // The subject is a separate ActivityItem; the api sets its own authorHandle
+    // (the reposted author), so the recursion resolves it independently.
+    const repost = bskyPost({
+      uri: `at://${DID}/app.bsky.feed.repost/3krepost`,
+      collection: 'app.bsky.feed.repost',
+      rkey: '3krepost',
+      record: { $type: 'app.bsky.feed.repost', createdAt: '2026-07-17T13:00:00.000Z' },
+      subject: bskyPost({ authorHandle: 'alice.test' }),
+    });
+    const vm = toStreamCardVM(repost);
+    // The repost item has no handle → no sourceUrl.
+    expect(vm.sourceUrl).toBeUndefined();
+    if (vm.subject?.kind === 'post') {
+      expect(vm.subject.post.sourceUrl).toBe('https://bsky.app/profile/alice.test/post/3kpost');
+    } else {
+      throw new Error('expected a post subject');
+    }
+  });
+});
+
 describe('toStreamCardVMs — batch + visibility filter', () => {
   it('drops items that fail isVisibleActivityItem and maps the rest', () => {
     const visible = bskyPost();

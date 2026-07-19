@@ -1,3 +1,4 @@
+import { resolveCardUrl } from '../cards/resolve-card-url.js';
 import { isVisibleActivityItem } from '../cards/visibility.js';
 import { isValidRgbColor } from '../format/wcag-contrast.js';
 import { matchPublisherByUri } from '../publishing/index.js';
@@ -184,6 +185,31 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string) => string> = {
 
 function buildTitle(verb: StreamVerb, label: string): string {
   return TITLE_BY_VERB[verb](label);
+}
+
+/**
+ * The canonical http(s) permalink to this record on its source app, or
+ * undefined. Delegates to the shared, pure {@link resolveCardUrl} using the
+ * author DID parsed from the uri and the author handle — the AppView-injected
+ * {@link ActivityItem.authorHandle}, falling back to a handle the record itself
+ * carries. With a handle, handle-keyed apps (Bluesky, Popfeed, Tangled, ...)
+ * resolve; did/uri/record.url-addressable apps (Smokesignal events, GitHub PRs,
+ * Standard.site docs, ...) resolve from the uri alone. Only non-null http(s)
+ * URLs are returned.
+ */
+function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): string | undefined {
+  const authorDid = didFromUri(item.uri);
+  if (!authorDid) return undefined;
+  const authorHandle = asNonEmptyString(item.authorHandle) ?? asNonEmptyString(record.handle);
+  const url = resolveCardUrl({
+    collection: item.collection,
+    record,
+    uri: item.uri,
+    rkey: item.rkey,
+    authorDid,
+    ...(authorHandle ? { authorHandle } : {}),
+  });
+  return url && /^https?:\/\//i.test(url) ? url : undefined;
 }
 
 /** Per-record RGB theme (publication / standard-site cards). Validated. */
@@ -869,7 +895,15 @@ export function toStreamCardVM(
   const theme = readTheme(record);
   if (theme) vm.theme = theme;
 
-  // Repost / reply target, normalized through the same transform.
+  // Link to the record on its source app. Set before the switch so every
+  // body-variant return path (each mutates and returns this same vm) keeps it.
+  if (record) {
+    const sourceUrl = resolveSourceUrl(item, record);
+    if (sourceUrl) vm.sourceUrl = sourceUrl;
+  }
+
+  // Repost / reply target, normalized through the same transform. Its own
+  // sourceUrl is computed by this recursion.
   if (item.subject) {
     vm.subject = { kind: 'post', post: toStreamCardVM(item.subject, options) };
   }

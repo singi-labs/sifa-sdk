@@ -19,6 +19,13 @@ export interface ActivityItem {
   rkey: string;
   /** The raw record from the PDS / AppView. Parsed defensively by the transform. */
   record: unknown;
+  /**
+   * The record author's handle, injected by the AppView. The activity snapshot
+   * is per-author, so the api sets this per item (and per `subject` item) to let
+   * handle-keyed apps (Bluesky, Popfeed, Tangled, ...) resolve a `sourceUrl`.
+   * Absent when the handle is unknown; the transform then relies on the DID.
+   */
+  authorHandle?: string;
   /** App id from the app registry, e.g. `bluesky`. */
   appId: string;
   /** Human app name from the app registry, e.g. `Bluesky`. */
