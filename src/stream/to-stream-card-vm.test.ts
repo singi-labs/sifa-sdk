@@ -258,22 +258,27 @@ describe('toStreamCardVM — repost', () => {
 });
 
 describe('toStreamCardVM — sourceUrl', () => {
-  it('links a Bluesky post to its bsky.app permalink when the author handle is known', () => {
+  it('links a Bluesky post to its bsky.app permalink from the AppView-injected authorHandle', () => {
     // resolveCardUrl's bluesky pattern keys on the handle
-    // (https://bsky.app/profile/{handle}/post/{rkey}), so the record must carry
-    // the author handle for a post to resolve.
+    // (https://bsky.app/profile/{handle}/post/{rkey}). The per-author snapshot
+    // lets the api inject item.authorHandle so posts resolve.
+    const vm = toStreamCardVM(bskyPost({ authorHandle: 'alice.test' }));
+    expect(vm.sourceUrl).toBe('https://bsky.app/profile/alice.test/post/3kpost');
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('falls back to a handle carried on the record when item.authorHandle is absent', () => {
     const vm = toStreamCardVM(
       bskyPost({
         record: {
           $type: 'app.bsky.feed.post',
           text: 'hello sky',
-          handle: 'alice.test',
+          handle: 'bob.test',
           createdAt: '2026-07-17T11:59:00.000Z',
         },
       }),
     );
-    expect(vm.sourceUrl).toBe('https://bsky.app/profile/alice.test/post/3kpost');
-    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+    expect(vm.sourceUrl).toBe('https://bsky.app/profile/bob.test/post/3kpost');
   });
 
   it('omits sourceUrl for a Bluesky post when no handle is available', () => {
@@ -312,23 +317,18 @@ describe('toStreamCardVM — sourceUrl', () => {
     expect(vm.sourceUrl).toBeUndefined();
   });
 
-  it('computes sourceUrl for the repost subject via the same recursion', () => {
+  it('computes sourceUrl for the repost subject from the subject item authorHandle', () => {
+    // The subject is a separate ActivityItem; the api sets its own authorHandle
+    // (the reposted author), so the recursion resolves it independently.
     const repost = bskyPost({
       uri: `at://${DID}/app.bsky.feed.repost/3krepost`,
       collection: 'app.bsky.feed.repost',
       rkey: '3krepost',
       record: { $type: 'app.bsky.feed.repost', createdAt: '2026-07-17T13:00:00.000Z' },
-      subject: bskyPost({
-        record: {
-          $type: 'app.bsky.feed.post',
-          text: 'hello sky',
-          handle: 'alice.test',
-          createdAt: '2026-07-17T11:59:00.000Z',
-        },
-      }),
+      subject: bskyPost({ authorHandle: 'alice.test' }),
     });
     const vm = toStreamCardVM(repost);
-    // The repost record itself has no handle → no sourceUrl.
+    // The repost item has no handle → no sourceUrl.
     expect(vm.sourceUrl).toBeUndefined();
     if (vm.subject?.kind === 'post') {
       expect(vm.subject.post.sourceUrl).toBe('https://bsky.app/profile/alice.test/post/3kpost');

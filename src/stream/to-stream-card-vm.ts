@@ -190,17 +190,17 @@ function buildTitle(verb: StreamVerb, label: string): string {
 /**
  * The canonical http(s) permalink to this record on its source app, or
  * undefined. Delegates to the shared, pure {@link resolveCardUrl} using the
- * author DID parsed from the uri and the author handle only when the record
- * itself carries one — the transform has no other handle source. Consequently
- * handle-keyed apps (Bluesky, Popfeed, Tangled, ...) resolve only when a handle
- * is present on the record, while did/uri/record.url-addressable apps
- * (Smokesignal events, GitHub PRs, Standard.site docs, ...) resolve from the
- * uri alone. Only non-null http(s) URLs are returned.
+ * author DID parsed from the uri and the author handle — the AppView-injected
+ * {@link ActivityItem.authorHandle}, falling back to a handle the record itself
+ * carries. With a handle, handle-keyed apps (Bluesky, Popfeed, Tangled, ...)
+ * resolve; did/uri/record.url-addressable apps (Smokesignal events, GitHub PRs,
+ * Standard.site docs, ...) resolve from the uri alone. Only non-null http(s)
+ * URLs are returned.
  */
 function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): string | undefined {
   const authorDid = didFromUri(item.uri);
   if (!authorDid) return undefined;
-  const authorHandle = asNonEmptyString(record.handle);
+  const authorHandle = asNonEmptyString(item.authorHandle) ?? asNonEmptyString(record.handle);
   const url = resolveCardUrl({
     collection: item.collection,
     record,
