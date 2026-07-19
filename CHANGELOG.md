@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.15
+
+### Patch Changes
+
+- 2b9a712: Add an optional `sourceUrl` to `StreamCardVM` so consumers can link each activity card to the record on its source app. `toStreamCardVM` computes it via the shared `resolveCardUrl`, keeping the transform pure; the field is absent when no linkable http(s) URL is available. The input `ActivityItem` gains an optional `authorHandle` the AppView injects (the snapshot is per-author) so handle-keyed apps (Bluesky, Popfeed, Tangled, ...) resolve their `sourceUrl`.
+
 ## 0.12.14
 
 ### Patch Changes
