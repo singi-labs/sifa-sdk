@@ -167,15 +167,19 @@ function buildSource(item: ActivityItem, options: ToStreamCardVMOptions): Stream
   };
 }
 
+// Post-type verbs drop the app name (the source pill already shows it, so
+// "Posted on Bluesky network" reads as redundant); verbs where the platform
+// adds meaning keep "on {App}".
 const TITLE_BY_VERB: Record<StreamVerb, (label: string) => string> = {
-  posted: (label) => `Posted on ${label}`,
-  reposted: () => 'Reposted a post',
+  posted: () => 'Posted',
+  reposted: () => 'Reposted',
   published: (label) => `Published on ${label}`,
   presented: () => 'Gave a presentation',
   endorsed: () => 'Wrote an endorsement',
   joined: (label) => `Joined ${label}`,
   shipped: (label) => `Shipped on ${label}`,
-  created: (label) => `Created a record on ${label}`,
+  reviewed: (label) => `Reviewed on ${label}`,
+  created: (label) => `Shared on ${label}`,
 };
 
 function buildTitle(verb: StreamVerb, label: string): string {

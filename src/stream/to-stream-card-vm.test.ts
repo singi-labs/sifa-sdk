@@ -25,6 +25,50 @@ function bskyPost(overrides: Partial<ActivityItem> = {}): ActivityItem {
   };
 }
 
+describe('toStreamCardVM — verb titles', () => {
+  it('drops the app name for plain posts (the source pill already shows it)', () => {
+    expect(toStreamCardVM(bskyPost()).title).toBe('Posted');
+  });
+
+  it('drops the app name for reposts', () => {
+    const repost = bskyPost({
+      uri: `at://${DID}/app.bsky.feed.repost/3krp`,
+      collection: 'app.bsky.feed.repost',
+      rkey: '3krp',
+      record: { $type: 'app.bsky.feed.repost', createdAt: '2026-07-17T11:00:00.000Z' },
+    });
+    expect(toStreamCardVM(repost).title).toBe('Reposted');
+  });
+
+  it('titles a Popfeed review with the "reviewed" verb, keeping the app', () => {
+    const review = bskyPost({
+      uri: `at://${DID}/social.popfeed.feed.review/3krv`,
+      collection: 'social.popfeed.feed.review',
+      rkey: '3krv',
+      appId: 'popfeed',
+      appName: 'Popfeed',
+      record: { title: 'Sugar', createdAt: '2026-07-17T11:00:00.000Z' },
+    });
+    const vm = toStreamCardVM(review);
+    expect(vm.verb).toBe('reviewed');
+    expect(vm.title).toBe('Reviewed on Popfeed');
+  });
+
+  it('uses "Shared on {app}" for the generic fallback', () => {
+    const item = bskyPost({
+      uri: `at://${DID}/com.example.widget/1`,
+      collection: 'com.example.widget',
+      rkey: '1',
+      appId: 'com.example',
+      appName: 'Example',
+      record: { name: 'a widget' },
+    });
+    const vm = toStreamCardVM(item);
+    expect(vm.verb).toBe('created');
+    expect(vm.title).toBe('Shared on Example');
+  });
+});
+
 describe('toStreamCardVM — generic / unknown', () => {
   const item: ActivityItem = {
     uri: `at://${DID}/com.example.widget/1`,
@@ -42,6 +86,8 @@ describe('toStreamCardVM — generic / unknown', () => {
     const vm = toStreamCardVM(item);
     expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
     expect(vm.verb).toBe('created');
+    // Unknown collections fall back to the "Shared on {app}" title.
+    expect(vm.title).toBe('Shared on Example');
     // `name` is a recognized human-visible field → a text body.
     expect(vm.body).toEqual({ kind: 'text', text: 'a widget' });
   });
