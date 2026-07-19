@@ -16,6 +16,7 @@ export const STREAM_VERBS = [
   'endorsed',
   'joined',
   'shipped',
+  'reviewed',
   'created',
 ] as const;
 
