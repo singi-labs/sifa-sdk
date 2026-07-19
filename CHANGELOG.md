@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.13
+
+### Patch Changes
+
+- ecdd380: resolveEmbed gains an `oembed` result kind for SlideShare and SpeakerDeck public deck URLs (whose iframe src needs a server-side oEmbed lookup), instead of falling back to a plain link. Adds `youtubeVideoId` and `youtubeThumbnailUrl` helpers for deriving a video's poster.
+
 ## 0.12.12
 
 ### Patch Changes
