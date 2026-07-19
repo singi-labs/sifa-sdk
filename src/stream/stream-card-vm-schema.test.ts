@@ -19,6 +19,18 @@ describe('streamCardVMSchema', () => {
     expect(streamCardVMSchema.safeParse(baseVM).success).toBe(true);
   });
 
+  it('accepts a VM with a sourceUrl and one that omits it', () => {
+    expect(
+      streamCardVMSchema.safeParse({
+        ...baseVM,
+        sourceUrl: 'https://bsky.app/profile/alice.test/post/3k',
+      }).success,
+    ).toBe(true);
+    // baseVM omits sourceUrl (optional).
+    expect(streamCardVMSchema.safeParse(baseVM).success).toBe(true);
+    expect(baseVM.sourceUrl).toBeUndefined();
+  });
+
   it('accepts a VM with blob media, theme, and external link', () => {
     const vm: StreamCardVM = {
       ...baseVM,

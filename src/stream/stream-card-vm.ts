@@ -243,6 +243,13 @@ export interface StreamCardVM {
   timestamp: string;
   /** Human sentence fragment, verb-aware. */
   title: string;
+  /**
+   * Canonical http(s) permalink to this record on its source app (e.g. a
+   * Bluesky post's `bsky.app` URL). Absent when no linkable URL is available —
+   * see {@link resolveCardUrl}, which keys some apps on the author handle the
+   * transform may not have. Consumers use this to make the card click through.
+   */
+  sourceUrl?: string;
   body?: StreamCardBody;
   media?: StreamMedia[];
   externalLink?: StreamExternalLink;
