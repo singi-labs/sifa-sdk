@@ -199,6 +199,8 @@ export {
   pdsProviderFromApi,
   relativeLuminance,
   resolveEmbed,
+  youtubeVideoId,
+  youtubeThumbnailUrl,
   rgbToString,
   sanitizeDisplayText,
   sanitizeHandleInput,
