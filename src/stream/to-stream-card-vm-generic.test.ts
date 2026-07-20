@@ -352,3 +352,24 @@ describe('applyGeneric — heuristics for unknown apps', () => {
     expect(vm.body).toEqual({ kind: 'media' });
   });
 });
+
+describe('applyGeneric — Fediverse post (fediverse.post)', () => {
+  // The AppView emits fediverse.post with the post text in `excerpt` (see
+  // sifa-api fetchFediverseActivity + the ExternalFeedCard). The stream card
+  // must show that text, not fall back to a bare link.
+  it('reads the post text from the `excerpt` field', () => {
+    const vm = toStreamCardVM(
+      item('fediverse.post', {
+        url: 'https://mstdn.social/@gxjansen/116952366494934113',
+        excerpt: 'Post to test if this Mastodon post will show up in Sifa',
+        source: 'Mastodon',
+        published: '2026-07-20T12:44:50.000Z',
+      }),
+    );
+    expect(vm.body).toEqual({
+      kind: 'text',
+      text: 'Post to test if this Mastodon post will show up in Sifa',
+    });
+    expectValid(vm);
+  });
+});
