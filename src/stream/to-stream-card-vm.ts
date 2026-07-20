@@ -608,9 +608,12 @@ function httpUrl(value: unknown): string | undefined {
 
 /**
  * Ordered human-visible text fields. `body` (handled specially for the
- * `{ value }` shape) sits between `content` and `message`. Mirrors the union of
- * fields the base cards read (generic `text|title|name|description|content`,
- * Tangled `name|title|text|message`, Margin `body`, asq `title|body`).
+ * `{ value }` shape) follows `content` and `excerpt`, before `message`. Mirrors
+ * the union of fields the base cards read (generic
+ * `text|title|name|description|content`, Tangled `name|title|text|message`,
+ * Margin `body`, asq `title|body`). `excerpt` carries the post text for
+ * external-feed items (Fediverse `fediverse.post`, RSS), which have no
+ * `text`/`content` field.
  */
 const GENERIC_TEXT_ORDER = [
   'text',
@@ -618,6 +621,7 @@ const GENERIC_TEXT_ORDER = [
   'name',
   'description',
   'content',
+  'excerpt',
   'body',
   'message',
   'note',
