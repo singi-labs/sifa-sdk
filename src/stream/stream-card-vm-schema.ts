@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import type {
   StreamAddress,
+  StreamAuthor,
   StreamCardBody,
   StreamCardSubject,
   StreamCardVM,
@@ -31,6 +32,13 @@ export const streamSourceSchema: z.ZodType<StreamSource> = z.object({
   appId: z.string(),
   label: z.string(),
   color: z.string(),
+});
+
+export const streamAuthorSchema: z.ZodType<StreamAuthor> = z.object({
+  did: z.string().optional(),
+  handle: z.string().optional(),
+  displayName: z.string().optional(),
+  avatar: z.string().optional(),
 });
 
 export const streamThemeSchema: z.ZodType<StreamTheme> = z.object({
@@ -230,6 +238,7 @@ export const streamCardVMSchema: z.ZodType<StreamCardVM> = z.lazy(() =>
     cid: z.string(),
     verb: streamVerbSchema,
     source: streamSourceSchema,
+    author: streamAuthorSchema.optional(),
     tier: z.enum(['creation', 'action', 'filtered']),
     timestamp: z.string(),
     title: z.string(),

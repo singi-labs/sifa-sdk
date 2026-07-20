@@ -26,6 +26,17 @@ export interface ActivityItem {
    * Absent when the handle is unknown; the transform then relies on the DID.
    */
   authorHandle?: string;
+  /**
+   * The record author's display name, injected by the AppView. Set on `subject`
+   * items (the quoted / reposted / replied-to original post) so the nested card
+   * can show whose post it is. Absent when unknown.
+   */
+  authorDisplayName?: string;
+  /**
+   * The record author's fully-resolved avatar URL, injected by the AppView.
+   * Like {@link authorDisplayName}, chiefly set on `subject` items.
+   */
+  authorAvatar?: string;
   /** App id from the app registry, e.g. `bluesky`. */
   appId: string;
   /** Human app name from the app registry, e.g. `Bluesky`. */

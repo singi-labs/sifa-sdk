@@ -69,6 +69,20 @@ describe('streamCardVMSchema', () => {
     expect(record.success).toBe(true);
   });
 
+  it('accepts and preserves an author identity block', () => {
+    const author = {
+      did: 'did:plc:abc',
+      handle: 'alice.test',
+      displayName: 'Alice',
+      avatar: 'https://cdn.example/avatar/alice.jpg',
+    };
+    const parsed = streamCardVMSchema.safeParse({ ...baseVM, author });
+    expect(parsed.success).toBe(true);
+    // Zod strips unknown keys by default, so this also guards that `author`
+    // is a modelled field and survives parsing (renderers rely on it).
+    if (parsed.success) expect(parsed.data.author).toEqual(author);
+  });
+
   it('rejects an unknown verb', () => {
     expect(streamCardVMSchema.safeParse({ ...baseVM, verb: 'liked' }).success).toBe(false);
   });

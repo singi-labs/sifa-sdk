@@ -10,6 +10,7 @@ export {
 } from './verbs.js';
 export type {
   StreamAddress,
+  StreamAuthor,
   StreamCardBody,
   StreamCardSubject,
   StreamCardVM,
@@ -31,6 +32,7 @@ export {
   streamExternalLinkSchema,
   streamGeoSchema,
   streamMediaSchema,
+  streamAuthorSchema,
   streamRichSegmentSchema,
   streamSourceSchema,
   streamThemeSchema,

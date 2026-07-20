@@ -6,6 +6,7 @@ import { getActivityTier } from '../taxonomy/activity-tiers.js';
 import type { ActivityItem } from './activity-item.js';
 import type {
   StreamAddress,
+  StreamAuthor,
   StreamCardBody,
   StreamCardSubject,
   StreamCardVM,
@@ -166,6 +167,27 @@ function buildSource(item: ActivityItem, options: ToStreamCardVMOptions): Stream
     label: item.appName,
     color: options.resolveSourceColor?.(item.appId) ?? DEFAULT_SOURCE_COLOR,
   };
+}
+
+/**
+ * The author identity for a card, from the AppView-injected handle / display
+ * name / avatar and the DID parsed from the record uri. Returns undefined when
+ * nothing is known (e.g. a Fediverse post whose uri is an http permalink, not
+ * an at-uri, and carries no injected author fields), so the field stays absent
+ * rather than an empty object.
+ */
+function buildAuthor(item: ActivityItem): StreamAuthor | undefined {
+  const did = didFromUri(item.uri);
+  const handle = asNonEmptyString(item.authorHandle);
+  const displayName = asNonEmptyString(item.authorDisplayName);
+  const avatar = asNonEmptyString(item.authorAvatar);
+  if (!did && !handle && !displayName && !avatar) return undefined;
+  const author: StreamAuthor = {};
+  if (did) author.did = did;
+  if (handle) author.handle = handle;
+  if (displayName) author.displayName = displayName;
+  if (avatar) author.avatar = avatar;
+  return author;
 }
 
 // Post-type verbs drop the app name (the source pill already shows it, so
@@ -911,6 +933,9 @@ export function toStreamCardVM(
     timestamp,
     title: buildTitle(verb, source.label),
   };
+
+  const author = buildAuthor(item);
+  if (author) vm.author = author;
 
   const theme = readTheme(record);
   if (theme) vm.theme = theme;
