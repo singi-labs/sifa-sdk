@@ -41,11 +41,23 @@ const PLATFORM_TOKEN_PREFIX = 'id.sifa.defs#platform';
  * some third-party apps. This maps the token to its lowercase suffix
  * (`linkedin`) and passes short codes / unknown values through unchanged.
  */
+/**
+ * Synonyms written by third-party tools and keytrace claims (whose `type` is
+ * surfaced as the platform) for the same underlying network, mapped to the
+ * canonical short code. Without this, a keytrace-verified Mastodon account
+ * arrives as `activitypub`, an unknown platform that renders as a generic
+ * website and is skipped by Fediverse ingestion.
+ */
+const PLATFORM_ALIASES: Record<string, PlatformId> = {
+  activitypub: 'fediverse',
+  mastodon: 'fediverse',
+};
+
 export function normalizePlatformId(platform: string): string {
-  if (platform.startsWith(PLATFORM_TOKEN_PREFIX)) {
-    return platform.slice(PLATFORM_TOKEN_PREFIX.length).toLowerCase();
-  }
-  return platform;
+  const code = platform.startsWith(PLATFORM_TOKEN_PREFIX)
+    ? platform.slice(PLATFORM_TOKEN_PREFIX.length).toLowerCase()
+    : platform;
+  return PLATFORM_ALIASES[code.toLowerCase()] ?? code;
 }
 
 export function isKnownPlatform(platform: string): platform is PlatformId {
