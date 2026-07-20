@@ -320,6 +320,22 @@ function withGeneric(vm: StreamCardVM): StreamCardVM {
   return vm;
 }
 
+/**
+ * Ingested Fediverse post (`fediverse.post`). Its `url` is the post's own
+ * permalink, so it becomes the card's `sourceUrl` (the renderer makes the whole
+ * card clickable) rather than an `externalLink` (which would render the raw URL
+ * as visible text). The item uri is that http permalink, not an at-uri, so the
+ * generic `resolveSourceUrl` path -- which parses a DID out of the uri -- can't
+ * set it; do it here.
+ */
+function applyFediversePost(vm: StreamCardVM, record: Record<string, unknown>): StreamCardVM {
+  const url = httpUrl(record.url);
+  if (url) vm.sourceUrl = url;
+  const text = asNonEmptyString(record.excerpt);
+  vm.body = text ? { kind: 'text', text } : { kind: 'generic' };
+  return vm;
+}
+
 function applyGithubPr(vm: StreamCardVM, record: Record<string, unknown>): StreamCardVM {
   const body: Extract<StreamCardBody, { kind: 'github-pr' }> = {
     kind: 'github-pr',
@@ -937,6 +953,8 @@ export function toStreamCardVM(
       return record ? applyYouAndMe(vm, record) : withGeneric(vm);
     case 'fyi.asq.answer':
       return record ? applyAsqAnswer(vm, record) : withGeneric(vm);
+    case 'fediverse.post':
+      return record ? applyFediversePost(vm, record) : withGeneric(vm);
   }
 
   // social.popfeed.feed.{post,note,review} — registered by prefix in sifa-web.

@@ -373,3 +373,23 @@ describe('applyGeneric — Fediverse post (fediverse.post)', () => {
     expectValid(vm);
   });
 });
+
+describe('applyGeneric — Fediverse post is a clickable self-permalink', () => {
+  // fediverse.post's URL is the post's own permalink. It must become the card's
+  // sourceUrl (whole-card clickable), NOT an externalLink (which renders the raw
+  // URL as visible text). The item uri is the http permalink, not an at-uri.
+  it('sets sourceUrl from record.url and does not set externalLink', () => {
+    const vm = toStreamCardVM(
+      item('fediverse.post', {
+        url: 'https://mstdn.social/@gxjansen/116952366494934113',
+        excerpt: 'Post text here',
+        source: 'Mastodon',
+        published: '2026-07-20T12:44:50.000Z',
+      }),
+    );
+    expect(vm.sourceUrl).toBe('https://mstdn.social/@gxjansen/116952366494934113');
+    expect(vm.externalLink).toBeUndefined();
+    expect(vm.body).toEqual({ kind: 'text', text: 'Post text here' });
+    expectValid(vm);
+  });
+});
