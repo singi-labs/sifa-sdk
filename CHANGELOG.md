@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.18
+
+### Patch Changes
+
+- ab68614: Read `excerpt` as a generic stream-card text field, so external-feed items (Fediverse `fediverse.post`, RSS) show their post text on the activity stream instead of falling back to a bare link.
+
 ## 0.12.17
 
 ### Patch Changes
