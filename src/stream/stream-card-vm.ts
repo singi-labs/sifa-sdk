@@ -14,6 +14,22 @@ export interface StreamSource {
 }
 
 /**
+ * The record author's identity, when the AppView supplies it. Rendered on
+ * nested subject cards — the quoted / reposted / replied-to original post shows
+ * whose post it is (avatar + name). Top-level cards are the profile owner's own
+ * activity, so surfaces render the owner's identity elsewhere and omit this.
+ * All fields optional: the transform includes whatever the AppView knew.
+ */
+export interface StreamAuthor {
+  /** Authoring DID, parsed from the record uri when it is an at-uri. */
+  did?: string;
+  handle?: string;
+  displayName?: string;
+  /** Fully-resolved avatar URL from the AppView (not a raw blob ref). */
+  avatar?: string;
+}
+
+/**
  * A per-item theme distinct from the app-registry `source.color`. Publication
  * and standard-site cards carry a record-level RGB theme (WCAG-AA validated
  * before use). Absent for most items.
@@ -238,6 +254,8 @@ export interface StreamCardVM {
   cid: string;
   verb: StreamVerb;
   source: StreamSource;
+  /** Original author identity, chiefly for nested subject (quote/repost) cards. */
+  author?: StreamAuthor;
   tier: ActivityTier;
   /** ISO 8601. Record `createdAt` when present, else the AppView index time. */
   timestamp: string;

@@ -257,6 +257,78 @@ describe('toStreamCardVM — repost', () => {
   });
 });
 
+describe('toStreamCardVM — author identity', () => {
+  it('populates author from the AppView-injected handle/displayName/avatar + did from the uri', () => {
+    const vm = toStreamCardVM(
+      bskyPost({
+        authorHandle: 'alice.test',
+        authorDisplayName: 'Alice',
+        authorAvatar: 'https://cdn.example/avatar/alice.jpg',
+      }),
+    );
+    expect(vm.author).toEqual({
+      did: DID,
+      handle: 'alice.test',
+      displayName: 'Alice',
+      avatar: 'https://cdn.example/avatar/alice.jpg',
+    });
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('carries the original author onto a quote/repost subject via the same recursion', () => {
+    const repost: ActivityItem = {
+      uri: `at://${DID}/app.bsky.feed.repost/3krepost`,
+      cid: 'bafyreirepost',
+      collection: 'app.bsky.feed.repost',
+      rkey: '3krepost',
+      appId: 'bluesky',
+      appName: 'Bluesky',
+      category: 'Posts',
+      indexedAt: '2026-07-17T13:00:00.000Z',
+      record: {
+        $type: 'app.bsky.feed.repost',
+        subject: { uri: 'at://did:plc:bob/app.bsky.feed.post/3kop', cid: 'bafyreiop' },
+        createdAt: '2026-07-17T13:00:00.000Z',
+      },
+      // The reposted OP is a separate ActivityItem carrying its own author.
+      subject: bskyPost({
+        uri: 'at://did:plc:bob/app.bsky.feed.post/3kop',
+        authorHandle: 'bob.test',
+        authorDisplayName: 'Bob',
+        authorAvatar: 'https://cdn.example/avatar/bob.jpg',
+      }),
+    };
+    const vm = toStreamCardVM(repost);
+    expect(vm.subject?.kind).toBe('post');
+    if (vm.subject?.kind === 'post') {
+      expect(vm.subject.post.author).toEqual({
+        did: 'did:plc:bob',
+        handle: 'bob.test',
+        displayName: 'Bob',
+        avatar: 'https://cdn.example/avatar/bob.jpg',
+      });
+    } else {
+      throw new Error('expected a post subject');
+    }
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('omits author when no identity is available (no did in the uri, no author fields)', () => {
+    const vm = toStreamCardVM({
+      uri: 'https://example.social/@nobody/123',
+      cid: 'bafyreifedi',
+      collection: 'fediverse.post',
+      rkey: '123',
+      appId: 'fediverse',
+      appName: 'Fediverse',
+      category: 'Posts',
+      indexedAt: '2026-07-17T09:00:00.000Z',
+      record: { $type: 'fediverse.post', excerpt: 'hi' },
+    });
+    expect(vm.author).toBeUndefined();
+  });
+});
+
 describe('toStreamCardVM — sourceUrl', () => {
   it('links a Bluesky post to its bsky.app permalink from the AppView-injected authorHandle', () => {
     // resolveCardUrl's bluesky pattern keys on the handle
