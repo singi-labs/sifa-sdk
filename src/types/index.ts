@@ -506,15 +506,46 @@ export interface OrgProfileView {
 }
 
 /**
+ * A company entity recognized purely from the handle's registrable domain
+ * (#160 auto-recognize), independent of any org record. Present on the verdict
+ * when `recognized` is true. `domain` is the handle's registrable domain and
+ * round-trips through `/c/<domain>`; `publicId` is nullable because entities
+ * minted before the public_id backfill have none.
+ */
+export interface RecognizedEntity {
+  publicId: string | null;
+  domain: string;
+  name: string;
+}
+
+/**
  * Server-computed org rendering-floor verdict (#160), carried on the profile
- * resolve so clients need no extra round-trip. `isOrg` is true when the account
- * has an `id.sifa.org.profile` record AND its handle is a custom registrable
- * domain (the authoritative, PSL-backed check lives server-side). Read it via
- * the `useOrgProfile` hook.
+ * resolve so clients need no extra round-trip. Read it via the `useOrgProfile`
+ * hook.
+ *
+ * `isOrg` is the CLAIMED floor: true when the account has an
+ * `id.sifa.org.profile` record AND its handle is a custom registrable domain
+ * (the authoritative, PSL-backed check lives server-side).
+ *
+ * `recognized` is INDEPENDENT of `isOrg`: true when the handle's registrable
+ * domain resolves to a known, non-suppressed, non-natural-person company entity
+ * in Sifa's DB, even with no org record yet (auto-recognize known-company
+ * domains). A known company that has not yet claimed is
+ * `recognized: true, isOrg: false`; a claimed recognized company is both true.
+ * Use it to treat a recognized-but-unclaimed company account as a company
+ * (company onboarding, `/c/` routing) before it claims.
  */
 export interface OrgFloorVerdict {
   isOrg: boolean;
   orgProfile?: OrgProfileView;
+  recognized: boolean;
+  /**
+   * Invariant (not encoded in the type, matching the flat wire shape the api
+   * sends): present whenever `recognized` is true, absent when false. Callers
+   * that read it after narrowing on `recognized === true` should still
+   * defensively check, since the type does not enforce the pairing.
+   */
+  recognizedEntity?: RecognizedEntity;
 }
 
 export interface Profile {

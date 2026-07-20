@@ -21,6 +21,7 @@ export type {
   LocationValue,
   OrgFloorVerdict,
   OrgProfileView,
+  RecognizedEntity,
   PdsProviderInfo,
   PresentationLinkView,
   Profile,
