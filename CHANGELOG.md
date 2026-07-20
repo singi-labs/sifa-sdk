@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.19
+
+### Patch Changes
+
+- 30e2cdd: Make ingested Fediverse posts (`fediverse.post`) render as a clickable card. Its permalink now becomes the card `sourceUrl` instead of an `externalLink`, so the whole card links to the post and the raw URL is no longer shown as text.
+
 ## 0.12.18
 
 ### Patch Changes
