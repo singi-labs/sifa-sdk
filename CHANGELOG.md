@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.16
+
+### Patch Changes
+
+- 60b9693: Normalize Fediverse platform synonyms (`activitypub`, `mastodon`) to the canonical `fediverse` code in `normalizePlatformId`, so keytrace-verified and third-party-written accounts are recognized instead of falling through as unknown platforms.
+
 ## 0.12.15
 
 ### Patch Changes
