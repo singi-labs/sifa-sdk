@@ -20,7 +20,13 @@ describe('normalizePlatformId', () => {
   });
 
   it('passes an unknown value through unchanged', () => {
-    expect(normalizePlatformId('mastodon')).toBe('mastodon');
+    expect(normalizePlatformId('friendster')).toBe('friendster');
+  });
+
+  it('maps Fediverse synonyms (activitypub, mastodon) to fediverse', () => {
+    expect(normalizePlatformId('activitypub')).toBe('fediverse');
+    expect(normalizePlatformId('mastodon')).toBe('fediverse');
+    expect(normalizePlatformId('ActivityPub')).toBe('fediverse');
   });
 });
 
@@ -34,6 +40,11 @@ describe('getPlatformLabel', () => {
   });
 
   it('falls back to the Website label for an unknown platform', () => {
-    expect(getPlatformLabel('mastodon')).toBe('Website');
+    expect(getPlatformLabel('friendster')).toBe('Website');
+  });
+
+  it('labels Fediverse synonyms as Fediverse', () => {
+    expect(getPlatformLabel('activitypub')).toBe('Fediverse');
+    expect(getPlatformLabel('mastodon')).toBe('Fediverse');
   });
 });
