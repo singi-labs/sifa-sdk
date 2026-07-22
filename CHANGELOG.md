@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.23
+
+### Patch Changes
+
+- 66c1e99: Point community-calendar event and RSVP card links at atmo.rsvp instead of the retired smokesignal.events. atmo.rsvp resolves any `community.lexicon.calendar` event by did+rkey, so the permalinks transfer 1:1 (`/p/{did}/e/{rkey}`).
+
 ## 0.12.22
 
 ### Patch Changes
