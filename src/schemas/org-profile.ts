@@ -3,6 +3,26 @@ import { z } from 'zod';
 import { datetimeSchema, maxGraphemes, selfLabelsSchema, uriSchema } from './shared.js';
 
 /**
+ * Structured physical address for an organization. Mirrors
+ * `community.lexicon.location.address` (all fields optional). Sifa enforces
+ * ISO 3166-1 alpha-2 country codes at the app layer.
+ */
+const orgAddressSchema = z.object({
+  country: z.string().optional(),
+  postalCode: z.string().optional(),
+  region: z.string().optional(),
+  locality: z.string().optional(),
+  street: z.string().optional(),
+  name: z.string().optional(),
+});
+
+/** A featured link on the org profile. Both `name` and `url` are required. */
+const orgLinkSchema = z.object({
+  name: z.string().refine(maxGraphemes(60)).max(600),
+  url: uriSchema.max(2048),
+});
+
+/**
  * Zod schema for `id.sifa.org.profile` records -- the self-declared
  * organization profile. Singleton (record key `self`), lives in the org's PDS.
  * Presence of this record marks the account as presenting as an organization;
@@ -21,6 +41,17 @@ export const OrgProfileRecordSchema = z.object({
   entityRefs: z.array(uriSchema).max(20).optional(),
   /** Contact email. NOT rendered publicly; validated as email at the app layer. */
   contact: z.string().optional(),
+  /** Physical addresses (headquarters, offices). */
+  addresses: z.array(orgAddressSchema).max(10).optional(),
+  /**
+   * Self-selected headcount range (a declared bucket, never a calculated count).
+   * Open enum (bare-string knownValues in the lexicon): `1-10`, `11-50`,
+   * `51-200`, `201-500`, `501-1000`, `1001-5000`, `5001-10000`, `10001+`. Any
+   * string is accepted so future ranges do not break older records.
+   */
+  companySize: z.string().optional(),
+  /** Featured links or content surfaced on the org profile. */
+  links: z.array(orgLinkSchema).max(10).optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,
 });

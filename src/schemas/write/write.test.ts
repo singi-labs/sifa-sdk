@@ -378,6 +378,60 @@ describe('OrgProfileWriteSchema', () => {
     );
     expect(OrgProfileWriteSchema.safeParse({ name: 'Acme' }).success).toBe(false);
   });
+
+  it('accepts optional addresses, companySize, and links', () => {
+    expect(
+      OrgProfileWriteSchema.safeParse({
+        name: 'Acme',
+        addresses: [{ street: '1 Main St', locality: 'Springfield', country: 'US' }],
+        companySize: '51-200',
+        links: [{ name: 'Careers', url: 'https://acme.com/jobs' }],
+        createdAt: '2024-01-01',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('accepts null for the three new nullable fields', () => {
+    expect(
+      OrgProfileWriteSchema.safeParse({
+        name: 'Acme',
+        addresses: null,
+        companySize: null,
+        links: null,
+        createdAt: '2024-01-01',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('caps addresses and links at 10', () => {
+    expect(
+      OrgProfileWriteSchema.safeParse({
+        name: 'Acme',
+        addresses: Array.from({ length: 11 }, () => ({ country: 'US' })),
+        createdAt: '2024-01-01',
+      }).success,
+    ).toBe(false);
+    expect(
+      OrgProfileWriteSchema.safeParse({
+        name: 'Acme',
+        links: Array.from({ length: 11 }, (_, i) => ({
+          name: `L${i}`,
+          url: `https://acme.com/${i}`,
+        })),
+        createdAt: '2024-01-01',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('requires both name and url on a link', () => {
+    expect(
+      OrgProfileWriteSchema.safeParse({
+        name: 'Acme',
+        links: [{ name: 'Careers' }],
+        createdAt: '2024-01-01',
+      }).success,
+    ).toBe(false);
+  });
 });
 
 describe('OrgEmploymentAttestationWriteSchema', () => {

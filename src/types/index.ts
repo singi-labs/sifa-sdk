@@ -492,6 +492,25 @@ export interface ProfileOverrideSource {
 }
 
 /**
+ * A structured physical address on the org view. Mirrors
+ * `community.lexicon.location.address`; every field is optional.
+ */
+export interface OrgAddressView {
+  country: string | null;
+  postalCode: string | null;
+  region: string | null;
+  locality: string | null;
+  street: string | null;
+  name: string | null;
+}
+
+/** A featured link on the org view. Both `name` and `url` are present. */
+export interface OrgLinkView {
+  name: string;
+  url: string;
+}
+
+/**
  * The org-profile fields exposed on the profile resolve when the org rendering
  * floor is met. Narrow on purpose: `contact` is never included (not rendered
  * publicly); record URI/CID are internal. Mirrors sifa-api's `OrgProfileView`.
@@ -503,6 +522,10 @@ export interface OrgProfileView {
   /** Blob CID (or resolved URL) of the org logo, when present. */
   logoBlob: string | null;
   entityRefs: string[] | null;
+  addresses: OrgAddressView[] | null;
+  /** Self-selected headcount range (declared bucket, never calculated). */
+  companySize: string | null;
+  links: OrgLinkView[] | null;
 }
 
 /**
