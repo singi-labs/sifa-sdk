@@ -25,9 +25,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
   tangled: {
     profileUrlPattern: 'https://tangled.sh/{handle}',
   },
+  // Community-calendar events (community.lexicon.calendar.*, incl. records
+  // originally authored in the decommissioned Smoke Signal). atmo.rsvp resolves
+  // any such event by did+rkey, so links point there. Internal id kept as
+  // `smokesignal` for continuity with existing token/color keys.
   smokesignal: {
-    urlPattern: 'https://smokesignal.events/{did}/{rkey}',
-    profileUrlPattern: 'https://smokesignal.events/{did}',
+    urlPattern: 'https://atmo.rsvp/p/{did}/e/{rkey}',
+    profileUrlPattern: 'https://atmo.rsvp/p/{did}',
   },
   whitewind: {
     urlPattern: 'https://whtwnd.com/{handle}/{rkey}',

@@ -367,11 +367,11 @@ describe('toStreamCardVM — sourceUrl', () => {
       collection: 'community.lexicon.calendar.event',
       rkey: '3kevent',
       appId: 'smokesignal',
-      appName: 'Smoke Signal',
+      appName: 'Community Calendar',
       record: { name: 'ATmosphereConf', createdAt: '2026-07-17T11:00:00.000Z' },
     });
     const vm = toStreamCardVM(event);
-    expect(vm.sourceUrl).toBe(`https://smokesignal.events/${DID}/3kevent`);
+    expect(vm.sourceUrl).toBe(`https://atmo.rsvp/p/${DID}/e/3kevent`);
   });
 
   it('omits sourceUrl for an unknown / unlinkable collection', () => {

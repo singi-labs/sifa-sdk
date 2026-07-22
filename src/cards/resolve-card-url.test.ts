@@ -242,8 +242,8 @@ describe('resolveCardUrl', () => {
     });
   });
 
-  describe('smokesignal rsvp', () => {
-    it('parses record.subject.uri into the smokesignal event URL', () => {
+  describe('community-calendar rsvp', () => {
+    it('parses record.subject.uri into the atmo.rsvp event URL', () => {
       expect(
         resolveCardUrl({
           ...baseItem,
@@ -253,7 +253,7 @@ describe('resolveCardUrl', () => {
             status: 'community.lexicon.calendar.rsvp#going',
           },
         }),
-      ).toBe('https://smokesignal.events/did:plc:eventowner/3k1abc');
+      ).toBe('https://atmo.rsvp/p/did:plc:eventowner/e/3k1abc');
     });
 
     it('returns null when the subject uri is missing', () => {
@@ -267,8 +267,8 @@ describe('resolveCardUrl', () => {
     });
   });
 
-  describe('smokesignal event', () => {
-    it('builds the per-event URL from the item uri', () => {
+  describe('community-calendar event', () => {
+    it('builds the per-event atmo.rsvp URL from the item uri', () => {
       expect(
         resolveCardUrl({
           ...baseItem,
@@ -278,7 +278,7 @@ describe('resolveCardUrl', () => {
           collection: 'community.lexicon.calendar.event',
           record: { name: 'Conf' },
         }),
-      ).toBe('https://smokesignal.events/did:plc:eventowner/3k1abc');
+      ).toBe('https://atmo.rsvp/p/did:plc:eventowner/e/3k1abc');
     });
   });
 

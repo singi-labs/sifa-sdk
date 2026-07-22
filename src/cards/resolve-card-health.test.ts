@@ -68,7 +68,7 @@ describe('resolveCardHealth', () => {
       }
     });
 
-    it('smokesignal event (own uri) -> record', () => {
+    it('community-calendar event (own uri) -> record on atmo.rsvp', () => {
       const h = resolveCardHealth({
         ...base,
         uri: 'at://did:plc:eventowner/community.lexicon.calendar.event/3k1abc',
@@ -78,7 +78,7 @@ describe('resolveCardHealth', () => {
         record: { name: 'Conf' },
       });
       expect(h.strategy).toBe('record');
-      expect(h.url).toBe('https://smokesignal.events/did:plc:eventowner/3k1abc');
+      expect(h.url).toBe('https://atmo.rsvp/p/did:plc:eventowner/e/3k1abc');
     });
 
     it('atmo.rsvp event (own uri) -> record', () => {
