@@ -122,12 +122,25 @@
         "default": "./dist/flags/index.cjs"
       }
     },
+    "./badge": {
+      "import": {
+        "types": "./dist/badge/index.d.ts",
+        "default": "./dist/badge/index.js"
+      },
+      "require": {
+        "types": "./dist/badge/index.d.cts",
+        "default": "./dist/badge/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/badge/index.js",
+    "./dist/badge/index.cjs"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
