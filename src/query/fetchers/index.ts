@@ -240,4 +240,6 @@ export {
   type OrgNotificationEmailRemoveResult,
 } from './org.js';
 
+export { fetchProfileSummary } from './profile-summary.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';

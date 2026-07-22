@@ -19,6 +19,12 @@ export {
 
 export { pickPrimaryPosition, type PrimaryPositionCandidate } from './primary-position.js';
 
+export {
+  summarizeProfileView,
+  type ProfileSummary,
+  type SummarizeProfileViewOptions,
+} from './profile-summary.js';
+
 export { isPseudoEmployer } from './pseudo-employer.js';
 export { looksLikeDomain } from './domain-detect.js';
 export {
