@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.22
+
+### Patch Changes
+
+- 76aca17: Add `summarizeProfileView` and `fetchProfileSummary` for compact profile summaries. Third-party surfaces (badges, maintainer cards, bylines) can now get identity, headline, current role/employer, and top skills without handling the full `getProfileView` payload. `summarizeProfileView` is a pure transform; `fetchProfileSummary` fetches and reduces in one call.
+
 ## 0.12.21
 
 ### Patch Changes
