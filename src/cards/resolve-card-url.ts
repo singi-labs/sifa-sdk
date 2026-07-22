@@ -212,8 +212,10 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
     return urlHealth(APP_URL_PATTERNS.margin?.profileUrlPattern ?? null);
   }
 
-  // Smokesignal RSVP: parse the linked event uri. The URL points at a
+  // Community-calendar RSVP: parse the linked event uri. The URL points at a
   // *different* record (the event), so probe the URL, not this RSVP record.
+  // Rendered via atmo.rsvp, which resolves any community.lexicon.calendar event
+  // by did+rkey (Smoke Signal is decommissioned; its permalinks are retired).
   if (collection === 'community.lexicon.calendar.rsvp') {
     const subject = record.subject;
     if (subject != null && typeof subject === 'object') {
@@ -221,18 +223,19 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
       if (subjectUri) {
         const parsed = parseAtUri(subjectUri);
         if (parsed) {
-          return urlHealth(`https://smokesignal.events/${parsed.did}/${parsed.rkey}`);
+          return urlHealth(`https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`);
         }
       }
     }
     return { url: null, strategy: 'none' };
   }
 
-  // Smokesignal event itself: use item's own uri -> self-permalink.
+  // Community-calendar event itself: use item's own uri -> self-permalink on
+  // atmo.rsvp (same rationale as the RSVP block above).
   if (collection === 'community.lexicon.calendar.event') {
     const parsed = parseAtUri(uri);
     if (parsed) {
-      return recordHealth(`https://smokesignal.events/${parsed.did}/${parsed.rkey}`);
+      return recordHealth(`https://atmo.rsvp/p/${parsed.did}/e/${parsed.rkey}`);
     }
     return { url: null, strategy: 'none' };
   }
