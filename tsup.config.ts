@@ -15,6 +15,7 @@ export default defineConfig({
     'src/tokens/index.ts',
     'src/publishing/index.ts',
     'src/flags/index.ts',
+    'src/badge/index.ts',
   ],
   loader: {
     '.json': 'json',
