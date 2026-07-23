@@ -782,6 +782,25 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('guestbook', () => {
+    it('entry: returns null — self-hosted widget has no public per-record viewer', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:signer/dev.baileytownsend.guestbook.entry/3mhw254fee52f',
+          rkey: '3mhw254fee52f',
+          authorDid: 'did:plc:signer',
+          collection: 'dev.baileytownsend.guestbook.entry',
+          record: { text: 'great to meet you!', subject: 'did:plc:owner' },
+        }),
+      ).toBeNull();
+    });
+
+    it('getAppIdForCollection maps dev.baileytownsend.guestbook.* to guestbook', () => {
+      expect(getAppIdForCollection('dev.baileytownsend.guestbook.entry')).toBe('guestbook');
+    });
+  });
+
   describe('unsupported / unclickable collections', () => {
     it('returns null for picosky (no URL pattern registered)', () => {
       expect(

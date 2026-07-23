@@ -80,6 +80,9 @@ export const APP_CATEGORY_MAP = {
   // Onboard from moll.dev profile audit.
   recipe: 'Recipes', // exchange.recipe.recipe — authored recipes on recipe.exchange
 
+  // Onboard from willow.sh profile audit.
+  guestbook: 'Social', // dev.baileytownsend.guestbook.entry — a note left on someone's cross-site guestbook
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',
