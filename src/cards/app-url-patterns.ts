@@ -141,6 +141,12 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // record.canonicalUrl (handled in resolveCardUrl); `note` records have no
     // public URL and render non-clickable. So no app-level pattern applies.
   },
+  guestbook: {
+    // Guestbook (dev.baileytownsend.guestbook) is a self-hosted, cross-site
+    // widget: each site owner renders their own guestbook wherever they choose,
+    // so there is no canonical public per-entry viewer or per-handle profile
+    // page. Entries render non-clickable. Same shape as crate `note`.
+  },
   atmorsvp: {
     // atmo.rsvp events live at /p/{did}/e/{rkey}. The per-item pattern is used
     // for the event record itself; checkin records build their URL from the
@@ -257,4 +263,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['io.kich.recipe.recipe', 'kich'],
   // Onboard from moll.dev profile audit.
   ['exchange.recipe.recipe', 'recipe'],
+  // Onboard from willow.sh profile audit.
+  ['dev.baileytownsend.guestbook.', 'guestbook'],
 ];
