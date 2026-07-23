@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.25
+
+### Patch Changes
+
+- 218b126: Add Guestbook (dev.baileytownsend.guestbook) to the app category map and collection-to-app mapping. Entries render non-clickable (self-hosted widget, no public per-record viewer).
+
 ## 0.12.24
 
 ### Patch Changes
