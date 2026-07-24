@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.27
+
+### Patch Changes
+
+- da4b980: Add atmoBB to the app category map and card-URL resolver. Forum threads and replies (`app.atmobb.discussion.*`) now resolve to their atmobb.app viewer pages (`/t/{did}/{rkey}`), with replies linking to their parent thread.
+
 ## 0.12.26
 
 ### Patch Changes
