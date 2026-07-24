@@ -115,6 +115,24 @@ describe('ProfileSkillRecordSchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('accepts an optional freeform subCategory grouping label', () => {
+    const result = ProfileSkillRecordSchema.safeParse({
+      name: 'React',
+      subCategory: 'Frontend',
+      createdAt: NOW,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects subCategory over 64 graphemes', () => {
+    const result = ProfileSkillRecordSchema.safeParse({
+      name: 'React',
+      subCategory: 'x'.repeat(65),
+      createdAt: NOW,
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('ProfilePositionRecordSchema', () => {

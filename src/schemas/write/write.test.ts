@@ -79,6 +79,18 @@ describe('SkillWriteSchema', () => {
       true,
     );
   });
+
+  it('accepts an optional subCategory grouping label', () => {
+    expect(SkillWriteSchema.safeParse({ name: 'React', subCategory: 'Frontend' }).success).toBe(
+      true,
+    );
+  });
+
+  it('treats an empty or whitespace-only subCategory as absent (never persisted)', () => {
+    const parsed = SkillWriteSchema.safeParse({ name: 'React', subCategory: '   ' });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.subCategory).toBeUndefined();
+  });
 });
 
 describe('CertificationWriteSchema', () => {

@@ -30,7 +30,7 @@ import {
   isKnownPlatform,
 } from './platforms.js';
 import { CATEGORY_LABELS, CATEGORY_ORDER, SKILL_CATEGORIES } from './skill-categories.js';
-import { dedupeSkills, groupSkillsByCategory } from './skill-grouping.js';
+import { dedupeSkills, groupSkillsByCategory, groupSkillsBySubCategory } from './skill-grouping.js';
 import {
   WORKPLACE_TYPE_LABELS,
   WORKPLACE_TYPE_OPTIONS,
@@ -406,6 +406,58 @@ describe('dedupeSkills', () => {
     const merged = dedupeSkills(input);
     expect(merged[0]?.name).toBe('TypeScript');
     expect(merged[0]?.rkey).toBe('first');
+  });
+
+  it('carries subCategory onto the merged skill when the first row lacks it', () => {
+    const input: ProfileSkill[] = [
+      { rkey: 'a', name: 'Ruby' },
+      { rkey: 'b', name: 'ruby', subCategory: 'Backend' },
+    ];
+    const merged = dedupeSkills(input);
+    expect(merged[0]?.subCategory).toBe('Backend');
+  });
+
+  it('does not let a whitespace-only subCategory block a real later value', () => {
+    const input: ProfileSkill[] = [
+      { rkey: 'a', name: 'Ruby', subCategory: '   ' },
+      { rkey: 'b', name: 'ruby', subCategory: 'Backend' },
+    ];
+    const merged = dedupeSkills(input);
+    expect(merged[0]?.subCategory).toBe('Backend');
+  });
+});
+
+describe('groupSkillsBySubCategory', () => {
+  it('groups by subCategory alphabetically with the ungrouped bucket last', () => {
+    const skills: ProfileSkill[] = [
+      { rkey: '1', name: 'Loose' },
+      { rkey: '2', name: 'React', subCategory: 'Frontend' },
+      { rkey: '3', name: 'Postgres', subCategory: 'Databases' },
+      { rkey: '4', name: 'Svelte', subCategory: 'frontend' },
+    ];
+    const groups = groupSkillsBySubCategory(skills);
+    expect(groups.map(([k]) => k)).toEqual(['Databases', 'Frontend', null]);
+  });
+
+  it('merges case-insensitive subCategory labels under the first-seen casing', () => {
+    const skills: ProfileSkill[] = [
+      { rkey: '1', name: 'React', subCategory: 'Frontend' },
+      { rkey: '2', name: 'Svelte', subCategory: 'frontend' },
+    ];
+    const groups = groupSkillsBySubCategory(skills);
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.[0]).toBe('Frontend');
+    expect(groups[0]?.[1]).toHaveLength(2);
+  });
+
+  it('sorts within a group by endorsementCount desc then name', () => {
+    const skills: ProfileSkill[] = [
+      { rkey: '1', name: 'React', subCategory: 'Frontend', endorsementCount: 1 },
+      { rkey: '2', name: 'Vue', subCategory: 'Frontend', endorsementCount: 5 },
+      { rkey: '3', name: 'Svelte', subCategory: 'Frontend', endorsementCount: 5 },
+    ];
+    const groups = groupSkillsBySubCategory(skills);
+    expect(groups[0]?.[1].map((s) => s.name)).toEqual(['Svelte', 'Vue', 'React']);
   });
 });
 

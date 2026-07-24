@@ -65,6 +65,8 @@ export interface SkillView {
   rkey: string;
   name: string;
   category?: string;
+  /** Freeform user-defined grouping label nested under `category` (#305). */
+  subCategory?: string;
   positionRkeys?: string[];
 }
 
