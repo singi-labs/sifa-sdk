@@ -33,6 +33,7 @@ export function dedupeSkills(skills: ProfileSkill[]): MergedProfileSkill[] {
 
     existing.mergedRkeys.push(skill.rkey);
     if (!existing.category && skill.category) existing.category = skill.category;
+    if (!existing.subCategory && skill.subCategory) existing.subCategory = skill.subCategory;
     if ((skill.endorsementCount ?? 0) > (existing.endorsementCount ?? 0)) {
       existing.endorsementCount = skill.endorsementCount;
     }
@@ -76,6 +77,49 @@ export function groupSkillsByCategory<T extends ProfileSkill>(skills: T[]): [str
   }
   const otherGroup = grouped.get('other');
   if (otherGroup?.length) ordered.push(['other', otherGroup]);
+
+  return ordered;
+}
+
+/**
+ * Groups skills by their freeform `subCategory` label (#305), for renderers
+ * that present skills in the user's own groups (Frontend, Backend, etc.).
+ *
+ * Labels are matched case-insensitively and surfaced under the first-seen
+ * casing. Groups are ordered alphabetically by label; skills with no
+ * `subCategory` collect under a trailing `null` bucket (omitted when empty).
+ * Within each group: endorsementCount desc, then alphabetical by name.
+ */
+export function groupSkillsBySubCategory<T extends ProfileSkill>(
+  skills: T[],
+): [string | null, T[]][] {
+  const labels = new Map<string, string>();
+  const grouped = new Map<string, T[]>();
+
+  for (const skill of skills) {
+    const raw = skill.subCategory?.trim();
+    const key = raw ? raw.toLowerCase() : '';
+    if (raw && !labels.has(key)) labels.set(key, raw);
+    const bucket = grouped.get(key) ?? [];
+    bucket.push(skill);
+    grouped.set(key, bucket);
+  }
+
+  for (const [, groupSkills] of grouped) {
+    groupSkills.sort((a, b) => {
+      const countDiff = (b.endorsementCount ?? 0) - (a.endorsementCount ?? 0);
+      if (countDiff !== 0) return countDiff;
+      return a.name.localeCompare(b.name);
+    });
+  }
+
+  const ordered: [string | null, T[]][] = [];
+  for (const key of [...labels.keys()].sort((a, b) => a.localeCompare(b))) {
+    const group = grouped.get(key);
+    if (group?.length) ordered.push([labels.get(key)!, group]);
+  }
+  const ungrouped = grouped.get('');
+  if (ungrouped?.length) ordered.push([null, ungrouped]);
 
   return ordered;
 }

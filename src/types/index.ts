@@ -78,6 +78,12 @@ export interface ProfileSkill {
   rkey: string;
   name: string;
   category?: string;
+  /**
+   * Freeform user-defined grouping label nested under `category` (e.g.
+   * "Frontend", "Backend"). No known values; renderers decide the display
+   * label. See `groupSkillsBySubCategory`.
+   */
+  subCategory?: string;
   endorsementCount?: number;
   endorsed?: boolean;
   activityBacked?: boolean;

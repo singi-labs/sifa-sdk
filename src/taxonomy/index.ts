@@ -51,7 +51,12 @@ export {
   SKILL_CATEGORIES,
   type SkillCategory,
 } from './skill-categories.js';
-export { dedupeSkills, groupSkillsByCategory, type MergedProfileSkill } from './skill-grouping.js';
+export {
+  dedupeSkills,
+  groupSkillsByCategory,
+  groupSkillsBySubCategory,
+  type MergedProfileSkill,
+} from './skill-grouping.js';
 export {
   APP_CATEGORIES,
   APP_CATEGORY_IDS,

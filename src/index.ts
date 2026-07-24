@@ -134,6 +134,7 @@ export {
   getFaviconUrl,
   getPlatformLabel,
   groupSkillsByCategory,
+  groupSkillsBySubCategory,
   isKnownPlatform,
   normalizePlatformId,
   type ActivityTaxonomy,

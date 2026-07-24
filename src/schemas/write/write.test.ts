@@ -79,6 +79,12 @@ describe('SkillWriteSchema', () => {
       true,
     );
   });
+
+  it('accepts an optional subCategory grouping label', () => {
+    expect(SkillWriteSchema.safeParse({ name: 'React', subCategory: 'Frontend' }).success).toBe(
+      true,
+    );
+  });
 });
 
 describe('CertificationWriteSchema', () => {
