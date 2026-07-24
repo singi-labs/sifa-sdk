@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.29
+
+### Patch Changes
+
+- 5dc3d9a: Fix roadmap vote casting: `castRoadmapVote` sent a `Content-Type: application/json` header with no request body, which the API rejected with a 400 before recording the vote. The bodyless POST no longer declares a JSON content-type.
+
 ## 0.12.28
 
 ### Patch Changes
