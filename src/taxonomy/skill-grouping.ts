@@ -105,21 +105,22 @@ export function groupSkillsBySubCategory<T extends ProfileSkill>(
     grouped.set(key, bucket);
   }
 
-  for (const [, groupSkills] of grouped) {
-    groupSkills.sort((a, b) => {
+  // Clone before sorting so the caller's arrays are never mutated in place.
+  const sortByRank = (groupSkills: T[]): T[] =>
+    [...groupSkills].sort((a, b) => {
       const countDiff = (b.endorsementCount ?? 0) - (a.endorsementCount ?? 0);
       if (countDiff !== 0) return countDiff;
       return a.name.localeCompare(b.name);
     });
-  }
 
   const ordered: [string | null, T[]][] = [];
   for (const key of [...labels.keys()].sort((a, b) => a.localeCompare(b))) {
+    const label = labels.get(key);
     const group = grouped.get(key);
-    if (group?.length) ordered.push([labels.get(key)!, group]);
+    if (label && group?.length) ordered.push([label, sortByRank(group)]);
   }
   const ungrouped = grouped.get('');
-  if (ungrouped?.length) ordered.push([null, ungrouped]);
+  if (ungrouped?.length) ordered.push([null, sortByRank(ungrouped)]);
 
   return ordered;
 }
