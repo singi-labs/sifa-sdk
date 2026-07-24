@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.28
+
+### Patch Changes
+
+- e8cbbf0: Add `fetchMyGithubPullRequests` fetcher and `useMyGithubPullRequests` hook (under the `/query` subpath) for listing the authenticated viewer's own ingested merged GitHub PRs. Backs the sifa-web GitHub importer.
+
 ## 0.12.27
 
 ### Patch Changes
