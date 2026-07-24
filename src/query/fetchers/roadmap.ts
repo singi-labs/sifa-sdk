@@ -113,7 +113,10 @@ export async function castRoadmapVote(
   try {
     const res = await fetchFn(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(options.headers ?? {}) },
+      // No body: the item key is in the URL. Do NOT declare a JSON content-type
+      // for an empty body — Fastify rejects that with a 400 before the handler
+      // runs. Only forward caller-provided headers.
+      ...(options.headers ? { headers: options.headers } : {}),
       credentials: options.credentials ?? 'include',
       signal: options.signal ?? AbortSignal.timeout(options.timeoutMs ?? 10_000),
     });

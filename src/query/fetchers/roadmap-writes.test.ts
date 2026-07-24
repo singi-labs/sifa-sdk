@@ -55,6 +55,24 @@ describe('castRoadmapVote', () => {
     expect(url).toBe('https://api.example/api/roadmap/votes/event%2FRSVP');
     expect(init.method).toBe('POST');
   });
+
+  it('sends no body and no application/json content-type (avoids Fastify empty-body 400)', async () => {
+    const fetchImpl = jsonFetch({ uri: 'at://x', rkey: 'r1' });
+    await castRoadmapVote({ ...baseConfig, fetch: fetchImpl }, 'jobProfiles');
+    const [, init] = getCall(fetchImpl);
+    expect(init.body).toBeUndefined();
+    const headers = (init.headers ?? {}) as Record<string, string>;
+    expect(headers['Content-Type'] ?? headers['content-type']).toBeUndefined();
+  });
+
+  it('still forwards caller-provided headers', async () => {
+    const fetchImpl = jsonFetch({ uri: 'at://x', rkey: 'r1' });
+    await castRoadmapVote({ ...baseConfig, fetch: fetchImpl }, 'jobProfiles', {
+      headers: { 'x-test': '1' },
+    });
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>)['x-test']).toBe('1');
+  });
 });
 
 describe('retractRoadmapVote', () => {
