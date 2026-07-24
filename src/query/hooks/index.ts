@@ -121,6 +121,7 @@ export {
   type RemoveFeatureAllowlistVariables,
 } from './use-feature-allowlist.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './use-activity.js';
+export { useMyGithubPullRequests, type UseMyGithubPullRequestsParams } from './use-github-prs.js';
 export { useEndorsementCount } from './use-endorsement.js';
 export { useNetworkStreamCount } from './use-stream.js';
 export { useAppAccountCheck, useReactionStatus } from './use-reactions.js';

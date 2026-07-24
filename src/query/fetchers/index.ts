@@ -166,6 +166,12 @@ export {
   type HeatmapDay,
   type HeatmapResponse,
 } from './activity.js';
+export {
+  fetchMyGithubPullRequests,
+  type GithubPullRequest,
+  type MyGithubPullRequestsResponse,
+  type FetchMyGithubPullRequestsOptions,
+} from './github-prs.js';
 export { fetchEndorsementCount } from './endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './stream.js';
 export {
