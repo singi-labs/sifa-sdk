@@ -416,6 +416,15 @@ describe('dedupeSkills', () => {
     const merged = dedupeSkills(input);
     expect(merged[0]?.subCategory).toBe('Backend');
   });
+
+  it('does not let a whitespace-only subCategory block a real later value', () => {
+    const input: ProfileSkill[] = [
+      { rkey: 'a', name: 'Ruby', subCategory: '   ' },
+      { rkey: 'b', name: 'ruby', subCategory: 'Backend' },
+    ];
+    const merged = dedupeSkills(input);
+    expect(merged[0]?.subCategory).toBe('Backend');
+  });
 });
 
 describe('groupSkillsBySubCategory', () => {

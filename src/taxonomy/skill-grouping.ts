@@ -33,7 +33,10 @@ export function dedupeSkills(skills: ProfileSkill[]): MergedProfileSkill[] {
 
     existing.mergedRkeys.push(skill.rkey);
     if (!existing.category && skill.category) existing.category = skill.category;
-    if (!existing.subCategory && skill.subCategory) existing.subCategory = skill.subCategory;
+    const incomingSubCategory = skill.subCategory?.trim();
+    if (incomingSubCategory && !existing.subCategory?.trim()) {
+      existing.subCategory = incomingSubCategory;
+    }
     if ((skill.endorsementCount ?? 0) > (existing.endorsementCount ?? 0)) {
       existing.endorsementCount = skill.endorsementCount;
     }
