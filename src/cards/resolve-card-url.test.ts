@@ -28,6 +28,8 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('site.standard.document')).toBe('standard');
     expect(getAppIdForCollection('place.stream.livestream')).toBe('streamplace');
     expect(getAppIdForCollection('app.bsky.feed.post')).toBe('bluesky');
+    expect(getAppIdForCollection('app.atmobb.discussion.reply')).toBe('atmobb');
+    expect(getAppIdForCollection('app.atmobb.discussion.thread')).toBe('atmobb');
   });
 
   it('falls back to the first two NSID segments for unknown apps', () => {
@@ -319,6 +321,46 @@ describe('resolveCardUrl', () => {
           record: { checkedInAt: '2026-05-31T14:56:30Z' },
         }),
       ).toBeNull();
+    });
+  });
+
+  describe('atmoBB forum', () => {
+    it('links a discussion reply to its parent thread page from record.thread.uri', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'app.atmobb.discussion.reply',
+          record: {
+            thread: {
+              uri: 'at://did:plc:threadowner/app.atmobb.discussion.thread/3mq24yxouok2n',
+            },
+            body: [{ $type: 'app.atmobb.richtext.block#text', text: 'Wuuuuuuurd' }],
+          },
+        }),
+      ).toBe('https://atmobb.app/t/did:plc:threadowner/3mq24yxouok2n');
+    });
+
+    it('returns null for a reply when the thread uri is missing', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'app.atmobb.discussion.reply',
+          record: { body: [{ $type: 'app.atmobb.richtext.block#text', text: 'hi' }] },
+        }),
+      ).toBeNull();
+    });
+
+    it('links a discussion thread to its own page from the item uri', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:threadowner/app.atmobb.discussion.thread/3mq24yxouok2n',
+          rkey: '3mq24yxouok2n',
+          authorDid: 'did:plc:threadowner',
+          collection: 'app.atmobb.discussion.thread',
+          record: { title: 'first topic', body: [] },
+        }),
+      ).toBe('https://atmobb.app/t/did:plc:threadowner/3mq24yxouok2n');
     });
   });
 

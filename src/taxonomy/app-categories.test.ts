@@ -56,6 +56,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('plyr')).toBe('Music');
     expect(categoryForApp('spark')).toBe('Posts');
     expect(categoryForApp('nooki')).toBe('Social');
+    expect(categoryForApp('atmobb')).toBe('Social');
     expect(categoryForApp('atstore')).toBe('Reviews');
     expect(categoryForApp('atfund')).toBe('Endorsements');
     expect(categoryForApp('crate')).toBe('Articles');
