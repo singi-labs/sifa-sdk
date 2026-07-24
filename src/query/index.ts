@@ -163,6 +163,12 @@ export {
   type HeatmapDay,
   type HeatmapResponse,
 } from './fetchers/activity.js';
+export {
+  fetchMyGithubPullRequests,
+  type GithubPullRequest,
+  type MyGithubPullRequestsResponse,
+  type FetchMyGithubPullRequestsOptions,
+} from './fetchers/github-prs.js';
 export { fetchEndorsementCount } from './fetchers/endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './fetchers/stream.js';
 export {
@@ -336,6 +342,10 @@ export {
   type RemoveFeatureAllowlistVariables,
 } from './hooks/use-feature-allowlist.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-activity.js';
+export {
+  useMyGithubPullRequests,
+  type UseMyGithubPullRequestsParams,
+} from './hooks/use-github-prs.js';
 export { useEndorsementCount } from './hooks/use-endorsement.js';
 export { useNetworkStreamCount } from './hooks/use-stream.js';
 export { useAppAccountCheck, useReactionStatus } from './hooks/use-reactions.js';

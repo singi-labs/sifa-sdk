@@ -86,6 +86,12 @@ export const sifaQueryKeys = {
       ['sifa', 'activity', 'feed', handleOrDid, opts] as const,
   },
 
+  github: {
+    all: () => ['sifa', 'github'] as const,
+    myPullRequests: (opts: { limit?: number; offset?: number }) =>
+      ['sifa', 'github', 'my-pull-requests', opts] as const,
+  },
+
   endorsement: {
     all: () => ['sifa', 'endorsement'] as const,
     count: (did: string) => ['sifa', 'endorsement', 'count', did] as const,
