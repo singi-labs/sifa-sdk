@@ -264,6 +264,36 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
     return { url: null, strategy: 'none' };
   }
 
+  // atmoBB forum (atmobb.app): the universal viewer renders any thread at
+  // /t/{thread-owner-did}/{thread-rkey}. A discussion reply has no own URL — it
+  // lives inside its parent thread, so parse record.thread.uri and link there.
+  // That URL points at a *different* record (the thread), so probe the URL.
+  if (collection === 'app.atmobb.discussion.reply') {
+    const thread = record.thread;
+    if (thread != null && typeof thread === 'object') {
+      const threadUri = stringOrNull((thread as Record<string, unknown>).uri);
+      if (threadUri) {
+        const parsed = parseAtUri(threadUri);
+        if (parsed) {
+          return urlHealth(`https://atmobb.app/t/${parsed.did}/${parsed.rkey}`);
+        }
+      }
+    }
+    return { url: null, strategy: 'none' };
+  }
+
+  // atmoBB thread itself: build the per-thread URL from the item's own uri — a
+  // self-permalink for this record (record-checkable). Other app.atmobb.*
+  // collections (actor.profile, forum.*) are excluded upstream by sifa-api and
+  // never reach the resolver.
+  if (collection === 'app.atmobb.discussion.thread') {
+    const parsed = parseAtUri(uri);
+    if (parsed) {
+      return recordHealth(`https://atmobb.app/t/${parsed.did}/${parsed.rkey}`);
+    }
+    return { url: null, strategy: 'none' };
+  }
+
   // atstore reviews: no per-review URL exists on atstore.fyi, and user profile
   // pages don't exist either. Deep-link to the reviewed product instead.
   // The slug comes from record.listingMeta (enriched by sifa-api from the

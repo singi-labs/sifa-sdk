@@ -83,6 +83,9 @@ export const APP_CATEGORY_MAP = {
   // Onboard from willow.sh profile audit.
   guestbook: 'Social', // dev.baileytownsend.guestbook.entry — a note left on someone's cross-site guestbook
 
+  // Onboard from trezy.codes profile audit.
+  atmobb: 'Social', // app.atmobb.discussion.{thread,reply} — federated forum threads + replies
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',

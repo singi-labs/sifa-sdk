@@ -72,6 +72,9 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     profileUrlPattern: 'https://grain.social/profile/{did}',
   },
   youandme: { profileUrlPattern: 'https://youandme.at' },
+  // atmoBB per-item thread/reply URLs are built bespoke in resolve-card-url.ts
+  // (raw-colon /t/{did}/{rkey}); this is only the member-profile fallback.
+  atmobb: { profileUrlPattern: 'https://atmobb.app/members/{did}' },
   // anisota: upgraded with per-record URL pattern below.
   margin: { profileUrlPattern: 'https://margin.at' },
   beaconbits: { profileUrlPattern: 'https://beaconbits.app' },
@@ -265,4 +268,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['exchange.recipe.recipe', 'recipe'],
   // Onboard from willow.sh profile audit.
   ['dev.baileytownsend.guestbook.', 'guestbook'],
+  // Onboard from trezy.codes profile audit.
+  ['app.atmobb.', 'atmobb'],
 ];
