@@ -207,6 +207,100 @@ describe('toStreamCardVM — Bluesky post', () => {
     expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
   });
 
+  it('carries hydrated #view image embeds as resolved URLs (thumb over fullsize)', () => {
+    // The AppView-hydrated shape sifa-api actually feeds the transform
+    // (mergeResolvedEmbed replaces record.embed with post.embed): images carry
+    // resolved `thumb`/`fullsize` CDN URLs and NO `image` blob ref.
+    const vm = toStreamCardVM(
+      bskyPost({
+        record: {
+          text: 'with pics',
+          createdAt: '2026-07-17T11:00:00.000Z',
+          embed: {
+            $type: 'app.bsky.embed.images#view',
+            images: [
+              {
+                alt: 'a cat',
+                thumb: 'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:author/bafcat@jpeg',
+                fullsize: 'https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:author/bafcat@jpeg',
+                aspectRatio: { width: 1000, height: 750 },
+              },
+            ],
+          },
+        },
+      }),
+    );
+    expect(vm.media).toHaveLength(1);
+    expect(vm.media?.[0]).toEqual({
+      url: 'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:author/bafcat@jpeg',
+      alt: 'a cat',
+      aspectRatio: { width: 1000, height: 750 },
+    });
+    // Text takes the body; media rides alongside on `vm.media` (the renderer
+    // draws it separately from the body).
+    expect(vm.body).toEqual({ kind: 'text', text: 'with pics' });
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('carries the external embed thumb (resolved #view URL) into externalLink', () => {
+    // A Bluesky GIF (tenor/klipy) arrives as an external#view embed whose
+    // `thumb` is a resolved cdn.bsky.app URL. Without it the card renders as a
+    // bare text link and the GIF poster is invisible on page.sifa.id/{h}/now.
+    const vm = toStreamCardVM(
+      bskyPost({
+        record: {
+          text: '',
+          createdAt: '2026-07-17T11:00:00.000Z',
+          embed: {
+            $type: 'app.bsky.embed.external#view',
+            external: {
+              uri: 'https://static.klipy.com/ii/abc/72/4f/Qel',
+              title: 'Data Intensifies - Star Trek Meme',
+              description: '',
+              thumb: 'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:author/bafgif@jpeg',
+            },
+          },
+        },
+      }),
+    );
+    expect(vm.externalLink).toEqual({
+      url: 'https://static.klipy.com/ii/abc/72/4f/Qel',
+      title: 'Data Intensifies - Star Trek Meme',
+      thumb: 'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:author/bafgif@jpeg',
+    });
+    expect(vm.body).toEqual({ kind: 'link' });
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('unwraps recordWithMedia#view to reach hydrated image URLs', () => {
+    const vm = toStreamCardVM(
+      bskyPost({
+        record: {
+          text: 'quote + pic',
+          createdAt: '2026-07-17T11:00:00.000Z',
+          embed: {
+            $type: 'app.bsky.embed.recordWithMedia#view',
+            record: { record: { uri: 'at://did:plc:x/app.bsky.feed.post/y', cid: 'bafq' } },
+            media: {
+              $type: 'app.bsky.embed.images#view',
+              images: [
+                {
+                  alt: '',
+                  thumb: 'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:author/bafpic@jpeg',
+                  fullsize:
+                    'https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:author/bafpic@jpeg',
+                },
+              ],
+            },
+          },
+        },
+      }),
+    );
+    expect(vm.media?.[0]).toMatchObject({
+      url: 'https://cdn.bsky.app/img/feed_thumbnail/plain/did:plc:author/bafpic@jpeg',
+    });
+  });
+
   it('unwraps recordWithMedia to reach the image blobs', () => {
     const vm = toStreamCardVM(
       bskyPost({
