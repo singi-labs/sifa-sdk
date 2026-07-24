@@ -256,10 +256,26 @@ function bskyImages(embed: Record<string, unknown>, did: string): StreamMedia[] 
   for (const raw of images) {
     const img = asRecord(raw);
     if (!img) continue;
+    const alt = asNonEmptyString(img.alt) ?? '';
+    const ratio = aspectRatio(img.aspectRatio);
+
+    // AppView-hydrated `app.bsky.embed.images#view`: the item carries resolved
+    // CDN URLs (`thumb`/`fullsize`) and no `image` blob. This is the shape
+    // sifa-api feeds the transform (mergeResolvedEmbed swaps the raw embed for
+    // the AppView view). Prefer the feed-sized `thumb`, matching sifa-web's
+    // `/activity` card.
+    const resolvedUrl = asNonEmptyString(img.thumb) ?? asNonEmptyString(img.fullsize);
+    if (resolvedUrl) {
+      const media: StreamMedia = { url: resolvedUrl, alt };
+      if (ratio) media.aspectRatio = ratio;
+      out.push(media);
+      continue;
+    }
+
+    // Raw record shape: images carry a blob ref; the host builds the CDN URL.
     const cid = blobCid(img.image);
     if (!cid) continue;
-    const media: StreamMedia = { did, cid, alt: asNonEmptyString(img.alt) ?? '' };
-    const ratio = aspectRatio(img.aspectRatio);
+    const media: StreamMedia = { did, cid, alt };
     if (ratio) media.aspectRatio = ratio;
     const mimeType = asNonEmptyString(asRecord(img.image)?.mimeType);
     if (mimeType) media.mimeType = mimeType;
@@ -276,9 +292,13 @@ function bskyExternal(embed: Record<string, unknown>): StreamExternalLink | unde
   const link: StreamExternalLink = { url };
   const title = asNonEmptyString(external.title);
   if (title) link.title = title;
-  // The raw record's `external.thumb` is a blob, not a URL. Resolving it would
-  // require building a CDN URL, which is a surface concern — leave `thumb`
-  // unset for now (M2 widens externalLink to carry blob refs if needed).
+  // AppView-hydrated `app.bsky.embed.external#view` carries a resolved CDN
+  // `thumb` URL (the raw record's thumb is a blob, but sifa-api's
+  // mergeResolvedEmbed swaps in the AppView view before the transform runs).
+  // Carrying it lets page.sifa.id render link/GIF posters instead of a bare
+  // text link. Only a string is accepted, so a raw blob ref is ignored.
+  const thumb = asNonEmptyString(external.thumb);
+  if (thumb) link.thumb = thumb;
   return link;
 }
 
@@ -292,8 +312,12 @@ function bskyEmbedContent(record: Record<string, unknown>, did: string): BskyEmb
   if (!embed) return {};
 
   // recordWithMedia wraps the media (images/external) alongside a quoted record.
+  // Match both the raw record type and the AppView `#view` variant, since
+  // sifa-api feeds the hydrated view.
   const type = asNonEmptyString(embed['$type']);
-  const target = type === 'app.bsky.embed.recordWithMedia' ? asRecord(embed.media) : embed;
+  const isRecordWithMedia =
+    type === 'app.bsky.embed.recordWithMedia' || type === 'app.bsky.embed.recordWithMedia#view';
+  const target = isRecordWithMedia ? asRecord(embed.media) : embed;
   if (!target) return {};
 
   if (Array.isArray(target.images)) {
