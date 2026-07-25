@@ -468,3 +468,10 @@ export {
   type ProfileVolunteeringRecord,
   type PublicationAuthor,
 } from './schemas/index.js';
+
+export {
+  ROADMAP_ITEM_META,
+  ROADMAP_ISSUES_REPO,
+  roadmapIssueUrl,
+  type RoadmapItemMeta,
+} from './roadmap/index.js';
