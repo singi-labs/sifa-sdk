@@ -4,7 +4,7 @@
 
 **Public client library for the Sifa AppView on AT Protocol.**
 
-[![Status: Alpha](https://img.shields.io/badge/status-alpha-orange)]()
+[![Status: Alpha](https://img.shields.io/badge/status-alpha-orange)](<>)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/singi-labs/sifa-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/singi-labs/sifa-sdk/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@singi-labs/sifa-sdk.svg)](https://www.npmjs.com/package/@singi-labs/sifa-sdk)

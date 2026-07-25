@@ -326,11 +326,7 @@ export interface ProfileInvolvement {
 }
 
 export type LanguageProficiency =
-  | 'elementary'
-  | 'limited_working'
-  | 'professional_working'
-  | 'full_professional'
-  | 'native';
+  'elementary' | 'limited_working' | 'professional_working' | 'full_professional' | 'native';
 
 export interface ProfileLanguage {
   rkey: string;

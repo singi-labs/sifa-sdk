@@ -22,12 +22,7 @@ export const DIMENSIONS_MAX_SCORE = 6;
 export const MIN_SKILLS = 3;
 
 export type DimensionKey =
-  | 'avatar'
-  | 'headline'
-  | 'about'
-  | 'currentPosition'
-  | 'skills'
-  | 'education';
+  'avatar' | 'headline' | 'about' | 'currentPosition' | 'skills' | 'education';
 
 export type DimensionMap = Record<DimensionKey, boolean>;
 
