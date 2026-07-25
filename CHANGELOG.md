@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.31
+
+### Patch Changes
+
+- bbf61e3: Add `ROADMAP_ITEM_META`: canonical description + tracking-issue metadata for the votable roadmap items, plus `roadmapIssueUrl`. Shared source of truth for the /roadmap page and the userinput.app discussion bodies.
+
 ## 0.12.30
 
 ### Patch Changes
