@@ -87,8 +87,7 @@ export interface RoadmapVoteError {
  * against a single source of truth.
  */
 export type CastRoadmapVoteResult =
-  | { ok: true; data: RoadmapVoteResult }
-  | { ok: false; error: RoadmapVoteError };
+  { ok: true; data: RoadmapVoteResult } | { ok: false; error: RoadmapVoteError };
 
 /**
  * Cast a vote on a roadmap item by its key.

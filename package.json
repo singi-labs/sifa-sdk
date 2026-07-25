@@ -194,7 +194,7 @@
     "eslint": "10.6.0",
     "husky": "9.1.7",
     "jsdom": "29.1.1",
-    "prettier": "3.8.4",
+    "prettier": "3.9.6",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "svgo": "4.0.1",

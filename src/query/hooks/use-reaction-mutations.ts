@@ -20,8 +20,7 @@ export interface CreateReactionVariables {
 }
 
 type CreateReactionMutationResult =
-  | { ok: true; data: ReactionResult }
-  | { ok: false; error: ReactionError };
+  { ok: true; data: ReactionResult } | { ok: false; error: ReactionError };
 
 /**
  * React hook for creating a reaction. Returns the discriminated-union
