@@ -10,6 +10,8 @@ function jsonFetch(body: unknown, status = 200): typeof fetch {
 }
 
 function getCall(fetchImpl: typeof fetch, index = 0): [string, RequestInit] {
+  // The vi.fn() mock registry is not part of the `fetch` type, so reaching for
+  // `.mock.calls` needs a cast; the shape is guaranteed by jsonFetch above.
   const calls = (fetchImpl as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls;
   return calls[index]!;
 }
@@ -23,6 +25,7 @@ describe('updateSkillSubCategories (#324)', () => {
       'Frontend',
     );
 
+    // Same cast as getCall, here only to count calls rather than read one.
     const calls = (fetchImpl as unknown as { mock: { calls: unknown[] } }).mock.calls;
     expect(calls).toHaveLength(1);
 
@@ -40,6 +43,7 @@ describe('updateSkillSubCategories (#324)', () => {
     await updateSkillSubCategories({ ...baseConfig, fetch: fetchImpl }, ['a'], '');
 
     const [, init] = getCall(fetchImpl);
+    // JSON.parse returns `any`; the body shape is set by the fetcher under test.
     const body = JSON.parse(init.body as string) as { subCategory: string };
     expect(body.subCategory).toBe('');
   });

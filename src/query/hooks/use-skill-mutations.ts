@@ -92,13 +92,17 @@ export function useUpdateSkillSubCategories(
   return useMutation({
     mutationFn: ({ rkeys, subCategory }: UpdateSkillSubCategoriesVariables) =>
       updateSkillSubCategories(config, rkeys, subCategory),
+    // `...options` comes first so a caller-supplied onSuccess cannot replace the
+    // wrapper below and silently skip profile invalidation; the wrapper calls it
+    // instead. The older skill hooks in this file spread options last and still
+    // carry that bug.
+    ...options,
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
         await invalidateProfile(queryClient, ownerHandleOrDid);
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
