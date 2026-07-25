@@ -37,7 +37,13 @@ export {
   updatePosition,
 } from './fetchers/positions.js';
 export { createEducation, deleteEducation, updateEducation } from './fetchers/education.js';
-export { createSkill, deleteSkill, updateSkill } from './fetchers/skills.js';
+export {
+  createSkill,
+  deleteSkill,
+  updateSkill,
+  updateSkillSubCategories,
+  type SubCategoryBulkResult,
+} from './fetchers/skills.js';
 export { createRecord, deleteRecord, updateRecord } from './fetchers/records.js';
 export {
   createProfileLocation,
@@ -256,7 +262,9 @@ export {
   useCreateSkill,
   useDeleteSkill,
   useUpdateSkill,
+  useUpdateSkillSubCategories,
   type UpdateSkillVariables,
+  type UpdateSkillSubCategoriesVariables,
 } from './hooks/use-skill-mutations.js';
 export {
   useCreateRecord,

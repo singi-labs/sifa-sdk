@@ -4,7 +4,13 @@ import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/
 
 import { type CreateResult, type WriteResult } from '../client.js';
 import { useSifaConfig } from '../config.js';
-import { createSkill, deleteSkill, updateSkill } from '../fetchers/skills.js';
+import {
+  createSkill,
+  deleteSkill,
+  updateSkill,
+  updateSkillSubCategories,
+  type SubCategoryBulkResult,
+} from '../fetchers/skills.js';
 import { sifaQueryKeys } from '../keys.js';
 
 async function invalidateProfile(
@@ -57,6 +63,46 @@ export function useUpdateSkill(
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
     ...options,
+  });
+}
+
+/** Variables for {@link useUpdateSkillSubCategories}. */
+export interface UpdateSkillSubCategoriesVariables {
+  rkeys: string[];
+  subCategory: string;
+}
+
+/**
+ * React hook for setting (or clearing) the sub-category on many skills in a
+ * single request. An empty `subCategory` clears the field.
+ */
+export function useUpdateSkillSubCategories(
+  ownerHandleOrDid: string,
+  options?: Omit<
+    UseMutationOptions<
+      WriteResult & SubCategoryBulkResult,
+      Error,
+      UpdateSkillSubCategoriesVariables
+    >,
+    'mutationFn'
+  >,
+) {
+  const config = useSifaConfig();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ rkeys, subCategory }: UpdateSkillSubCategoriesVariables) =>
+      updateSkillSubCategories(config, rkeys, subCategory),
+    // `...options` comes first so a caller-supplied onSuccess cannot replace the
+    // wrapper below and silently skip profile invalidation; the wrapper calls it
+    // instead. The older skill hooks in this file spread options last and still
+    // carry that bug.
+    ...options,
+    onSuccess: async (result, variables, onMutateResult, context) => {
+      if (result.success) {
+        await invalidateProfile(queryClient, ownerHandleOrDid);
+      }
+      await options?.onSuccess?.(result, variables, onMutateResult, context);
+    },
   });
 }
 
