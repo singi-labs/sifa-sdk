@@ -24,9 +24,14 @@ permissions:
 jobs:
   enable-auto-merge:
     runs-on: ubuntu-latest
+    # Bot PRs are excluded because they cannot work: a dependabot-triggered
+    # run reads the separate Dependabot secrets store, so the PAT below is
+    # empty and gh exits before it reaches the merge API. That left a red
+    # check on every bump with nothing to fix in the PR itself.
     if: >
       github.event.pull_request.draft == false &&
-      github.event.pull_request.base.ref == 'main'
+      github.event.pull_request.base.ref == 'main' &&
+      !endsWith(github.event.pull_request.user.login, '[bot]')
     steps:
       - name: Enable auto-merge
         env:
