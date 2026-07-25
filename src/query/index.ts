@@ -206,10 +206,12 @@ export {
 } from './fetchers/roadmap.js';
 export {
   deleteAccount,
+  fetchWipePreview,
   resetProfile,
   type DeleteAccountResult,
   type ResetProfileResult,
   type PdsWipeOutcome,
+  type WipePreview,
 } from './fetchers/destructive.js';
 export {
   checkNetworkMapJobStatus,
@@ -357,7 +359,7 @@ export {
 } from './hooks/use-reaction-mutations.js';
 export { useMyRoadmapVotes, useRoadmapVotes } from './hooks/use-roadmap.js';
 export { useCastRoadmapVote, useRetractRoadmapVote } from './hooks/use-roadmap-mutations.js';
-export { useDeleteAccount, useResetProfile } from './hooks/use-destructive.js';
+export { useDeleteAccount, useResetProfile, useWipePreview } from './hooks/use-destructive.js';
 export {
   fetchBskyContentLabelPrefs,
   updateBskyContentLabelPrefs,

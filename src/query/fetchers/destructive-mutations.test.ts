@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { type SifaApiConfig } from '../client.js';
-import { deleteAccount, resetProfile } from './destructive.js';
+import { deleteAccount, fetchWipePreview, resetProfile } from './destructive.js';
 import { createReaction, deleteReaction } from './reactions.js';
 import { castRoadmapVote, retractRoadmapVote } from './roadmap.js';
 
@@ -188,5 +188,38 @@ describe('resetProfile PDS outcome', () => {
     const result = await resetProfile({ ...baseConfig, fetch: fetchImpl }, true);
 
     expect(result.pds?.remaining).toEqual(['id.sifa.meeting']);
+  });
+});
+
+describe('fetchWipePreview', () => {
+  it('GETs /api/profile/wipe-preview with credentials', async () => {
+    const fetchImpl = jsonFetch({ needsScopeFor: [] });
+    await fetchWipePreview({ ...baseConfig, fetch: fetchImpl });
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/wipe-preview');
+    expect(init.method).toBe('GET');
+    expect(init.credentials).toBe('include');
+  });
+
+  it('surfaces the collections the current grant cannot delete', async () => {
+    const fetchImpl = jsonFetch({ needsScopeFor: ['id.sifa.meeting'] });
+    const preview = await fetchWipePreview({ ...baseConfig, fetch: fetchImpl });
+    expect(preview.needsScopeFor).toEqual(['id.sifa.meeting']);
+  });
+
+  // "No gaps" and "we could not look" must not read the same to a caller
+  // about to delete an account: the second one cannot promise a clean wipe.
+  it('surfaces that the server could not enumerate the repo', async () => {
+    const fetchImpl = jsonFetch({ needsScopeFor: [], unknown: true });
+    const preview = await fetchWipePreview({ ...baseConfig, fetch: fetchImpl });
+    expect(preview.needsScopeFor).toEqual([]);
+    expect(preview.unknown).toBe(true);
+  });
+
+  // Deliberately not swallowed into an empty gap list: a caller that cannot
+  // reach the preview must warn, not proceed as if there were nothing to ask for.
+  it('throws on HTTP failure rather than reporting no gaps', async () => {
+    const fetchImpl = jsonFetch({ message: 'nope' }, 500);
+    await expect(fetchWipePreview({ ...baseConfig, fetch: fetchImpl })).rejects.toThrow();
   });
 });
