@@ -1,4 +1,10 @@
-import { apiWrite, type ApiFetchOptions, type SifaApiConfig, type WriteResult } from '../client.js';
+import {
+  apiFetch,
+  apiWrite,
+  type ApiFetchOptions,
+  type SifaApiConfig,
+  type WriteResult,
+} from '../client.js';
 
 /**
  * What the server managed to remove from the user's PDS.
@@ -20,6 +26,42 @@ export interface PdsWipeOutcome {
    * Without this, that case is indistinguishable from "nothing to delete".
    */
   unknown: boolean;
+}
+
+/**
+ * What a PDS wipe could not remove with the grant the session holds today.
+ *
+ * Read this BEFORE the destructive step. Deleting an account destroys the
+ * session, so a missing scope cannot be granted afterwards -- there is nobody
+ * left to ask. A non-empty `needsScopeFor` means the wipe would strand those
+ * records on the user's data server.
+ */
+export interface WipePreview {
+  /** id.sifa.* collections the current grant cannot delete. */
+  needsScopeFor: string[];
+  /**
+   * The server could not enumerate the repo, so the gap list is not
+   * authoritative. Distinct from an empty list, which means "nothing to ask for".
+   */
+  unknown?: boolean;
+}
+
+/**
+ * Ask which id.sifa.* collections the current grant cannot delete.
+ *
+ * Unlike most read fetchers in this file's neighbourhood, a failure is NOT
+ * flattened into an empty result: an empty gap list reads as "a wipe will be
+ * clean", and a caller must not promise that on the strength of a request that
+ * never arrived. Let it throw and warn.
+ */
+export function fetchWipePreview(
+  config: SifaApiConfig,
+  options: ApiFetchOptions = {},
+): Promise<WipePreview> {
+  return apiFetch<WipePreview>(config, '/api/profile/wipe-preview', {
+    credentials: 'include',
+    ...options,
+  });
 }
 
 /** Extended write result for {@link resetProfile}. */

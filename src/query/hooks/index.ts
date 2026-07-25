@@ -133,7 +133,7 @@ export {
 } from './use-reaction-mutations.js';
 export { useMyRoadmapVotes, useRoadmapVotes } from './use-roadmap.js';
 export { useCastRoadmapVote, useRetractRoadmapVote } from './use-roadmap-mutations.js';
-export { useDeleteAccount, useResetProfile } from './use-destructive.js';
+export { useDeleteAccount, useResetProfile, useWipePreview } from './use-destructive.js';
 
 export {
   useEntitySearch,

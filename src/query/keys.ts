@@ -118,6 +118,11 @@ export const sifaQueryKeys = {
     all: () => ['sifa', 'bsky-preferences'] as const,
     contentLabels: () => ['sifa', 'bsky-preferences', 'content-labels'] as const,
   },
+
+  destructive: {
+    all: () => ['sifa', 'destructive'] as const,
+    wipePreview: () => ['sifa', 'destructive', 'wipe-preview'] as const,
+  },
 } as const;
 
 export type SifaQueryKey =
@@ -169,4 +174,6 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.roadmap.votes>
   | ReturnType<typeof sifaQueryKeys.roadmap.myVotes>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.all>
-  | ReturnType<typeof sifaQueryKeys.bskyPreferences.contentLabels>;
+  | ReturnType<typeof sifaQueryKeys.bskyPreferences.contentLabels>
+  | ReturnType<typeof sifaQueryKeys.destructive.all>
+  | ReturnType<typeof sifaQueryKeys.destructive.wipePreview>;

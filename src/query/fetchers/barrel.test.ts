@@ -28,6 +28,7 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
     expect(typeof Fetchers.updateProfileSelf).toBe('function');
     expect(typeof Fetchers.castRoadmapVote).toBe('function');
     expect(typeof Fetchers.deleteAccount).toBe('function');
+    expect(typeof Fetchers.fetchWipePreview).toBe('function');
   });
 
   it('re-exports the query-key factory', () => {

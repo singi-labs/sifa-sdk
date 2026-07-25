@@ -209,10 +209,12 @@ export {
 } from './roadmap.js';
 export {
   deleteAccount,
+  fetchWipePreview,
   resetProfile,
   type DeleteAccountResult,
   type ResetProfileResult,
   type PdsWipeOutcome,
+  type WipePreview,
 } from './destructive.js';
 export {
   checkNetworkMapJobStatus,
