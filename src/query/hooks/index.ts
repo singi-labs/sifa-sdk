@@ -42,7 +42,9 @@ export {
   useCreateSkill,
   useDeleteSkill,
   useUpdateSkill,
+  useUpdateSkillSubCategories,
   type UpdateSkillVariables,
+  type UpdateSkillSubCategoriesVariables,
 } from './use-skill-mutations.js';
 export {
   useCreateRecord,
