@@ -475,3 +475,5 @@ export {
   roadmapIssueUrl,
   type RoadmapItemMeta,
 } from './roadmap/index.js';
+
+// scratch: exercises the AI review gate, do not merge

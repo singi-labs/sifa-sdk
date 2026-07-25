@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   review:
-    uses: singi-labs/.github/.github/workflows/ai-review-reusable.yml@main
+    uses: singi-labs/.github/.github/workflows/ai-review-reusable.yml@fix/ai-review-status-on-skip
     secrets:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
     with:
