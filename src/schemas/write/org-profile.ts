@@ -33,6 +33,7 @@ export const OrgProfileWriteSchema = z.object({
   addresses: z.array(orgAddressWriteSchema).max(10).nullable().optional(),
   companySize: z.string().max(20).nullable().optional(),
   links: z.array(orgLinkWriteSchema).max(10).nullable().optional(),
+  personalProfileVisible: z.boolean().nullable().optional(),
   createdAt: z.string(),
 });
 

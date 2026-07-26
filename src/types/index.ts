@@ -565,6 +565,15 @@ export interface OrgFloorVerdict {
   orgProfile?: OrgProfileView;
   recognized: boolean;
   /**
+   * Whether the account also keeps a visible personal profile, from
+   * `id.sifa.org.profile.personalProfileVisible`. True only for a claimed org
+   * (`isOrg`) that opted in -- the sole-trader case, where one DID carries both
+   * a person facet at `/p/` and a company facet at `/c/` and neither route
+   * redirects to the other. Absent or false is the exclusive default: the
+   * account presents solely as an organization and `/p/` redirects to `/c/`.
+   */
+  personalProfileVisible?: boolean;
+  /**
    * Invariant (not encoded in the type, matching the flat wire shape the api
    * sends): present whenever `recognized` is true, absent when false. Callers
    * that read it after narrowing on `recognized === true` should still

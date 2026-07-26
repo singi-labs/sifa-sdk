@@ -324,6 +324,8 @@ export {
   ENTITY_REF_ANCHORS,
   qualifiesAsOrg,
   isRegistrableDomainHandle,
+  hasPersonalProfileContent,
+  rendersPersonalProfile,
   isCompanyPageIndexable,
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
   type DimensionKey,
@@ -336,6 +338,7 @@ export {
   type DisambiguationFields,
   type EntityRefAnchor,
   type CompanyFirmographics,
+  type PersonalFacetContent,
 } from './logic/index.js';
 
 // Profile section model: which sections render, in what order, their nav
