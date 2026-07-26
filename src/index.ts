@@ -135,6 +135,7 @@ export {
   getPlatformLabel,
   groupSkillsByCategory,
   groupSkillsBySubCategory,
+  groupSkillsForDisplay,
   isKnownPlatform,
   normalizePlatformId,
   type ActivityTaxonomy,

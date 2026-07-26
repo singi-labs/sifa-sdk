@@ -58,6 +58,11 @@ export {
   type MergedProfileSkill,
 } from './skill-grouping.js';
 export {
+  groupSkillsForDisplay,
+  type SkillDisplayGroups,
+  type SkillDisplayGroupsOptions,
+} from './skill-display-groups.js';
+export {
   APP_CATEGORIES,
   APP_CATEGORY_IDS,
   getAppCategoryIcon,
