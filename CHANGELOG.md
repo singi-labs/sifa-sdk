@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.36
+
+### Patch Changes
+
+- 7aee75f: Accept `personalProfileVisible` on the org claim and org profile update request bodies, so a client can actually set the flag added in 0.12.35.
+- aac8a05: Add `groupSkillsForDisplay`, which returns a category's sub-groups plus whether labels carry information (withheld below two distinct sub-categories). `ungroupedFirst` hoists the unlabelled bucket for linear documents, where trailing it would read as belonging to the sub-heading above. Shared so the profile, print, markdown and docx surfaces group identically.
+
 ## 0.12.35
 
 ### Patch Changes
