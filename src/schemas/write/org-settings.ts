@@ -27,6 +27,8 @@ export const OrgProfileUpdateRequestSchema = z.object({
   contact: z.string().max(320).optional(),
   entityRefs: z.array(z.string().min(1).max(2048)).min(1).max(20),
   logo: orgLogoBlobSchema.optional(),
+  /** Sole-trader opt-in; see {@link OrgClaimRequestSchema}. Flippable after the claim. */
+  personalProfileVisible: z.boolean().optional(),
 });
 
 export type OrgProfileUpdateRequestInput = z.infer<typeof OrgProfileUpdateRequestSchema>;

@@ -16,6 +16,12 @@ export const OrgClaimRequestSchema = z.object({
   website: z.string().max(2048).optional(),
   contact: z.string().max(320).optional(),
   entityRefs: z.array(z.string().min(1).max(2048)).min(1).max(20),
+  /**
+   * Sole-trader opt-in: keep the claimant's personal profile visible at `/p/`
+   * alongside the new company page at `/c/`. Omitted or false presents the
+   * account solely as an organization.
+   */
+  personalProfileVisible: z.boolean().optional(),
   authorityAck: z.literal(true),
 });
 

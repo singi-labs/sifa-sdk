@@ -83,3 +83,36 @@ describe('org domain + notification-email request schemas', () => {
     );
   });
 });
+
+describe('personalProfileVisible on the org request bodies (#327)', () => {
+  const claimBase = {
+    name: 'Vincent Santelé',
+    entityRefs: ['https://www.wikidata.org/wiki/Q123'],
+    authorityAck: true as const,
+  };
+  const updateBase = {
+    name: 'Vincent Santelé',
+    entityRefs: ['https://www.wikidata.org/wiki/Q123'],
+  };
+
+  it('is optional on both bodies', () => {
+    expect(OrgClaimRequestSchema.safeParse(claimBase).success).toBe(true);
+    expect(OrgProfileUpdateRequestSchema.safeParse(updateBase).success).toBe(true);
+  });
+
+  it('round-trips a boolean on both bodies', () => {
+    const claim = OrgClaimRequestSchema.safeParse({ ...claimBase, personalProfileVisible: true });
+    expect(claim.success && claim.data.personalProfileVisible).toBe(true);
+    const update = OrgProfileUpdateRequestSchema.safeParse({
+      ...updateBase,
+      personalProfileVisible: false,
+    });
+    expect(update.success && update.data.personalProfileVisible).toBe(false);
+  });
+
+  it('rejects a non-boolean', () => {
+    expect(
+      OrgClaimRequestSchema.safeParse({ ...claimBase, personalProfileVisible: 'yes' }).success,
+    ).toBe(false);
+  });
+});
