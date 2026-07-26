@@ -44,6 +44,8 @@ export {
   isRegistrableDomainHandle,
   hasPersonalProfileContent,
   rendersPersonalProfile,
+  rendersCompanyProfile,
+  resolveAccountFacetMode,
 } from './org-floor.js';
 export type { PersonalFacetContent } from './org-floor.js';
 export {
