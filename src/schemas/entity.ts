@@ -77,6 +77,14 @@ export const EntitySelectResponseSchema = z.object({
   kind: z.string(),
   canonicalName: z.string(),
   domain: z.string().nullable(),
+  /**
+   * The entity's website, gated to sources trustworthy enough to prefill into a
+   * record the user signs. Narrower than `domain`, which is a display value and
+   * may come from a crawl. Null when the entity has no such source.
+   */
+  website: httpUrlNullable.default(null),
+  /** Which tier `website` came from. Crawled is never an accepted source. */
+  websiteTier: z.enum(['org', 'curated']).nullable().default(null),
   entityRef: httpUrlNullable,
 });
 export type EntitySelectResponse = z.infer<typeof EntitySelectResponseSchema>;
