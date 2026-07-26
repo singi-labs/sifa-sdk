@@ -115,4 +115,47 @@ describe('EntitySelectResponseSchema', () => {
     });
     expect(parsed.entityRef).toBeNull();
   });
+
+  it('defaults website + websiteTier to null when the AppView omits them', () => {
+    const parsed = EntitySelectResponseSchema.parse({
+      entityId: 3,
+      slug: 'acme',
+      kind: 'org',
+      canonicalName: 'Acme',
+      domain: 'acme.com',
+      entityRef: null,
+    });
+    expect(parsed.website).toBeNull();
+    expect(parsed.websiteTier).toBeNull();
+  });
+
+  it('parses the trust-gated website and its tier', () => {
+    const parsed = EntitySelectResponseSchema.parse({
+      entityId: 3,
+      slug: 'acme',
+      kind: 'org',
+      canonicalName: 'Acme',
+      domain: 'acme.com',
+      website: 'https://acme.com',
+      websiteTier: 'curated',
+      entityRef: null,
+    });
+    expect(parsed.website).toBe('https://acme.com');
+    expect(parsed.websiteTier).toBe('curated');
+  });
+
+  it('rejects a crawled tier, which is never an acceptable website source', () => {
+    expect(() =>
+      EntitySelectResponseSchema.parse({
+        entityId: 3,
+        slug: 'acme',
+        kind: 'org',
+        canonicalName: 'Acme',
+        domain: 'acme.com',
+        website: 'https://acme.com',
+        websiteTier: 'crawled',
+        entityRef: null,
+      }),
+    ).toThrow();
+  });
 });
