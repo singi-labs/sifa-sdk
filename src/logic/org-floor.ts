@@ -1,5 +1,6 @@
 import type { OrgProfileRecord } from '../schemas/org-profile.js';
 import { looksLikeDomain } from './domain-detect.js';
+import type { AccountFacetMode } from '../types/index.js';
 
 /**
  * Handle hosts that are shared PDS / signup domains, never a single
@@ -143,7 +144,12 @@ export function hasPersonalProfileContent(profile: PersonalFacetContent): boolea
  */
 export function rendersPersonalProfile(
   org: { isOrg: boolean; recognized: boolean; personalProfileVisible?: boolean } | null | undefined,
+  renderPreference?: 'person' | 'company' | null,
 ): boolean {
+  // An explicit 'person' choice is the owner's own override and wins outright:
+  // it is what makes "Person" mean person, even for an account holding an org
+  // record (which stays in the PDS, inert).
+  if (renderPreference === 'person') return true;
   if (org === null || org === undefined) return true;
   if (!org.isOrg && !org.recognized) return true;
   // Gated on isOrg, not merely on the flag: `personalProfileVisible` lives in
@@ -151,4 +157,49 @@ export function rendersPersonalProfile(
   // (known company domain, never claimed) has no record to carry it and keeps
   // the redirect. Claiming is the way in.
   return org.isOrg && org.personalProfileVisible === true;
+}
+
+/**
+ * Should this account's company page render at `/c/`?
+ *
+ * The mirror of {@link rendersPersonalProfile}. True for any company account --
+ * claimed or merely recognized -- EXCEPT when the owner explicitly chose to
+ * present as a person, which suppresses the company page rather than deleting
+ * anything. The org record stays in the PDS and the choice is reversible.
+ *
+ * Pure: no network, no I/O.
+ */
+export function rendersCompanyProfile(
+  org: { isOrg: boolean; recognized: boolean } | null | undefined,
+  renderPreference?: 'person' | 'company' | null,
+): boolean {
+  if (renderPreference === 'person') return false;
+  if (org === null || org === undefined) return false;
+  return org.isOrg || org.recognized;
+}
+
+/**
+ * Resolve the three-way "are you a person, a company, or both?" answer that the
+ * account settings switch presents, from the two places the answer is stored.
+ *
+ * Precedence, highest first:
+ *   1. `renderPreference === 'person'` -- the owner's explicit local override.
+ *      Wins even over a claimed org record, which stays inert in the PDS.
+ *   2. A claimed org that declared `personalProfileVisible` -- `'both'`, the
+ *      sole trader. Read from the PDS record, so it is portable.
+ *   3. Any other company account (claimed, recognized, or `renderPreference`
+ *      `'company'`) -- `'company'`.
+ *   4. Everything else -- `'person'`.
+ *
+ * Pure: no network, no I/O.
+ */
+export function resolveAccountFacetMode(profile: {
+  org?: { isOrg: boolean; recognized: boolean; personalProfileVisible?: boolean } | null;
+  renderPreference?: 'person' | 'company' | null;
+}): AccountFacetMode {
+  if (profile.renderPreference === 'person') return 'person';
+  const org = profile.org;
+  if (org?.isOrg && org.personalProfileVisible === true) return 'both';
+  if (org?.isOrg || org?.recognized || profile.renderPreference === 'company') return 'company';
+  return 'person';
 }

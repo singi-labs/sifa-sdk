@@ -50,6 +50,7 @@ export type {
   SkillSuggestion,
   TrustStat,
   VerifiedAccount,
+  AccountFacetMode,
 } from './types/index.js';
 
 // Aggregated public profile view (`id.sifa.getProfileView` XRPC query).
@@ -327,6 +328,8 @@ export {
   isRegistrableDomainHandle,
   hasPersonalProfileContent,
   rendersPersonalProfile,
+  rendersCompanyProfile,
+  resolveAccountFacetMode,
   isCompanyPageIndexable,
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
   type DimensionKey,

@@ -4,7 +4,9 @@ import {
   hasPersonalProfileContent,
   isRegistrableDomainHandle,
   qualifiesAsOrg,
+  rendersCompanyProfile,
   rendersPersonalProfile,
+  resolveAccountFacetMode,
 } from './org-floor.js';
 import type { OrgProfileRecord } from '../schemas/org-profile.js';
 
@@ -111,5 +113,77 @@ describe('rendersPersonalProfile', () => {
     expect(
       rendersPersonalProfile({ isOrg: false, recognized: true, personalProfileVisible: true }),
     ).toBe(false);
+  });
+});
+
+describe('rendersCompanyProfile', () => {
+  it('renders for any company account', () => {
+    expect(rendersCompanyProfile({ isOrg: true, recognized: false })).toBe(true);
+    expect(rendersCompanyProfile({ isOrg: false, recognized: true })).toBe(true);
+  });
+
+  it('does not render for a plain person or a missing verdict', () => {
+    expect(rendersCompanyProfile({ isOrg: false, recognized: false })).toBe(false);
+    expect(rendersCompanyProfile(null)).toBe(false);
+    expect(rendersCompanyProfile(undefined)).toBe(false);
+  });
+
+  it('is suppressed by an explicit person preference, even for a claimed org', () => {
+    expect(rendersCompanyProfile({ isOrg: true, recognized: true }, 'person')).toBe(false);
+  });
+
+  it('is unaffected by a company preference', () => {
+    expect(rendersCompanyProfile({ isOrg: true, recognized: false }, 'company')).toBe(true);
+  });
+});
+
+describe('rendersPersonalProfile with a render preference', () => {
+  it('renders for a claimed org that chose person, keeping the record inert', () => {
+    expect(rendersPersonalProfile({ isOrg: true, recognized: true }, 'person')).toBe(true);
+  });
+
+  it('still hides for a claimed org that chose company', () => {
+    expect(rendersPersonalProfile({ isOrg: true, recognized: false }, 'company')).toBe(false);
+  });
+});
+
+describe('resolveAccountFacetMode', () => {
+  it('is person for a plain account', () => {
+    expect(resolveAccountFacetMode({})).toBe('person');
+    expect(resolveAccountFacetMode({ org: { isOrg: false, recognized: false } })).toBe('person');
+  });
+
+  it('is company for a claimed or recognized account', () => {
+    expect(resolveAccountFacetMode({ org: { isOrg: true, recognized: false } })).toBe('company');
+    expect(resolveAccountFacetMode({ org: { isOrg: false, recognized: true } })).toBe('company');
+  });
+
+  it('is both for a claimed org that kept its personal profile', () => {
+    expect(
+      resolveAccountFacetMode({
+        org: { isOrg: true, recognized: false, personalProfileVisible: true },
+      }),
+    ).toBe('both');
+  });
+
+  it('lets an explicit person preference win over everything, including both', () => {
+    expect(
+      resolveAccountFacetMode({
+        org: { isOrg: true, recognized: true, personalProfileVisible: true },
+        renderPreference: 'person',
+      }),
+    ).toBe('person');
+  });
+
+  it('is company when only the preference says so', () => {
+    expect(resolveAccountFacetMode({ renderPreference: 'company' })).toBe('company');
+  });
+
+  it('ignores personalProfileVisible on an unclaimed account', () => {
+    expect(
+      resolveAccountFacetMode({
+        org: { isOrg: false, recognized: true, personalProfileVisible: true },
+      }),
+    ).toBe('company');
   });
 });

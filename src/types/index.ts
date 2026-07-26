@@ -582,9 +582,27 @@ export interface OrgFloorVerdict {
   recognizedEntity?: RecognizedEntity;
 }
 
+/**
+ * The account owner's answer to "are you a person, a company, or both?".
+ *
+ * `'person'` and `'company'` are Sifa-local overrides stored in
+ * `account_render_overrides` (set via `POST /api/account/render-preference`).
+ * `'both'` is NOT stored here -- it is the portable
+ * `id.sifa.org.profile.personalProfileVisible` declaration in the account's own
+ * PDS, so any AppView can evaluate it without asking Sifa. Resolve the combined
+ * answer with `resolveAccountFacetMode`.
+ */
+export type AccountFacetMode = 'person' | 'company' | 'both';
+
 export interface Profile {
   did: string;
   handle: string;
+  /**
+   * Sifa-local render override, absent when the account has never set one
+   * (auto: today's recognition behaviour). `'person'` is the escape hatch for a
+   * personal domain that Sifa catalogued as a company.
+   */
+  renderPreference?: 'person' | 'company' | null;
   /**
    * Org rendering-floor verdict (#160). Present on the profile resolve; absent
    * on payloads that predate the field. When `org.isOrg` is true the account
