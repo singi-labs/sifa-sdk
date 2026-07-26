@@ -73,3 +73,82 @@ export function qualifiesAsOrg(
   if (record === null || record === undefined) return false;
   return isRegistrableDomainHandle(handle);
 }
+
+/**
+ * The person-facet fields that decide whether an account has a CV worth
+ * keeping. A structural subset of `Profile`, so callers can pass a profile
+ * straight in. Every list is optional; `positions`, `education`, and `skills`
+ * are always present on a real profile but typed optional here so partial
+ * fixtures and trimmed payloads work.
+ */
+export interface PersonalFacetContent {
+  headline?: string | null;
+  about?: string | null;
+  positions?: unknown[];
+  education?: unknown[];
+  skills?: unknown[];
+  certifications?: unknown[];
+  projects?: unknown[];
+  publications?: unknown[];
+  volunteering?: unknown[];
+  involvement?: unknown[];
+  honors?: unknown[];
+  courses?: unknown[];
+}
+
+/**
+ * Does this account have a personal profile worth keeping visible?
+ *
+ * Decides the claim-flow default when an account claims its domain as an
+ * organization. An empty account claiming a domain is a plain company signup:
+ * present solely as an org, ask nothing. An account that already carries a CV
+ * is the sole-trader case: keeping both facets is the default, and hiding the
+ * person facet must be a deliberate choice rather than a silent side effect of
+ * claiming.
+ *
+ * True when any profile section holds at least one record, or when the headline
+ * or about text is non-blank. Whitespace-only text does not count.
+ *
+ * Pure: no network, no I/O.
+ */
+export function hasPersonalProfileContent(profile: PersonalFacetContent): boolean {
+  const filled = (text: string | null | undefined): boolean =>
+    typeof text === 'string' && text.trim() !== '';
+  if (filled(profile.headline) || filled(profile.about)) return true;
+  const sections = [
+    profile.positions,
+    profile.education,
+    profile.skills,
+    profile.certifications,
+    profile.projects,
+    profile.publications,
+    profile.volunteering,
+    profile.involvement,
+    profile.honors,
+    profile.courses,
+  ];
+  return sections.some((section) => Array.isArray(section) && section.length > 0);
+}
+
+/**
+ * Should this account's personal profile render at `/p/`, given the org verdict?
+ *
+ * The single routing predicate behind the freelancer dual-identity case: a
+ * claimed org that set `personalProfileVisible` renders both facets, so `/p/`
+ * serves the person instead of redirecting to `/c/`. Every other account keeps
+ * the exclusive behaviour -- an org (claimed or merely recognized) redirects
+ * `/p/` to `/c/`, and a plain person renders at `/p/` as always.
+ *
+ * Pure: no network, no I/O.
+ */
+export function rendersPersonalProfile(
+  org: { isOrg: boolean; recognized: boolean; personalProfileVisible?: boolean } | null | undefined,
+): boolean {
+  if (org === null || org === undefined) return true;
+  if (!org.isOrg && !org.recognized) return true;
+  // Gated on isOrg, not merely on the flag: `personalProfileVisible` lives in
+  // the `id.sifa.org.profile` record, so an account that is only RECOGNIZED
+  // (known company domain, never claimed) has no record to carry it and keeps
+  // the redirect. Claiming is the way in.
+  return org.isOrg && org.personalProfileVisible === true;
+}

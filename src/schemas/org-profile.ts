@@ -52,6 +52,13 @@ export const OrgProfileRecordSchema = z.object({
   companySize: z.string().optional(),
   /** Featured links or content surfaced on the org profile. */
   links: z.array(orgLinkSchema).max(10).optional(),
+  /**
+   * Whether the account holder's personal profile stays visible alongside this
+   * org profile. For sole traders whose personal domain is also their trade
+   * name: one account, two facets, both pages render. Absent or false means the
+   * account presents solely as an organization.
+   */
+  personalProfileVisible: z.boolean().optional(),
   labels: selfLabelsSchema.optional(),
   createdAt: datetimeSchema,
 });

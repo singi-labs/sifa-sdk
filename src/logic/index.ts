@@ -39,7 +39,13 @@ export {
   ENTITY_REF_ANCHORS,
   type EntityRefAnchor,
 } from './entity-ref-anchor.js';
-export { qualifiesAsOrg, isRegistrableDomainHandle } from './org-floor.js';
+export {
+  qualifiesAsOrg,
+  isRegistrableDomainHandle,
+  hasPersonalProfileContent,
+  rendersPersonalProfile,
+} from './org-floor.js';
+export type { PersonalFacetContent } from './org-floor.js';
 export {
   isCompanyPageIndexable,
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
