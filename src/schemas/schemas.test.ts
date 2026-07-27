@@ -25,6 +25,7 @@ import {
   didSchema,
   languageTagSchema,
   maxGraphemes,
+  skillRefSchema,
   strongRefSchema,
   uriSchema,
 } from './index.js';
@@ -79,6 +80,13 @@ describe('shared format helpers', () => {
     expect(strongRefSchema.safeParse(STRONG_REF).success).toBe(true);
     expect(strongRefSchema.safeParse({ uri: AT_URI }).success).toBe(false);
     expect(strongRefSchema.safeParse({ cid: CID }).success).toBe(false);
+  });
+
+  it('skillRefSchema requires uri only and carries no cid', () => {
+    expect(skillRefSchema.safeParse({ uri: AT_URI }).success).toBe(true);
+    expect(skillRefSchema.safeParse({}).success).toBe(false);
+    expect(skillRefSchema.safeParse({ cid: CID }).success).toBe(false);
+    expect(skillRefSchema.safeParse({ uri: 'not-an-at-uri' }).success).toBe(false);
   });
 
   it('maxGraphemes counts grapheme clusters, not UTF-16 units', () => {
@@ -185,8 +193,31 @@ describe('ProfilePositionRecordSchema', () => {
     ).toBe(false);
   });
 
+  it('accepts skills entries without a cid (id.sifa.defs#skillRef)', () => {
+    const result = ProfilePositionRecordSchema.safeParse({
+      company: 'Sifa',
+      title: 'Founder',
+      startedAt: NOW,
+      createdAt: NOW,
+      skills: [{ uri: AT_URI }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('preserves isPrimary and unknown lexicon fields', () => {
+    const result = ProfilePositionRecordSchema.safeParse({
+      company: 'Sifa',
+      title: 'Founder',
+      startedAt: NOW,
+      createdAt: NOW,
+      isPrimary: true,
+    });
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.isPrimary).toBe(true);
+  });
+
   it('rejects skills array over 50 entries', () => {
-    const skills = Array.from({ length: 51 }, () => STRONG_REF);
+    const skills = Array.from({ length: 51 }, () => ({ uri: AT_URI }));
     expect(
       ProfilePositionRecordSchema.safeParse({
         company: 'Sifa',
