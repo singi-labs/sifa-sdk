@@ -112,6 +112,7 @@ export {
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,
+  skillRefSchema,
   strongRefSchema,
   uriSchema,
 } from './shared.js';

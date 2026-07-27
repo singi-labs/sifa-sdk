@@ -429,6 +429,7 @@ export {
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,
+  skillRefSchema,
   strongRefSchema,
   uriSchema,
   type AtmosphereFeedItem,

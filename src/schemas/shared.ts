@@ -64,6 +64,16 @@ export const strongRefSchema = z.object({
 });
 
 /**
+ * Reference to an `id.sifa.profile.skill` record by AT-URI. Mirrors
+ * `id.sifa.defs#skillRef`, which carries no CID at all: skills are mutable
+ * records in the same user's repo, so the reference resolves live and tracks
+ * edits to the target.
+ */
+export const skillRefSchema = z.object({
+  uri: atUriSchema,
+});
+
+/**
  * Reference to a record by AT-URI, with an optional CID. Mirrors
  * `id.sifa.defs#externalRecordRef`. Unlike a strongRef the CID is optional:
  * consumers resolve the AT-URI live so the reference tracks edits to the
