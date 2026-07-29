@@ -69,7 +69,19 @@ export {
   type ExternalAccountInput,
   type VerifyExternalAccountResult,
 } from './external-accounts.js';
-export { createEndorsement, type EndorsementInput } from './endorsements.js';
+export {
+  createEndorsement,
+  confirmEndorsement,
+  type EndorsementInput,
+  type ConfirmEndorsementInput,
+} from './endorsements.js';
+export {
+  fetchPendingEndorsements,
+  dismissEndorsement,
+  type PendingEndorsement,
+  type PendingEndorsementsPage,
+  type DismissEndorsementInput,
+} from './endorsement-inbox.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './marque-domains.js';
 export {

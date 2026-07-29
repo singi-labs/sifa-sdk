@@ -95,6 +95,9 @@ export const sifaQueryKeys = {
   endorsement: {
     all: () => ['sifa', 'endorsement'] as const,
     count: (did: string) => ['sifa', 'endorsement', 'count', did] as const,
+    // Scoped to the session rather than a DID -- the AppView reads the subject
+    // from the session cookie, so there is only ever one inbox per client.
+    pending: () => ['sifa', 'endorsement', 'pending'] as const,
   },
 
   stream: {
@@ -165,6 +168,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.activity.feed>
   | ReturnType<typeof sifaQueryKeys.endorsement.all>
   | ReturnType<typeof sifaQueryKeys.endorsement.count>
+  | ReturnType<typeof sifaQueryKeys.endorsement.pending>
   | ReturnType<typeof sifaQueryKeys.stream.all>
   | ReturnType<typeof sifaQueryKeys.stream.networkCount>
   | ReturnType<typeof sifaQueryKeys.reactions.all>
