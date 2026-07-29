@@ -1,7 +1,7 @@
 {
   "$schema": "https://sifa.id/schemas/activity-tiers/v1.json",
-  "version": "1.0.0",
-  "updated": "2026-05-28",
+  "version": "1.1.0",
+  "updated": "2026-07-29",
   "tiers": {
     "creation": {
       "label": "Made",
@@ -20,21 +20,56 @@
     }
   },
   "lexicons": {
-    "app.bsky.feed.post": {
+    "app.atmobb.discussion.reply": {
       "tier": "creation",
-      "app": "bluesky",
-      "notes": "Ambiguous: many posts are casual, but the lexicon also carries long-form posts and threads. Treated as creation; empty quote-posts (no text + record embed) are filtered at the consumer layer, not here."
+      "app": "atmobb",
+      "notes": "Replies are authored text, consistent with app.bsky.feed.post covering replies."
     },
-    "app.bsky.feed.like": { "tier": "action", "app": "bluesky" },
-    "app.bsky.feed.repost": { "tier": "action", "app": "bluesky" },
+    "app.atmobb.discussion.thread": {
+      "tier": "creation",
+      "app": "atmobb"
+    },
+    "app.beaconbits.beacon": {
+      "tier": "creation",
+      "app": "beaconbits"
+    },
+    "app.bsky.actor.profile": {
+      "tier": "filtered",
+      "app": "bluesky",
+      "notes": "Profile metadata record."
+    },
     "app.bsky.feed.generator": {
       "tier": "filtered",
       "app": "bluesky",
       "notes": "Feed generator definition record, not personal activity."
     },
-    "app.bsky.graph.follow": { "tier": "action", "app": "bluesky" },
-    "app.bsky.graph.block": { "tier": "filtered", "app": "bluesky", "notes": "Moderation record." },
-    "app.bsky.graph.mute": { "tier": "filtered", "app": "bluesky", "notes": "Moderation record." },
+    "app.bsky.feed.like": {
+      "tier": "action",
+      "app": "bluesky"
+    },
+    "app.bsky.feed.post": {
+      "tier": "creation",
+      "app": "bluesky",
+      "notes": "Ambiguous: many posts are casual, but the lexicon also carries long-form posts and threads. Treated as creation; empty quote-posts (no text + record embed) are filtered at the consumer layer, not here."
+    },
+    "app.bsky.feed.repost": {
+      "tier": "action",
+      "app": "bluesky"
+    },
+    "app.bsky.graph.block": {
+      "tier": "filtered",
+      "app": "bluesky",
+      "notes": "Moderation record."
+    },
+    "app.bsky.graph.follow": {
+      "tier": "action",
+      "app": "bluesky"
+    },
+    "app.bsky.graph.list": {
+      "tier": "filtered",
+      "app": "bluesky",
+      "notes": "User-curated list metadata; not surfaced as profile activity."
+    },
     "app.bsky.graph.listblock": {
       "tier": "filtered",
       "app": "bluesky",
@@ -45,43 +80,576 @@
       "app": "bluesky",
       "notes": "List membership; rendered via the parent list, not as standalone activity."
     },
-    "app.bsky.graph.list": {
+    "app.bsky.graph.mute": {
       "tier": "filtered",
       "app": "bluesky",
-      "notes": "User-curated list metadata; not surfaced as profile activity."
+      "notes": "Moderation record."
     },
-    "app.bsky.graph.starterpack": { "tier": "filtered", "app": "bluesky" },
-    "app.bsky.actor.profile": {
+    "app.bsky.graph.starterpack": {
       "tier": "filtered",
+      "app": "bluesky"
+    },
+    "app.bsky.graph.verification": {
+      "tier": "creation",
       "app": "bluesky",
-      "notes": "Profile metadata record."
+      "notes": "Diverges from app.bsky.graph.follow (action) on purpose: verifying another account's handle is a deliberate trust statement the actor authors, not a tap. Sifa renders it with its own card."
     },
-
-    "sh.tangled.repo": { "tier": "creation", "app": "tangled" },
-    "sh.tangled.repo.issue": { "tier": "creation", "app": "tangled" },
-    "sh.tangled.repo.pull": { "tier": "creation", "app": "tangled" },
-    "sh.tangled.feed.star": { "tier": "action", "app": "tangled" },
-    "sh.tangled.graph.follow": { "tier": "action", "app": "tangled" },
-    "sh.tangled.actor.profile": {
+    "app.collectivesocial.feed.list": {
+      "tier": "creation",
+      "app": "collectivesocial",
+      "notes": "Auto-created default Inbox lists are filtered at the consumer layer via isDefault=true predicate."
+    },
+    "app.mcp.server": {
+      "tier": "creation",
+      "app": "mcp"
+    },
+    "app.sidetrail.trail": {
+      "tier": "creation",
+      "app": "semble"
+    },
+    "app.sidetrail.walk": {
+      "tier": "creation",
+      "app": "semble"
+    },
+    "app.userinput.discussion": {
+      "tier": "creation",
+      "app": "userinput"
+    },
+    "app.userinput.reply": {
+      "tier": "creation",
+      "app": "userinput",
+      "notes": "Replies are authored text, consistent with app.bsky.feed.post covering replies."
+    },
+    "at.margin.annotation": {
+      "tier": "creation",
+      "app": "margin",
+      "notes": "An annotation on someone else's text is still authored writing."
+    },
+    "at.margin.bookmark": {
       "tier": "filtered",
-      "app": "tangled",
-      "notes": "Profile metadata record."
+      "notes": "Bookmark — consumption signal, not creation.",
+      "app": "margin"
     },
-
+    "at.margin.highlight": {
+      "tier": "filtered",
+      "notes": "Highlight — consumption signal, not creation.",
+      "app": "margin"
+    },
+    "at.margin.note": {
+      "tier": "creation",
+      "app": "margin"
+    },
+    "at.marque.domain": {
+      "tier": "creation",
+      "app": "marque"
+    },
+    "at.youandme.connection": {
+      "tier": "creation",
+      "app": "youandme"
+    },
+    "blue.flashes.feed.post": {
+      "tier": "creation",
+      "app": "flashes"
+    },
+    "blue.linkat.board": {
+      "tier": "filtered",
+      "notes": "Link-in-bio board; consumption signal.",
+      "app": "linkat"
+    },
+    "buzz.bookhive.book": {
+      "tier": "creation",
+      "app": "bookhive"
+    },
+    "com.minomobi.music.composition": {
+      "tier": "creation",
+      "app": "minomobi"
+    },
+    "com.voxport.podcast.series": {
+      "tier": "creation",
+      "app": "voxport"
+    },
+    "com.whtwnd.blog.entry": {
+      "tier": "creation",
+      "app": "whitewind"
+    },
+    "community.lexicon.badge.award": {
+      "tier": "creation",
+      "app": "badges",
+      "notes": "The award record is authored by the giver, so it is their attestation about someone else."
+    },
+    "community.lexicon.bookmarks.bookmark": {
+      "tier": "filtered",
+      "notes": "Bookmark — consumption signal.",
+      "app": "kipclip"
+    },
     "community.lexicon.calendar.rsvp": {
       "tier": "creation",
       "app": "smokesignal",
       "notes": "Ambiguous: RSVPs are reactions to events, but they are public commitments and the only Smoke Signal record Sifa scans today. Classified as creation."
+    },
+    "community.nooki.comments": {
+      "tier": "creation",
+      "app": "nooki",
+      "notes": "Comments are authored text."
+    },
+    "community.nooki.membership": {
+      "tier": "creation",
+      "app": "nooki",
+      "notes": "Joining a community, classified like social.colibri.membership (creation)."
+    },
+    "community.opensocial.membership": {
+      "tier": "creation",
+      "app": "opensocial",
+      "notes": "Joining a community, classified like social.colibri.membership (creation)."
+    },
+    "computer.aetheros.page": {
+      "tier": "creation",
+      "app": "aetheros"
+    },
+    "dev.atvouch.graph.vouch": {
+      "tier": "creation",
+      "app": "atvouch",
+      "notes": "Vouching for someone. Authored attestation, same reasoning as fund.at.graph.endorse."
+    },
+    "dev.baileytownsend.guestbook.entry": {
+      "tier": "creation",
+      "app": "guestbook",
+      "notes": "Signing someone else's guestbook is a short authored message."
+    },
+    "dev.keytrace.claim": {
+      "tier": "creation",
+      "app": "keytrace"
+    },
+    "dev.skyboard.board": {
+      "tier": "filtered",
+      "notes": "Skyboard task-board metadata.",
+      "app": "skyboard"
+    },
+    "dev.skyboard.op": {
+      "tier": "filtered",
+      "notes": "Skyboard operation log.",
+      "app": "skyboard"
+    },
+    "dev.skyboard.task": {
+      "tier": "filtered",
+      "notes": "Skyboard task record.",
+      "app": "skyboard"
     },
     "events.smokesignal.profile": {
       "tier": "filtered",
       "app": "smokesignal",
       "notes": "Profile metadata record."
     },
-
-    "blue.flashes.feed.post": { "tier": "creation", "app": "flashes" },
-
-    "social.grain.gallery": { "tier": "creation", "app": "grain" },
+    "exchange.recipe.recipe": {
+      "tier": "creation",
+      "app": "recipe"
+    },
+    "fm.plyr.comment": {
+      "tier": "creation",
+      "app": "plyr",
+      "notes": "Comments are authored text."
+    },
+    "forum.barazo.community.member": {
+      "tier": "creation",
+      "app": "barazo"
+    },
+    "forum.barazo.flag": {
+      "tier": "filtered",
+      "app": "barazo",
+      "notes": "Moderation flag."
+    },
+    "forum.barazo.post": {
+      "tier": "creation",
+      "app": "barazo"
+    },
+    "forum.barazo.reaction": {
+      "tier": "action",
+      "app": "barazo"
+    },
+    "forum.barazo.reply": {
+      "tier": "action",
+      "app": "barazo",
+      "notes": "Short conversational reply — engagement signal."
+    },
+    "forum.barazo.reputation.event": {
+      "tier": "creation",
+      "app": "barazo"
+    },
+    "fund.at.graph.endorse": {
+      "tier": "creation",
+      "app": "atfund",
+      "notes": "Endorsing someone. Authored attestation, not engagement."
+    },
+    "fyi.asq.answer": {
+      "tier": "creation",
+      "app": "asq"
+    },
+    "fyi.asq.question": {
+      "tier": "creation",
+      "app": "asq"
+    },
+    "fyi.atstore.listing.review": {
+      "tier": "creation",
+      "app": "atstore"
+    },
+    "fyi.unravel.frontpage.post": {
+      "tier": "creation",
+      "app": "frontpage"
+    },
+    "fyi.unravel.frontpage.vote": {
+      "tier": "action",
+      "app": "frontpage"
+    },
+    "id.sifa.authConnection": {
+      "tier": "filtered",
+      "app": "sifa",
+      "notes": "OAuth scope record."
+    },
+    "id.sifa.authMeet": {
+      "tier": "filtered",
+      "app": "sifa",
+      "notes": "OAuth scope record."
+    },
+    "id.sifa.authProfile": {
+      "tier": "filtered",
+      "app": "sifa",
+      "notes": "OAuth scope record."
+    },
+    "id.sifa.authProfileAccess": {
+      "tier": "filtered",
+      "app": "sifa",
+      "notes": "OAuth profile-access record."
+    },
+    "id.sifa.authProject": {
+      "tier": "filtered",
+      "app": "sifa",
+      "notes": "OAuth scope record."
+    },
+    "id.sifa.endorsement": {
+      "tier": "creation",
+      "app": "sifa",
+      "notes": "Endorsement authored by the actor about another profile."
+    },
+    "id.sifa.endorsement.confirmation": {
+      "tier": "action",
+      "app": "sifa",
+      "notes": "Confirmation/acceptance of an endorsement received."
+    },
+    "id.sifa.graph.connection": {
+      "tier": "creation",
+      "app": "sifa",
+      "notes": "Mutual professional connection record."
+    },
+    "id.sifa.graph.follow": {
+      "tier": "action",
+      "app": "sifa"
+    },
+    "id.sifa.meeting": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.certification": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.course": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.education": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.externalAccount": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.honor": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.language": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.location": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.position": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.presentation": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.presentationDelivery": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.project": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.publication": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.self": {
+      "tier": "creation",
+      "app": "sifa",
+      "notes": "Sifa professional profile root."
+    },
+    "id.sifa.profile.skill": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.profile.volunteering": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.project.member": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.project.membership": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "id.sifa.project.self": {
+      "tier": "creation",
+      "app": "sifa"
+    },
+    "io.atcr.repo.page": {
+      "tier": "creation",
+      "app": "atcr"
+    },
+    "io.calabro.watsm.program": {
+      "tier": "creation",
+      "app": "watsm"
+    },
+    "io.kich.recipe.recipe": {
+      "tier": "creation",
+      "app": "kich"
+    },
+    "is.kevara.directory.speaker": {
+      "tier": "creation",
+      "app": "kevara"
+    },
+    "li.plonk.paste": {
+      "tier": "creation",
+      "app": "plonk"
+    },
+    "link.pastesphere.snippet": {
+      "tier": "creation",
+      "app": "pastesphere"
+    },
+    "net.alternativeproto.submission": {
+      "tier": "creation",
+      "app": "alternativeproto"
+    },
+    "net.alternativeproto.vote": {
+      "tier": "action",
+      "notes": "Vote record on a third-party protocol.",
+      "app": "alternativeproto"
+    },
+    "net.anisota.feed.list": {
+      "tier": "creation",
+      "app": "anisota"
+    },
+    "net.anisota.feed.post": {
+      "tier": "creation",
+      "app": "anisota"
+    },
+    "net.anisota.player.state": {
+      "tier": "filtered",
+      "notes": "Anisota game player state.",
+      "app": "anisota"
+    },
+    "network.cosmik.card": {
+      "tier": "filtered",
+      "notes": "Link-in-bio card; consumption signal.",
+      "app": "cosmik"
+    },
+    "network.cosmik.collection": {
+      "tier": "filtered",
+      "notes": "Stale registry id — Cosmik formerly in app registry.",
+      "app": "cosmik"
+    },
+    "network.cosmik.collectionLink": {
+      "tier": "filtered",
+      "app": "cosmik"
+    },
+    "network.cosmik.connection": {
+      "tier": "filtered",
+      "app": "cosmik"
+    },
+    "network.cosmik.follow": {
+      "tier": "filtered",
+      "app": "cosmik"
+    },
+    "one.papili.post": {
+      "tier": "creation",
+      "app": "papili"
+    },
+    "org.v-it.skill": {
+      "tier": "creation",
+      "app": "vit"
+    },
+    "os.aether.docs.presentation": {
+      "tier": "creation",
+      "app": "aetherdocs"
+    },
+    "place.stream.broadcast.origin": {
+      "tier": "filtered",
+      "app": "streamplace",
+      "notes": "Broadcast origin/infrastructure record."
+    },
+    "place.stream.chat.message": {
+      "tier": "filtered",
+      "app": "streamplace",
+      "notes": "Ephemeral chat message."
+    },
+    "place.stream.chat.profile": {
+      "tier": "filtered",
+      "app": "streamplace",
+      "notes": "Chat profile metadata."
+    },
+    "place.stream.key": {
+      "tier": "filtered",
+      "app": "streamplace",
+      "notes": "Stream key — sensitive infrastructure record."
+    },
+    "place.stream.livestream": {
+      "tier": "creation",
+      "app": "streamplace"
+    },
+    "place.stream.metadata.configuration": {
+      "tier": "filtered",
+      "app": "streamplace",
+      "notes": "Stream configuration metadata."
+    },
+    "pub.leaflet.authFullPermissions": {
+      "tier": "filtered",
+      "app": "leaflet",
+      "notes": "OAuth permission record."
+    },
+    "pub.leaflet.comment": {
+      "tier": "creation",
+      "app": "leaflet"
+    },
+    "pub.leaflet.interactions.recommend": {
+      "tier": "action",
+      "app": "leaflet"
+    },
+    "quest.atmo.checkin": {
+      "tier": "creation",
+      "app": "atmorsvp",
+      "notes": "Attendance, classified like community.lexicon.calendar.rsvp (creation) rather than as engagement. The creation tier description names RSVPs explicitly."
+    },
+    "quest.atmo.event": {
+      "tier": "creation",
+      "app": "atmorsvp"
+    },
+    "sh.tangled.actor.profile": {
+      "tier": "filtered",
+      "app": "tangled",
+      "notes": "Profile metadata record."
+    },
+    "sh.tangled.feed.star": {
+      "tier": "action",
+      "app": "tangled"
+    },
+    "sh.tangled.graph.follow": {
+      "tier": "action",
+      "app": "tangled"
+    },
+    "sh.tangled.repo": {
+      "tier": "creation",
+      "app": "tangled"
+    },
+    "sh.tangled.repo.issue": {
+      "tier": "creation",
+      "app": "tangled"
+    },
+    "sh.tangled.repo.pull": {
+      "tier": "creation",
+      "app": "tangled"
+    },
+    "site.standard.document": {
+      "tier": "creation",
+      "app": "standard"
+    },
+    "so.sprk.feed.post": {
+      "tier": "creation",
+      "app": "spark"
+    },
+    "so.sprk.story.post": {
+      "tier": "creation",
+      "app": "spark"
+    },
+    "social.colibri.actor.data": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Actor metadata."
+    },
+    "social.colibri.approval": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Moderation approval record."
+    },
+    "social.colibri.category": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Category metadata."
+    },
+    "social.colibri.channel": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Channel definition."
+    },
+    "social.colibri.channel.read": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Read-state marker."
+    },
+    "social.colibri.community": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Community definition."
+    },
+    "social.colibri.membership": {
+      "tier": "creation",
+      "app": "colibri"
+    },
+    "social.colibri.message": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Chat message — high-volume conversational signal, not portfolio."
+    },
+    "social.colibri.reaction": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Chat reaction."
+    },
+    "social.colibri.richtext.facet": {
+      "tier": "filtered",
+      "app": "colibri",
+      "notes": "Richtext facet sub-record."
+    },
+    "social.crate.content": {
+      "tier": "creation",
+      "app": "crate"
+    },
+    "social.crate.note": {
+      "tier": "creation",
+      "app": "crate"
+    },
+    "social.grain.gallery": {
+      "tier": "creation",
+      "app": "grain"
+    },
     "social.grain.gallery.item": {
       "tier": "filtered",
       "app": "grain",
@@ -102,229 +670,102 @@
       "app": "grain",
       "notes": "Ephemeral story format."
     },
-
-    "com.whtwnd.blog.entry": { "tier": "creation", "app": "whitewind" },
-
-    "fyi.unravel.frontpage.post": { "tier": "creation", "app": "frontpage" },
-    "fyi.unravel.frontpage.vote": { "tier": "action", "app": "frontpage" },
-
-    "social.psky.feed.post": { "tier": "creation", "app": "picosky" },
-
-    "link.pastesphere.snippet": { "tier": "creation", "app": "pastesphere" },
-
-    "site.standard.document": { "tier": "creation", "app": "standard" },
-
-    "computer.aetheros.page": { "tier": "creation", "app": "aetheros" },
-
-    "space.roomy.space.personal": { "tier": "creation", "app": "roomy" },
-
-    "dev.keytrace.claim": { "tier": "creation", "app": "keytrace" },
-
-    "social.popfeed.feed.review": { "tier": "creation", "app": "popfeed" },
-    "social.popfeed.feed.post": { "tier": "creation", "app": "popfeed" },
-    "social.popfeed.feed.note": { "tier": "creation", "app": "popfeed" },
-    "social.popfeed.feed.like": { "tier": "action", "app": "popfeed" },
-    "social.popfeed.challenge.participation": {
+    "social.passports.fiftyStates.visit": {
+      "tier": "creation",
+      "app": "passports"
+    },
+    "social.passports.travel.leg": {
+      "tier": "creation",
+      "app": "passports"
+    },
+    "social.pinksky.app.preference": {
       "tier": "filtered",
-      "app": "popfeed",
-      "notes": "Challenge participation tracking."
+      "app": "bluesky",
+      "notes": "Pinkleap (Bluesky client) app preferences."
     },
     "social.popfeed.actor.profile": {
       "tier": "filtered",
       "app": "popfeed",
       "notes": "Profile metadata record."
     },
-
-    "place.stream.livestream": { "tier": "creation", "app": "streamplace" },
-    "place.stream.broadcast.origin": {
+    "social.popfeed.challenge.participation": {
       "tier": "filtered",
-      "app": "streamplace",
-      "notes": "Broadcast origin/infrastructure record."
+      "app": "popfeed",
+      "notes": "Challenge participation tracking."
     },
-    "place.stream.key": {
-      "tier": "filtered",
-      "app": "streamplace",
-      "notes": "Stream key — sensitive infrastructure record."
-    },
-    "place.stream.metadata.configuration": {
-      "tier": "filtered",
-      "app": "streamplace",
-      "notes": "Stream configuration metadata."
-    },
-    "place.stream.chat.message": {
-      "tier": "filtered",
-      "app": "streamplace",
-      "notes": "Ephemeral chat message."
-    },
-    "place.stream.chat.profile": {
-      "tier": "filtered",
-      "app": "streamplace",
-      "notes": "Chat profile metadata."
-    },
-
-    "app.sidetrail.trail": { "tier": "creation", "app": "semble" },
-    "app.sidetrail.walk": { "tier": "creation", "app": "semble" },
-
-    "at.youandme.connection": { "tier": "creation", "app": "youandme" },
-
-    "pub.leaflet.comment": { "tier": "creation", "app": "leaflet" },
-    "pub.leaflet.interactions.recommend": { "tier": "action", "app": "leaflet" },
-    "pub.leaflet.authFullPermissions": {
-      "tier": "filtered",
-      "app": "leaflet",
-      "notes": "OAuth permission record."
-    },
-
-    "social.colibri.membership": { "tier": "creation", "app": "colibri" },
-    "social.colibri.message": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Chat message — high-volume conversational signal, not portfolio."
-    },
-    "social.colibri.reaction": { "tier": "filtered", "app": "colibri", "notes": "Chat reaction." },
-    "social.colibri.channel": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Channel definition."
-    },
-    "social.colibri.community": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Community definition."
-    },
-    "social.colibri.approval": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Moderation approval record."
-    },
-    "social.colibri.category": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Category metadata."
-    },
-    "social.colibri.channel.read": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Read-state marker."
-    },
-    "social.colibri.actor.data": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Actor metadata."
-    },
-    "social.colibri.richtext.facet": {
-      "tier": "filtered",
-      "app": "colibri",
-      "notes": "Richtext facet sub-record."
-    },
-
-    "app.collectivesocial.feed.list": {
-      "tier": "creation",
-      "app": "collectivesocial",
-      "notes": "Auto-created default Inbox lists are filtered at the consumer layer via isDefault=true predicate."
-    },
-
-    "net.alternativeproto.vote": {
+    "social.popfeed.feed.like": {
       "tier": "action",
-      "notes": "Vote record on a third-party protocol."
+      "app": "popfeed"
     },
-    "network.cosmik.collection": {
-      "tier": "filtered",
-      "notes": "Stale registry id — Cosmik formerly in app registry."
+    "social.popfeed.feed.note": {
+      "tier": "creation",
+      "app": "popfeed"
     },
-    "network.cosmik.collectionLink": { "tier": "filtered" },
-    "network.cosmik.connection": { "tier": "filtered" },
-    "network.cosmik.follow": { "tier": "filtered" },
-    "network.cosmik.card": { "tier": "filtered", "notes": "Link-in-bio card; consumption signal." },
-
-    "social.pinksky.app.preference": {
-      "tier": "filtered",
-      "app": "bluesky",
-      "notes": "Pinkleap (Bluesky client) app preferences."
+    "social.popfeed.feed.post": {
+      "tier": "creation",
+      "app": "popfeed"
     },
-
-    "at.margin.bookmark": {
-      "tier": "filtered",
-      "notes": "Bookmark — consumption signal, not creation."
+    "social.popfeed.feed.review": {
+      "tier": "creation",
+      "app": "popfeed"
     },
-    "at.margin.highlight": {
-      "tier": "filtered",
-      "notes": "Highlight — consumption signal, not creation."
+    "social.psky.feed.post": {
+      "tier": "creation",
+      "app": "picosky"
     },
-    "community.lexicon.bookmarks.bookmark": {
-      "tier": "filtered",
-      "notes": "Bookmark — consumption signal."
+    "space.roomy.space.personal": {
+      "tier": "creation",
+      "app": "roomy"
     },
-    "blue.linkat.board": { "tier": "filtered", "notes": "Link-in-bio board; consumption signal." },
-
-    "dev.skyboard.board": { "tier": "filtered", "notes": "Skyboard task-board metadata." },
-    "dev.skyboard.op": { "tier": "filtered", "notes": "Skyboard operation log." },
-    "dev.skyboard.task": { "tier": "filtered", "notes": "Skyboard task record." },
-
-    "net.anisota.player.state": { "tier": "filtered", "notes": "Anisota game player state." },
+    "st.lifepo.lifeEvent": {
+      "tier": "creation",
+      "app": "lifepo"
+    },
+    "stream.thought.blip": {
+      "tier": "creation",
+      "app": "streamthought"
+    },
+    "tech.waow.doodl.drawing": {
+      "tier": "creation",
+      "app": "waow"
+    },
+    "tech.waow.doodl.icon": {
+      "tier": "creation",
+      "app": "waow"
+    },
+    "tech.waow.doodl.iconset": {
+      "tier": "creation",
+      "app": "waow"
+    },
+    "tech.waow.doodl.logo": {
+      "tier": "creation",
+      "app": "waow"
+    },
+    "tech.waow.pollz.poll": {
+      "tier": "creation",
+      "app": "waow"
+    },
+    "tech.waow.slides.deck": {
+      "tier": "creation",
+      "app": "waow"
+    },
+    "tech.waow.slides.slide": {
+      "tier": "creation",
+      "app": "waow",
+      "notes": "Individual slides are components of a deck. Both are kept; the consumer decides whether to collapse them."
+    },
+    "wiki.lichen.note": {
+      "tier": "creation",
+      "app": "lichen"
+    },
+    "wiki.lichen.wiki": {
+      "tier": "creation",
+      "app": "lichen"
+    },
     "xyz.statusphere.status": {
       "tier": "filtered",
-      "notes": "Statusphere emoji status — leisure signal."
-    },
-
-    "id.sifa.profile.self": {
-      "tier": "creation",
-      "app": "sifa",
-      "notes": "Sifa professional profile root."
-    },
-    "id.sifa.profile.position": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.education": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.skill": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.certification": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.project": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.volunteering": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.publication": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.course": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.honor": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.language": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.externalAccount": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.location": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.presentation": { "tier": "creation", "app": "sifa" },
-    "id.sifa.profile.presentationDelivery": { "tier": "creation", "app": "sifa" },
-    "id.sifa.endorsement": {
-      "tier": "creation",
-      "app": "sifa",
-      "notes": "Endorsement authored by the actor about another profile."
-    },
-    "id.sifa.endorsement.confirmation": {
-      "tier": "action",
-      "app": "sifa",
-      "notes": "Confirmation/acceptance of an endorsement received."
-    },
-    "id.sifa.graph.follow": { "tier": "action", "app": "sifa" },
-    "id.sifa.graph.connection": {
-      "tier": "creation",
-      "app": "sifa",
-      "notes": "Mutual professional connection record."
-    },
-    "id.sifa.project.self": { "tier": "creation", "app": "sifa" },
-    "id.sifa.project.member": { "tier": "creation", "app": "sifa" },
-    "id.sifa.project.membership": { "tier": "creation", "app": "sifa" },
-    "id.sifa.meeting": { "tier": "creation", "app": "sifa" },
-    "id.sifa.authProfile": { "tier": "filtered", "app": "sifa", "notes": "OAuth scope record." },
-    "id.sifa.authProfileAccess": {
-      "tier": "filtered",
-      "app": "sifa",
-      "notes": "OAuth profile-access record."
-    },
-    "id.sifa.authProject": { "tier": "filtered", "app": "sifa", "notes": "OAuth scope record." },
-    "id.sifa.authConnection": { "tier": "filtered", "app": "sifa", "notes": "OAuth scope record." },
-    "id.sifa.authMeet": { "tier": "filtered", "app": "sifa", "notes": "OAuth scope record." },
-
-    "forum.barazo.post": { "tier": "creation", "app": "barazo" },
-    "forum.barazo.community.member": { "tier": "creation", "app": "barazo" },
-    "forum.barazo.reputation.event": { "tier": "creation", "app": "barazo" },
-    "forum.barazo.reaction": { "tier": "action", "app": "barazo" },
-    "forum.barazo.reply": {
-      "tier": "action",
-      "app": "barazo",
-      "notes": "Short conversational reply — engagement signal."
-    },
-    "forum.barazo.flag": { "tier": "filtered", "app": "barazo", "notes": "Moderation flag." }
+      "notes": "Statusphere emoji status — leisure signal.",
+      "app": "statusphere"
+    }
   }
 }

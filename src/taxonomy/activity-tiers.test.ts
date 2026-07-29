@@ -99,3 +99,35 @@ describe('ACTIVITY_TIERS taxonomy', () => {
     }
   });
 });
+
+describe('taxonomy completeness', () => {
+  // sifa-workspace#345: the taxonomy had drifted to the point where 55 of the
+  // 79 collections sifa-api scans were absent. getActivityTier defaults absent
+  // NSIDs to 'filtered', so those apps were classified as hidden while
+  // rendering fine in production, and the docs table generated from this file
+  // was missing most of what Sifa supports.
+  //
+  // The counterpart test lives in sifa-api, where the registry is, and asserts
+  // every scanned collection resolves here. This one guards the shape.
+  it('gives every entry a tier and an owning app', () => {
+    for (const [nsid, entry] of Object.entries(ACTIVITY_TIERS.lexicons)) {
+      expect(entry.tier, `${nsid} has no tier`).toBeTruthy();
+      expect(entry.app, `${nsid} has no app`).toBeTruthy();
+    }
+  });
+
+  it('uses only the three declared tiers', () => {
+    const declared = new Set(Object.keys(ACTIVITY_TIERS.tiers));
+    for (const [nsid, entry] of Object.entries(ACTIVITY_TIERS.lexicons)) {
+      expect(declared, `${nsid} has an undeclared tier: ${entry.tier}`).toContain(entry.tier);
+    }
+  });
+
+  it('keys every entry by a plausible NSID', () => {
+    for (const nsid of Object.keys(ACTIVITY_TIERS.lexicons)) {
+      expect(nsid, `${nsid} is not a dotted NSID`).toMatch(
+        /^[a-z][a-z0-9-]*(\.[a-zA-Z0-9-]+){2,}$/,
+      );
+    }
+  });
+});
