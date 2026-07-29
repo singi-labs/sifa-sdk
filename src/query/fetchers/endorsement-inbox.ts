@@ -15,6 +15,13 @@ export interface PendingEndorsement {
    * so the AppView hands this back rather than making callers rebuild it.
    */
   uri: string;
+  /**
+   * CID of the endorsement record, when the AppView has it. Often absent:
+   * an endorsement written by another AT Protocol app can be indexed without
+   * its CID ever reaching us. Pass it through to confirm when present; the
+   * AppView resolves it from the endorser's PDS when it is not.
+   */
+  cid?: string;
   skillUri: string;
   skillCid: string;
   skillName: string;
