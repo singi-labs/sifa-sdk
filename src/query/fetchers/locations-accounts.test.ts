@@ -192,6 +192,19 @@ describe('endorsements', () => {
     expect(body.skillName).toBe('Community Organizing');
   });
 
+  it('confirmEndorsement omits the CID when the caller has none', async () => {
+    // The AppView resolves it. Sending a placeholder or another record's CID
+    // would write a corrupt strongRef.
+    const fetchImpl = jsonFetch({ rkey: 'c1' });
+    await confirmEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      { endorsementUri: 'at://did:plc:endorser/id.sifa.endorsement/abc' },
+    );
+    const body = JSON.parse(getCall(fetchImpl)[1].body as string) as Record<string, string>;
+    expect(body.endorsementUri).toBe('at://did:plc:endorser/id.sifa.endorsement/abc');
+    expect('endorsementCid' in body).toBe(false);
+  });
+
   it('confirmEndorsement POSTs the strongRef to /api/endorsement/confirm', async () => {
     const fetchImpl = jsonFetch({ rkey: 'c1' });
     const result = await confirmEndorsement(

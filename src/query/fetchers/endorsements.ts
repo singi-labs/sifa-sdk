@@ -24,7 +24,13 @@ export interface EndorsementInput {
 /** Body accepted by {@link confirmEndorsement}. */
 export interface ConfirmEndorsementInput {
   endorsementUri: string;
-  endorsementCid: string;
+  /**
+   * Optional. When omitted the AppView resolves the CID itself, reading the
+   * record from the endorser's PDS if it has none stored. Callers working from
+   * the pending inbox should pass `cid` through when it is there and leave it
+   * out when it is not, rather than substituting another record's CID.
+   */
+  endorsementCid?: string;
 }
 
 /**
