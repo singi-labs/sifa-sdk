@@ -225,6 +225,7 @@ describe('endorsement inbox', () => {
   it('fetchPendingEndorsements reads the session-scoped inbox with credentials', async () => {
     const pending = {
       endorserDid: 'did:plc:endorser',
+      endorserHandle: 'alice.sifa.id',
       rkey: 'abc',
       uri: 'at://did:plc:endorser/id.sifa.endorsement/abc',
       skillUri: 'at://did:plc:x/id.sifa.profile.skill/s1',
@@ -238,6 +239,25 @@ describe('endorsement inbox', () => {
     const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/endorsements/pending');
     expect(init.credentials).toBe('include');
+  });
+
+  it('tolerates a pending endorsement with no endorser handle', async () => {
+    // The endorser need not be a Sifa user.
+    const fetchImpl = jsonFetch({
+      endorsements: [
+        {
+          endorserDid: 'did:plc:endorser',
+          rkey: 'abc',
+          uri: 'at://did:plc:endorser/id.sifa.endorsement/abc',
+          skillUri: 'at://did:plc:x/id.sifa.profile.skill/s1',
+          skillCid: 'bafyreis1',
+          skillName: 'Community Organizing',
+          createdAt: '2026-07-20T00:00:00.000Z',
+        },
+      ],
+    });
+    const result = await fetchPendingEndorsements({ ...baseConfig, fetch: fetchImpl });
+    expect(result.endorsements[0]?.endorserHandle).toBeUndefined();
   });
 
   it('fetchPendingEndorsements returns an empty page when the request fails', async () => {

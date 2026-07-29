@@ -9,6 +9,12 @@ import {
 /** A received endorsement the subject has neither confirmed nor dismissed. */
 export interface PendingEndorsement {
   endorserDid: string;
+  /**
+   * Endorser's handle, when the AppView has resolved one. Absent when the
+   * endorser has no Sifa profile yet -- an endorsement can come from any AT
+   * Protocol app -- so the UI needs a fallback for having no name to show.
+   */
+  endorserHandle?: string;
   rkey: string;
   /**
    * AT-URI of the endorsement record. The confirm mutation needs a strongRef,
