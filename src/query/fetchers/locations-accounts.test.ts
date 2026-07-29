@@ -182,6 +182,23 @@ describe('endorsements', () => {
     expect(JSON.parse(init.body as string)).toEqual(endorsementInput);
   });
 
+  it('createEndorsement omits the skill CID when the caller has none', async () => {
+    // The common case: only the firehose carries a CID, so a freshly added
+    // skill has none. The AppView resolves it rather than rejecting the write.
+    const fetchImpl = jsonFetch({ rkey: 'e1' });
+    await createEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      {
+        subjectDid: 'did:plc:x',
+        skillUri: 'at://did:plc:x/id.sifa.profile.skill/abc',
+        skillName: 'Community Organizing',
+      },
+    );
+    const body = JSON.parse(getCall(fetchImpl)[1].body as string) as Record<string, string>;
+    expect('skillCid' in body).toBe(false);
+    expect(body.skillUri).toBe('at://did:plc:x/id.sifa.profile.skill/abc');
+  });
+
   it('createEndorsement sends the strongRef fields the AppView requires', async () => {
     const fetchImpl = jsonFetch({ rkey: 'e1' });
     await createEndorsement({ ...baseConfig, fetch: fetchImpl }, endorsementInput);

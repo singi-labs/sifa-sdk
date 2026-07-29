@@ -77,6 +77,13 @@ export interface ProfileEducation {
 export interface ProfileSkill {
   rkey: string;
   name: string;
+  /**
+   * CID of the skill record, needed as a strongRef when endorsing it. Often
+   * absent: only the firehose carries a CID, so a skill added moments ago has
+   * none indexed yet. Pass it to `createEndorsement` when present and omit it
+   * otherwise -- the AppView resolves it from the owner's PDS.
+   */
+  cid?: string;
   category?: string;
   /**
    * Freeform user-defined grouping label nested under `category` (e.g.
