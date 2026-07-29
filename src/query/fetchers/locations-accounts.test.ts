@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { type SifaApiConfig } from '../client.js';
-import { createEndorsement } from './endorsements.js';
+import { confirmEndorsement, createEndorsement } from './endorsements.js';
+import { dismissEndorsement, fetchPendingEndorsements } from './endorsement-inbox.js';
 import {
   createExternalAccount,
   deleteExternalAccount,
@@ -23,6 +24,11 @@ const baseConfig: SifaApiConfig = { baseUrl: 'https://api.example' };
 
 function jsonFetch(body: unknown, status = 200): typeof fetch {
   return vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status })));
+}
+
+/** 204 carries no body; Response rejects one, so build it explicitly. */
+function noContentFetch(): typeof fetch {
+  return vi.fn(() => Promise.resolve(new Response(null, { status: 204 })));
 }
 
 function getCall(fetchImpl: typeof fetch, index = 0): [string, RequestInit] {
@@ -157,20 +163,108 @@ describe('external accounts', () => {
 });
 
 describe('endorsements', () => {
-  it('createEndorsement POSTs to /api/endorsements and returns rkey', async () => {
+  const endorsementInput = {
+    subjectDid: 'did:plc:x',
+    skillUri: 'at://did:plc:x/id.sifa.profile.skill/abc',
+    skillCid: 'bafyreiabc',
+    skillName: 'Community Organizing',
+    comment: 'Great!',
+  };
+
+  it('createEndorsement POSTs to /api/endorsement and returns rkey', async () => {
     const fetchImpl = jsonFetch({ rkey: 'e1' });
-    const result = await createEndorsement(
-      { ...baseConfig, fetch: fetchImpl },
-      { skillUri: 'at://did:plc:x/id.sifa.profile.skill/abc', comment: 'Great!' },
-    );
+    const result = await createEndorsement({ ...baseConfig, fetch: fetchImpl }, endorsementInput);
     expect(result).toEqual({ success: true, rkey: 'e1' });
     const [url, init] = getCall(fetchImpl);
-    expect(url).toBe('https://api.example/api/endorsements');
+    // Singular. The AppView has no /api/endorsements collection endpoint.
+    expect(url).toBe('https://api.example/api/endorsement');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual(endorsementInput);
+  });
+
+  it('createEndorsement sends the strongRef fields the AppView requires', async () => {
+    const fetchImpl = jsonFetch({ rkey: 'e1' });
+    await createEndorsement({ ...baseConfig, fetch: fetchImpl }, endorsementInput);
+    const body = JSON.parse(getCall(fetchImpl)[1].body as string) as Record<string, string>;
+    // Dropping any of these makes the AppView reject the write with a 400.
+    expect(body.subjectDid).toBe('did:plc:x');
+    expect(body.skillCid).toBe('bafyreiabc');
+    expect(body.skillName).toBe('Community Organizing');
+  });
+
+  it('confirmEndorsement POSTs the strongRef to /api/endorsement/confirm', async () => {
+    const fetchImpl = jsonFetch({ rkey: 'c1' });
+    const result = await confirmEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      {
+        endorsementUri: 'at://did:plc:endorser/id.sifa.endorsement/abc',
+        endorsementCid: 'bafyreiabc',
+      },
+    );
+    expect(result).toEqual({ success: true, rkey: 'c1' });
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/endorsement/confirm');
+    expect(init.method).toBe('POST');
+  });
+});
+
+describe('endorsement inbox', () => {
+  it('fetchPendingEndorsements reads the session-scoped inbox with credentials', async () => {
+    const pending = {
+      endorserDid: 'did:plc:endorser',
+      rkey: 'abc',
+      uri: 'at://did:plc:endorser/id.sifa.endorsement/abc',
+      skillUri: 'at://did:plc:x/id.sifa.profile.skill/s1',
+      skillCid: 'bafyreis1',
+      skillName: 'Community Organizing',
+      createdAt: '2026-07-20T00:00:00.000Z',
+    };
+    const fetchImpl = jsonFetch({ endorsements: [pending] });
+    const result = await fetchPendingEndorsements({ ...baseConfig, fetch: fetchImpl });
+    expect(result.endorsements).toEqual([pending]);
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/endorsements/pending');
+    expect(init.credentials).toBe('include');
+  });
+
+  it('fetchPendingEndorsements returns an empty page when the request fails', async () => {
+    const fetchImpl = jsonFetch({ error: 'Unauthorized' }, 401);
+    const result = await fetchPendingEndorsements({ ...baseConfig, fetch: fetchImpl });
+    // A signed-out or broken inbox degrades to "nothing pending" rather than
+    // breaking whichever surface is hosting it.
+    expect(result).toEqual({ endorsements: [] });
+  });
+
+  it('fetchPendingEndorsements passes the cursor through for paging', async () => {
+    const fetchImpl = jsonFetch({ endorsements: [], cursor: '2026-07-19T00:00:00.000Z' });
+    const result = await fetchPendingEndorsements({ ...baseConfig, fetch: fetchImpl });
+    expect(result.cursor).toBe('2026-07-19T00:00:00.000Z');
+  });
+
+  it('dismissEndorsement POSTs the endorsement coordinates', async () => {
+    const fetchImpl = noContentFetch();
+    const result = await dismissEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      { endorserDid: 'did:plc:endorser', rkey: 'abc' },
+    );
+    expect(result.success).toBe(true);
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/endorsement/dismiss');
     expect(init.method).toBe('POST');
     expect(JSON.parse(init.body as string)).toEqual({
-      skillUri: 'at://did:plc:x/id.sifa.profile.skill/abc',
-      comment: 'Great!',
+      endorserDid: 'did:plc:endorser',
+      rkey: 'abc',
     });
+  });
+
+  it('dismissEndorsement reports failure without throwing', async () => {
+    const fetchImpl = jsonFetch({ message: 'Nope' }, 500);
+    const result = await dismissEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      { endorserDid: 'did:plc:endorser', rkey: 'abc' },
+    );
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Nope');
   });
 });
 

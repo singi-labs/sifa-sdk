@@ -64,7 +64,19 @@ export {
   type ExternalAccountInput,
   type VerifyExternalAccountResult,
 } from './fetchers/external-accounts.js';
-export { createEndorsement, type EndorsementInput } from './fetchers/endorsements.js';
+export {
+  createEndorsement,
+  confirmEndorsement,
+  type EndorsementInput,
+  type ConfirmEndorsementInput,
+} from './fetchers/endorsements.js';
+export {
+  fetchPendingEndorsements,
+  dismissEndorsement,
+  type PendingEndorsement,
+  type PendingEndorsementsPage,
+  type DismissEndorsementInput,
+} from './fetchers/endorsement-inbox.js';
 export { fetchResolveActor } from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
@@ -291,6 +303,11 @@ export {
   type UpdateExternalAccountVariables,
 } from './hooks/use-external-accounts.js';
 export { useCreateEndorsement } from './hooks/use-endorsement-mutations.js';
+export {
+  usePendingEndorsements,
+  useConfirmEndorsement,
+  useDismissEndorsement,
+} from './hooks/use-endorsement-inbox.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';
 export {

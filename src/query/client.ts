@@ -149,6 +149,14 @@ export async function apiFetch<T = unknown>(
       throw new ApiError(`Sifa API ${res.status} on ${path}`, res.status, errBody);
     }
 
+    // 204 and 205 are defined to carry no body, so res.json() throws on them.
+    // apiWrite treats that throw as a failed write, which turned every
+    // successful no-content response (roadmap unvote, remove reaction,
+    // dismiss endorsement) into a reported error.
+    if (res.status === 204 || res.status === 205) {
+      return undefined as T;
+    }
+
     return (await res.json()) as T;
   }
 
