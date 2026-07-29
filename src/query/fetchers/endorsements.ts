@@ -11,8 +11,12 @@ export interface EndorsementInput {
   subjectDid: string;
   /** AT-URI of the subject's `id.sifa.profile.skill` record. */
   skillUri: string;
-  /** CID of that skill record, pinning the endorsement to the version endorsed. */
-  skillCid: string;
+  /**
+   * CID of that skill record, pinning the endorsement to the version endorsed.
+   * Optional: the AppView resolves it when omitted, which is the common case
+   * since only the firehose carries a CID. Never substitute another record's.
+   */
+  skillCid?: string;
   /**
    * Snapshot of the skill's name at endorsement time. Acts as the validity
    * anchor: if the subject later renames the skill, the mismatch is detectable.
