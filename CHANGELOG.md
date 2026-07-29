@@ -1,5 +1,15 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.42
+
+### Patch Changes
+
+- 8090b6f: Carry the skill record CID, and make it optional when endorsing.
+
+  `ProfileSkill` gains an optional `cid`, and `EndorsementInput.skillCid` is now
+  optional. Only the firehose carries a CID, so a skill added moments ago has
+  none indexed; the AppView resolves it from the owner's PDS when omitted.
+
 ## 0.12.41
 
 ### Patch Changes
