@@ -1,5 +1,13 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.41
+
+### Patch Changes
+
+- 749e579: Add the optional `endorserHandle` to `PendingEndorsement`, matching the
+  AppView. Absent when the endorser has no Sifa profile yet, since an endorsement
+  can come from any AT Protocol app.
+
 ## 0.12.40
 
 ### Patch Changes
