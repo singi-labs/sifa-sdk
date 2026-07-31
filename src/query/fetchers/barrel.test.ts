@@ -23,6 +23,13 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
     expect(typeof Fetchers.removeFeatureAllowlist).toBe('function');
   });
 
+  it('re-exports the confirmation fetchers', () => {
+    expect(typeof Fetchers.fetchPendingConfirmations).toBe('function');
+    expect(typeof Fetchers.createConfirmation).toBe('function');
+    expect(typeof Fetchers.dismissConfirmation).toBe('function');
+    expect(typeof Fetchers.revokeConfirmation).toBe('function');
+  });
+
   it('re-exports a representative sample of mutation fetchers', () => {
     expect(typeof Fetchers.createPosition).toBe('function');
     expect(typeof Fetchers.updateProfileSelf).toBe('function');

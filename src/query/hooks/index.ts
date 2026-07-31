@@ -71,6 +71,12 @@ export {
   type UpdateExternalAccountVariables,
 } from './use-external-accounts.js';
 export { useCreateEndorsement } from './use-endorsement-mutations.js';
+export {
+  usePendingConfirmations,
+  useCreateConfirmation,
+  useDismissConfirmation,
+  useRevokeConfirmation,
+} from './use-confirmations.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './use-marque-domains.js';
 export {

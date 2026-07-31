@@ -129,6 +129,52 @@ describe('ProjectWriteSchema, PublicationWriteSchema, VolunteeringWriteSchema, L
   });
 });
 
+describe('ProjectWriteSchema members', () => {
+  it('accepts a member with only a did', () => {
+    const parsed = ProjectWriteSchema.safeParse({
+      name: 'Sifa',
+      members: [{ did: 'did:plc:abc123' }],
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it('accepts a role and title alongside the did', () => {
+    const parsed = ProjectWriteSchema.safeParse({
+      name: 'Sifa',
+      members: [
+        { did: 'did:plc:abc123', role: 'id.sifa.defs#projectCore', title: 'Backend Engineer' },
+      ],
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  // A handle is not an identity: it can be reassigned to someone else. The
+  // picker resolves to a DID before writing, and this is the backstop.
+  it('rejects a handle in place of a did', () => {
+    const parsed = ProjectWriteSchema.safeParse({
+      name: 'Sifa',
+      members: [{ did: 'alice.bsky.social' }],
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('rejects a 51st member', () => {
+    const parsed = ProjectWriteSchema.safeParse({
+      name: 'Sifa',
+      members: Array.from({ length: 51 }, (_, i) => ({ did: `did:plc:abc${i}` })),
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('accepts a projectRef linking this entry to someone elses record', () => {
+    const parsed = ProjectWriteSchema.safeParse({
+      name: 'Sifa',
+      projectRef: { uri: 'at://did:plc:other/id.sifa.profile.project/3kxyz' },
+    });
+    expect(parsed.success).toBe(true);
+  });
+});
+
 describe('ProfileSelfWriteSchema', () => {
   it('.passthrough() means unknown fields are preserved (intentional)', () => {
     const parsed = ProfileSelfWriteSchema.safeParse({

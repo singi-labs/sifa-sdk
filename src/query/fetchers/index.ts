@@ -82,6 +82,16 @@ export {
   type PendingEndorsementsPage,
   type DismissEndorsementInput,
 } from './endorsement-inbox.js';
+export {
+  fetchPendingConfirmations,
+  createConfirmation,
+  dismissConfirmation,
+  revokeConfirmation,
+  type PendingConfirmation,
+  type PendingConfirmationsPage,
+  type ConfirmationInput,
+  type ConfirmationSubjectInput,
+} from './confirmations.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './marque-domains.js';
 export {

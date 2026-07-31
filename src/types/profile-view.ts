@@ -87,6 +87,21 @@ export interface ProjectView {
   url?: string;
   startDate?: string;
   endDate?: string;
+  members?: ProjectMemberView[];
+  /** AT-URI of the same project as recorded elsewhere, when this entry duplicates another. */
+  projectRef?: string;
+}
+
+/** A person named as a member of a project. Identity fields appear only once confirmed. */
+export interface ProjectMemberView {
+  did: string;
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+  confirmed?: boolean;
+  confirmedStale?: boolean;
+  role?: string;
+  title?: string;
 }
 
 export interface VolunteeringView {
@@ -164,11 +179,22 @@ export interface DurationView {
   maxMinutes?: number;
 }
 
+/**
+ * A co-speaker on a presentation delivery.
+ *
+ * `displayName` and `avatar` are served only once `confirmed` is true. The
+ * lexicon also declares an unlinked free-text `name`, which the AppView has
+ * never emitted -- the record field is `format: did`, so there is nothing to
+ * emit it from.
+ */
 export interface CoSpeakerView {
   did?: string;
   handle?: string;
   displayName?: string;
   avatar?: string;
+  hasSifaProfile?: boolean;
+  confirmed?: boolean;
+  confirmedStale?: boolean;
   name?: string;
 }
 
