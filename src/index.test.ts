@@ -6,7 +6,12 @@ import {
   PROFILE_INVOLVEMENT_NSID,
   getArtifactLinkKindLabel,
   getInvolvementKindHeading,
+  PROJECT_ROLES,
+  type ActorCard,
   type Endorsement,
+  type ProjectMemberCard,
+  type ProjectMemberView,
+  type ProjectRole,
   type LanguageProficiency,
   type Profile,
   type ProfileCertification,
@@ -107,5 +112,48 @@ describe('exported types', () => {
       createdAt: '2026-05-14T12:00:00Z',
     };
     expect(endorsement.endorserHandle).toBe('bob.sifa.id');
+  });
+});
+
+// These appear in the signatures of exported interfaces -- ProfileProject.members
+// is ProjectMemberCard[], ProjectView.members is ProjectMemberView[] -- so a
+// consumer must be able to name them. They shipped in 0.12.45 defined but not
+// re-exported, which nothing caught because the barrel tests only covered
+// fetchers and hooks.
+describe('people-link types are nameable by consumers', () => {
+  it('ActorCard carries the confirmation state the render rule turns on', () => {
+    const card: ActorCard = {
+      did: 'did:plc:alice',
+      handle: 'alice.test',
+      confirmed: false,
+    };
+    expect(card.confirmed).toBe(false);
+    expect(card.displayName).toBeUndefined();
+  });
+
+  it('ProjectMemberCard extends ActorCard with a role', () => {
+    const member: ProjectMemberCard = {
+      did: 'did:plc:alice',
+      handle: 'alice.test',
+      confirmed: true,
+      role: 'id.sifa.defs#projectCore',
+      title: 'Backend',
+    };
+    expectTypeOf(member).toExtend<ActorCard>();
+    expect(member.role).toBe('id.sifa.defs#projectCore');
+  });
+
+  it('ProjectMemberView is nameable', () => {
+    const view: ProjectMemberView = { did: 'did:plc:alice', handle: 'alice.test' };
+    expect(view.handle).toBe('alice.test');
+  });
+
+  it('PROJECT_ROLES exports the known values', () => {
+    expect(PROJECT_ROLES).toEqual([
+      'id.sifa.defs#projectOwner',
+      'id.sifa.defs#projectCore',
+      'id.sifa.defs#projectContributor',
+    ]);
+    expectTypeOf<ProjectRole>().toExtend<string>();
   });
 });
