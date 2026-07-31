@@ -25,8 +25,16 @@ describe('@singi-labs/sifa-sdk/query/hooks barrel', () => {
     expect(typeof Hooks.useStats).toBe('function');
   });
 
+  it('re-exports the confirmation hooks', () => {
+    expect(typeof Hooks.usePendingConfirmations).toBe('function');
+    expect(typeof Hooks.useCreateConfirmation).toBe('function');
+    expect(typeof Hooks.useDismissConfirmation).toBe('function');
+    expect(typeof Hooks.useRevokeConfirmation).toBe('function');
+  });
+
   it('re-exports the query-key factory', () => {
     expect(typeof Hooks.sifaQueryKeys.follow.all).toBe('function');
     expect(Hooks.sifaQueryKeys.follow.feed({})).toEqual(['sifa', 'follow', 'feed', {}]);
+    expect(Hooks.sifaQueryKeys.confirmation.pending()).toEqual(['sifa', 'confirmation', 'pending']);
   });
 });

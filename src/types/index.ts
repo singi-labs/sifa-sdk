@@ -175,6 +175,14 @@ export interface ProfileProject {
   url?: string;
   startDate?: string;
   endDate?: string;
+  /** Other people named on this project, hydrated from the stored DIDs. */
+  members?: ProjectMemberCard[];
+  /**
+   * AT-URI of the same project as recorded elsewhere, when this entry
+   * duplicates another person's. Set so consumers can tell the two describe one
+   * project; both still render from their own owner's record.
+   */
+  projectRef?: string;
   hidden?: boolean;
 }
 
@@ -382,12 +390,53 @@ export interface PresentationLinkView {
  * Any atproto account; `hasSifaProfile` is true when they have a claimed Sifa
  * profile (vs an unclaimed atproto account that still renders at /p/<handle>).
  */
-export interface CoSpeaker {
+/**
+ * Another person named on someone's record, as rendered by the AppView.
+ *
+ * `displayName` and `avatar` are present only when `confirmed` is true. An
+ * unconfirmed claim renders as a bare handle with no identity attached and no
+ * link to a profile: naming someone is a claim, and until they affirm it the
+ * claim must not borrow their face.
+ */
+export interface ActorCard {
   did: string;
   handle: string;
   displayName?: string;
   avatar?: string;
   hasSifaProfile?: boolean;
+  /** True once the named person has published a matching `id.sifa.confirmation`. */
+  confirmed?: boolean;
+  /**
+   * True when the record was materially changed after being confirmed -- a
+   * rename, or a changed role. The confirmation stands until withdrawn, but the
+   * UI should say the claim has moved since it was affirmed.
+   */
+  confirmedStale?: boolean;
+}
+
+/** @deprecated Use {@link ActorCard}. Kept so existing co-speaker call sites keep compiling. */
+export type CoSpeaker = ActorCard;
+
+/**
+ * Roles shipped today. The lexicon declares these as `knownValues`, so the
+ * field itself stays a plain string: a consumer meeting a role it does not
+ * recognise should show it rather than discard it.
+ *
+ * Display only. A record living in someone else's repository cannot grant
+ * write access to anything, and the UI must not imply that it does.
+ */
+export const PROJECT_ROLES = [
+  'id.sifa.defs#projectOwner',
+  'id.sifa.defs#projectCore',
+  'id.sifa.defs#projectContributor',
+] as const;
+
+export type ProjectRole = (typeof PROJECT_ROLES)[number];
+
+/** A person named as a member of a project, with their role alongside the actor card. */
+export interface ProjectMemberCard extends ActorCard {
+  role?: string;
+  title?: string;
 }
 
 /** An occasion on which a presentation was delivered (the AppView view-model). */

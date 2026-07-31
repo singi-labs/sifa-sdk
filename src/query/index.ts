@@ -77,6 +77,16 @@ export {
   type PendingEndorsementsPage,
   type DismissEndorsementInput,
 } from './fetchers/endorsement-inbox.js';
+export {
+  fetchPendingConfirmations,
+  createConfirmation,
+  dismissConfirmation,
+  revokeConfirmation,
+  type PendingConfirmation,
+  type PendingConfirmationsPage,
+  type ConfirmationInput,
+  type ConfirmationSubjectInput,
+} from './fetchers/confirmations.js';
 export { fetchResolveActor } from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
@@ -308,6 +318,12 @@ export {
   useConfirmEndorsement,
   useDismissEndorsement,
 } from './hooks/use-endorsement-inbox.js';
+export {
+  usePendingConfirmations,
+  useCreateConfirmation,
+  useDismissConfirmation,
+  useRevokeConfirmation,
+} from './hooks/use-confirmations.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';
 export {

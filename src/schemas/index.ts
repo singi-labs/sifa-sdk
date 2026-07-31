@@ -22,6 +22,12 @@ export {
   type EntityMintDomainResponse,
 } from './entity.js';
 export { EndorsementRecordSchema, type EndorsementRecord } from './endorsement.js';
+export {
+  ConfirmationRecordSchema,
+  CONFIRMATION_RELATIONS,
+  type ConfirmationRecord,
+  type ConfirmationRelation,
+} from './confirmation.js';
 export { OrgProfileRecordSchema, type OrgProfileRecord } from './org-profile.js';
 export {
   OrgEmploymentAttestationRecordSchema,
