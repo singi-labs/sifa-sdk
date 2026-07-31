@@ -9,8 +9,12 @@ import {
 export interface EndorsementInput {
   /** DID of the person being endorsed. */
   subjectDid: string;
-  /** AT-URI of the subject's `id.sifa.profile.skill` record. */
-  skillUri: string;
+  /**
+   * AT-URI of the subject's `id.sifa.profile.skill` record. Omit to propose a
+   * skill they have not listed; `skillName` then names what is proposed, and
+   * the record is created when they accept.
+   */
+  skillUri?: string;
   /**
    * CID of that skill record, pinning the endorsement to the version endorsed.
    * Optional: the AppView resolves it when omitted, which is the common case
@@ -26,6 +30,13 @@ export interface EndorsementInput {
 }
 
 /** Body accepted by {@link confirmEndorsement}. */
+export interface ConfirmEndorsementResult {
+  /** Skill the endorsement resolved to, created if it was a proposal. */
+  skillUri?: string;
+  /** True when accepting added a new skill to the profile. */
+  skillCreated?: boolean;
+}
+
 export interface ConfirmEndorsementInput {
   endorsementUri: string;
   /**
@@ -60,6 +71,11 @@ export function confirmEndorsement(
   config: SifaApiConfig,
   data: ConfirmEndorsementInput,
   options: ApiFetchOptions = {},
-): Promise<CreateResult> {
-  return apiWriteCreate(config, '/api/endorsement/confirm', data, options);
+): Promise<CreateResult & ConfirmEndorsementResult> {
+  return apiWriteCreate<ConfirmEndorsementResult>(
+    config,
+    '/api/endorsement/confirm',
+    data,
+    options,
+  );
 }

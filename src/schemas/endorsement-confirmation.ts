@@ -8,6 +8,13 @@ import { datetimeSchema, strongRefSchema } from './shared.js';
  */
 export const EndorsementConfirmationRecordSchema = z.object({
   endorsement: strongRefSchema,
+  /**
+   * Skill record this endorsement applies to. Set when the endorsement proposed
+   * a skill: the subject creates the record and links it here, because the
+   * endorser cannot write to the subject's repository. Also set when a proposed
+   * name matched a skill the subject already had.
+   */
+  skill: strongRefSchema.optional(),
   createdAt: datetimeSchema,
 });
 

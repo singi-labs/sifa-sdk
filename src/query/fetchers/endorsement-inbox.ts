@@ -28,8 +28,15 @@ export interface PendingEndorsement {
    * AppView resolves it from the endorser's PDS when it is not.
    */
   cid?: string;
-  skillUri: string;
-  skillCid: string;
+  /** Absent when this endorsement proposes a skill the subject does not have. */
+  skillUri?: string;
+  skillCid?: string;
+  /**
+   * True when accepting this will add `skillName` to the profile as well as
+   * publishing the endorsement. The UI must say so: it is a bigger action than
+   * confirming an endorsement of a skill already listed.
+   */
+  proposesNewSkill?: boolean;
   skillName: string;
   comment?: string;
   createdAt: string;

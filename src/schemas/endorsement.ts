@@ -8,7 +8,12 @@ import { datetimeSchema, didSchema, maxGraphemes, strongRefSchema } from './shar
  */
 export const EndorsementRecordSchema = z.object({
   subject: didSchema,
-  skill: strongRefSchema,
+  /**
+   * Absent when the endorser is proposing a skill the subject has not listed,
+   * named by `skillName`. The record it becomes is linked from the subject's
+   * confirmation, since only they can write to their own repository.
+   */
+  skill: strongRefSchema.optional(),
   skillName: z.string().min(1).refine(maxGraphemes(64)).max(640),
   comment: z.string().refine(maxGraphemes(300)).max(3000).optional(),
   createdAt: datetimeSchema,
