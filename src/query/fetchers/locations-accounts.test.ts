@@ -209,6 +209,32 @@ describe('endorsements', () => {
     expect(body.skillName).toBe('Community Organizing');
   });
 
+  it('createEndorsement proposes a skill when no URI is given', async () => {
+    // The subject has not listed it; the record is created when they accept.
+    const fetchImpl = jsonFetch({ rkey: 'e1' });
+    await createEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      { subjectDid: 'did:plc:x', skillName: 'Food Captain' },
+    );
+    const body = JSON.parse(getCall(fetchImpl)[1].body as string) as Record<string, string>;
+    expect(body.skillName).toBe('Food Captain');
+    expect('skillUri' in body).toBe(false);
+  });
+
+  it('confirmEndorsement surfaces the skill it resolved to', async () => {
+    const fetchImpl = jsonFetch({
+      rkey: 'c1',
+      skillUri: 'at://did:plc:x/id.sifa.profile.skill/new1',
+      skillCreated: true,
+    });
+    const result = await confirmEndorsement(
+      { ...baseConfig, fetch: fetchImpl },
+      { endorsementUri: 'at://did:plc:endorser/id.sifa.endorsement/abc' },
+    );
+    expect(result.skillCreated).toBe(true);
+    expect(result.skillUri).toBe('at://did:plc:x/id.sifa.profile.skill/new1');
+  });
+
   it('confirmEndorsement omits the CID when the caller has none', async () => {
     // The AppView resolves it. Sending a placeholder or another record's CID
     // would write a corrupt strongRef.
