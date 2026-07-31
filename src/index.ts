@@ -40,6 +40,9 @@ export type {
   ProfilePosition,
   ProfilePresentation,
   CoSpeaker,
+  ActorCard,
+  ProjectMemberCard,
+  ProjectRole,
   ProfilePresentationDelivery,
   ProfileProject,
   ProfilePublication,
@@ -71,6 +74,7 @@ export type {
   CourseView,
   DurationView,
   CoSpeakerView,
+  ProjectMemberView,
   PresentationDeliveryView,
   PresentationView,
   HonorView,
@@ -79,6 +83,8 @@ export type {
   ActiveAppView,
   AtfundLinkView,
 } from './types/profile-view.js';
+
+export { PROJECT_ROLES } from './types/index.js';
 
 export {
   ACTIVITY_TIERS,
