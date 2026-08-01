@@ -5,6 +5,7 @@ import {
   didSchema,
   maxGraphemes,
   partialDateSchema,
+  externalRecordRefSchema,
   selfLabelsSchema,
   strongRefSchema,
   uriSchema,
@@ -33,12 +34,17 @@ export const ProfileProjectRecordSchema = z.object({
   url: uriSchema.optional(),
   members: z.array(projectMemberRefSchema).max(50).optional(),
   /**
-   * The same project as recorded elsewhere: another person's entry for shared
-   * work, or a first-class `id.sifa.project.self` record. Set when you were
-   * named on someone else's entry and keep your own version, so consumers can
-   * tell the two describe one project instead of showing it twice.
+   * The canonical `id.sifa.project.self` this personal entry corresponds to.
+   * A composition link. For the same project recorded on someone else's
+   * profile, see `sameAs`.
    */
   projectRef: strongRefSchema.optional(),
+  /**
+   * The same project as recorded on another person's profile. Each side stays
+   * its own record; this only says the two describe one thing. Resolves by
+   * AT-URI, since they will keep editing their copy.
+   */
+  sameAs: externalRecordRefSchema.optional(),
   position: strongRefSchema.optional(),
   startedAt: partialDateSchema.optional(),
   endedAt: partialDateSchema.optional(),

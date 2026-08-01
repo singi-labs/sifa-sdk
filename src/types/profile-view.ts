@@ -89,7 +89,8 @@ export interface ProjectView {
   endDate?: string;
   members?: ProjectMemberView[];
   /** AT-URI of the same project as recorded elsewhere, when this entry duplicates another. */
-  projectRef?: string;
+  /** AT-URI of the same record on another person's profile, when they keep one. */
+  sameAs?: string;
 }
 
 /** A person named as a member of a project. Identity fields appear only once confirmed. */
@@ -215,6 +216,8 @@ export interface PresentationDeliveryView {
   links?: PresentationLinkView[];
   eventUri?: string;
   coSpeakers?: CoSpeakerView[];
+  /** AT-URI of the same session as recorded on another person's profile. */
+  sameAs?: string;
 }
 
 export interface PresentationView {

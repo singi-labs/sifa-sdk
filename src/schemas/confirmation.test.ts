@@ -142,11 +142,41 @@ describe('ProfileProjectRecordSchema members', () => {
     expect(parsed.success).toBe(true);
   });
 
-  it('accepts a projectRef pointing at another persons project', () => {
+  // sameAs is the peer link: my record and yours describe one project.
+  // projectRef is the composition link to a canonical project.self. Keeping
+  // them separate is why sameAs exists at all -- presentationDelivery had no
+  // spare name, since presentationRef there already means the parent talk.
+  it('accepts a sameAs pointing at another persons project', () => {
+    const parsed = ProfileProjectRecordSchema.safeParse({
+      ...base,
+      sameAs: { uri: 'at://did:plc:other/id.sifa.profile.project/3kxyz' },
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  // externalRecordRef, not strongRef: they keep editing their copy, and that
+  // must not invalidate a link saying the two describe one thing.
+  it('accepts a sameAs with no cid', () => {
+    const parsed = ProfileProjectRecordSchema.safeParse({
+      ...base,
+      sameAs: { uri: 'at://did:plc:other/id.sifa.profile.project/3kxyz' },
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it('rejects a sameAs that is not an AT-URI', () => {
+    const parsed = ProfileProjectRecordSchema.safeParse({
+      ...base,
+      sameAs: { uri: 'https://example.com/project' },
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('still accepts projectRef as the composition link', () => {
     const parsed = ProfileProjectRecordSchema.safeParse({
       ...base,
       projectRef: {
-        uri: 'at://did:plc:other/id.sifa.profile.project/3kxyz',
+        uri: 'at://did:plc:me/id.sifa.project.self/3kxyz',
         cid: 'bafyreib2rxk3rh6kzwq6vwqrzr4wqf3rvvxzs6rlrx3ftbtbfmk4d3fbfe',
       },
     });

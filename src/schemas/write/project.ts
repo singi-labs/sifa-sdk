@@ -19,8 +19,10 @@ export const ProjectWriteSchema = z.object({
   description: z.string().max(50000).nullable().optional(),
   url: optionalUrl(),
   members: z.array(projectMemberWriteSchema).max(50).optional(),
-  /** The same project as recorded elsewhere, when this entry duplicates someone else's. */
+  /** The canonical project.self this entry corresponds to. Composition, not peer sameness. */
   projectRef: externalRecordRefSchema.optional(),
+  /** The same project as recorded on another person's profile. */
+  sameAs: externalRecordRefSchema.optional(),
   startedAt: z.string().nullable().optional(),
   endedAt: z.string().nullable().optional(),
 });
