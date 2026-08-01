@@ -128,6 +128,7 @@ export {
   type AddFeatureAllowlistVariables,
   type RemoveFeatureAllowlistVariables,
 } from './use-feature-allowlist.js';
+export { useAdminReviewQueues } from './use-admin-review-queues.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './use-activity.js';
 export { useMyGithubPullRequests, type UseMyGithubPullRequestsParams } from './use-github-prs.js';
 export { useEndorsementCount } from './use-endorsement.js';
