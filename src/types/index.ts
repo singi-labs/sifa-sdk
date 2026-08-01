@@ -93,6 +93,16 @@ export interface ProfileSkill {
   subCategory?: string;
   endorsementCount?: number;
   endorsed?: boolean;
+  /**
+   * Names this skill was endorsed under, where they differ from what it is
+   * called now. Absent when nothing has drifted.
+   *
+   * A rename keeps the same record, so endorsements follow it and stay
+   * counted. Showing the original name is what keeps that honest: a reader can
+   * see that a skill now called one thing was vouched for as another, instead
+   * of the rename quietly laundering the endorsement.
+   */
+  endorsedAs?: string[];
   activityBacked?: boolean;
 }
 
