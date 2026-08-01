@@ -349,6 +349,10 @@ export interface ProfileInvolvement {
    */
   legacy?: boolean;
   hidden?: boolean;
+  /** Other people named on this involvement, hydrated from the stored DIDs. */
+  collaborators?: ProjectMemberCard[];
+  /** AT-URI of the same involvement as recorded on another person's profile. */
+  sameAs?: string;
 }
 
 export type LanguageProficiency =

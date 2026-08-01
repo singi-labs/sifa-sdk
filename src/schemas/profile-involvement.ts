@@ -3,11 +3,13 @@ import { z } from 'zod';
 import {
   datetimeSchema,
   didSchema,
+  externalRecordRefSchema,
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,
   uriSchema,
 } from './shared.js';
+import { projectMemberRefSchema } from './profile-project.js';
 
 /** Collection NSID for involvement records. Pass to the generic record helpers. */
 export const PROFILE_INVOLVEMENT_NSID = 'id.sifa.profile.involvement';
@@ -62,6 +64,8 @@ export const ProfileInvolvementRecordSchema = z
       .max(50)
       .optional(),
     labels: selfLabelsSchema.optional(),
+    collaborators: z.array(projectMemberRefSchema).max(50).optional(),
+    sameAs: externalRecordRefSchema.optional(),
     createdAt: datetimeSchema,
   })
   .passthrough();

@@ -136,6 +136,10 @@ export interface InvolvementView {
   endedAt?: string;
   links: InvolvementLinkView[];
   legacy: boolean;
+  /** Other people named on this involvement, hydrated from the stored DIDs. */
+  collaborators?: ProjectMemberView[];
+  /** AT-URI of the same involvement as recorded on another person's profile. */
+  sameAs?: string;
 }
 
 export interface ContributorView {
