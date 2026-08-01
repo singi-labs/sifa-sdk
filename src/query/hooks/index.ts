@@ -73,6 +73,7 @@ export {
 export { useCreateEndorsement } from './use-endorsement-mutations.js';
 export {
   usePendingConfirmations,
+  useGivenConfirmations,
   useCreateConfirmation,
   useDismissConfirmation,
   useRevokeConfirmation,

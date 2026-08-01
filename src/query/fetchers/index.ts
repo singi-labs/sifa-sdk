@@ -84,11 +84,13 @@ export {
 } from './endorsement-inbox.js';
 export {
   fetchPendingConfirmations,
+  fetchGivenConfirmations,
   createConfirmation,
   dismissConfirmation,
   revokeConfirmation,
   type PendingConfirmation,
   type PendingConfirmationsPage,
+  type GivenConfirmation,
   type ConfirmationInput,
   type ConfirmationSubjectInput,
 } from './confirmations.js';
