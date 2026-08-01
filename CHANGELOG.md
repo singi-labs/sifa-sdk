@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.49
+
+### Patch Changes
+
+- 74052cc: Add `getAdminReviewQueues` fetcher and `useAdminReviewQueues` hook for the open counts of the three admin review queues (ideas, name corrections, pending companies) plus their total. Backed by `GET /api/admin/stats/review-queues`; shared query key means the admin nav pill and the review-queues page render from one request.
+
 ## 0.12.48
 
 ### Patch Changes
