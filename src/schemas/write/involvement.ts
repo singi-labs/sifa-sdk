@@ -1,8 +1,11 @@
 import { z } from 'zod';
 
+import { projectMemberWriteSchema } from './project.js';
+
 import {
   artifactLinkSchema,
   entityRefSchema,
+  externalRecordRefSchema,
   optionalUrl,
   skillRefSchema,
   writeLocationSchema,
@@ -31,6 +34,10 @@ export const InvolvementWriteSchema = z.object({
   startedAt: z.string().max(32).nullable().optional(),
   endedAt: z.string().max(32).nullable().optional(),
   links: z.array(artifactLinkSchema).max(50).nullable().optional(),
+  /** Other people who worked on this alongside you. Same shape as project members. */
+  collaborators: z.array(projectMemberWriteSchema).max(50).optional(),
+  /** The same involvement as recorded on another person's profile. */
+  sameAs: externalRecordRefSchema.optional(),
   entityRef: entityRefSchema,
   location: writeLocationSchema,
   skills: z.array(skillRefSchema).max(50).nullable().optional(),
