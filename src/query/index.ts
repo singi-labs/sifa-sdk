@@ -79,11 +79,13 @@ export {
 } from './fetchers/endorsement-inbox.js';
 export {
   fetchPendingConfirmations,
+  fetchGivenConfirmations,
   createConfirmation,
   dismissConfirmation,
   revokeConfirmation,
   type PendingConfirmation,
   type PendingConfirmationsPage,
+  type GivenConfirmation,
   type ConfirmationInput,
   type ConfirmationSubjectInput,
 } from './fetchers/confirmations.js';
@@ -320,6 +322,7 @@ export {
 } from './hooks/use-endorsement-inbox.js';
 export {
   usePendingConfirmations,
+  useGivenConfirmations,
   useCreateConfirmation,
   useDismissConfirmation,
   useRevokeConfirmation,

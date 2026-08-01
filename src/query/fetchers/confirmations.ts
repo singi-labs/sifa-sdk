@@ -43,6 +43,23 @@ export interface PendingConfirmationsPage {
   cursor?: string;
 }
 
+/** A confirmation the signed-in user has already given. */
+export interface GivenConfirmation {
+  subjectUri: string;
+  claimerDid: string;
+  claimerHandle?: string;
+  relation: string;
+  /** The name as it stood when confirmed, so a rename shows as a difference. */
+  subjectName: string;
+  /** The name the record carries now. Absent when the claim no longer exists. */
+  currentName?: string;
+  /** The record changed materially after it was confirmed. */
+  confirmedStale: boolean;
+  /** They removed you from the record, or deleted it. Nothing left to withdraw. */
+  claimWithdrawn: boolean;
+  createdAt: string;
+}
+
 /** Body accepted by {@link createConfirmation}. */
 export interface ConfirmationInput {
   subjectUri: string;
@@ -80,6 +97,32 @@ export async function fetchPendingConfirmations(
       ...options,
     });
     return { confirmations: data?.confirmations ?? [], cursor: data?.cursor };
+  } catch {
+    return { confirmations: [] };
+  }
+}
+
+/**
+ * Confirmations the signed-in user has already given.
+ *
+ * The surface for changing your mind. Without it a confirmation is one-way in
+ * practice: the inbox lists only claims you have not answered, so once answered
+ * there is nowhere to see it, let alone withdraw it.
+ *
+ * Returns an empty list on failure, matching the pending inbox: a broken list
+ * should not break the page hosting it.
+ */
+export async function fetchGivenConfirmations(
+  config: SifaApiConfig,
+  options: ApiFetchOptions = {},
+): Promise<{ confirmations: GivenConfirmation[] }> {
+  try {
+    const data = await apiFetch<{ confirmations: GivenConfirmation[] }>(
+      config,
+      '/api/confirmations/mine',
+      { cache: 'no-store', credentials: 'include', timeoutMs: 5000, ...options },
+    );
+    return { confirmations: data?.confirmations ?? [] };
   } catch {
     return { confirmations: [] };
   }

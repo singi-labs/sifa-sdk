@@ -13,10 +13,12 @@ import { useSifaConfig } from '../config.js';
 import {
   createConfirmation,
   dismissConfirmation,
+  fetchGivenConfirmations,
   fetchPendingConfirmations,
   revokeConfirmation,
   type ConfirmationInput,
   type ConfirmationSubjectInput,
+  type GivenConfirmation,
   type PendingConfirmationsPage,
 } from '../fetchers/confirmations.js';
 import { sifaQueryKeys } from '../keys.js';
@@ -46,6 +48,29 @@ export function usePendingConfirmations(
 }
 
 /**
+ * Confirmations the signed-in user has already given, with whether each has
+ * drifted since. Returns an empty list when signed out or on error.
+ */
+export function useGivenConfirmations(
+  options?: Omit<
+    UseQueryOptions<
+      { confirmations: GivenConfirmation[] },
+      Error,
+      { confirmations: GivenConfirmation[] },
+      ReturnType<typeof sifaQueryKeys.confirmation.given>
+    >,
+    'queryKey' | 'queryFn'
+  >,
+) {
+  const config = useSifaConfig();
+  return useQuery({
+    queryKey: sifaQueryKeys.confirmation.given(),
+    queryFn: () => fetchGivenConfirmations(config),
+    ...options,
+  });
+}
+
+/**
  * Affirm a claim naming you. On success it leaves the inbox and starts
  * rendering with your name and avatar on the claimer's profile, so both the
  * inbox and the claimer's profile cache are invalidated.
@@ -66,6 +91,9 @@ export function useCreateConfirmation(
       if (result.success) {
         await queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.confirmation.pending(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.confirmation.given(),
         });
         if (claimerHandleOrDid) {
           await queryClient.invalidateQueries({
