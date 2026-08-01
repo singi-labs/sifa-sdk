@@ -1,5 +1,14 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.48
+
+### Patch Changes
+
+- 857c341: Add `endorsedAs` to `ProfileSkill`: names a skill was endorsed under where they
+  differ from its current name. A rename keeps the same record, so endorsements
+  follow it and stay counted; surfacing the original name is what stops a rename
+  quietly laundering an endorsement.
+
 ## 0.12.47
 
 ### Patch Changes
