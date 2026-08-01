@@ -1,6 +1,6 @@
 {
   "name": "@singi-labs/sifa-sdk",
-  "version": "0.12.50",
+  "version": "0.12.51",
   "description": "Sifa SDK — public client library for the Sifa AppView on AT Protocol. Shared by sifa-web and sifa-app.",
   "license": "MIT",
   "type": "module",
