@@ -176,6 +176,11 @@ export {
   type ListFeatureAllowlistOptions,
 } from './admin-feature-allowlists.js';
 export {
+  getAdminReviewQueues,
+  type AdminReviewQueues,
+  type GetAdminReviewQueuesOptions,
+} from './admin-review-queues.js';
+export {
   fetchActivityFeed,
   fetchActivityTeaser,
   fetchHeatmapData,

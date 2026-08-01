@@ -179,6 +179,11 @@ export {
   type ListFeatureAllowlistOptions,
 } from './fetchers/admin-feature-allowlists.js';
 export {
+  getAdminReviewQueues,
+  type AdminReviewQueues,
+  type GetAdminReviewQueuesOptions,
+} from './fetchers/admin-review-queues.js';
+export {
   fetchActivityFeed,
   fetchActivityTeaser,
   fetchHeatmapData,
@@ -384,6 +389,7 @@ export {
   type AddFeatureAllowlistVariables,
   type RemoveFeatureAllowlistVariables,
 } from './hooks/use-feature-allowlist.js';
+export { useAdminReviewQueues } from './hooks/use-admin-review-queues.js';
 export { useActivityFeed, useActivityTeaser, useHeatmapData } from './hooks/use-activity.js';
 export {
   useMyGithubPullRequests,

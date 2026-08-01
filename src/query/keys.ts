@@ -64,6 +64,7 @@ export const sifaQueryKeys = {
   admin: {
     all: () => ['sifa', 'admin'] as const,
     featureAllowlist: (flag: string) => ['sifa', 'admin', 'feature-allowlist', flag] as const,
+    reviewQueues: () => ['sifa', 'admin', 'review-queues'] as const,
   },
 
   stats: {
@@ -165,6 +166,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.follow.blueskySuggestions>
   | ReturnType<typeof sifaQueryKeys.admin.all>
   | ReturnType<typeof sifaQueryKeys.admin.featureAllowlist>
+  | ReturnType<typeof sifaQueryKeys.admin.reviewQueues>
   | ReturnType<typeof sifaQueryKeys.stats.all>
   | ReturnType<typeof sifaQueryKeys.stats.homepage>
   | ReturnType<typeof sifaQueryKeys.apps.all>
