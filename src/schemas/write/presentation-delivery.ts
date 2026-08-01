@@ -17,6 +17,11 @@ import {
  */
 export const PresentationDeliveryWriteSchema = z.object({
   presentationRef: externalRecordRefSchema.optional(),
+  /**
+   * The same session as recorded on another person's profile. Distinct from
+   * presentationRef above, which points at the talk this session delivered.
+   */
+  sameAs: externalRecordRefSchema.optional(),
   title: z.string().max(3000).nullable().optional(),
   role: z.string().max(640).nullable().optional(),
   eventName: z.string().max(3000).nullable().optional(),

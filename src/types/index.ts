@@ -182,7 +182,8 @@ export interface ProfileProject {
    * duplicates another person's. Set so consumers can tell the two describe one
    * project; both still render from their own owner's record.
    */
-  projectRef?: string;
+  /** AT-URI of the same record on another person's profile, when they keep one. */
+  sameAs?: string;
   hidden?: boolean;
 }
 
@@ -446,6 +447,8 @@ export interface ProfilePresentationDelivery {
   presentationRkey?: string | null;
   /** Co-speakers at this occasion, hydrated from the stored DIDs. */
   coSpeakers?: CoSpeaker[];
+  /** AT-URI of the same session as recorded on another person's profile. */
+  sameAs?: string;
   title?: string | null;
   role?: string | null;
   eventName?: string | null;
