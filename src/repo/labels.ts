@@ -21,6 +21,17 @@ export interface RepoRecordLabel {
    * avatar without parsing a DID back out of display text.
    */
   subjectDid?: string;
+  /**
+   * Set when the record carried no readable text and {@link primary} is the
+   * collection leaf rather than the user's own data.
+   *
+   * A surface must substitute its own wording for these -- a row reading
+   * "follow" or "location" tells the reader nothing about which record they
+   * are about to delete. The flag exists because the leaf is indistinguishable
+   * from real content once it is a string: a headline that genuinely says
+   * "location" must not be relabelled.
+   */
+  isFallback?: true;
 }
 
 interface LabelRule {
@@ -177,12 +188,13 @@ function pickString(
 export function describeSifaRecord(collection: string, value: unknown): RepoRecordLabel {
   const leaf = collectionLeaf(collection);
   const rule = LABEL_RULES[collection];
-  if (!rule || typeof value !== 'object' || value === null) return { primary: leaf };
+  if (!rule || typeof value !== 'object' || value === null) {
+    return { primary: leaf, isFallback: true };
+  }
 
   const record = value as Record<string, unknown>;
-  const label: RepoRecordLabel = {
-    primary: (rule.primary && pickString(record, rule.primary)) ?? leaf,
-  };
+  const primary = rule.primary && pickString(record, rule.primary);
+  const label: RepoRecordLabel = primary ? { primary } : { primary: leaf, isFallback: true };
 
   const secondary = rule.secondary && pickString(record, rule.secondary);
   if (secondary !== undefined && secondary !== label.primary) label.secondary = secondary;
