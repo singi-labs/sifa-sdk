@@ -77,6 +77,39 @@ describe('describeSifaRecord', () => {
     ).toEqual({ primary: 'Shipping on ATProto', secondary: 'AtmosphereConf', date: '2026-03-04' });
   });
 
+  // The city lives under `address`, not at the top level. A rule that could
+  // only see the top level rendered the bare word "location" -- the one item
+  // on the page about where someone physically is, showing them nothing.
+  it('reads a location from its nested address', () => {
+    expect(
+      describeSifaRecord('id.sifa.profile.location', {
+        type: 'id.sifa.defs#locationPrimary',
+        address: {
+          $type: 'community.lexicon.location.address',
+          locality: 'Amsterdam',
+          region: 'North Holland',
+          country: 'NL',
+        },
+        isPrimary: true,
+        createdAt: '2026-04-13T19:26:34.283Z',
+      }),
+    ).toEqual({ primary: 'Amsterdam', secondary: 'NL' });
+  });
+
+  it('falls back through the nested address when the city is missing', () => {
+    expect(
+      describeSifaRecord('id.sifa.profile.location', {
+        address: { region: 'North Holland', country: 'NL' },
+      }),
+    ).toEqual({ primary: 'North Holland', secondary: 'NL' });
+  });
+
+  it('does not throw when a dotted path runs through a non-object', () => {
+    expect(describeSifaRecord('id.sifa.profile.location', { address: 'Amsterdam' })).toEqual({
+      primary: 'location',
+    });
+  });
+
   it('falls back to the collection leaf when the record has no usable text', () => {
     expect(describeSifaRecord('id.sifa.authProfileAccess', { createdAt: '2026-01-01' })).toEqual({
       primary: 'authProfileAccess',
