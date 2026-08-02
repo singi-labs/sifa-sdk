@@ -7,11 +7,6 @@ import { SIFA_REPO_GROUPS, repoGroupForCollection, type RepoGroupId } from './gr
  * so a lexicon added to the map without a deliberate test change is caught.
  */
 const RECORD_COLLECTIONS = [
-  'id.sifa.authConnection',
-  'id.sifa.authMeet',
-  'id.sifa.authProfile',
-  'id.sifa.authProfileAccess',
-  'id.sifa.authProject',
   'id.sifa.confirmation',
   'id.sifa.endorsement',
   'id.sifa.endorsement.confirmation',
@@ -71,8 +66,22 @@ describe('SIFA_REPO_GROUPS', () => {
     expect(repoGroupForCollection('chat.bsky.actor.declaration')).toBe('other');
   });
 
-  it('keeps consent and access records in their own group, away from profile content', () => {
-    expect(repoGroupForCollection('id.sifa.authProfileAccess')).toBe('consents-access');
-    expect(repoGroupForCollection('id.sifa.meeting')).toBe('consents-access');
+  it('keeps meetings in their own group, away from profile content', () => {
+    expect(repoGroupForCollection('id.sifa.meeting')).toBe('meetings');
+  });
+
+  // These are `permission-set` lexicons: OAuth scope identifiers published to
+  // the authority PDS, never written into anyone's repo. Claiming them named a
+  // consent-management surface that could only ever come back empty.
+  it('does not claim the auth permission sets, which are not records', () => {
+    for (const nsid of [
+      'id.sifa.authProfile',
+      'id.sifa.authProfileAccess',
+      'id.sifa.authConnection',
+      'id.sifa.authMeet',
+      'id.sifa.authProject',
+    ]) {
+      expect(repoGroupForCollection(nsid)).toBe('other');
+    }
   });
 });

@@ -16,8 +16,8 @@ export type RepoGroupId =
   | 'skills-endorsements'
   | 'projects'
   | 'publications-talks'
-  | 'connections'
-  | 'consents-access'
+  | 'people'
+  | 'meetings'
   | 'other';
 
 export interface RepoGroupDefinition {
@@ -88,19 +88,16 @@ export const SIFA_REPO_GROUPS: readonly RepoGroupDefinition[] = [
     ],
   },
   {
-    id: 'connections',
+    id: 'people',
     collections: ['id.sifa.graph.follow', 'id.sifa.graph.connection', 'id.sifa.confirmation'],
   },
+  // The id.sifa.auth* lexicons are `permission-set` definitions -- OAuth scope
+  // identifiers published to the authority PDS and referenced from the API's
+  // scope builder. Nothing writes them into a user's repo, so listing them here
+  // promised a consent-management surface that could only ever be empty.
   {
-    id: 'consents-access',
-    collections: [
-      'id.sifa.authProfile',
-      'id.sifa.authProfileAccess',
-      'id.sifa.authConnection',
-      'id.sifa.authMeet',
-      'id.sifa.authProject',
-      'id.sifa.meeting',
-    ],
+    id: 'meetings',
+    collections: ['id.sifa.meeting'],
   },
 ];
 

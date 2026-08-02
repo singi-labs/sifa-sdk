@@ -63,7 +63,7 @@ describe('describeSifaRecord', () => {
         subject: 'did:plc:abc123',
         createdAt: '2026-01-01T00:00:00.000Z',
       }),
-    ).toEqual({ primary: 'follow', subjectDid: 'did:plc:abc123' });
+    ).toEqual({ primary: 'follow', isFallback: true, subjectDid: 'did:plc:abc123' });
   });
 
   it('reads a presentation delivery as the talk title and event', () => {
@@ -107,30 +107,37 @@ describe('describeSifaRecord', () => {
   it('does not throw when a dotted path runs through a non-object', () => {
     expect(describeSifaRecord('id.sifa.profile.location', { address: 'Amsterdam' })).toEqual({
       primary: 'location',
+      isFallback: true,
     });
   });
 
   it('falls back to the collection leaf when the record has no usable text', () => {
-    expect(describeSifaRecord('id.sifa.authProfileAccess', { createdAt: '2026-01-01' })).toEqual({
-      primary: 'authProfileAccess',
+    expect(describeSifaRecord('id.sifa.meeting', { createdAt: '2026-01-01' })).toEqual({
+      primary: 'meeting',
+      isFallback: true,
     });
   });
 
   it('does not throw on a record that does not match its schema', () => {
     expect(() => describeSifaRecord('id.sifa.profile.position', null)).not.toThrow();
-    expect(describeSifaRecord('id.sifa.profile.position', null)).toEqual({ primary: 'position' });
+    expect(describeSifaRecord('id.sifa.profile.position', null)).toEqual({
+      primary: 'position',
+      isFallback: true,
+    });
     expect(describeSifaRecord('id.sifa.profile.position', 'not an object')).toEqual({
       primary: 'position',
+      isFallback: true,
     });
     expect(describeSifaRecord('id.sifa.profile.position', { title: 42 })).toEqual({
       primary: 'position',
+      isFallback: true,
     });
   });
 
   it('ignores blank and whitespace-only strings rather than rendering an empty label', () => {
     expect(
       describeSifaRecord('id.sifa.profile.skill', { name: '   ', createdAt: '2026-01-01' }),
-    ).toEqual({ primary: 'skill' });
+    ).toEqual({ primary: 'skill', isFallback: true });
   });
 
   it('trims surrounding whitespace from user text', () => {
@@ -142,6 +149,7 @@ describe('describeSifaRecord', () => {
   it('handles an unknown collection without a rule', () => {
     expect(describeSifaRecord('id.sifa.profile.somethingNew', { title: 'Whatever' })).toEqual({
       primary: 'somethingNew',
+      isFallback: true,
     });
   });
 });
