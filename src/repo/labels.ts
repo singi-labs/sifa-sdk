@@ -24,7 +24,14 @@ export interface RepoRecordLabel {
 }
 
 interface LabelRule {
-  /** Candidate fields for {@link RepoRecordLabel.primary}, first non-blank wins. */
+  /**
+   * Candidate fields for {@link RepoRecordLabel.primary}, first non-blank wins.
+   *
+   * A field may be a dotted path into a nested object ("address.locality").
+   * Several lexicons nest their readable text one level down, and a rule that
+   * could only see the top level fell through to the collection leaf -- the
+   * user was shown the bare word "location" where their city should be.
+   */
   primary?: readonly string[];
   secondary?: readonly string[];
   date?: readonly string[];
@@ -44,7 +51,10 @@ interface LabelRule {
  */
 const LABEL_RULES: Readonly<Record<string, LabelRule>> = {
   'id.sifa.profile.self': { primary: ['headline'] },
-  'id.sifa.profile.location': { primary: ['locality', 'region', 'country'] },
+  'id.sifa.profile.location': {
+    primary: ['address.locality', 'address.region', 'address.country'],
+    secondary: ['address.country'],
+  },
   'id.sifa.profile.language': { primary: ['name'], secondary: ['proficiency'] },
   'id.sifa.profile.externalAccount': { primary: ['label', 'platform'], secondary: ['url'] },
   'id.sifa.org.profile': { primary: ['name'] },
@@ -126,6 +136,16 @@ function collectionLeaf(collection: string): string {
   return collection.slice(collection.lastIndexOf('.') + 1);
 }
 
+/** Walk a dotted path, stopping at the first step that is not an object. */
+function valueAtPath(record: Record<string, unknown>, path: string): unknown {
+  let current: unknown = record;
+  for (const segment of path.split('.')) {
+    if (typeof current !== 'object' || current === null) return undefined;
+    current = (current as Record<string, unknown>)[segment];
+  }
+  return current;
+}
+
 /**
  * First field holding a non-blank string, or undefined.
  *
@@ -138,7 +158,7 @@ function pickString(
   fields: readonly string[],
 ): string | undefined {
   for (const field of fields) {
-    const raw = record[field];
+    const raw = valueAtPath(record, field);
     if (typeof raw !== 'string') continue;
     const trimmed = raw.trim();
     if (trimmed.length > 0) return trimmed;
