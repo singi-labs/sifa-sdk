@@ -489,3 +489,16 @@ export {
   roadmapIssueUrl,
   type RoadmapItemMeta,
 } from './roadmap/index.js';
+
+export { SIFA_REPO_GROUPS, describeSifaRecord, repoGroupForCollection } from './repo/index.js';
+export type {
+  RepoCollectionGroup,
+  RepoDeleteOutcome,
+  RepoDeleteRecordResult,
+  RepoDeleteResult,
+  RepoGroupDefinition,
+  RepoGroupId,
+  RepoInventory,
+  RepoRecordLabel,
+  RepoRecordSummary,
+} from './repo/index.js';
