@@ -144,6 +144,7 @@ export {
 export { useMyRoadmapVotes, useRoadmapVotes } from './use-roadmap.js';
 export { useCastRoadmapVote, useRetractRoadmapVote } from './use-roadmap-mutations.js';
 export { useDeleteAccount, useResetProfile, useWipePreview } from './use-destructive.js';
+export { useDeleteRepoRecords, useRepoInventory } from './use-repo-inventory.js';
 
 export {
   useEntitySearch,

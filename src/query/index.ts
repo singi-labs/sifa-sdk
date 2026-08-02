@@ -249,6 +249,12 @@ export {
   type WipePreview,
 } from './fetchers/destructive.js';
 export {
+  deleteRepoRecords,
+  fetchRepoInventory,
+  repoExportUrl,
+  type RepoDeleteInput,
+} from './fetchers/repo-inventory.js';
+export {
   checkNetworkMapJobStatus,
   fetchNetworkMap,
   initiateNetworkMapGeneration,
@@ -410,6 +416,7 @@ export {
 export { useMyRoadmapVotes, useRoadmapVotes } from './hooks/use-roadmap.js';
 export { useCastRoadmapVote, useRetractRoadmapVote } from './hooks/use-roadmap-mutations.js';
 export { useDeleteAccount, useResetProfile, useWipePreview } from './hooks/use-destructive.js';
+export { useDeleteRepoRecords, useRepoInventory } from './hooks/use-repo-inventory.js';
 export {
   fetchBskyContentLabelPrefs,
   updateBskyContentLabelPrefs,

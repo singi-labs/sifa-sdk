@@ -246,6 +246,12 @@ export {
   type WipePreview,
 } from './destructive.js';
 export {
+  deleteRepoRecords,
+  fetchRepoInventory,
+  repoExportUrl,
+  type RepoDeleteInput,
+} from './repo-inventory.js';
+export {
   checkNetworkMapJobStatus,
   fetchNetworkMap,
   initiateNetworkMapGeneration,
