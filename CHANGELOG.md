@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.53
+
+### Patch Changes
+
+- 523ca81: Label rules can read nested fields via dotted paths, and `id.sifa.profile.location` now uses them. The city lives under `address`, so the previous top-level-only lookup fell through to the collection leaf: the one item on a data-management page about where someone physically is showed them the bare word "location" and nothing else.
+
 ## 0.12.52
 
 ### Patch Changes
