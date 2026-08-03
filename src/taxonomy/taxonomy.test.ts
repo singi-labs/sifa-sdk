@@ -63,6 +63,7 @@ const LEXICON_OPEN_TO_KNOWN_VALUES = [
   'id.sifa.defs#mentoringOthers',
   'id.sifa.defs#beingMentored',
   'id.sifa.defs#collaborations',
+  'id.sifa.defs#speakingEngagements',
 ] as const;
 
 const LEXICON_WORKPLACE_TYPE_KNOWN_VALUES = [
@@ -285,6 +286,20 @@ describe('open-to', () => {
   it('every option has a unique short token', () => {
     const tokens = OPEN_TO_OPTIONS.map((o) => o.token);
     expect(new Set(tokens).size).toBe(tokens.length);
+  });
+
+  it('offers speaking engagements as a work-group option', () => {
+    const speaking = OPEN_TO_OPTIONS.find((o) => o.value === 'id.sifa.defs#speakingEngagements');
+    expect(speaking).toBeDefined();
+    expect(speaking?.token).toBe('speaking');
+    expect(speaking?.labelKey).toBe('speakingEngagements');
+    expect(speaking?.group).toBe('work');
+  });
+
+  it('round-trips the speaking token through both lookup maps', () => {
+    expect(openToTokenToValue('speaking')).toBe('id.sifa.defs#speakingEngagements');
+    expect(openToValueToToken('id.sifa.defs#speakingEngagements')).toBe('speaking');
+    expect(getOpenToLabelKey('id.sifa.defs#speakingEngagements')).toBe('speakingEngagements');
   });
 
   it('every option has a valid group', () => {
