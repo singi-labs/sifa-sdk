@@ -22,6 +22,17 @@ export interface RepoRecordLabel {
    */
   subjectDid?: string;
   /**
+   * Handle and display name for {@link subjectDid}, when a surface resolved it.
+   *
+   * Records whose whole meaning is a relationship -- follows, meetings,
+   * endorsements -- carry only a DID. A page listing 33 of them shows 33
+   * identical rows and a column of did:plc: strings, which is unusable for
+   * deciding which one to remove. Resolution has to be batched by the caller,
+   * so the SDK leaves room for the answer rather than fetching it.
+   */
+  subjectHandle?: string;
+  subjectName?: string;
+  /**
    * Set when the record carried no readable text and {@link primary} is the
    * collection leaf rather than the user's own data.
    *
@@ -127,13 +138,17 @@ const LABEL_RULES: Readonly<Record<string, LabelRule>> = {
   },
   'id.sifa.profile.presentation': { primary: ['title', 'label'] },
   'id.sifa.profile.presentationDelivery': {
-    primary: ['title'],
+    // A delivery without its own title is identified by the event it happened
+    // at. Falling straight to the leaf gave a run of rows all reading "a time
+    // you gave a talk", with the one distinguishing fact demoted underneath.
+    primary: ['title', 'eventName'],
     secondary: ['eventName'],
     date: ['date'],
   },
   'id.sifa.profile.honor': { primary: ['title'], secondary: ['issuer'], date: ['awardedAt'] },
 
   'id.sifa.graph.follow': { subjectDid: ['subject'] },
+  'id.sifa.meeting': { subjectDid: ['subject'] },
   'id.sifa.graph.connection': { subjectDid: ['subject'] },
   'id.sifa.confirmation': {
     primary: ['subjectName'],

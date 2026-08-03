@@ -111,9 +111,38 @@ describe('describeSifaRecord', () => {
     });
   });
 
+  // A delivery without its own title is identified by the event. Falling to
+  // the leaf gave a run of rows all reading "a time you gave a talk".
+  it('names an untitled talk by its event', () => {
+    expect(
+      describeSifaRecord('id.sifa.profile.presentationDelivery', {
+        eventName: 'ISM eCommerce Online Marketing Event',
+        date: '2013-02-28',
+      }),
+    ).toEqual({ primary: 'ISM eCommerce Online Marketing Event', date: '2013-02-28' });
+  });
+
+  it('prefers a talk title over the event when both exist', () => {
+    expect(
+      describeSifaRecord('id.sifa.profile.presentationDelivery', {
+        title: 'Shipping on ATProto',
+        eventName: 'AtmosphereConf',
+      }),
+    ).toEqual({ primary: 'Shipping on ATProto', secondary: 'AtmosphereConf' });
+  });
+
+  it('carries the subject DID of a meeting, which has no text of its own', () => {
+    expect(
+      describeSifaRecord('id.sifa.meeting', {
+        subject: 'did:plc:abc123',
+        createdAt: '2026-03-28T01:41:30.748Z',
+      }),
+    ).toEqual({ primary: 'meeting', isFallback: true, subjectDid: 'did:plc:abc123' });
+  });
+
   it('falls back to the collection leaf when the record has no usable text', () => {
-    expect(describeSifaRecord('id.sifa.meeting', { createdAt: '2026-01-01' })).toEqual({
-      primary: 'meeting',
+    expect(describeSifaRecord('id.sifa.authProject', { createdAt: '2026-01-01' })).toEqual({
+      primary: 'authProject',
       isFallback: true,
     });
   });
