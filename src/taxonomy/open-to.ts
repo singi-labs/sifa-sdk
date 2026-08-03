@@ -48,6 +48,12 @@ export const OPEN_TO_OPTIONS: OpenToOption[] = [
     group: 'work',
   },
   {
+    value: 'id.sifa.defs#speakingEngagements',
+    labelKey: 'speakingEngagements',
+    token: 'speaking',
+    group: 'work',
+  },
+  {
     value: 'id.sifa.defs#mentoringOthers',
     labelKey: 'mentoringOthers',
     token: 'mentor',
