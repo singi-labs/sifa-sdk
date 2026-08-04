@@ -17,6 +17,12 @@ export {
 } from './sort-by-date.js';
 export { sanitizeHandleInput } from './handle-utils.js';
 export { countryCodeToFlag, formatLocation, parseLocationString } from './location-utils.js';
+export { locationSegments } from './location-segments.js';
+export type {
+  LocationSegment,
+  LocationSegmentKind,
+  LocationSegmentsOptions,
+} from './location-segments.js';
 export {
   detectPdsProvider,
   formatStructuredName,

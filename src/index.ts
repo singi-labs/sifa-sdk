@@ -203,6 +203,7 @@ export {
   isValidRgbColor,
   lexiconDateExtractor,
   limitCombiningMarks,
+  locationSegments,
   meetsContrastAA,
   normalizeCompanyKey,
   normalizeLegalForm,
@@ -489,6 +490,12 @@ export {
   roadmapIssueUrl,
   type RoadmapItemMeta,
 } from './roadmap/index.js';
+
+export type {
+  LocationSegment,
+  LocationSegmentKind,
+  LocationSegmentsOptions,
+} from './format/index.js';
 
 export { SIFA_REPO_GROUPS, describeSifaRecord, repoGroupForCollection } from './repo/index.js';
 export type {
