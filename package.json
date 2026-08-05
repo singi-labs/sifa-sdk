@@ -1,7 +1,7 @@
 {
   "name": "@singi-labs/sifa-sdk",
   "version": "0.12.57",
-  "description": "Sifa SDK — public client library for the Sifa AppView on AT Protocol. Shared by sifa-web and sifa-app.",
+  "description": "Sifa SDK \u2014 public client library for the Sifa AppView on AT Protocol. Shared by sifa-web and sifa-app.",
   "license": "MIT",
   "type": "module",
   "homepage": "https://sifa.id",
@@ -130,6 +130,16 @@
       "require": {
         "types": "./dist/badge/index.d.cts",
         "default": "./dist/badge/index.cjs"
+      }
+    },
+    "./jsonld": {
+      "import": {
+        "types": "./dist/jsonld/index.d.ts",
+        "default": "./dist/jsonld/index.js"
+      },
+      "require": {
+        "types": "./dist/jsonld/index.d.cts",
+        "default": "./dist/jsonld/index.cjs"
       }
     },
     "./package.json": "./package.json"
