@@ -34,6 +34,8 @@ export {
 } from './pds-utils.js';
 export { resolveEmbed, youtubeVideoId, youtubeThumbnailUrl, type EmbedResult } from './embed.js';
 export { buildTalkSlug, parseTalkRkey, slugifyTitle } from './talk-slug.js';
+export { buildMetaDescription } from './meta-description.js';
+export type { MetaDescriptionInput, MetaDescriptionPosition } from './meta-description.js';
 export { limitCombiningMarks, sanitizeDisplayText } from './text-sanitize.js';
 export { truncateGraphemes } from './text-truncate.js';
 export { formatDistanceToNow } from './time-utils.js';

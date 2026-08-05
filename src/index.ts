@@ -219,6 +219,7 @@ export {
   sanitizeHandleInput,
   singleDateExtractor,
   slugifyTitle,
+  buildMetaDescription,
   buildTalkSlug,
   sortByDateDesc,
   summarizePresentationDeliveries,
