@@ -70,6 +70,14 @@ export interface JsonLdProfileInput {
   readonly publications?: readonly unknown[];
   readonly courses?: readonly unknown[];
   readonly externalAccounts?: readonly unknown[];
+  /**
+   * Dual-facet accounts: one DID presenting as both a person and a company.
+   * Only the opted-in case is emitted, see `buildPersonJsonLd`.
+   */
+  readonly org?: {
+    readonly personalProfileVisible?: boolean;
+    readonly orgProfile?: { readonly name?: string } | null;
+  } | null;
 }
 
 interface Hideable {
@@ -226,6 +234,37 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
   const structuredName =
     givenTrimmed && familyTrimmed ? `${givenTrimmed} ${familyTrimmed}` : undefined;
 
+  // A sole trader who kept both faces is one legal person and one business on
+  // a single DID. Without an explicit link a crawler reads the /p/ Person and
+  // the /c/ Organization as two unrelated entities that happen to share a
+  // domain. The company goes first: it is the account's own business, ahead of
+  // any self-reported position elsewhere.
+  const ownCompany =
+    profile.org?.personalProfileVisible && profile.org.orgProfile
+      ? {
+          '@type': 'Organization' as const,
+          '@id': `${baseUrl}/c/${profile.handle}`,
+          name: s(profile.org.orgProfile.name ?? profile.handle),
+        }
+      : null;
+  const worksFor = [
+    ...(ownCompany ? [ownCompany] : []),
+    ...positions
+      .filter((p) => p.company)
+      .map((p) => ({
+        '@type': 'Organization' as const,
+        name: s(p.company!),
+        ...(p.title && {
+          member: {
+            '@type': 'OrganizationRole' as const,
+            roleName: s(p.title),
+            ...(p.startedAt && { startDate: p.startedAt }),
+            ...(p.endedAt && { endDate: p.endedAt }),
+          },
+        }),
+      })),
+  ];
+
   const awards = visible(profile.honors)
     .filter((h) => h.title)
     .map((h) => s(h.title!));
@@ -236,6 +275,8 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    // Stable identifier so a /c/ Organization's `founder` can point back here.
+    '@id': `${baseUrl}/p/${profile.handle}`,
     name: s(structuredName ?? profile.displayName ?? profile.handle),
     ...(givenTrimmed && { givenName: s(givenTrimmed) }),
     ...(familyTrimmed && { familyName: s(familyTrimmed) }),
@@ -248,22 +289,7 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
     url: `${baseUrl}/p/${profile.handle}`,
     image: profile.avatar ?? undefined,
     ...(profile.location && { homeLocation: buildHomeLocation(profile.location, s) }),
-    ...(positions.length > 0 && {
-      worksFor: positions
-        .filter((p) => p.company)
-        .map((p) => ({
-          '@type': 'Organization' as const,
-          name: s(p.company!),
-          ...(p.title && {
-            member: {
-              '@type': 'OrganizationRole' as const,
-              roleName: s(p.title),
-              ...(p.startedAt && { startDate: p.startedAt }),
-              ...(p.endedAt && { endDate: p.endedAt }),
-            },
-          }),
-        })),
-    }),
+    ...(worksFor.length > 0 && { worksFor }),
     ...(visible(profile.education).length > 0 && {
       alumniOf: visible(profile.education)
         .filter((e) => e.institution)

@@ -352,3 +352,57 @@ describe('sanitizer coverage', () => {
     expect(JSON.stringify(ld)).not.toMatch(/[<>]/);
   });
 });
+
+describe('dual-facet pairing (ported, sifa-web #327)', () => {
+  const dual = {
+    handle: 'jododd.com',
+    displayName: 'Jo Dodd',
+    org: { personalProfileVisible: true, orgProfile: { name: 'Jo Dodd Ltd' } },
+  };
+
+  it('gives the Person a stable @id so the company page can point back at it', () => {
+    expect(buildPersonJsonLd(dual)['@id']).toBe('https://sifa.id/p/jododd.com');
+  });
+
+  it('links the person to their own company as an employer with a resolvable @id', () => {
+    // A sole trader is both faces of one DID: without the @id, a crawler reads
+    // the /p/ Person and the /c/ Organization as two unrelated entities that
+    // happen to share a domain.
+    expect(buildPersonJsonLd(dual).worksFor).toContainEqual({
+      '@type': 'Organization',
+      '@id': 'https://sifa.id/c/jododd.com',
+      name: 'Jo Dodd Ltd',
+    });
+  });
+
+  it('puts the own company first, ahead of self-reported positions', () => {
+    const ld = buildPersonJsonLd({
+      ...dual,
+      positions: [{ company: 'Acme', title: 'Advisor' }],
+    });
+    expect(ld.worksFor?.map((w) => w.name)).toEqual(['Jo Dodd Ltd', 'Acme']);
+  });
+
+  it('adds nothing for an account that did not opt into both faces', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'singi.dev',
+      org: { personalProfileVisible: false, orgProfile: { name: 'Singi Labs' } },
+    });
+    expect(ld['@id']).toBe('https://sifa.id/p/singi.dev');
+    expect(ld.worksFor).toBeUndefined();
+  });
+
+  it('falls back to the handle when the org profile has no name', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'jododd.com',
+      org: { personalProfileVisible: true, orgProfile: {} },
+    });
+    expect(ld.worksFor?.[0]?.name).toBe('jododd.com');
+  });
+
+  it('derives both @id values from baseUrl', () => {
+    const ld = buildPersonJsonLd(dual, { baseUrl: 'https://page.sifa.id' });
+    expect(ld['@id']).toBe('https://page.sifa.id/p/jododd.com');
+    expect(ld.worksFor?.[0]).toMatchObject({ '@id': 'https://page.sifa.id/c/jododd.com' });
+  });
+});
