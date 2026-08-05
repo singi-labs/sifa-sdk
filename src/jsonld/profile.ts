@@ -12,8 +12,7 @@ import { formatLocation } from '../format/location-utils.js';
 import { pickPrimaryPosition } from '../logic/primary-position.js';
 import { filterHidden } from '../profile/section-model.js';
 import type { LocationValue } from '../types/index.js';
-
-const DEFAULT_BASE_URL = 'https://sifa.id';
+import { normaliseBaseUrl } from './url.js';
 
 /**
  * Maximum number of skills emitted into `knowsAbout`. The rendered profile
@@ -116,10 +115,6 @@ const identity: Sanitizer = (input) => input;
 
 function hasMeaningfulText(value: string | undefined | null): value is string {
   return typeof value === 'string' && MEANINGFUL_TEXT_RE.test(value);
-}
-
-function normaliseBaseUrl(baseUrl: string | undefined): string {
-  return (baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
 }
 
 /** `filterHidden` takes a mutable array; the input types are readonly. */

@@ -10,8 +10,8 @@
 
 import { buildTalkSlug } from '../format/talk-slug.js';
 import { filterHidden } from '../profile/section-model.js';
+import { normaliseBaseUrl, profileUrl } from './url.js';
 
-const DEFAULT_BASE_URL = 'https://sifa.id';
 const DOI_RESOLVER = 'https://doi.org/';
 const ORCID_RESOLVER = 'https://orcid.org/';
 
@@ -46,14 +46,6 @@ interface PersonNode {
 }
 
 const identity = (input: string) => input;
-
-function normaliseBaseUrl(baseUrl: string | undefined): string {
-  return (baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
-}
-
-function profileUrl(baseUrl: string, handle: string): string {
-  return `${baseUrl}/p/${handle}`;
-}
 
 function authorNode(author: WorkAuthor, baseUrl: string, s: (v: string) => string): PersonNode {
   return {

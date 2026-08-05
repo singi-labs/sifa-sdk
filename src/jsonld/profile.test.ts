@@ -275,6 +275,16 @@ describe('baseUrl option', () => {
     const ld = buildPersonJsonLd({ handle: 'gui.do' }, { baseUrl: 'https://page.sifa.id/' });
     expect(ld.url).toBe('https://page.sifa.id/p/gui.do');
   });
+
+  it('strips a long run of trailing slashes in linear time', () => {
+    // The input shape behind CodeQL js/polynomial-redos: normaliseBaseUrl scans
+    // rather than using /\/+$/, so this stays linear.
+    const ld = buildPersonJsonLd(
+      { handle: 'gui.do' },
+      { baseUrl: `https://page.sifa.id${'/'.repeat(50_000)}` },
+    );
+    expect(ld.url).toBe('https://page.sifa.id/p/gui.do');
+  });
 });
 
 describe('owner-hidden items never reach structured data', () => {
