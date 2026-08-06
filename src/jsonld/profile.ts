@@ -36,6 +36,13 @@ export interface JsonLdOptions {
   readonly baseUrl?: string;
   /** Applied to every user-authored string. Defaults to identity. */
   readonly sanitize?: Sanitizer;
+  /**
+   * Absolute URL of the page this graph describes, used for `url` and `@id`.
+   * Defaults to `${baseUrl}/p/${handle}`. Personal sites can be served from an
+   * arbitrary host, including a self-hosted custom domain, where that default
+   * path is not where the page lives.
+   */
+  readonly canonicalUrl?: string;
 }
 
 /**
@@ -195,6 +202,9 @@ function buildHomeLocation(location: LocationValue, s: Sanitizer) {
 export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOptions = {}) {
   const s = options.sanitize ?? identity;
   const baseUrl = normaliseBaseUrl(options.baseUrl);
+  // The own-company link below deliberately keeps the baseUrl origin: a /c/
+  // page lives on Sifa even when the personal site does not.
+  const canonical = options.canonicalUrl ?? `${baseUrl}/p/${profile.handle}`;
 
   const positions = visible(profile.positions);
   const currentPosition = pickPrimaryPosition(positions);
@@ -276,7 +286,7 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
     '@context': 'https://schema.org',
     '@type': 'Person',
     // Stable identifier so a /c/ Organization's `founder` can point back here.
-    '@id': `${baseUrl}/p/${profile.handle}`,
+    '@id': canonical,
     name: s(structuredName ?? profile.displayName ?? profile.handle),
     ...(givenTrimmed && { givenName: s(givenTrimmed) }),
     ...(familyTrimmed && { familyName: s(familyTrimmed) }),
@@ -286,7 +296,8 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
         ? s(currentPosition.title)
         : undefined,
     description: hasMeaningfulText(profile.about) ? s(profile.about) : undefined,
-    url: `${baseUrl}/p/${profile.handle}`,
+    alternateName: `@${profile.handle}`,
+    url: canonical,
     image: profile.avatar ?? undefined,
     ...(profile.location && { homeLocation: buildHomeLocation(profile.location, s) }),
     ...(worksFor.length > 0 && { worksFor }),
@@ -357,7 +368,7 @@ export function buildProfilePageJsonLd(profile: JsonLdProfileInput, options: Jso
   const person = buildPersonJsonLd(profile, options);
   const { '@context': _context, ...personWithoutContext } = person;
 
-  const url = `${normaliseBaseUrl(options.baseUrl)}/p/${profile.handle}`;
+  const url = options.canonicalUrl ?? `${normaliseBaseUrl(options.baseUrl)}/p/${profile.handle}`;
   const hasPart = PROFILE_SECTION_HAS_PART.filter((section) => section.populated(profile)).map(
     (section) => ({
       '@type': 'WebPageElement' as const,

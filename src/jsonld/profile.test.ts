@@ -406,3 +406,56 @@ describe('dual-facet pairing (ported, sifa-web #327)', () => {
     expect(ld.worksFor?.[0]).toMatchObject({ '@id': 'https://page.sifa.id/c/jododd.com' });
   });
 });
+
+describe('canonicalUrl option', () => {
+  // page.sifa.id sites can be served from an arbitrary host, including a
+  // self-hosted custom domain, where `${baseUrl}/p/${handle}` is simply not
+  // where the page lives.
+  it('overrides both url and @id', () => {
+    const ld = buildPersonJsonLd(
+      { handle: 'alice.example' },
+      { canonicalUrl: 'https://alice.example/' },
+    );
+    expect(ld.url).toBe('https://alice.example/');
+    expect(ld['@id']).toBe('https://alice.example/');
+  });
+
+  it('leaves the own-company @id on the Sifa origin', () => {
+    // The company link points at a /c/ page on Sifa, which is a different site
+    // from the personal one and keeps its own canonical.
+    const ld = buildPersonJsonLd(
+      {
+        handle: 'jododd.com',
+        org: { personalProfileVisible: true, orgProfile: { name: 'Jo Dodd Ltd' } },
+      },
+      { canonicalUrl: 'https://jododd.example/' },
+    );
+    expect(ld.worksFor?.[0]).toMatchObject({ '@id': 'https://sifa.id/c/jododd.com' });
+  });
+
+  it('falls back to the baseUrl profile path when not supplied', () => {
+    expect(buildPersonJsonLd({ handle: 'gui.do' }).url).toBe('https://sifa.id/p/gui.do');
+  });
+
+  it('does not affect the breadcrumb trail', () => {
+    const ld = buildBreadcrumbListJsonLd(
+      { handle: 'gui.do' },
+      { canonicalUrl: 'https://x.example/' },
+    );
+    expect(ld.itemListElement[1]?.item).toBe('https://sifa.id/p/gui.do');
+  });
+
+  it('is used by ProfilePage for its own url too', () => {
+    const ld = buildProfilePageJsonLd(
+      { handle: 'alice.example' },
+      { canonicalUrl: 'https://alice.example/' },
+    );
+    expect(ld.url).toBe('https://alice.example/');
+  });
+});
+
+describe('alternateName', () => {
+  it('emits the handle prefixed with @ so the ATproto identity is resolvable', () => {
+    expect(buildPersonJsonLd({ handle: 'gui.do' }).alternateName).toBe('@gui.do');
+  });
+});
