@@ -36,6 +36,11 @@ export interface PositionView {
   entityName?: string;
   description?: string;
   employmentType?: string;
+  onBehalfOf?: string;
+  onBehalfOfDid?: string;
+  onBehalfOfEntityRef?: string;
+  /** Resolved name for the represented party. Render `onBehalfOf` when absent -- never the raw ref URI. */
+  onBehalfOfEntityName?: string;
   workplaceType?: string;
   locationCountry?: string;
   locationRegion?: string;
