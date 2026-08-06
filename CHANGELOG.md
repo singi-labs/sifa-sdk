@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.63
+
+### Patch Changes
+
+- b181c1c: Add the `onBehalfOf` representation disclosure to the position schemas and `PositionView`: `onBehalfOf`, `onBehalfOfDid`, `onBehalfOfEntityRef`, plus the view-only resolved `onBehalfOfEntityName`. Mirrors sifa-lexicons#88 and #90. Used for board seats held as a fund's representative, where the person answers to a third party.
+
 ## 0.12.62
 
 ### Patch Changes
