@@ -34,6 +34,9 @@ export {
   buildProjectJsonLd,
   buildPublicationJsonLd,
 } from './works.js';
+export { buildProfileWorksJsonLd } from './works-graph.js';
+export type { ProfileWorksInput } from './works-graph.js';
+
 export type {
   CourseInput,
   PresentationDeliveryInput,
