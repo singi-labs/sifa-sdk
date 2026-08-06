@@ -40,6 +40,16 @@ export interface ProfilePosition {
   endedAt?: string;
   location?: LocationValue | null;
   employmentType?: string;
+  /**
+   * Party this role is held on behalf of, when the person represents someone else --
+   * most often a fund whose board seat this is. A disclosure rather than a role type,
+   * so it is a separate field from `employmentType`. Absent for independent roles.
+   */
+  onBehalfOf?: string;
+  /** DID of the represented party, when known. May be an organization or a person. */
+  onBehalfOfDid?: string;
+  /** Portable entity identifier for the represented party (Wikidata/ROR/LEI URI). */
+  onBehalfOfEntityRef?: string;
   workplaceType?: string;
   skills?: SkillRef[];
   linkedSkills?: ProfileSkill[];
