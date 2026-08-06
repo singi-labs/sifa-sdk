@@ -21,6 +21,11 @@ export const PositionWriteSchema = z.object({
   title: z.string().min(1).max(256),
   description: z.string().max(50000).nullable().optional(),
   employmentType: z.string().nullable().optional(),
+  // Held-on-behalf-of disclosure for board and advisory roles. Nullable so a client
+  // can clear it when a seat stops being a representative one.
+  onBehalfOf: z.string().max(256).nullable().optional(),
+  onBehalfOfDid: z.string().max(256).nullable().optional(),
+  onBehalfOfEntityRef: entityRefSchema.nullable(),
   workplaceType: z.string().nullable().optional(),
   location: writeLocationSchema,
   startedAt: z.string().nullable().optional(),
