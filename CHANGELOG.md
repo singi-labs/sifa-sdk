@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.66
+
+### Patch Changes
+
+- bd4fa35: Add `onBehalfOf`, `onBehalfOfDid` and `onBehalfOfEntityRef` to the `ProfilePosition` type. The fields were added to `PositionView` and the schemas in an earlier release, but `ProfilePosition` is the type profile UIs actually render, so consumers could not read the disclosure.
+
 ## 0.12.65
 
 ### Patch Changes
