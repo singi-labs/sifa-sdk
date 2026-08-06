@@ -93,3 +93,24 @@ export function isCompanyRequired(employmentType: string | undefined | null): bo
   if (!employmentType) return true;
   return !COMPANY_OPTIONAL_EMPLOYMENT_TYPES.has(employmentType);
 }
+
+/**
+ * Employment types for which the `onBehalfOf` disclosure is meaningful — a seat or
+ * advisory role can be held as someone else's representative, most often a fund whose
+ * board seat it is. Derived from the group rather than hand-listed so it cannot drift.
+ */
+export const ON_BEHALF_OF_EMPLOYMENT_TYPES: ReadonlySet<string> = new Set(
+  EMPLOYMENT_TYPE_GROUPS.find((g) => g.label === 'Governance & advisory')?.items.map(
+    (i) => i.value,
+  ) ?? [],
+);
+
+/**
+ * Whether to offer the `onBehalfOf` disclosure for a given employment type. False when
+ * the type is unspecified: a full-time employee represents nobody, and surfacing the
+ * field on every position form would put a rare disclosure in front of everyone.
+ */
+export function isOnBehalfOfApplicable(employmentType: string | undefined | null): boolean {
+  if (!employmentType) return false;
+  return ON_BEHALF_OF_EMPLOYMENT_TYPES.has(employmentType);
+}

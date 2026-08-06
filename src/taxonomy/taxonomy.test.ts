@@ -8,6 +8,8 @@ import {
   COMPANY_OPTIONAL_EMPLOYMENT_TYPES,
   EMPLOYMENT_TYPE_GROUPS,
   EMPLOYMENT_TYPE_LABELS,
+  ON_BEHALF_OF_EMPLOYMENT_TYPES,
+  isOnBehalfOfApplicable,
   getEmploymentTypeLabel,
   isCompanyRequired,
 } from './employment-type.js';
@@ -150,6 +152,37 @@ describe('employment-type', () => {
       expect(isCompanyRequired(v)).toBe(true);
       expect(COMPANY_OPTIONAL_EMPLOYMENT_TYPES.has(v)).toBe(false);
     }
+  });
+
+  // The onBehalfOf disclosure only makes sense for roles held on someone's behalf.
+  // A full-time employee is not a representative of anyone, so surfacing the field
+  // there is noise on the far more common form.
+  it('treats only the governance and advisory roles as on-behalf-of applicable', () => {
+    for (const v of [
+      'id.sifa.defs#boardMember',
+      'id.sifa.defs#boardObserver',
+      'id.sifa.defs#advisor',
+    ]) {
+      expect(isOnBehalfOfApplicable(v)).toBe(true);
+    }
+    for (const v of ['id.sifa.defs#fullTime', 'id.sifa.defs#freelance', 'id.sifa.defs#volunteer']) {
+      expect(isOnBehalfOfApplicable(v)).toBe(false);
+    }
+  });
+
+  it('is not applicable when the employment type is unspecified', () => {
+    expect(isOnBehalfOfApplicable(undefined)).toBe(false);
+    expect(isOnBehalfOfApplicable(null)).toBe(false);
+    expect(isOnBehalfOfApplicable('')).toBe(false);
+  });
+
+  it('ON_BEHALF_OF_EMPLOYMENT_TYPES stays in sync with the governance group', () => {
+    const governance =
+      EMPLOYMENT_TYPE_GROUPS.find((g) => g.label === 'Governance & advisory')?.items.map(
+        (i) => i.value,
+      ) ?? [];
+    expect(governance.length).toBeGreaterThan(0);
+    expect([...ON_BEHALF_OF_EMPLOYMENT_TYPES].sort()).toEqual([...governance].sort());
   });
 
   it('EMPLOYMENT_TYPE_GROUPS excludes the deprecated "volunteer" token', () => {
