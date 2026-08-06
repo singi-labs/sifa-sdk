@@ -42,6 +42,17 @@ export const EMPLOYMENT_TYPE_GROUPS: EmploymentTypeGroup[] = [
       { value: 'id.sifa.defs#trainee', label: 'Trainee' },
     ],
   },
+  // A non-executive director is normally not an employee, and neither is a volunteer:
+  // this axis was never payroll-only. These roles carry a title, duties and a term, so
+  // they belong on a position rather than on the investment record.
+  {
+    label: 'Governance & advisory',
+    items: [
+      { value: 'id.sifa.defs#boardMember', label: 'Board member' },
+      { value: 'id.sifa.defs#boardObserver', label: 'Board observer' },
+      { value: 'id.sifa.defs#advisor', label: 'Advisor' },
+    ],
+  },
 ];
 
 export const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {

@@ -52,6 +52,9 @@ const LEXICON_EMPLOYMENT_TYPE_KNOWN_VALUES = [
   'id.sifa.defs#fellowship',
   'id.sifa.defs#trainee',
   'id.sifa.defs#volunteer',
+  'id.sifa.defs#boardMember',
+  'id.sifa.defs#boardObserver',
+  'id.sifa.defs#advisor',
 ] as const;
 
 const LEXICON_OPEN_TO_KNOWN_VALUES = [
@@ -119,6 +122,34 @@ describe('employment-type', () => {
     // The label map retains exactly the legacy tokens no longer offered in the dropdown.
     const legacyOnly = flat.filter((v) => !grouped.includes(v));
     expect(legacyOnly).toEqual(['id.sifa.defs#volunteer']);
+  });
+
+  // Board seats and advisory roles are career-shaped -- a title, duties, a term -- so
+  // they sit on position rather than on the investment record. See sifa-lexicons#86.
+  it('offers the governance and advisory roles in the dropdown', () => {
+    const grouped = EMPLOYMENT_TYPE_GROUPS.flatMap((g) => g.items.map((i) => i.value));
+    expect(grouped).toContain('id.sifa.defs#boardMember');
+    expect(grouped).toContain('id.sifa.defs#boardObserver');
+    expect(grouped).toContain('id.sifa.defs#advisor');
+  });
+
+  it('labels board observer distinctly from board member', () => {
+    expect(EMPLOYMENT_TYPE_LABELS['id.sifa.defs#boardMember']).toBe('Board member');
+    expect(EMPLOYMENT_TYPE_LABELS['id.sifa.defs#boardObserver']).toBe('Board observer');
+    expect(EMPLOYMENT_TYPE_LABELS['id.sifa.defs#advisor']).toBe('Advisor');
+  });
+
+  // A board seat or advisory role is always at a named organization, so these stay
+  // outside the Independent group and keep the company-required default.
+  it('requires a company for the governance and advisory roles', () => {
+    for (const v of [
+      'id.sifa.defs#boardMember',
+      'id.sifa.defs#boardObserver',
+      'id.sifa.defs#advisor',
+    ]) {
+      expect(isCompanyRequired(v)).toBe(true);
+      expect(COMPANY_OPTIONAL_EMPLOYMENT_TYPES.has(v)).toBe(false);
+    }
   });
 
   it('EMPLOYMENT_TYPE_GROUPS excludes the deprecated "volunteer" token', () => {
