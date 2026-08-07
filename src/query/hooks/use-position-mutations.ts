@@ -41,6 +41,9 @@ export function useUpdatePosition(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ rkey, data }: UpdatePositionVariables) => updatePosition(config, rkey, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -48,7 +51,6 @@ export function useUpdatePosition(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -60,6 +62,9 @@ export function useDeletePosition(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (rkey: string) => deletePosition(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -67,7 +72,6 @@ export function useDeletePosition(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -79,6 +83,9 @@ export function useSetPositionPrimary(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (rkey: string) => setPositionPrimary(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -86,7 +93,6 @@ export function useSetPositionPrimary(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -98,6 +104,9 @@ export function useUnsetPositionPrimary(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (rkey: string) => unsetPositionPrimary(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -105,7 +114,6 @@ export function useUnsetPositionPrimary(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -123,6 +131,9 @@ export function useLinkSkillToPosition(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ position, skillRef }: PositionSkillLinkVariables) =>
       linkSkillToPosition(config, position, skillRef),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -131,7 +142,6 @@ export function useLinkSkillToPosition(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -143,6 +153,9 @@ export function useUnlinkSkillFromPosition(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ position, skillRef }: PositionSkillLinkVariables) =>
       unlinkSkillFromPosition(config, position, skillRef),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -151,6 +164,5 @@ export function useUnlinkSkillFromPosition(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

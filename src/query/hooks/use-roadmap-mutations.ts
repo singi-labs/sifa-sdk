@@ -28,6 +28,9 @@ export function useCastRoadmapVote(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (key: string) => castRoadmapVote(config, key),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.ok) {
@@ -35,7 +38,6 @@ export function useCastRoadmapVote(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -46,6 +48,9 @@ export function useRetractRoadmapVote(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (key: string) => retractRoadmapVote(config, key),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -53,6 +58,5 @@ export function useRetractRoadmapVote(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

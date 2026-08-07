@@ -29,6 +29,9 @@ export function useCreateProfileLocation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: ProfileLocationInput) => createProfileLocation(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -36,7 +39,6 @@ export function useCreateProfileLocation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -57,6 +59,9 @@ export function useUpdateProfileLocation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ rkey, data }: UpdateProfileLocationVariables) =>
       updateProfileLocation(config, rkey, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -65,7 +70,6 @@ export function useUpdateProfileLocation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -77,6 +81,9 @@ export function useDeleteProfileLocation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (rkey: string) => deleteProfileLocation(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -84,6 +91,5 @@ export function useDeleteProfileLocation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

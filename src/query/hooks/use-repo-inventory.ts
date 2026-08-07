@@ -66,11 +66,13 @@ export function useDeleteRepoRecords(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (input: RepoDeleteInput) => deleteRepoRecords(config, input),
     onSuccess: async (result, variables, onMutateResult, context) => {
       await queryClient.invalidateQueries({ queryKey: sifaQueryKeys.all() });
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

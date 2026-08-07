@@ -30,6 +30,9 @@ export function useCreateSkill(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: Record<string, unknown>) => createSkill(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -37,7 +40,6 @@ export function useCreateSkill(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -55,6 +57,9 @@ export function useUpdateSkill(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ rkey, data }: UpdateSkillVariables) => updateSkill(config, rkey, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -62,7 +67,6 @@ export function useUpdateSkill(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -114,6 +118,9 @@ export function useDeleteSkill(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (rkey: string) => deleteSkill(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -121,6 +128,5 @@ export function useDeleteSkill(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

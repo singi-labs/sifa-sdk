@@ -22,6 +22,9 @@ export function useCreatePosition(
   const queryClient = useQueryClient();
 
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: Record<string, unknown>) => createPosition(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -30,6 +33,5 @@ export function useCreatePosition(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

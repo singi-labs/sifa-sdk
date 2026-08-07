@@ -86,6 +86,9 @@ export function useCreateConfirmation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: ConfirmationInput) => createConfirmation(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -103,7 +106,6 @@ export function useCreateConfirmation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -117,6 +119,9 @@ export function useDismissConfirmation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: ConfirmationSubjectInput) => dismissConfirmation(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -126,7 +131,6 @@ export function useDismissConfirmation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -141,6 +145,9 @@ export function useRevokeConfirmation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: ConfirmationSubjectInput) => revokeConfirmation(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -155,6 +162,5 @@ export function useRevokeConfirmation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

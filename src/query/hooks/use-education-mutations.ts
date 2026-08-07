@@ -24,6 +24,9 @@ export function useCreateEducation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: Record<string, unknown>) => createEducation(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -31,7 +34,6 @@ export function useCreateEducation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -49,6 +51,9 @@ export function useUpdateEducation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ rkey, data }: UpdateEducationVariables) => updateEducation(config, rkey, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -56,7 +61,6 @@ export function useUpdateEducation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -68,6 +72,9 @@ export function useDeleteEducation(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (rkey: string) => deleteEducation(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -75,6 +82,5 @@ export function useDeleteEducation(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

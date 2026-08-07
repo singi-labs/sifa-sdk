@@ -35,6 +35,9 @@ export function useCreateRecord(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ collection, data }: CreateRecordVariables) =>
       createRecord(config, collection, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -43,7 +46,6 @@ export function useCreateRecord(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -62,6 +64,9 @@ export function useUpdateRecord(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ collection, rkey, data }: UpdateRecordVariables) =>
       updateRecord(config, collection, rkey, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -70,7 +75,6 @@ export function useUpdateRecord(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -88,6 +92,9 @@ export function useDeleteRecord(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ collection, rkey }: DeleteRecordVariables) =>
       deleteRecord(config, collection, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -96,6 +103,5 @@ export function useDeleteRecord(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

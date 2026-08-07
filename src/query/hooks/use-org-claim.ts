@@ -25,6 +25,9 @@ export function useOrgClaim(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (body: OrgClaimRequestInput) => submitOrgClaim(config, body),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success && handleOrDid) {
@@ -34,6 +37,5 @@ export function useOrgClaim(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

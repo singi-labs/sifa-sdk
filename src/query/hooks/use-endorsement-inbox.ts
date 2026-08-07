@@ -58,6 +58,9 @@ export function useConfirmEndorsement(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: ConfirmEndorsementInput) => confirmEndorsement(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -75,7 +78,6 @@ export function useConfirmEndorsement(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -89,6 +91,9 @@ export function useDismissEndorsement(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: DismissEndorsementInput) => dismissEndorsement(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -98,6 +103,5 @@ export function useDismissEndorsement(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

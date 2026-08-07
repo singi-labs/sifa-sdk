@@ -37,6 +37,9 @@ function makeWriteHook<TVariable>(
     const config = useSifaConfig();
     const queryClient = useQueryClient();
     return useMutation({
+      // Spread first: a consumer-supplied onSuccess would otherwise replace the
+      // handler below and silently drop cache invalidation (#453).
+      ...options,
       mutationFn: (v: TVariable) => fetcher(config, v),
       onSuccess: async (result, variables, onMutateResult, context) => {
         if (result.success) {
@@ -44,7 +47,6 @@ function makeWriteHook<TVariable>(
         }
         await options?.onSuccess?.(result, variables, onMutateResult, context);
       },
-      ...options,
     });
   };
 }
@@ -104,6 +106,5 @@ export function useRefreshOrcidPublications(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

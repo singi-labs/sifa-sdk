@@ -24,6 +24,9 @@ export function useRevealMarqueDomain(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (domain: string) => revealMarqueDomain(config, domain),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -31,7 +34,6 @@ export function useRevealMarqueDomain(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -43,6 +45,9 @@ export function useUnrevealMarqueDomain(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (domain: string) => unrevealMarqueDomain(config, domain),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -50,6 +55,5 @@ export function useUnrevealMarqueDomain(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
