@@ -35,6 +35,7 @@ describe('ALL_SECTIONS order (evidence-first)', () => {
       'courses',
       'awards',
       'involvement',
+      'investments',
       'languages',
       'other-profiles',
     ]);
@@ -146,5 +147,22 @@ describe('filterHidden / visibleItems', () => {
 
   it('visibleItems drops hidden items for a visitor', () => {
     expect(visibleItems(items, false).map((i) => i.rkey)).toEqual(['a', 'c']);
+  });
+});
+
+describe('investments placement', () => {
+  const ids: string[] = ALL_SECTIONS.map((s) => s.id);
+
+  // Adjacent to involvement but not inside it. The two records are near-neighbours
+  // in how people think about them, and completely different in what they hold:
+  // one is work contributed, the other capital deployed.
+  it('sits directly after involvement, as its own section', () => {
+    expect(ids.indexOf('investments')).toBe(ids.indexOf('involvement') + 1);
+  });
+
+  // Evidence-first ordering: what someone did comes before what they hold.
+  it('sits below the show-your-work and formal blocks', () => {
+    expect(ids.indexOf('investments')).toBeGreaterThan(ids.indexOf('projects'));
+    expect(ids.indexOf('investments')).toBeGreaterThan(ids.indexOf('credentials'));
   });
 });
