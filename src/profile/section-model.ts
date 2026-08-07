@@ -69,6 +69,9 @@ export const ALL_SECTIONS = [
   { id: 'courses', labelKey: 'courses', ns: 'sections' as const, group: 'qualifications' as const },
   { id: 'awards', labelKey: 'awards', ns: 'sections' as const, group: 'more' as const },
   { id: 'involvement', labelKey: 'involvement', ns: 'sections' as const, group: 'more' as const },
+  // Its own section rather than a group under involvement: that record is about
+  // work contributed, this one about capital deployed.
+  { id: 'investments', labelKey: 'investments', ns: 'sections' as const, group: 'more' as const },
   { id: 'languages', labelKey: 'languages', ns: 'sections' as const, group: 'more' as const },
   {
     id: 'other-profiles',
@@ -106,6 +109,8 @@ export function isSectionPopulated(profile: Profile, id: string): boolean {
       );
     case 'involvement':
       return Boolean(profile.involvement?.length);
+    case 'investments':
+      return Boolean(profile.investments?.length);
     case 'awards':
       return Boolean(profile.honors?.length);
     case 'languages':
@@ -164,6 +169,7 @@ export const SECTION_LABELS: Record<SectionId, string> = {
   courses: 'Courses',
   awards: 'Awards',
   involvement: 'Involvement',
+  investments: 'Investments',
   languages: 'Languages',
   'other-profiles': 'Links',
 };
