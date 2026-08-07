@@ -26,6 +26,9 @@ export function useCreateInvestment(
   const queryClient = useQueryClient();
 
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the handler
+    // below and silently drop cache invalidation. The handler forwards to it instead.
+    ...options,
     mutationFn: (data: Record<string, unknown>) => createInvestment(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -33,7 +36,6 @@ export function useCreateInvestment(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -48,6 +50,9 @@ export function useUpdateInvestment(
   const queryClient = useQueryClient();
 
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the handler
+    // below and silently drop cache invalidation. The handler forwards to it instead.
+    ...options,
     mutationFn: ({ rkey, data }: { rkey: string; data: Record<string, unknown> }) =>
       updateInvestment(config, rkey, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -56,7 +61,6 @@ export function useUpdateInvestment(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -68,6 +72,9 @@ export function useDeleteInvestment(
   const queryClient = useQueryClient();
 
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the handler
+    // below and silently drop cache invalidation. The handler forwards to it instead.
+    ...options,
     mutationFn: (rkey: string) => deleteInvestment(config, rkey),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -75,6 +82,5 @@ export function useDeleteInvestment(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
