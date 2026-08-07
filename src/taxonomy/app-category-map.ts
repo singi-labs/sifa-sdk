@@ -15,6 +15,10 @@ export const APP_CATEGORY_MAP = {
   bluesky: 'Posts',
   tangled: 'Code',
   github: 'Code',
+  // Posts ingested from a verified Fediverse (ActivityPub) account. Like
+  // github, there is no PDS collection behind it -- its own scanner owns the
+  // app-stats row.
+  fediverse: 'Posts',
   smokesignal: 'Events',
   flashes: 'Photos',
   grain: 'Photos',
