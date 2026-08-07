@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.71
+
+### Patch Changes
+
+- c968833: Recognise Chive (chive.pub) eprints. Adds the `pub.chive.` prefix to `COLLECTION_TO_APP`, the `chive` URL patterns, and the `Research` category mapping.
+- ce3a4d5: Add `investments` to the profile section model: `ALL_SECTIONS`, `SECTION_LABELS` and the has-content predicate. It sits directly after `involvement` as its own section, so consumers get the anchor, ordering and export label without hand-maintaining a parallel list.
+
 ## 0.12.70
 
 ### Patch Changes
