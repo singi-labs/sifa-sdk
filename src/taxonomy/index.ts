@@ -131,3 +131,15 @@ export {
   type VerificationProviderId,
   type VerificationSource,
 } from './verification-providers.js';
+export {
+  INVESTMENT_ROLE_OPTIONS,
+  INVESTMENT_ROLE_LABELS,
+  INVESTMENT_STAGE_OPTIONS,
+  INVESTMENT_STAGE_LABELS,
+  INVESTMENT_STATUS_OPTIONS,
+  INVESTMENT_STATUS_LABELS,
+  getInvestmentRoleLabel,
+  getInvestmentStageLabel,
+  getInvestmentStatusLabel,
+  type InvestmentOption,
+} from './investment.js';

@@ -38,3 +38,11 @@ describe('@singi-labs/sifa-sdk/query/hooks barrel', () => {
     expect(Hooks.sifaQueryKeys.confirmation.pending()).toEqual(['sifa', 'confirmation', 'pending']);
   });
 });
+
+describe('investment mutation hooks', () => {
+  it('re-exports the create, update and delete hooks', () => {
+    expect(typeof Hooks.useCreateInvestment).toBe('function');
+    expect(typeof Hooks.useUpdateInvestment).toBe('function');
+    expect(typeof Hooks.useDeleteInvestment).toBe('function');
+  });
+});

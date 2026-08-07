@@ -286,3 +286,4 @@ export {
 export { fetchProfileSummary } from './profile-summary.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';
+export { createInvestment, updateInvestment, deleteInvestment } from './investments.js';
