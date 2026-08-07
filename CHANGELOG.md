@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.68
+
+### Patch Changes
+
+- 03dd0f1: Add `fediverse` to `APP_CATEGORY_MAP` (category `Posts`). Ingested Fediverse posts become a first-class app in the registry so users can toggle them off in their activity settings (sifa-workspace#378).
+
 ## 0.12.67
 
 ### Patch Changes
