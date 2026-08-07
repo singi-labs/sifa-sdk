@@ -427,6 +427,7 @@ export {
   ProfileHonorRecordSchema,
   ProfileInvestmentRecordSchema,
   InvestmentAmountSchema,
+  PROFILE_INVESTMENT_NSID,
   ProfileInvolvementRecordSchema,
   ArtifactLinkSchema,
   PROFILE_INVOLVEMENT_NSID,
