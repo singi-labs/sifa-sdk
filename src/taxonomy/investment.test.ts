@@ -20,7 +20,9 @@ describe('investment taxonomy', () => {
     expect(values).toContain('id.sifa.defs#angelInvestment');
     expect(values).toContain('id.sifa.defs#syndicateInvestment');
     expect(values).toContain('id.sifa.defs#limitedPartner');
-    expect(values.some((v) => /generalPartner|#gp$/i.test(v))).toBe(false);
+    expect(values).not.toContain('id.sifa.defs#generalPartner');
+    // Grouped so the anchor binds to both alternatives, not just the second.
+    expect(values.some((v) => /(?:generalPartner|#gp)$/i.test(v))).toBe(false);
   });
 
   it('labels every role, stage and status option', () => {
