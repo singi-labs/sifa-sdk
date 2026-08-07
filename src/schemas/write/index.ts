@@ -40,6 +40,7 @@ export { EducationWriteSchema, type EducationWriteInput } from './education.js';
 export { ExternalAccountWriteSchema, type ExternalAccountWriteInput } from './external-account.js';
 export { HonorWriteSchema, type HonorWriteInput } from './honor.js';
 export { InvolvementWriteSchema, type InvolvementWriteInput } from './involvement.js';
+export { InvestmentWriteSchema, type InvestmentWriteInput } from './investment.js';
 export { LanguageWriteSchema, type LanguageWriteInput } from './language.js';
 export {
   OrgEmploymentAttestationWriteSchema,

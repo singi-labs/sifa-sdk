@@ -122,3 +122,8 @@ export {
   strongRefSchema,
   uriSchema,
 } from './shared.js';
+export {
+  ProfileInvestmentRecordSchema,
+  InvestmentAmountSchema,
+  type ProfileInvestmentRecord,
+} from './profile-investment.js';

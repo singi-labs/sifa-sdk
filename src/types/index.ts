@@ -324,6 +324,41 @@ export interface ProfileInvolvementLink {
  * record, or a mapped legacy `id.sifa.profile.volunteering` record (`legacy`),
  * grouped in the UI by `kind` via the SDK's involvement-kind taxonomy.
  */
+/** One artifact link on an investment (round announcement, portfolio page, filing). */
+export interface ProfileInvestmentLink {
+  url: string;
+  kind?: string;
+  label?: string;
+}
+
+/** A capital position: money the person put in. Roles with duties are positions. */
+export interface ProfileInvestment {
+  rkey: string;
+  /** For a limited-partner entry this names the fund, not a portfolio company. */
+  company: string;
+  companyDid?: string;
+  entityRef?: string;
+  /** Resolved canonical name of the linked company. Render over `company` when present. */
+  entityName?: string;
+  /** How the capital went in. Angel, syndicate member or LP -- never GP. */
+  role?: string;
+  /** The company's funding stage at the time of the investment, not its stage today. */
+  stage?: string;
+  /** active / exited / written off / undisclosed. */
+  status?: string;
+  /** The vehicle the capital went through. Absent for a cheque in the person's own name. */
+  via?: string;
+  viaDid?: string;
+  viaEntityRef?: string;
+  /** Whole major currency units plus an ISO 4217 code. Absent unless the person opted in. */
+  amount?: { value: number; currency: string };
+  startedAt?: string;
+  endedAt?: string;
+  description?: string;
+  links?: ProfileInvestmentLink[];
+  hidden?: boolean;
+}
+
 export interface ProfileInvolvement {
   rkey: string;
   /** Involvement-kind token; drives the display heading. Legacy rows map to charity. */
@@ -775,6 +810,7 @@ export interface Profile {
   publications?: ProfilePublication[];
   volunteering?: ProfileVolunteering[];
   involvement?: ProfileInvolvement[];
+  investments?: ProfileInvestment[];
   honors?: ProfileHonor[];
   languages?: ProfileLanguage[];
   courses?: ProfileCourse[];

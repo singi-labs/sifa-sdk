@@ -164,3 +164,8 @@ export {
 } from './use-org-notification-emails.js';
 
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';
+export {
+  useCreateInvestment,
+  useUpdateInvestment,
+  useDeleteInvestment,
+} from './use-investment-mutations.js';

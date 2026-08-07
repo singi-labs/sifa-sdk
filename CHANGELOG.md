@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.69
+
+### Patch Changes
+
+- 25caa06: Add the investment layer for `id.sifa.profile.investment`: the `ProfileInvestment` type, `ProfileInvestmentRecordSchema` and `InvestmentWriteSchema`, the role/stage/status taxonomy with labels, and create/update/delete fetchers plus their TanStack hooks. Capital positions only — board seats and advisory roles remain positions.
+
 ## 0.12.68
 
 ### Patch Changes
