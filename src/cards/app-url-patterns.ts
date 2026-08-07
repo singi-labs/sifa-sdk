@@ -194,6 +194,12 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // outbound link points at the author's Aether OS space (mirrors aetheros).
     profileUrlPattern: 'https://aetheros.computer/{handle}',
   },
+  zeens: {
+    // Zeens (zeens.app) still uses its former app.photosky.* namespace. The
+    // app redirects /collection/{handle}/{rkey} to the canonical path below.
+    urlPattern: 'https://zeens.app/profile/{handle}/collections/{rkey}',
+    profileUrlPattern: 'https://zeens.app/profile/{handle}',
+  },
   chive: {
     // Chive's eprint route is a catch-all that decodes a single URI-encoded
     // at-uri segment: /eprints/<encodeURIComponent(at://did/nsid/rkey)>.
@@ -280,4 +286,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['app.atmobb.', 'atmobb'],
   // Onboard from aaronstevenwhite.io profile audit.
   ['pub.chive.', 'chive'],
+  // Onboard from helene-cook.eu profile audit. Zeens kept its old NSID.
+  ['app.photosky.', 'zeens'],
 ];
