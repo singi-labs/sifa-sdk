@@ -5,6 +5,8 @@ import {
   INVOLVEMENT_KIND_OPTIONS,
   PROFILE_INVOLVEMENT_NSID,
   getArtifactLinkKindLabel,
+  ON_BEHALF_OF_EMPLOYMENT_TYPES,
+  isOnBehalfOfApplicable,
   getInvolvementKindHeading,
   PROJECT_ROLES,
   type ActorCard,
@@ -155,5 +157,18 @@ describe('people-link types are nameable by consumers', () => {
       'id.sifa.defs#projectContributor',
     ]);
     expectTypeOf<ProjectRole>().toExtend<string>();
+  });
+});
+
+// The taxonomy barrel is an explicit allowlist, so a symbol can exist in its module
+// and be missing from the package entry point. Module-level tests cannot catch that:
+// they import the file directly. Asserted here, from the public entry, because
+// sifa-web failed to typecheck on exactly this gap.
+describe('employment-type public exports', () => {
+  it('exposes the onBehalfOf predicate and its set from the package root', () => {
+    expect(typeof isOnBehalfOfApplicable).toBe('function');
+    expect(isOnBehalfOfApplicable('id.sifa.defs#boardMember')).toBe(true);
+    expect(isOnBehalfOfApplicable('id.sifa.defs#fullTime')).toBe(false);
+    expect(ON_BEHALF_OF_EMPLOYMENT_TYPES.has('id.sifa.defs#advisor')).toBe(true);
   });
 });
