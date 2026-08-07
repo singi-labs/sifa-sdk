@@ -93,6 +93,9 @@ export const APP_CATEGORY_MAP = {
   // Onboard from aaronstevenwhite.io profile audit.
   chive: 'Research', // pub.chive.eprint.submission — preprints on chive.pub
 
+  // Onboard from helene-cook.eu profile audit.
+  zeens: 'Photos', // app.photosky.collection — curated photo collections on zeens.app
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',

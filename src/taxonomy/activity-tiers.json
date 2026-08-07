@@ -29,6 +29,11 @@
       "tier": "creation",
       "app": "atmobb"
     },
+    "app.photosky.collection": {
+      "tier": "creation",
+      "app": "zeens",
+      "notes": "A curated photo collection on Zeens (still the app.photosky namespace)."
+    },
     "app.beaconbits.beacon": {
       "tier": "creation",
       "app": "beaconbits"

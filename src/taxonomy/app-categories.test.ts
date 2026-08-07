@@ -58,6 +58,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('nooki')).toBe('Social');
     expect(categoryForApp('atmobb')).toBe('Social');
     expect(categoryForApp('chive')).toBe('Research');
+    expect(categoryForApp('zeens')).toBe('Photos');
     expect(categoryForApp('atstore')).toBe('Reviews');
     expect(categoryForApp('atfund')).toBe('Endorsements');
     expect(categoryForApp('crate')).toBe('Articles');

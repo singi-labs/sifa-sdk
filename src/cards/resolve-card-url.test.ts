@@ -31,6 +31,7 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('app.atmobb.discussion.reply')).toBe('atmobb');
     expect(getAppIdForCollection('app.atmobb.discussion.thread')).toBe('atmobb');
     expect(getAppIdForCollection('pub.chive.eprint.submission')).toBe('chive');
+    expect(getAppIdForCollection('app.photosky.collection')).toBe('zeens');
   });
 
   it('falls back to the first two NSID segments for unknown apps', () => {
@@ -379,6 +380,22 @@ describe('resolveCardUrl', () => {
       ).toBe(
         'https://chive.pub/eprints/at%3A%2F%2Fdid%3Aplc%3A34mbm5v3umztwvvgnttvcz6e%2Fpub.chive.eprint.submission%2F3mhedkrrm7w2p',
       );
+    });
+  });
+
+  describe('Zeens collections', () => {
+    it('builds the canonical handle-based collection URL', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:xt6g4fytvnnby2k2i3ocyu6w/app.photosky.collection/3mrqcieniro2j',
+          rkey: '3mrqcieniro2j',
+          authorDid: 'did:plc:xt6g4fytvnnby2k2i3ocyu6w',
+          authorHandle: 'helene-cook.eu',
+          collection: 'app.photosky.collection',
+          record: { title: 'Japan nights', visibility: 'public' },
+        }),
+      ).toBe('https://zeens.app/profile/helene-cook.eu/collections/3mrqcieniro2j');
     });
   });
 
