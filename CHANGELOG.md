@@ -1,5 +1,18 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.70
+
+### Patch Changes
+
+- f65952b: Fix the investment fetchers, which pointed at `/api/profile/investment` — an endpoint sifa-api does not have. They now delegate to the generic record route (`/api/profile/records/id.sifa.profile.investment`), like every other collection without a bespoke handler. Adds `PROFILE_INVESTMENT_NSID`.
+- 4b33a62: `TERM_MAPPINGS` is now derived from sifa-lexicons rather than maintained here.
+
+  The same facts were hand-written in two repos: as `x-skos:*` annotations on the lexicons, and as a literal table in this package. Nothing checked that they agreed.
+
+  The lexicons win, because their annotations are published to the authority PDS and are what a third party resolving `id.sifa.*` actually reads. `src/jsonld/term-mappings.json` is now a committed copy of the lexicons' generated document, refreshed by `pnpm sync:term-mappings` and drift-checked nightly against a fresh checkout of sifa-lexicons.
+
+  No API change: `TERM_MAPPINGS`, `VOCABULARIES`, `expandCurie`, `mappingsForLexicon` and `isDeliberatelyUnmapped` all behave as before, and the existing tests pass untouched.
+
 ## 0.12.69
 
 ### Patch Changes
