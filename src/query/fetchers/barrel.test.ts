@@ -53,3 +53,11 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
     expect(exported.useCreatePosition).toBeUndefined();
   });
 });
+
+describe('investment fetchers', () => {
+  it('re-exports the create, update and delete fetchers', () => {
+    expect(typeof Fetchers.createInvestment).toBe('function');
+    expect(typeof Fetchers.updateInvestment).toBe('function');
+    expect(typeof Fetchers.deleteInvestment).toBe('function');
+  });
+});

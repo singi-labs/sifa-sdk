@@ -5,6 +5,10 @@ import {
   INVOLVEMENT_KIND_OPTIONS,
   PROFILE_INVOLVEMENT_NSID,
   getArtifactLinkKindLabel,
+  INVESTMENT_ROLE_OPTIONS,
+  INVESTMENT_STATUS_OPTIONS,
+  getInvestmentRoleLabel,
+  ProfileInvestmentRecordSchema,
   ON_BEHALF_OF_EMPLOYMENT_TYPES,
   isOnBehalfOfApplicable,
   getInvolvementKindHeading,
@@ -18,6 +22,7 @@ import {
   type Profile,
   type ProfileCertification,
   type ProfileInvolvement,
+  type ProfileInvestment,
   type ProfilePosition,
 } from './index.js';
 
@@ -170,5 +175,32 @@ describe('employment-type public exports', () => {
     expect(isOnBehalfOfApplicable('id.sifa.defs#boardMember')).toBe(true);
     expect(isOnBehalfOfApplicable('id.sifa.defs#fullTime')).toBe(false);
     expect(ON_BEHALF_OF_EMPLOYMENT_TYPES.has('id.sifa.defs#advisor')).toBe(true);
+  });
+});
+
+// The taxonomy and schema barrels are explicit allowlists, and the root index is a
+// second one. Module-level tests import the file directly, so they cannot catch a
+// symbol that never leaves the package -- which is how isOnBehalfOfApplicable
+// shipped unreachable in 0.12.66.
+describe('investment public exports', () => {
+  it('exposes the investment taxonomy from the package root', () => {
+    expect(INVESTMENT_ROLE_OPTIONS.length).toBeGreaterThan(0);
+    expect(INVESTMENT_STATUS_OPTIONS.map((o) => o.value)).toContain(
+      'id.sifa.defs#investmentWrittenOff',
+    );
+    expect(getInvestmentRoleLabel('id.sifa.defs#angelInvestment')).toBe('Angel');
+  });
+
+  it('exposes the investment record schema from the package root', () => {
+    const parsed = ProfileInvestmentRecordSchema.parse({
+      company: 'ShopAgentic',
+      createdAt: '2026-04-01T00:00:00.000Z',
+    });
+    expect(parsed.company).toBe('ShopAgentic');
+  });
+
+  it('exposes the ProfileInvestment type from the package root', () => {
+    expectTypeOf<ProfileInvestment>().toHaveProperty('company');
+    expectTypeOf<ProfileInvestment>().toHaveProperty('status');
   });
 });
