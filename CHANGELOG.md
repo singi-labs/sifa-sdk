@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.72
+
+### Patch Changes
+
+- b21b2d3: Classify `pub.chive.eprint.submission` as a `creation` in the activity taxonomy. Without it `getActivityTier` reports Chive eprints as `filtered`, which fails sifa-api's taxonomy reconciliation check.
+
 ## 0.12.71
 
 ### Patch Changes
