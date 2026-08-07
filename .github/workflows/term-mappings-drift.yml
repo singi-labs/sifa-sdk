@@ -1,0 +1,64 @@
+name: Term mappings drift
+# src/jsonld/term-mappings.json is a committed copy of sifa-lexicons'
+# well-known/term-mappings.json. sifa-lexicons publishes to GitHub Packages
+# while this SDK publishes to public npm, so it cannot be a dependency; the
+# copy is refreshed by scripts/sync-term-mappings.mjs.
+#
+# A committed copy with no check is how the activity-tiers sync has been able
+# to drift silently. This closes that for term mappings: it re-runs the sync
+# against a fresh checkout of sifa-lexicons and fails if the result differs
+# from what is committed.
+#
+# Deliberately NOT a required check, matching the first-party dependency flow
+# decision: a lexicon change landing before the SDK catches up is expected and
+# should not block unrelated PRs. It is a nightly signal, plus on-demand.
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/jsonld/term-mappings.json'
+      - 'scripts/sync-term-mappings.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sifa-sdk
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: sifa-sdk
+
+      # Public repo, so no token needed. Pinned to main because that is the
+      # version whose lexicons are published to the authority PDS.
+      - name: Checkout sifa-lexicons
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: singi-labs/sifa-lexicons
+          ref: main
+          path: sifa-lexicons
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+
+      # No install: the sync script uses only Node built-ins, so nothing from
+      # either package's dependency graph runs here.
+      - name: Check for drift
+        run: |
+          node sifa-sdk/scripts/sync-term-mappings.mjs \
+            --source sifa-lexicons/well-known/term-mappings.json \
+            --check
+
+      - name: Explain a failure
+        if: failure()
+        run: |
+          echo "::error::src/jsonld/term-mappings.json no longer matches sifa-lexicons."
+          echo "The lexicons are the source of truth. To resolve:"
+          echo "  1. Check out sifa-lexicons next to sifa-sdk"
+          echo "  2. Run: pnpm sync:term-mappings"
+          echo "  3. Commit the result with a changeset"
