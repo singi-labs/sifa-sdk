@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.73
+
+### Patch Changes
+
+- a3ae6f6: Fix cache invalidation in every mutation hook. `...options` was spread after the hook's own `onSuccess`/`onError`, so a consumer passing either callback replaced the internal handler and silently lost `invalidateQueries` — stale UI after a successful write, with no error anywhere. 52 mutation blocks across 22 files, plus a guard test that fails if the ordering is reintroduced.
+- 96588d3: Recognise Zeens (zeens.app) photo collections. Adds the `app.photosky.` prefix to `COLLECTION_TO_APP`, the `zeens` URL patterns, the `Photos` category mapping, and a `creation` activity tier for `app.photosky.collection`.
+
 ## 0.12.72
 
 ### Patch Changes
