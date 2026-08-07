@@ -90,6 +90,9 @@ export const APP_CATEGORY_MAP = {
   // Onboard from trezy.codes profile audit.
   atmobb: 'Social', // app.atmobb.discussion.{thread,reply} — federated forum threads + replies
 
+  // Onboard from aaronstevenwhite.io profile audit.
+  chive: 'Research', // pub.chive.eprint.submission — preprints on chive.pub
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',

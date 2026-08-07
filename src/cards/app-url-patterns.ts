@@ -194,6 +194,14 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // outbound link points at the author's Aether OS space (mirrors aetheros).
     profileUrlPattern: 'https://aetheros.computer/{handle}',
   },
+  chive: {
+    // Chive's eprint route is a catch-all that decodes a single URI-encoded
+    // at-uri segment: /eprints/<encodeURIComponent(at://did/nsid/rkey)>.
+    // {did} and {rkey} are URI-encoded on interpolation, so the separators
+    // are pre-encoded as literals here rather than resolved bespoke.
+    urlPattern: 'https://chive.pub/eprints/at%3A%2F%2F{did}%2Fpub.chive.eprint.submission%2F{rkey}',
+    profileUrlPattern: 'https://chive.pub/authors/{did}',
+  },
 });
 
 /**
@@ -270,4 +278,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['dev.baileytownsend.guestbook.', 'guestbook'],
   // Onboard from trezy.codes profile audit.
   ['app.atmobb.', 'atmobb'],
+  // Onboard from aaronstevenwhite.io profile audit.
+  ['pub.chive.', 'chive'],
 ];

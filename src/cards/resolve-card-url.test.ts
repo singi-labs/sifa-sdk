@@ -30,6 +30,7 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('app.bsky.feed.post')).toBe('bluesky');
     expect(getAppIdForCollection('app.atmobb.discussion.reply')).toBe('atmobb');
     expect(getAppIdForCollection('app.atmobb.discussion.thread')).toBe('atmobb');
+    expect(getAppIdForCollection('pub.chive.eprint.submission')).toBe('chive');
   });
 
   it('falls back to the first two NSID segments for unknown apps', () => {
@@ -361,6 +362,23 @@ describe('resolveCardUrl', () => {
           record: { title: 'first topic', body: [] },
         }),
       ).toBe('https://atmobb.app/t/did:plc:threadowner/3mq24yxouok2n');
+    });
+  });
+
+  describe('Chive eprints', () => {
+    it('builds the URI-encoded at-uri path Chive expects', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:34mbm5v3umztwvvgnttvcz6e/pub.chive.eprint.submission/3mhedkrrm7w2p',
+          rkey: '3mhedkrrm7w2p',
+          authorDid: 'did:plc:34mbm5v3umztwvvgnttvcz6e',
+          collection: 'pub.chive.eprint.submission',
+          record: { title: 'Generating event descriptions', authors: [] },
+        }),
+      ).toBe(
+        'https://chive.pub/eprints/at%3A%2F%2Fdid%3Aplc%3A34mbm5v3umztwvvgnttvcz6e%2Fpub.chive.eprint.submission%2F3mhedkrrm7w2p',
+      );
     });
   });
 
