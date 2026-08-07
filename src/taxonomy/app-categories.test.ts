@@ -76,6 +76,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('margin')).toBe('Research');
     expect(categoryForApp('recipe')).toBe('Recipes');
     expect(categoryForApp('guestbook')).toBe('Social');
+    expect(categoryForApp('fediverse')).toBe('Posts');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
