@@ -40,6 +40,9 @@ export function useCreateReaction(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ targetUri, appId, targetCid }: CreateReactionVariables) =>
       createReaction(config, targetUri, appId, targetCid),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -48,7 +51,6 @@ export function useCreateReaction(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -65,6 +67,9 @@ export function useDeleteReaction(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ targetUri, appId }: DeleteReactionVariables) =>
       deleteReaction(config, targetUri, appId),
     onSuccess: async (result, variables, onMutateResult, context) => {
@@ -73,6 +78,5 @@ export function useDeleteReaction(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

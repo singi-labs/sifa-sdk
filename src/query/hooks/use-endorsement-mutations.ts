@@ -21,6 +21,9 @@ export function useCreateEndorsement(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: EndorsementInput) => createEndorsement(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success && endorsedHandleOrDid) {
@@ -33,6 +36,5 @@ export function useCreateEndorsement(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

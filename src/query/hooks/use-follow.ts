@@ -87,6 +87,9 @@ export function useFollow(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ handle, note }: FollowVariables) => followUser(config, handle, { note }),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -99,7 +102,6 @@ export function useFollow(
       await queryClient.invalidateQueries({ queryKey: sifaQueryKeys.follow.all() });
       await options?.onError?.(error, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -113,6 +115,9 @@ export function useUnfollow(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: ({ handle }: UnfollowVariables) => unfollowUser(config, handle),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -124,7 +129,6 @@ export function useUnfollow(
       await queryClient.invalidateQueries({ queryKey: sifaQueryKeys.follow.all() });
       await options?.onError?.(error, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 

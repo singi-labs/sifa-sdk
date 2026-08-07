@@ -46,6 +46,9 @@ export function useUpdateProfileSelf(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: UpdateProfileSelfInput) => updateProfileSelf(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -53,7 +56,6 @@ export function useUpdateProfileSelf(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -65,6 +67,9 @@ export function useUpdateProfileOverride(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (data: UpdateProfileOverrideInput) => updateProfileOverride(config, data),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -72,7 +77,6 @@ export function useUpdateProfileOverride(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -84,6 +88,9 @@ export function useRefreshPds(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: () => refreshPds(config),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -91,7 +98,6 @@ export function useRefreshPds(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -106,6 +112,9 @@ export function useUploadAvatar(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (file: Blob) => uploadAvatar(config, file),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -113,7 +122,6 @@ export function useUploadAvatar(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -125,6 +133,9 @@ export function useDeleteAvatarOverride(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: () => deleteAvatarOverride(config),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -132,6 +143,5 @@ export function useDeleteAvatarOverride(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }

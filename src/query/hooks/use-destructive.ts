@@ -61,6 +61,9 @@ export function useResetProfile(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (deletePdsData: boolean) => resetProfile(config, deletePdsData),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -68,7 +71,6 @@ export function useResetProfile(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
 
@@ -85,6 +87,9 @@ export function useDeleteAccount(
   const config = useSifaConfig();
   const queryClient = useQueryClient();
   return useMutation({
+    // Spread first: a consumer-supplied handler would otherwise replace the
+    // one below and silently drop cache invalidation (#453).
+    ...options,
     mutationFn: (deletePdsData: boolean) => deleteAccount(config, deletePdsData),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
@@ -92,6 +97,5 @@ export function useDeleteAccount(
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
-    ...options,
   });
 }
