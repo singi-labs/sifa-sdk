@@ -4,8 +4,10 @@ export {
   COMPANY_OPTIONAL_EMPLOYMENT_TYPES,
   EMPLOYMENT_TYPE_GROUPS,
   EMPLOYMENT_TYPE_LABELS,
+  ON_BEHALF_OF_EMPLOYMENT_TYPES,
   getEmploymentTypeLabel,
   isCompanyRequired,
+  isOnBehalfOfApplicable,
   type EmploymentTypeGroup,
   type EmploymentTypeOption,
 } from './employment-type.js';
