@@ -11,6 +11,7 @@ import {
   unsetPositionPrimary,
   updatePosition,
 } from './positions.js';
+import { createInvestment, updateInvestment, deleteInvestment } from './investments.js';
 import { createRecord, deleteRecord, updateRecord } from './records.js';
 import { createSkill, deleteSkill, updateSkill } from './skills.js';
 
@@ -256,5 +257,40 @@ describe('generic record CRUD escape hatch', () => {
       error: 'PDS down',
       pdsHost: 'eurosky.social',
     });
+  });
+});
+
+// sifa-api has no /api/profile/investment handler -- every collection without a
+// bespoke route is served by /api/profile/records/<collection>. Asserting the URL
+// rather than only the return shape is what catches a wrong path: a mocked fetch
+// happily resolves whatever you point it at.
+describe('investment fetchers hit the generic record route', () => {
+  it('createInvestment POSTs to /api/profile/records/id.sifa.profile.investment', async () => {
+    const fetchImpl = jsonFetch({ rkey: 'i1' });
+    const result = await createInvestment(
+      { ...baseConfig, fetch: fetchImpl },
+      {
+        company: 'ShopAgentic',
+      },
+    );
+    expect(result).toEqual({ success: true, rkey: 'i1' });
+    const [url] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/records/id.sifa.profile.investment');
+  });
+
+  it('updateInvestment PUTs to the record route with the rkey', async () => {
+    const fetchImpl = jsonFetch({});
+    await updateInvestment({ ...baseConfig, fetch: fetchImpl }, 'i1', { company: 'X' });
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/records/id.sifa.profile.investment/i1');
+    expect(init.method).toBe('PUT');
+  });
+
+  it('deleteInvestment DELETEs the record route with the rkey', async () => {
+    const fetchImpl = jsonFetch({});
+    await deleteInvestment({ ...baseConfig, fetch: fetchImpl }, 'i1');
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/records/id.sifa.profile.investment/i1');
+    expect(init.method).toBe('DELETE');
   });
 });

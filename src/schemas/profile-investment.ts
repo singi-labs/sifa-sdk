@@ -31,6 +31,9 @@ export const InvestmentAmountSchema = z.object({
   currency: z.string().length(3),
 });
 
+/** Collection NSID for investment records. */
+export const PROFILE_INVESTMENT_NSID = 'id.sifa.profile.investment';
+
 /** Zod schema for `id.sifa.profile.investment` records. */
 export const ProfileInvestmentRecordSchema = z
   .object({

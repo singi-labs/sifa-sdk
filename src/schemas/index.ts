@@ -125,5 +125,6 @@ export {
 export {
   ProfileInvestmentRecordSchema,
   InvestmentAmountSchema,
+  PROFILE_INVESTMENT_NSID,
   type ProfileInvestmentRecord,
 } from './profile-investment.js';
