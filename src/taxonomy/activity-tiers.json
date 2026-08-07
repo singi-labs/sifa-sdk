@@ -537,6 +537,11 @@
       "app": "streamplace",
       "notes": "Stream configuration metadata."
     },
+    "pub.chive.eprint.submission": {
+      "tier": "creation",
+      "app": "chive",
+      "notes": "An authored preprint: title, ordered authors with affiliations, abstract."
+    },
     "pub.leaflet.authFullPermissions": {
       "tier": "filtered",
       "app": "leaflet",
