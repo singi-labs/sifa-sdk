@@ -101,6 +101,7 @@ export { useStats } from './use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './use-apps.js';
 export {
   useCanonicalSkillSearch,
+  useSearchCompanies,
   useSearchFilters,
   useSearchProfiles,
   useSkillSuggestions,

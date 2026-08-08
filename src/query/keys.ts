@@ -30,6 +30,8 @@ export const sifaQueryKeys = {
     all: () => ['sifa', 'search'] as const,
     profiles: (filters: Record<string, unknown>) =>
       ['sifa', 'search', 'profiles', filters] as const,
+    companies: (filters: Record<string, unknown>) =>
+      ['sifa', 'search', 'companies', filters] as const,
     skills: (query: string) => ['sifa', 'search', 'skills', query] as const,
     canonicalSkills: (query: string, limit: number) =>
       ['sifa', 'search', 'canonical-skills', query, limit] as const,

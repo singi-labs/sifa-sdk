@@ -67,8 +67,34 @@ export interface FilterOptions {
   openTo?: { token: string; count: number }[];
 }
 
+/** Company entry returned by company search (workspace#299). */
+export interface CompanySearchResult {
+  /** Immutable catalogue id; the durable `/c/{publicId}` link. */
+  publicId: string;
+  name: string;
+  domain: string | null;
+  country: string | null;
+  industry: string | null;
+  logoUrl: string | null;
+  employeeCount: number | null;
+}
+
+export interface CompanySearchFilters {
+  q?: string;
+  /** ISO 3166-1 alpha-2. */
+  country?: string;
+  industry?: string;
+  limit?: number;
+}
+
+export interface CompanySearchResponse {
+  results: CompanySearchResult[];
+  hasMore: boolean;
+}
+
 const EMPTY_SEARCH: SearchResponse = { profiles: [], total: 0, limit: 20, offset: 0 };
 const EMPTY_FILTERS: FilterOptions = { countries: [], industries: [], apps: [], openTo: [] };
+const EMPTY_COMPANY_SEARCH: CompanySearchResponse = { results: [], hasMore: false };
 
 /**
  * Search profiles by free-text query and optional filters. Returns an
@@ -98,6 +124,36 @@ export async function fetchSearchProfiles(
   if (params.size === 0) return EMPTY_SEARCH;
 
   return apiFetch<SearchResponse>(config, `/api/search/profiles?${params.toString()}`, {
+    cache: 'no-store',
+    ...options,
+  });
+}
+
+/**
+ * Company search over the entity catalogue (workspace#299).
+ *
+ * A category of its own rather than part of profile search: the two rank
+ * differently and carry different filters, and a slow category should not hold
+ * up the rest of a blended results page.
+ *
+ * An empty query returns nothing without a network call. The API rejects a
+ * blank `q` rather than scanning ~200k rows, so asking would only spend a round
+ * trip to be told no.
+ */
+export async function fetchSearchCompanies(
+  config: SifaApiConfig,
+  filters: CompanySearchFilters,
+  options: ApiFetchOptions = {},
+): Promise<CompanySearchResponse> {
+  const q = filters.q?.trim();
+  if (!q) return EMPTY_COMPANY_SEARCH;
+
+  const params = new URLSearchParams({ q });
+  if (filters.country) params.set('country', filters.country);
+  if (filters.industry) params.set('industry', filters.industry);
+  if (filters.limit !== undefined) params.set('limit', String(filters.limit));
+
+  return apiFetch<CompanySearchResponse>(config, `/api/search/companies?${params.toString()}`, {
     cache: 'no-store',
     ...options,
   });

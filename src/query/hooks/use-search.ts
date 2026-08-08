@@ -5,10 +5,13 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import type { SkillSuggestion } from '../../types/index.js';
 import { useSifaConfig } from '../config.js';
 import {
+  fetchSearchCompanies,
   fetchSearchFilters,
   fetchSearchProfiles,
   fetchSkillSuggestions,
   searchSkills,
+  type CompanySearchFilters,
+  type CompanySearchResponse,
   type FilterOptions,
   type SearchFilters,
   type SearchResponse,
@@ -100,6 +103,31 @@ export function useSearchFilters(
   return useQuery({
     queryKey: sifaQueryKeys.search.filters(),
     queryFn: () => fetchSearchFilters(config),
+    ...options,
+  });
+}
+
+/**
+ * Company search (workspace#299). Separate hook from `useSearchProfiles` so a
+ * blended results page can render each category as it resolves instead of
+ * waiting for the slowest.
+ */
+export function useSearchCompanies(
+  filters: CompanySearchFilters,
+  options?: Omit<
+    UseQueryOptions<
+      CompanySearchResponse,
+      Error,
+      CompanySearchResponse,
+      ReturnType<typeof sifaQueryKeys.search.companies>
+    >,
+    'queryKey' | 'queryFn'
+  >,
+) {
+  const config = useSifaConfig();
+  return useQuery({
+    queryKey: sifaQueryKeys.search.companies(filters as Record<string, unknown>),
+    queryFn: () => fetchSearchCompanies(config, filters),
     ...options,
   });
 }
