@@ -129,10 +129,14 @@ export {
   type HiddenApp,
 } from './apps.js';
 export {
+  fetchSearchCompanies,
   fetchSearchFilters,
   fetchSearchProfiles,
   fetchSkillSuggestions,
   searchSkills,
+  type CompanySearchFilters,
+  type CompanySearchResponse,
+  type CompanySearchResult,
   type FilterOptions,
   type ProfileSearchResult,
   type SearchFilters,
