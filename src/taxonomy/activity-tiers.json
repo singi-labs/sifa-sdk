@@ -29,6 +29,21 @@
       "tier": "creation",
       "app": "atmobb"
     },
+    "at.locale.project": {
+      "tier": "creation",
+      "app": "locale",
+      "notes": "A localization project the actor owns: git source, source and target locales."
+    },
+    "at.locale.translation": {
+      "tier": "creation",
+      "app": "locale",
+      "notes": "One authored translated string for a message key in a target locale."
+    },
+    "blog.pckt.mini.post": {
+      "tier": "creation",
+      "app": "pckt",
+      "notes": "A pckt microblog post. Long-form pckt posts are site.standard.document instead."
+    },
     "app.photosky.collection": {
       "tier": "creation",
       "app": "zeens",
