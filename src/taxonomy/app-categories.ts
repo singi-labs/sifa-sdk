@@ -36,6 +36,7 @@ export const APP_CATEGORIES = {
   Reviews: { phosphorIcon: 'Star' },
   Slides: { phosphorIcon: 'Presentation' },
   Social: { phosphorIcon: 'UsersThree' },
+  Translations: { phosphorIcon: 'Translate' },
   Verification: { phosphorIcon: 'Key' },
   Video: { phosphorIcon: 'VideoCamera' },
 } as const;
