@@ -1,6 +1,6 @@
 import type { ProfileSkill } from '../types/index.js';
 
-import { CATEGORY_ORDER } from './skill-categories.js';
+import { CATEGORY_ORDER, normalizeSkillCategory } from './skill-categories.js';
 
 export type MergedProfileSkill = ProfileSkill & {
   mergedRkeys: string[];
@@ -58,7 +58,9 @@ export function groupSkillsByCategory<T extends ProfileSkill>(skills: T[]): [str
   const grouped = new Map<string, T[]>();
 
   for (const skill of skills) {
-    const normalised = skill.category?.toLowerCase().trim() ?? '';
+    // Accepts the lexicon's own ref form (id.sifa.defs#technical) as well as
+    // the bare token, so a record written to spec is not bucketed as "other".
+    const normalised = normalizeSkillCategory(skill.category) ?? '';
     const key = (CATEGORY_ORDER as readonly string[]).includes(normalised) ? normalised : 'other';
     const bucket = grouped.get(key) ?? [];
     bucket.push(skill);
