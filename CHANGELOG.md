@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.74
+
+### Patch Changes
+
+- 3567655: Add a `Translations` app category (Phosphor `Translate`) and map two new apps: `locale` (localization projects and translation strings on locale.at) and `pckt` (microblog posts that have no `site.standard.document` twin).
+
 ## 0.12.73
 
 ### Patch Changes
