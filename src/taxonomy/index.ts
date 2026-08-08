@@ -49,6 +49,7 @@ export {
 } from './platforms.js';
 export {
   CATEGORY_LABELS,
+  normalizeSkillCategory,
   CATEGORY_ORDER,
   SKILL_CATEGORIES,
   type SkillCategory,
