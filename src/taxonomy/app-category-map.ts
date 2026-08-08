@@ -96,6 +96,10 @@ export const APP_CATEGORY_MAP = {
   // Onboard from helene-cook.eu profile audit.
   zeens: 'Photos', // app.photosky.collection — curated photo collections on zeens.app
 
+  // Onboard from scanash.com profile audit.
+  locale: 'Translations', // at.locale.{project,translation} — localization projects and authored translation strings on locale.at
+  pckt: 'Posts', // blog.pckt.mini.post — microblog posts with no site.standard.document twin
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',

@@ -36,6 +36,7 @@ describe('APP_CATEGORIES', () => {
     expect(getAppCategoryIcon('Music')).toBe('MusicNote');
     expect(getAppCategoryIcon('Q&A')).toBe('Question');
     expect(getAppCategoryIcon('Domains')).toBe('Globe');
+    expect(getAppCategoryIcon('Translations')).toBe('Translate');
   });
 });
 
@@ -79,6 +80,8 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('recipe')).toBe('Recipes');
     expect(categoryForApp('guestbook')).toBe('Social');
     expect(categoryForApp('fediverse')).toBe('Posts');
+    expect(categoryForApp('locale')).toBe('Translations');
+    expect(categoryForApp('pckt')).toBe('Posts');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {
