@@ -129,6 +129,56 @@ describe('ProjectWriteSchema, PublicationWriteSchema, VolunteeringWriteSchema, L
   });
 });
 
+describe('PublicationWriteSchema authors', () => {
+  // The regression this schema fixes: `authors` was absent, so an object
+  // schema stripped every co-author and the write endpoint persisted a
+  // publication with none. Assert survival, not just acceptance -- parsing
+  // succeeded before too, silently and with the field gone.
+  it('keeps a name-only co-author', () => {
+    const parsed = PublicationWriteSchema.safeParse({
+      title: 'A paper',
+      authors: [{ name: 'A. Example' }],
+    });
+    expect(parsed.success).toBe(true);
+    expect(parsed.success && parsed.data.authors).toEqual([{ name: 'A. Example' }]);
+  });
+
+  it('keeps the DID on a co-author linked to an account', () => {
+    const parsed = PublicationWriteSchema.safeParse({
+      title: 'A paper',
+      authors: [{ name: 'A. Example', did: 'did:plc:alice' }],
+    });
+    expect(parsed.success && parsed.data.authors?.[0]?.did).toBe('did:plc:alice');
+  });
+
+  it('rejects a co-author with no name', () => {
+    // The lexicon requires it: an entry with no name is an empty line in
+    // someone's author list, and nothing renders it.
+    expect(PublicationWriteSchema.safeParse({ title: 'A paper', authors: [{}] }).success).toBe(
+      false,
+    );
+    expect(
+      PublicationWriteSchema.safeParse({ title: 'A paper', authors: [{ name: '' }] }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a malformed DID rather than storing it', () => {
+    expect(
+      PublicationWriteSchema.safeParse({
+        title: 'A paper',
+        authors: [{ name: 'A. Example', did: 'alice.example.com' }],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects more than 50 co-authors', () => {
+    const many = Array.from({ length: 51 }, (_, i) => ({ name: `Author ${i}` }));
+    expect(PublicationWriteSchema.safeParse({ title: 'A paper', authors: many }).success).toBe(
+      false,
+    );
+  });
+});
+
 describe('ProjectWriteSchema members', () => {
   it('accepts a member with only a did', () => {
     const parsed = ProjectWriteSchema.safeParse({

@@ -67,6 +67,10 @@ export { PresentationWriteSchema, type PresentationWriteInput } from './presenta
 export { ProfileLocationWriteSchema, type ProfileLocationWriteInput } from './profile-location.js';
 export { ProfileSelfWriteSchema, type ProfileSelfWriteInput } from './profile-self.js';
 export { ProjectWriteSchema, type ProjectWriteInput } from './project.js';
-export { PublicationWriteSchema, type PublicationWriteInput } from './publication.js';
+export {
+  PublicationWriteSchema,
+  publicationAuthorWriteSchema,
+  type PublicationWriteInput,
+} from './publication.js';
 export { SkillWriteSchema, type SkillWriteInput } from './skill.js';
 export { VolunteeringWriteSchema, type VolunteeringWriteInput } from './volunteering.js';
