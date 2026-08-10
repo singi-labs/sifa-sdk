@@ -8,8 +8,12 @@
 //
 // It is a committed copy rather than a dependency because sifa-lexicons
 // publishes to GitHub Packages (private registry) while this SDK publishes to
-// public npm, so it cannot be depended on at runtime. Same constraint and same
-// shape as scripts/sync-activity-tiers.mjs.
+// public npm, so it cannot be depended on at runtime.
+//
+// Note the direction: term mappings flow lexicons -> SDK because the x-skos:*
+// annotations are published to the authority PDS as part of the lexicon
+// records. The activity taxonomy flows the other way (this SDK owns it),
+// because it is editorial rendering policy and never reaches a PDS.
 //
 // Drift is caught by .github/workflows/term-mappings-drift.yml, which runs
 // this script against a fresh checkout of sifa-lexicons and fails if the
