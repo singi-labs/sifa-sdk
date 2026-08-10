@@ -104,6 +104,7 @@ export const sifaQueryKeys = {
     // Also session-scoped: the AppView picks the candidate from the viewer's
     // own follows, dismissals and blocks.
     reciprocity: () => ['sifa', 'endorsement', 'reciprocity'] as const,
+    received: (did: string) => ['sifa', 'endorsement', 'received', did] as const,
   },
 
   confirmation: {
@@ -191,6 +192,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.endorsement.count>
   | ReturnType<typeof sifaQueryKeys.endorsement.pending>
   | ReturnType<typeof sifaQueryKeys.endorsement.reciprocity>
+  | ReturnType<typeof sifaQueryKeys.endorsement.received>
   | ReturnType<typeof sifaQueryKeys.confirmation.all>
   | ReturnType<typeof sifaQueryKeys.confirmation.pending>
   | ReturnType<typeof sifaQueryKeys.confirmation.given>
