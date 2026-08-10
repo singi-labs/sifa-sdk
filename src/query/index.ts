@@ -71,6 +71,11 @@ export {
   type ConfirmEndorsementInput,
 } from './fetchers/endorsements.js';
 export {
+  fetchReceivedEndorsements,
+  type ReceivedEndorsement,
+  type ReceivedEndorsementsPage,
+} from './fetchers/received-endorsements.js';
+export {
   fetchReciprocityCandidate,
   type ReciprocityCandidate,
   type ReciprocitySkill,
@@ -331,6 +336,7 @@ export {
   type UpdateExternalAccountVariables,
 } from './hooks/use-external-accounts.js';
 export { useCreateEndorsement } from './hooks/use-endorsement-mutations.js';
+export { useReceivedEndorsements } from './hooks/use-received-endorsements.js';
 export { useReciprocityCandidate } from './hooks/use-reciprocity.js';
 export {
   usePendingEndorsements,
