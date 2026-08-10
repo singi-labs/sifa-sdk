@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// This SDK is the source of truth for the activity taxonomy.
+//
+// It used to be synced from sifa-lexicons, but the taxonomy is editorial
+// rather than protocol: none of it is published to a PDS, and it governs how
+// Sifa renders records rather than what any record means. Keeping it in the
+// lexicon repo meant it lived where nobody edited it, and the two copies
+// drifted 60 entries apart before anything noticed.
+//
+// It is served publicly at https://sifa.id/.well-known/sifa-activity-tiers.json
+// so third-party clients and sibling AppViews can read Sifa's choices rather
+// than infer them.
 import rawTaxonomy from './activity-tiers.json' with { type: 'json' };
 
 export type ActivityTier = 'creation' | 'action' | 'filtered';

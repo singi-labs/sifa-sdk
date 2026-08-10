@@ -166,7 +166,6 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm run build && changeset publish",
-    "sync:activity-tiers": "node scripts/sync-activity-tiers.mjs",
     "build:flags": "node scripts/build-flags.mjs",
     "sync:term-mappings": "node scripts/sync-term-mappings.mjs"
   },
