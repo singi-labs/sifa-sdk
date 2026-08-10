@@ -1,5 +1,24 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.78
+
+### Patch Changes
+
+- 0c631fd: This package is now the source of truth for the activity taxonomy, and `scripts/sync-activity-tiers.mjs` is removed.
+
+  The script pulled `src/taxonomy/activity-tiers.json` from sifa-lexicons, but the two had drifted 60 entries apart: every substantive taxonomy change landed here, none upstream. Running the sync would have deleted real work.
+
+  The taxonomy is editorial rather than protocol. None of it is published to a PDS, and it governs how Sifa renders records rather than what any record means, so it belongs with the rendering code that acts on it. It is now served at `https://sifa.id/.well-known/sifa-activity-tiers.json`.
+
+  No API change: `ACTIVITY_TIERS`, `getActivityTier`, `getLexiconEntry`, `getTierMeta` and `getActivityTaxonomyVersion` are untouched.
+
+- d8347a6: Add `fetchReciprocityCandidate` and `useReciprocityCandidate`: someone the
+  signed-in user follows on Sifa whose skills they could endorse. The AppView
+  does the picking (dismissals, blocks, has-a-skill, twelve-hour rotation), so
+  this is a plain read. Returns `null` both when nobody is left to suggest and on
+  failure, so a broken suggestion cannot break the page hosting it.
+- 7b72f91: Add `AuthorSuggestion` and `ProfileView.authorSuggestions`, typing the owner-only co-author matches the AppView already returns. A suggestion joins to a publication contributor by verified ORCID iD and asserts nothing until the owner acts on it.
+
 ## 0.12.77
 
 ### Patch Changes
