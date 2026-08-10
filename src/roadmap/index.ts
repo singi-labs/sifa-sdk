@@ -70,12 +70,13 @@ export const ROADMAP_ITEM_META: Record<string, RoadmapItemMeta> = {
     issues: [218],
   },
   rssFediverseIngestion: {
-    description: 'Pull in posts from RSS feeds and the Fediverse.',
-    issues: [111],
+    description: 'Fediverse posts are in your stream. RSS feeds are next.',
+    issues: [111, 153],
   },
   githubFeedIngestion: {
-    description: 'Bring your GitHub activity into your track record.',
-    issues: [95],
+    description:
+      'GitHub activity is in your track record. GitLab and org-owned repositories are next.',
+    issues: [391, 392],
   },
   compensationInformation: {
     description: 'Add optional pay and compensation context to your roles.',
