@@ -101,6 +101,9 @@ export const sifaQueryKeys = {
     // Scoped to the session rather than a DID -- the AppView reads the subject
     // from the session cookie, so there is only ever one inbox per client.
     pending: () => ['sifa', 'endorsement', 'pending'] as const,
+    // Also session-scoped: the AppView picks the candidate from the viewer's
+    // own follows, dismissals and blocks.
+    reciprocity: () => ['sifa', 'endorsement', 'reciprocity'] as const,
   },
 
   confirmation: {
@@ -187,6 +190,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.endorsement.all>
   | ReturnType<typeof sifaQueryKeys.endorsement.count>
   | ReturnType<typeof sifaQueryKeys.endorsement.pending>
+  | ReturnType<typeof sifaQueryKeys.endorsement.reciprocity>
   | ReturnType<typeof sifaQueryKeys.confirmation.all>
   | ReturnType<typeof sifaQueryKeys.confirmation.pending>
   | ReturnType<typeof sifaQueryKeys.confirmation.given>
