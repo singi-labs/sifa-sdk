@@ -43,6 +43,7 @@ export type {
   ProfilePresentation,
   CoSpeaker,
   ActorCard,
+  AuthorSuggestion,
   ProjectMemberCard,
   ProjectRole,
   ProfilePresentationDelivery,

@@ -214,6 +214,26 @@ export interface PublicationContributor {
   handle?: string;
 }
 
+/**
+ * A co-author an importer produced that the profile owner can offer to link to
+ * a Sifa account.
+ *
+ * Matched on verified ORCID iD only, never on name: "A. Example", "Alice
+ * Example", and "Example, A." are one person, and "J. Smith" is four hundred.
+ *
+ * A suggestion, never a claim. Nothing reaches any repository until the owner
+ * acts, which is what makes ORCID re-syncing safe: matching writes nothing, so
+ * a re-sync cannot generate a confirmation request.
+ */
+export interface AuthorSuggestion {
+  /** ORCID iD the match was made on. The join key back to a contributor. */
+  orcidId: string;
+  did: string;
+  handle: string;
+  /** Display name on the matched account, for showing what is being proposed. */
+  displayName?: string;
+}
+
 export interface ProfilePublication {
   rkey: string;
   title: string;
@@ -808,6 +828,14 @@ export interface Profile {
   certifications?: ProfileCertification[];
   projects?: ProfileProject[];
   publications?: ProfilePublication[];
+  /**
+   * Co-authors on imported publications that resolve to a Sifa account.
+   *
+   * Owner-only, and absent rather than empty for every other viewer, so a
+   * consumer cannot tell "no suggestions" from "not yours". Join to a
+   * publication contributor by `orcidId`.
+   */
+  authorSuggestions?: AuthorSuggestion[];
   volunteering?: ProfileVolunteering[];
   involvement?: ProfileInvolvement[];
   investments?: ProfileInvestment[];
