@@ -76,6 +76,11 @@ export {
   type ConfirmEndorsementInput,
 } from './endorsements.js';
 export {
+  fetchReciprocityCandidate,
+  type ReciprocityCandidate,
+  type ReciprocitySkill,
+} from './reciprocity.js';
+export {
   fetchPendingEndorsements,
   dismissEndorsement,
   type PendingEndorsement,
