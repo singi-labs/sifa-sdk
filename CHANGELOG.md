@@ -1,5 +1,14 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.80
+
+### Patch Changes
+
+- fd88ee4: Add `fetchReceivedEndorsements` and `useReceivedEndorsements`: confirmed
+  endorsements a DID has received, newest first, carrying the endorser's handle,
+  display name and avatar. `fetchEndorsementCount` already hit this endpoint and
+  threw the payload away; this returns it.
+
 ## 0.12.79
 
 ### Patch Changes
