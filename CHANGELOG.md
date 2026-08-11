@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.82
+
+### Patch Changes
+
+- c544545: Add the `rss` app to APP_CATEGORY_MAP, categorized as Articles. Backs RSS and Atom feed ingestion in sifa-api, whose app registry throws at import when an app id has no category here.
+
 ## 0.12.81
 
 ### Patch Changes
