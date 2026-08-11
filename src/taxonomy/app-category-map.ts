@@ -19,6 +19,10 @@ export const APP_CATEGORY_MAP = {
   // github, there is no PDS collection behind it -- its own scanner owns the
   // app-stats row.
   fediverse: 'Posts',
+  // Items ingested from a verified RSS or Atom feed: blogs, newsletters,
+  // podcast and channel feeds. Categorized as Articles rather than Posts
+  // because the common case is a long-form blog entry with a title.
+  rss: 'Articles',
   smokesignal: 'Events',
   flashes: 'Photos',
   grain: 'Photos',
