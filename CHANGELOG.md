@@ -1,5 +1,13 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.83
+
+### Patch Changes
+
+- 5bbc607: Add optional `customDomain` to `OrgFloorVerdict`: whether the account's handle
+  is a custom registrable apex domain, i.e. eligible to claim an org page. Lets
+  the claim flow gate on eligibility up front instead of after the write.
+
 ## 0.12.82
 
 ### Patch Changes
