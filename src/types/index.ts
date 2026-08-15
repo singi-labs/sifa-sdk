@@ -703,6 +703,22 @@ export interface OrgFloorVerdict {
   orgProfile?: OrgProfileView;
   recognized: boolean;
   /**
+   * Whether the account's handle is a custom registrable apex domain, i.e.
+   * eligible to CLAIM an org page (#306). Mirrors the `isBindableHandleDomain`
+   * floor the api enforces at write time, surfaced so the `/claim` wizard can
+   * gate on eligibility BEFORE the authority consent rather than failing the
+   * final PDS write. Independent of `isOrg`/`recognized` -- purely the handle's
+   * shape, so a `*.bsky.social` account reads false and a not-yet-claimed
+   * custom domain reads true.
+   *
+   * Optional here (a tolerant reader): the api always emits it, but a profile
+   * payload cached before this field shipped may omit it. Gate on the explicit
+   * `customDomain === false` for the up-front block; treat absent as unknown and
+   * let the api 403 stay the authoritative backstop -- never enforce on this
+   * field alone.
+   */
+  customDomain?: boolean;
+  /**
    * Whether the account also keeps a visible personal profile, from
    * `id.sifa.org.profile.personalProfileVisible`. True only for a claimed org
    * (`isOrg`) that opted in -- the sole-trader case, where one DID carries both
