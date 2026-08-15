@@ -776,6 +776,12 @@ export interface Profile {
    * `Person.familyName`. See `givenName` for fallback guidance.
    */
   familyName?: string;
+  /**
+   * Free-form phonetic respelling of the user's name from
+   * `id.sifa.profile.self.namePronunciation` (e.g. `Foo-kuh`). Optional; a
+   * native field with no `app.bsky.actor.profile` equivalent. Text only.
+   */
+  namePronunciation?: string;
   avatar?: string;
   pronouns?: string;
   headline?: string;

@@ -29,6 +29,8 @@ export interface UpdateProfileSelfInput {
   givenName?: string;
   /** Schema.org Person.familyName from id.sifa.profile.self.familyName. */
   familyName?: string;
+  /** Free-form phonetic respelling of the name from id.sifa.profile.self.namePronunciation. */
+  namePronunciation?: string;
   industries?: ProfileIndustryInput[];
   location?: ProfileSelfLocation;
   website?: string;
