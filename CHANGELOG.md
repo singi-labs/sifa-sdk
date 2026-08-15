@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.84
+
+### Patch Changes
+
+- dc884aa: Add `namePronunciation` to the profile.self record schema, write schema, `Profile` view type, and `updateProfileSelf` input. Free-form phonetic respelling of the user's name (e.g. `Foo-kuh`), capped at 64 graphemes.
+
 ## 0.12.83
 
 ### Patch Changes
