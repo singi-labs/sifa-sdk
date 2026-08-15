@@ -19,6 +19,7 @@ export const ProfileSelfWriteSchema = z
     about: z.string().max(50000).optional(),
     givenName: z.string().max(640).optional(),
     familyName: z.string().max(640).optional(),
+    namePronunciation: z.string().max(640).optional(),
     industries: z
       .array(
         z.object({

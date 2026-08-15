@@ -74,6 +74,19 @@ describe('updateProfileSelf', () => {
     expect(JSON.parse(init.body as string)).toEqual({ headline: 'Builder', about: 'About me' });
   });
 
+  it('includes namePronunciation in the body when provided', async () => {
+    const fetchImpl = jsonFetch({});
+    await updateProfileSelf(
+      { ...baseConfig, fetch: fetchImpl },
+      { givenName: 'Foeke', namePronunciation: 'Foo-kuh' },
+    );
+    const [, init] = getCall(fetchImpl);
+    expect(JSON.parse(init.body as string)).toEqual({
+      givenName: 'Foeke',
+      namePronunciation: 'Foo-kuh',
+    });
+  });
+
   it('returns { success: false, error } on HTTP failure', async () => {
     const fetchImpl = jsonFetch({ message: 'Unauthorized' }, 401);
     const result = await updateProfileSelf({ ...baseConfig, fetch: fetchImpl }, {});

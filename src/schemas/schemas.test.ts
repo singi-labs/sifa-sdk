@@ -314,6 +314,21 @@ describe('ProfileSelfRecordSchema', () => {
     );
   });
 
+  it('accepts namePronunciation as an optional string', () => {
+    expect(
+      ProfileSelfRecordSchema.safeParse({ namePronunciation: 'Foo-kuh', createdAt: NOW }).success,
+    ).toBe(true);
+    const parsed = ProfileSelfRecordSchema.parse({ createdAt: NOW });
+    expect(parsed.namePronunciation).toBeUndefined();
+  });
+
+  it('caps namePronunciation at 64 graphemes', () => {
+    const long = 'a'.repeat(65);
+    expect(
+      ProfileSelfRecordSchema.safeParse({ namePronunciation: long, createdAt: NOW }).success,
+    ).toBe(false);
+  });
+
   it('rejects non-string givenName/familyName values', () => {
     expect(ProfileSelfRecordSchema.safeParse({ givenName: 42, createdAt: NOW }).success).toBe(
       false,

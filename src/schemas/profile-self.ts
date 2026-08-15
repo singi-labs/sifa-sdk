@@ -15,6 +15,7 @@ export const ProfileSelfRecordSchema = z.object({
   industry: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   givenName: z.string().refine(maxGraphemes(64)).max(640).optional(),
   familyName: z.string().refine(maxGraphemes(64)).max(640).optional(),
+  namePronunciation: z.string().refine(maxGraphemes(64)).max(640).optional(),
   location: z.unknown().optional(),
   openTo: z.array(z.string()).max(10).optional(),
   preferredWorkplace: z.array(z.string()).max(3).optional(),

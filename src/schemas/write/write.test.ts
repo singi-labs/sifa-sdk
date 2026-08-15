@@ -241,6 +241,13 @@ describe('ProfileSelfWriteSchema', () => {
   it('caps headline at 300', () => {
     expect(ProfileSelfWriteSchema.safeParse({ headline: 'x'.repeat(301) }).success).toBe(false);
   });
+
+  it('accepts namePronunciation and caps it at 640 bytes', () => {
+    expect(ProfileSelfWriteSchema.safeParse({ namePronunciation: 'Foo-kuh' }).success).toBe(true);
+    expect(ProfileSelfWriteSchema.safeParse({ namePronunciation: 'x'.repeat(641) }).success).toBe(
+      false,
+    );
+  });
 });
 
 describe('ProfileLocationWriteSchema', () => {
