@@ -27,16 +27,19 @@ export { fetchAtFundLink, fetchProfile } from './profile.js';
 export { fetchGetProfileView } from './get-profile-view.js';
 export {
   deleteAvatarOverride,
+  deleteNamePronunciationAudio,
   refreshPds,
   updateProfileOverride,
   updateProfileSelf,
   uploadAvatar,
+  uploadNamePronunciationAudio,
   type ProfileIndustryInput,
   type ProfileSelfLocation,
   type RefreshPdsResult,
   type UpdateProfileOverrideInput,
   type UpdateProfileSelfInput,
   type UploadAvatarResult,
+  type UploadPronunciationAudioResult,
 } from './profile-mutations.js';
 export {
   createPosition,

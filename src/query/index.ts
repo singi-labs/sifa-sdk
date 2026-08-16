@@ -16,16 +16,19 @@ export { fetchGetProfileView } from './fetchers/get-profile-view.js';
 export { fetchProfileSummary } from './fetchers/profile-summary.js';
 export {
   deleteAvatarOverride,
+  deleteNamePronunciationAudio,
   refreshPds,
   updateProfileOverride,
   updateProfileSelf,
   uploadAvatar,
+  uploadNamePronunciationAudio,
   type ProfileIndustryInput,
   type ProfileSelfLocation,
   type RefreshPdsResult,
   type UpdateProfileOverrideInput,
   type UpdateProfileSelfInput,
   type UploadAvatarResult,
+  type UploadPronunciationAudioResult,
 } from './fetchers/profile-mutations.js';
 export {
   createPosition,
@@ -281,10 +284,12 @@ export { useAtFundLink, useProfile } from './hooks/use-profile.js';
 export { useGetProfileView } from './hooks/use-get-profile-view.js';
 export {
   useDeleteAvatarOverride,
+  useDeleteNamePronunciationAudio,
   useRefreshPds,
   useUpdateProfileOverride,
   useUpdateProfileSelf,
   useUploadAvatar,
+  useUploadNamePronunciationAudio,
 } from './hooks/use-profile-mutations.js';
 export { useCreatePosition } from './hooks/use-create-position.js';
 export {

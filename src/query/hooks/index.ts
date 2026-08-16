@@ -16,10 +16,12 @@ export { useAtFundLink, useProfile } from './use-profile.js';
 export { useGetProfileView } from './use-get-profile-view.js';
 export {
   useDeleteAvatarOverride,
+  useDeleteNamePronunciationAudio,
   useRefreshPds,
   useUpdateProfileOverride,
   useUpdateProfileSelf,
   useUploadAvatar,
+  useUploadNamePronunciationAudio,
 } from './use-profile-mutations.js';
 export { useCreatePosition } from './use-create-position.js';
 export {

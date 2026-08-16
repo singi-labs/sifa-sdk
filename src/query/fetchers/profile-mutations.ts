@@ -146,3 +146,58 @@ export function deleteAvatarOverride(
 ): Promise<WriteResult> {
   return apiWrite(config, '/api/profile/avatar', 'DELETE', options);
 }
+
+/** Extended result for {@link uploadNamePronunciationAudio}. */
+export interface UploadPronunciationAudioResult extends WriteResult {
+  /** Publicly accessible URL of the newly uploaded audio clip. */
+  url?: string;
+}
+
+/**
+ * Upload a name-pronunciation audio clip via `multipart/form-data`. Pass a
+ * `File` (browser) or any `Blob` (Expo, node). The SDK leaves `Content-Type`
+ * unset so the runtime sets the multipart boundary automatically.
+ *
+ * Never throws -- inspect `result.success` and `result.url`.
+ */
+export async function uploadNamePronunciationAudio(
+  config: SifaApiConfig,
+  file: Blob,
+  options: ApiFetchOptions = {},
+): Promise<UploadPronunciationAudioResult> {
+  const fetchFn = config.fetch ?? globalThis.fetch;
+  const url = `${config.baseUrl}/api/profile/pronunciation-audio`;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetchFn(url, {
+      method: 'POST',
+      credentials: options.credentials ?? 'include',
+      body: formData,
+      signal: options.signal ?? AbortSignal.timeout(options.timeoutMs ?? 30_000),
+      headers: options.headers,
+    });
+    if (!res.ok) {
+      const errBody = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        pdsHost?: string;
+      };
+      const msg = errBody.message ?? `Request failed (${res.status})`;
+      const pdsHost = errBody.pdsHost;
+      return { success: false, error: msg, ...(pdsHost ? { pdsHost } : {}) };
+    }
+    const data = (await res.json()) as { url: string };
+    return { success: true, url: data.url };
+  } catch {
+    return { success: false, error: 'Network error' };
+  }
+}
+
+/** Delete the name-pronunciation audio clip from the user's profile. */
+export function deleteNamePronunciationAudio(
+  config: SifaApiConfig,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  return apiWrite(config, '/api/profile/pronunciation-audio', 'DELETE', options);
+}

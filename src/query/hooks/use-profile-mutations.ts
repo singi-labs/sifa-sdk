@@ -6,14 +6,17 @@ import { useSifaConfig } from '../config.js';
 import { type WriteResult } from '../client.js';
 import {
   deleteAvatarOverride,
+  deleteNamePronunciationAudio,
   refreshPds,
   updateProfileOverride,
   updateProfileSelf,
   uploadAvatar,
+  uploadNamePronunciationAudio,
   type RefreshPdsResult,
   type UpdateProfileOverrideInput,
   type UpdateProfileSelfInput,
   type UploadAvatarResult,
+  type UploadPronunciationAudioResult,
 } from '../fetchers/profile-mutations.js';
 import { sifaQueryKeys } from '../keys.js';
 
@@ -137,6 +140,51 @@ export function useDeleteAvatarOverride(
     // handler below and silently drop cache invalidation (#453).
     ...options,
     mutationFn: () => deleteAvatarOverride(config),
+    onSuccess: async (result, variables, onMutateResult, context) => {
+      if (result.success) {
+        await invalidateProfile(queryClient, ownerHandleOrDid);
+      }
+      await options?.onSuccess?.(result, variables, onMutateResult, context);
+    },
+  });
+}
+
+/**
+ * React hook for uploading a name-pronunciation audio clip. Pass a `File`
+ * (browser) or `Blob` (Expo) as the mutation variable.
+ */
+export function useUploadNamePronunciationAudio(
+  ownerHandleOrDid: string,
+  options?: Omit<UseMutationOptions<UploadPronunciationAudioResult, Error, Blob>, 'mutationFn'>,
+) {
+  const config = useSifaConfig();
+  const queryClient = useQueryClient();
+  return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
+    mutationFn: (file: Blob) => uploadNamePronunciationAudio(config, file),
+    onSuccess: async (result, variables, onMutateResult, context) => {
+      if (result.success) {
+        await invalidateProfile(queryClient, ownerHandleOrDid);
+      }
+      await options?.onSuccess?.(result, variables, onMutateResult, context);
+    },
+  });
+}
+
+/** React hook for deleting the name-pronunciation audio clip. */
+export function useDeleteNamePronunciationAudio(
+  ownerHandleOrDid: string,
+  options?: Omit<UseMutationOptions<WriteResult, Error, void>, 'mutationFn'>,
+) {
+  const config = useSifaConfig();
+  const queryClient = useQueryClient();
+  return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
+    mutationFn: () => deleteNamePronunciationAudio(config),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
         await invalidateProfile(queryClient, ownerHandleOrDid);

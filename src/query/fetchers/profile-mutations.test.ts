@@ -4,10 +4,12 @@ import { type SifaApiConfig } from '../client.js';
 import { createPosition } from './positions.js';
 import {
   deleteAvatarOverride,
+  deleteNamePronunciationAudio,
   refreshPds,
   updateProfileOverride,
   updateProfileSelf,
   uploadAvatar,
+  uploadNamePronunciationAudio,
 } from './profile-mutations.js';
 import { searchSkills } from './search.js';
 
@@ -182,6 +184,42 @@ describe('uploadAvatar', () => {
     const result = await uploadAvatar({ ...baseConfig, fetch: fetchImpl }, file);
     expect(result.success).toBe(false);
     expect(result.error).toBe('Request failed (500)');
+  });
+});
+
+describe('uploadNamePronunciationAudio', () => {
+  it('POSTs FormData with field "file" to the audio endpoint and returns the url', async () => {
+    const fetchImpl = jsonFetch({ url: 'https://pds.example/xrpc/com.atproto.sync.getBlob?cid=x' });
+    const file = new Blob(['clip'], { type: 'audio/webm' });
+    const result = await uploadNamePronunciationAudio({ ...baseConfig, fetch: fetchImpl }, file);
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/pronunciation-audio');
+    expect(init.method).toBe('POST');
+    expect(init.body).toBeInstanceOf(FormData);
+    expect((init.body as FormData).get('file')).toBeInstanceOf(Blob);
+    expect(result).toEqual({
+      success: true,
+      url: 'https://pds.example/xrpc/com.atproto.sync.getBlob?cid=x',
+    });
+  });
+
+  it('returns structured error including pdsHost when the PDS rejects the blob', async () => {
+    const fetchImpl = jsonFetch({ message: 'Blob type not accepted', pdsHost: 'bsky.social' }, 400);
+    const file = new Blob(['x'], { type: 'audio/webm' });
+    const result = await uploadNamePronunciationAudio({ ...baseConfig, fetch: fetchImpl }, file);
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Blob type not accepted');
+    expect(result.pdsHost).toBe('bsky.social');
+  });
+});
+
+describe('deleteNamePronunciationAudio', () => {
+  it('DELETEs /api/profile/pronunciation-audio', async () => {
+    const fetchImpl = jsonFetch({});
+    await deleteNamePronunciationAudio({ ...baseConfig, fetch: fetchImpl });
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/profile/pronunciation-audio');
+    expect(init.method).toBe('DELETE');
   });
 });
 
