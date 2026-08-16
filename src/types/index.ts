@@ -782,6 +782,12 @@ export interface Profile {
    * native field with no `app.bsky.actor.profile` equivalent. Text only.
    */
   namePronunciation?: string;
+  /**
+   * Resolved URL of the name-pronunciation audio clip from
+   * `id.sifa.profile.self.namePronunciationAudio`, served from the user's PDS
+   * (`com.atproto.sync.getBlob`). Optional; absent when no clip is set.
+   */
+  namePronunciationAudioUrl?: string;
   avatar?: string;
   pronouns?: string;
   headline?: string;
