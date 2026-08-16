@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.85
+
+### Patch Changes
+
+- e8747d2: Add name-pronunciation audio: `namePronunciationAudioUrl` on the `Profile` view, and `uploadNamePronunciationAudio` / `deleteNamePronunciationAudio` fetchers plus `useUploadNamePronunciationAudio` / `useDeleteNamePronunciationAudio` hooks (mirroring the avatar upload).
+
 ## 0.12.84
 
 ### Patch Changes
