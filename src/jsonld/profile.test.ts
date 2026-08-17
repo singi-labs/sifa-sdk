@@ -309,6 +309,24 @@ describe('owner-hidden items never reach structured data', () => {
     expect(ld.jobTitle).toBe('Engineer');
   });
 
+  it('names worksFor from the resolved entity name over the free-text company', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'vicwalker.dev.br',
+      positions: [
+        {
+          title: 'Q Architect',
+          company: 'Inova&#231;&#227;o e Transforma&#231;&#227;o Digital | NTT DATA',
+          entityName: 'NTT DATA Brasil',
+          startedAt: '2024-01',
+          primary: true,
+        },
+      ],
+    });
+    const worksFor = ld.worksFor as { name: string }[];
+    expect(worksFor[0]?.name).toBe('NTT DATA Brasil');
+    expect(JSON.stringify(ld)).not.toContain('&#231;');
+  });
+
   it('excludes hidden skills from knowsAbout', () => {
     const ld = buildPersonJsonLd({
       handle: 'gui.do',

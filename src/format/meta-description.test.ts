@@ -61,6 +61,24 @@ describe('buildMetaDescription', () => {
     expect(desc).toBe('Independent Consultant');
   });
 
+  it('prefers the resolved entity name over the free-text company snapshot', () => {
+    const desc = buildMetaDescription({
+      handle: 'vicwalker.dev.br',
+      positions: [
+        {
+          title: 'Q Architect',
+          company: 'Inova&#231;&#227;o e Transforma&#231;&#227;o Digital | NTT DATA',
+          entityName: 'NTT DATA Brasil',
+          startedAt: '2024-01',
+          primary: true,
+        },
+      ],
+    });
+    expect(desc).toBe('Q Architect at NTT DATA Brasil');
+    expect(desc).not.toContain('NTT DATA |');
+    expect(desc).not.toContain('&#231;');
+  });
+
   it('excludes hidden positions', () => {
     const desc = buildMetaDescription({
       handle: 'gui.do',

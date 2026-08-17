@@ -20,6 +20,13 @@ const MEANINGFUL_TEXT_RE = /[\p{L}\p{N}]/u;
 
 export interface MetaDescriptionPosition {
   readonly company?: string;
+  /**
+   * Current canonical name of the linked company entity, resolved by the
+   * AppView at read time. Preferred over the free-text `company` snapshot so a
+   * corrected company name (and a decoded one) shows here, not the value frozen
+   * into the position record.
+   */
+  readonly entityName?: string;
   readonly title?: string;
   readonly startedAt?: string;
   readonly endedAt?: string;
@@ -47,7 +54,8 @@ export function buildMetaDescription(profile: MetaDescriptionInput): string {
   if (currentPosition) {
     const positionParts: string[] = [];
     if (currentPosition.title) positionParts.push(currentPosition.title);
-    if (currentPosition.company) positionParts.push(`at ${currentPosition.company}`);
+    const company = currentPosition.entityName ?? currentPosition.company;
+    if (company) positionParts.push(`at ${company}`);
     if (positionParts.length > 0) parts.push(positionParts.join(' '));
   }
 
