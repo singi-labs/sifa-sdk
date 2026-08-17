@@ -24,6 +24,7 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('exchange.recipe.recipe')).toBe('recipe');
     expect(getAppIdForCollection('buzz.bookhive.book')).toBe('bookhive');
     expect(getAppIdForCollection('social.grain.gallery')).toBe('grain');
+    expect(getAppIdForCollection('pics.pixl.image')).toBe('pixl');
     expect(getAppIdForCollection('link.pastesphere.snippet')).toBe('pastesphere');
     expect(getAppIdForCollection('site.standard.document')).toBe('standard');
     expect(getAppIdForCollection('place.stream.livestream')).toBe('streamplace');
@@ -856,6 +857,21 @@ describe('resolveCardUrl', () => {
     it('getAppIdForCollection maps social.crate.* to crate', () => {
       expect(getAppIdForCollection('social.crate.content')).toBe('crate');
       expect(getAppIdForCollection('social.crate.note')).toBe('crate');
+    });
+  });
+
+  describe('pixl', () => {
+    it('image: returns null — pixl.pics is auth-gated with no public per-record viewer', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:willow/pics.pixl.image/3msm5lkt4vg2u',
+          rkey: '3msm5lkt4vg2u',
+          authorDid: 'did:plc:willow',
+          collection: 'pics.pixl.image',
+          record: { alt: '', createdAt: '2026-08-08T22:46:07.964Z' },
+        }),
+      ).toBeNull();
     });
   });
 

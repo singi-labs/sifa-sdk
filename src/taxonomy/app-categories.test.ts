@@ -55,6 +55,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('passports')).toBe('Places');
     expect(categoryForApp('asq')).toBe('Q&A');
     expect(categoryForApp('plyr')).toBe('Music');
+    expect(categoryForApp('pixl')).toBe('Photos');
     expect(categoryForApp('spark')).toBe('Posts');
     expect(categoryForApp('nooki')).toBe('Social');
     expect(categoryForApp('atmobb')).toBe('Social');

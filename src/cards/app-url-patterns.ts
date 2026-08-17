@@ -223,6 +223,7 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['com.kipclip.', 'kipclip'],
   ['blue.flashes.', 'flashes'],
   ['social.grain.', 'grain'],
+  ['pics.pixl.', 'pixl'],
   ['com.whtwnd.', 'whitewind'],
   ['fyi.unravel.frontpage.', 'frontpage'],
   ['social.psky.', 'picosky'],
