@@ -75,7 +75,7 @@ getTierMeta('creation'); // { label: 'Made', shownOnPublicProfile: true, ... }
 
 This SDK is the recommended way to build clients against the Sifa AppView. It does not depend on `react-dom`, `react-native`, `next`, or any browser/Node-only storage API -- it runs anywhere TypeScript runs.
 
-If you have a use case the current public surface does not cover, open an issue on [`singi-labs/sifa-workspace`](https://github.com/singi-labs/sifa-workspace/issues).
+If you have a use case the current public surface does not cover, [send feedback](https://sifa.id/feedback).
 
 ---
 
@@ -150,7 +150,7 @@ All changes go through Pull Requests. CI must pass before merge.
 | [singi-labs/sifa-api](https://github.com/singi-labs/sifa-api)             | AppView backend that this SDK consumes | Source-available |
 | [singi-labs/sifa-web](https://github.com/singi-labs/sifa-web)             | Next.js web client (consumes this SDK) | Source-available |
 | [singi-labs/sifa-lexicons](https://github.com/singi-labs/sifa-lexicons)   | AT Protocol lexicon schemas            | MIT              |
-| [singi-labs/sifa-workspace](https://github.com/singi-labs/sifa-workspace) | Project coordination, issues, roadmap  | Public           |
+| [singi-labs/sifa-workspace](https://github.com/singi-labs/sifa-workspace) | Project coordination  | Public           |
 
 ---
 
