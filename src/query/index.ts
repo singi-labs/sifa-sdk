@@ -102,7 +102,7 @@ export {
   type ConfirmationInput,
   type ConfirmationSubjectInput,
 } from './fetchers/confirmations.js';
-export { fetchResolveActor } from './fetchers/actor.js';
+export { fetchResolveActor, fetchTypeaheadActors } from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
 export {
