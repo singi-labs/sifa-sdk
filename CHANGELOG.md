@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.88
+
+### Patch Changes
+
+- fe40ecc: Add Pixl (`pics.pixl.image`) to the app category map (Photos) and `COLLECTION_TO_APP`. Pixl (pixl.pics) is a photo-sharing app; it is auth-gated with no public per-record viewer, so no URL pattern is registered and its cards render non-clickable.
+
 ## 0.12.87
 
 ### Patch Changes
