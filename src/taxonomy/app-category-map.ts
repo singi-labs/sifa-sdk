@@ -26,6 +26,7 @@ export const APP_CATEGORY_MAP = {
   smokesignal: 'Events',
   flashes: 'Photos',
   grain: 'Photos',
+  pixl: 'Photos', // pics.pixl.image — photo posts on pixl.pics
   whitewind: 'Articles',
   frontpage: 'Links',
   pastesphere: 'Pastes',
