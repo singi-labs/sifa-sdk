@@ -11,6 +11,8 @@ import {
 describe('getActivityTier', () => {
   it('returns "creation" for a known creation NSID', () => {
     expect(getActivityTier('app.bsky.feed.post')).toBe('creation');
+    // Pixl photos are creation-tier (scanned by the pixl app, must not be filtered).
+    expect(getActivityTier('pics.pixl.image')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {

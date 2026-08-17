@@ -528,6 +528,10 @@
       "tier": "creation",
       "app": "aetherdocs"
     },
+    "pics.pixl.image": {
+      "tier": "creation",
+      "app": "pixl"
+    },
     "place.stream.broadcast.origin": {
       "tier": "filtered",
       "app": "streamplace",
