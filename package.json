@@ -10,7 +10,7 @@
     "url": "git+https://github.com/singi-labs/sifa-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/singi-labs/sifa-workspace/issues"
+    "url": "https://sifa.id/feedback"
   },
   "publishConfig": {
     "access": "public",
