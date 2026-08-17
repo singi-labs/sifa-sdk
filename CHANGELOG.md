@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.90
+
+### Patch Changes
+
+- 90d1750: Point the package `bugs` URL and the README feedback link at sifa.id/feedback instead of the GitHub workspace issues.
+
 ## 0.12.89
 
 ### Patch Changes
