@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.89
+
+### Patch Changes
+
+- 3f74a55: Classify `pics.pixl.image` as a `creation`-tier record (app `pixl`) in the activity taxonomy. Without this the Pixl scan collection defaulted to `filtered`, which fails the registry/taxonomy reconciliation check in sifa-api. Follow-up to the initial Pixl onboarding.
+
 ## 0.12.88
 
 ### Patch Changes
