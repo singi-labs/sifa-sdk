@@ -150,7 +150,7 @@ All changes go through Pull Requests. CI must pass before merge.
 | [singi-labs/sifa-api](https://github.com/singi-labs/sifa-api)             | AppView backend that this SDK consumes | Source-available |
 | [singi-labs/sifa-web](https://github.com/singi-labs/sifa-web)             | Next.js web client (consumes this SDK) | Source-available |
 | [singi-labs/sifa-lexicons](https://github.com/singi-labs/sifa-lexicons)   | AT Protocol lexicon schemas            | MIT              |
-| [singi-labs/sifa-workspace](https://github.com/singi-labs/sifa-workspace) | Project coordination  | Public           |
+| [singi-labs/sifa-workspace](https://github.com/singi-labs/sifa-workspace) | Project coordination                   | Public           |
 
 ---
 
