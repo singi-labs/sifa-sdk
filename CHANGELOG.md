@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.87
+
+### Patch Changes
+
+- bba2257: Prefer the resolved company `entityName` over the free-text `company` snapshot when deriving the meta description and JSON-LD `worksFor`. A corrected (or decoded) company name now shows in the profile's link preview and structured data instead of the value frozen into the position record.
+
 ## 0.12.86
 
 ### Patch Changes
