@@ -92,6 +92,12 @@ interface Hideable {
 }
 export interface JsonLdPosition extends Hideable {
   readonly company?: string;
+  /**
+   * Current canonical name of the linked company entity, resolved by the
+   * AppView at read time. Preferred over the free-text `company` snapshot for
+   * `worksFor.name` so structured data names the corrected (and decoded) entity.
+   */
+  readonly entityName?: string;
   readonly title?: string;
   readonly startedAt?: string;
   readonly endedAt?: string;
@@ -260,10 +266,10 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
   const worksFor = [
     ...(ownCompany ? [ownCompany] : []),
     ...positions
-      .filter((p) => p.company)
+      .filter((p) => p.entityName ?? p.company)
       .map((p) => ({
         '@type': 'Organization' as const,
-        name: s(p.company!),
+        name: s((p.entityName ?? p.company)!),
         ...(p.title && {
           member: {
             '@type': 'OrganizationRole' as const,
