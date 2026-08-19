@@ -157,6 +157,18 @@ export {
   type SkillSearchResult,
 } from './search.js';
 export {
+  fetchSpeakers,
+  fetchTalks,
+  type SpeakerCard,
+  type SpeakerGroup,
+  type SpeakerDirectoryFilters,
+  type SpeakersResponse,
+  type TalkEvent,
+  type TalkRow,
+  type TalkSpeaker,
+  type TalksResponse,
+} from './speakers.js';
+export {
   fetchFeaturedProfile,
   fetchSimilarProfiles,
   fetchSuggestionCount,
