@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.12.92
+
+### Patch Changes
+
+- 36e1dcf: Add the account-switcher query layer: `fetchAccounts` / `useAccounts` (list the accounts attached to the browser), the `switchAccount` fetcher (POST to activate one by DID), and the `AccountSummary` type.
+
 ## 0.12.91
 
 ### Patch Changes
