@@ -138,6 +138,12 @@ export {
   type HiddenApp,
 } from './fetchers/apps.js';
 export {
+  fetchAccounts,
+  switchAccount,
+  type AccountSummary,
+  type FetchAccountsOptions,
+} from './fetchers/accounts.js';
+export {
   fetchSearchFilters,
   fetchSearchProfiles,
   fetchSkillSuggestions,
@@ -376,6 +382,7 @@ export {
 } from './hooks/use-profile-items-hide.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
+export { useAccounts } from './hooks/use-accounts.js';
 export {
   useCanonicalSkillSearch,
   useSearchFilters,
