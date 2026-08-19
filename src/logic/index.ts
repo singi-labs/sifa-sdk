@@ -53,3 +53,4 @@ export {
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
   type CompanyFirmographics,
 } from './company-page-indexable.js';
+export { countRecentActivity, type DailyActivityCount } from './recent-activity.js';

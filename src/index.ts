@@ -356,6 +356,8 @@ export {
   resolveAccountFacetMode,
   isCompanyPageIndexable,
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
+  countRecentActivity,
+  type DailyActivityCount,
   type DimensionKey,
   type DimensionMap,
   type PrimaryPositionCandidate,
