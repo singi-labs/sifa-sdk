@@ -80,6 +80,13 @@ export const sifaQueryKeys = {
     hidden: () => ['sifa', 'apps', 'hidden'] as const,
   },
 
+  auth: {
+    all: () => ['sifa', 'auth'] as const,
+    // Session-scoped: the AppView reads the account list from the browser's
+    // cookies, so there is only ever one list per client.
+    accounts: () => ['sifa', 'auth', 'accounts'] as const,
+  },
+
   activity: {
     all: () => ['sifa', 'activity'] as const,
     heatmap: (handleOrDid: string, days: number) =>

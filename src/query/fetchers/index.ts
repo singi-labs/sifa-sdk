@@ -142,6 +142,12 @@ export {
   type HiddenApp,
 } from './apps.js';
 export {
+  fetchAccounts,
+  switchAccount,
+  type AccountSummary,
+  type FetchAccountsOptions,
+} from './accounts.js';
+export {
   fetchSearchCompanies,
   fetchSearchFilters,
   fetchSearchProfiles,
