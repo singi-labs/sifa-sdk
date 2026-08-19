@@ -1,5 +1,15 @@
 # @singi-labs/sifa-sdk
 
+## 0.13.0
+
+### Minor Changes
+
+- a63dcf2: Add `fetchSpeakers` and `fetchTalks` fetchers for the speaker directory, backing the `/api/speakers` and `/api/talks` AppView endpoints. Exports the accompanying result types (`SpeakerCard`, `SpeakerGroup`, `SpeakersResponse`, `TalkRow`, `TalkSpeaker`, `TalkEvent`, `TalksResponse`, `SpeakerDirectoryFilters`) from `@singi-labs/sifa-sdk/query` and `@singi-labs/sifa-sdk/query/fetchers`.
+
+### Patch Changes
+
+- 48b9040: Add `countRecentActivity(days, windowDays, now?)` — a pure predicate that sums per-day activity totals within the last `windowDays` calendar days. Structurally accepts the query layer's `HeatmapDay[]`. Consumers use it to gate the profile Activity block: hide the block for visitors when a profile has too little recent activity, while owners always see it.
+
 ## 0.12.92
 
 ### Patch Changes
