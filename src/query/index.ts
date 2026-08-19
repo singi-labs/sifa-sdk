@@ -155,6 +155,18 @@ export {
   type SkillSearchResult,
 } from './fetchers/search.js';
 export {
+  fetchSpeakers,
+  fetchTalks,
+  type SpeakerCard,
+  type SpeakerGroup,
+  type SpeakerDirectoryFilters,
+  type SpeakersResponse,
+  type TalkEvent,
+  type TalkRow,
+  type TalkSpeaker,
+  type TalksResponse,
+} from './fetchers/speakers.js';
+export {
   fetchEntitySearch,
   selectEntity,
   importSearchEntities,
