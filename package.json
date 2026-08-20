@@ -210,7 +210,7 @@
     "svgo": "4.0.2",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.61.1",
+    "typescript-eslint": "8.67.0",
     "vitest": "3.2.1"
   }
 }
