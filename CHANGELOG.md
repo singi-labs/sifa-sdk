@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.14.2
+
+### Patch Changes
+
+- 392961b: Add `orgLogoBlob` to `AccountSummary` so the account switcher can resolve a company account's uploaded logo through the shared company-logo resolution, matching its `/c/` page.
+
 ## 0.14.1
 
 ### Patch Changes
