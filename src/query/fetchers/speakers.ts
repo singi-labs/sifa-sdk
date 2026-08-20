@@ -32,6 +32,13 @@ export interface SpeakerCard {
    */
   recentEvents: string[];
   eventsSelfReported: boolean;
+  /**
+   * Up to 3 of the speaker's most-recent talks (self-reported), newest first.
+   * `rkey` builds the talk-page URL via `buildTalkSlug(title, rkey)`. Optional:
+   * absent from responses served before this field shipped, so consumers should
+   * default to an empty list.
+   */
+  recentTalks?: { title: string; rkey: string }[];
 }
 
 export interface SpeakersResponse {
