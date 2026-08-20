@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.14.0
+
+### Minor Changes
+
+- e860f4b: Add `recentTalks` (title + rkey, up to 3 newest) to the speaker directory `SpeakerCard` type, so speaker cards can show what a person talks about and link to the talk page.
+
 ## 0.13.0
 
 ### Minor Changes
