@@ -65,11 +65,20 @@ describe('fetchSpeakers', () => {
         matchedTopics: ['Magento'],
         recentEvents: ['MageTitans 2025'],
         eventsSelfReported: true,
+        recentTalks: [
+          { title: 'Scaling Magento checkout', rkey: '3abc' },
+          { title: 'Adobe Commerce performance', rkey: '3def' },
+        ],
       },
     ];
     const fetchImpl = jsonFetch({ speakers });
     const result = await fetchSpeakers({ ...baseConfig, fetch: fetchImpl }, { topic: 'Magento' });
     expect(result.speakers).toEqual(speakers);
+    // recentTalks surfaces through the fetcher with the { title, rkey } shape.
+    expect(result.speakers[0]!.recentTalks).toEqual([
+      { title: 'Scaling Magento checkout', rkey: '3abc' },
+      { title: 'Adobe Commerce performance', rkey: '3def' },
+    ]);
   });
 
   it('returns an empty list on error', async () => {
