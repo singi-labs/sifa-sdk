@@ -208,6 +208,7 @@ export {
   detectPdsProvider,
   formatCompanyName,
   formatDateRange,
+  formatDisplayUrl,
   formatDistanceToNow,
   formatLocation,
   formatPresentationDuration,
@@ -518,6 +519,8 @@ export type {
   LocationSegmentKind,
   LocationSegmentsOptions,
 } from './format/index.js';
+
+export type { DisplayUrl, FormatDisplayUrlOptions, UrlPathPolicy } from './format/index.js';
 
 export { SIFA_REPO_GROUPS, describeSifaRecord, repoGroupForCollection } from './repo/index.js';
 export type {

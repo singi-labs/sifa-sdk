@@ -34,6 +34,16 @@ export interface ProfilePosition {
    * `company`).
    */
   entityName?: string;
+  /**
+   * Company-page slug for a durably-linked position, resolved by the AppView at
+   * read time alongside `entityName` (#159). Lets a consumer link the company
+   * name to its `/c/{domain}` page without re-resolving `entityRef`. `domain` is
+   * the readable form, `publicId` the durable fallback; build the link as
+   * `/c/${companyDomain ?? companyPublicId}`. Both absent for free-text /
+   * unlinked positions.
+   */
+  companyDomain?: string;
+  companyPublicId?: string;
   title: string;
   description?: string;
   startedAt: string;
