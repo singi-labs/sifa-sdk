@@ -6,6 +6,13 @@ export interface AccountSummary {
   handle: string | null;
   displayName: string | null;
   avatarUrl: string | null;
+  /**
+   * The org's uploaded logo blob CID, for a company account that set one on its
+   * `/c/` page; null otherwise. The switcher resolves it to the same logo `/c/`
+   * shows (via the shared company-logo resolution), so an uploaded logo appears
+   * in the menu rather than the atproto avatar. Omitted by older api responses.
+   */
+  orgLogoBlob?: string | null;
   /** Whether this is the currently-active account. */
   active: boolean;
 }

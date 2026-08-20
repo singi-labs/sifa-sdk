@@ -24,6 +24,22 @@ describe('fetchAccounts', () => {
     expect(getCall(fetchImpl)[0]).toContain('/api/auth/accounts');
   });
 
+  it('passes through the org logo blob CID for company accounts', async () => {
+    const accounts = [
+      {
+        did: 'did:plc:org',
+        handle: 'singi.dev',
+        displayName: 'Singi Labs',
+        avatarUrl: 'https://cdn.example/avatar.jpg',
+        orgLogoBlob: 'bafyreiorglogocid',
+        active: false,
+      },
+    ];
+    const fetchImpl = jsonFetch({ accounts });
+    const result = await fetchAccounts({ ...baseConfig, fetch: fetchImpl });
+    expect(result[0]!.orgLogoBlob).toBe('bafyreiorglogocid');
+  });
+
   it('returns [] when the request fails (including unauthenticated)', async () => {
     const fetchImpl = jsonFetch({ error: 'unauth' }, 401);
     expect(await fetchAccounts({ ...baseConfig, fetch: fetchImpl })).toEqual([]);
