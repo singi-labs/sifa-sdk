@@ -207,7 +207,7 @@
     "prettier": "3.9.6",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "svgo": "4.0.1",
+    "svgo": "4.0.2",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.61.1",
