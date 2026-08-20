@@ -38,6 +38,8 @@ export { buildMetaDescription } from './meta-description.js';
 export type { MetaDescriptionInput, MetaDescriptionPosition } from './meta-description.js';
 export { limitCombiningMarks, sanitizeDisplayText } from './text-sanitize.js';
 export { truncateGraphemes } from './text-truncate.js';
+export { formatDisplayUrl } from './format-display-url.js';
+export type { DisplayUrl, FormatDisplayUrlOptions, UrlPathPolicy } from './format-display-url.js';
 export { formatDistanceToNow } from './time-utils.js';
 export {
   contrastRatio,
