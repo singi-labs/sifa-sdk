@@ -6,16 +6,21 @@
  * <meta description>, JSON-LD) re-derived "primary" inconsistently and diverged
  * for users with multiple concurrent roles.
  *
+ * A `hidden` position is one the user chose not to show on their public profile.
+ * It is never surfaced as the featured role — hidden wins over `primary`, so a
+ * role flagged both hidden and primary is excluded rather than featured.
+ *
  * Rules (in order):
- * 1. A position the user explicitly flagged `primary` AND that is still active.
- * 2. Otherwise, the active position with the most recent `startedAt`.
- * 3. Otherwise, undefined (no active position).
+ * 1. A position the user explicitly flagged `primary` AND that is still active AND not hidden.
+ * 2. Otherwise, the active, non-hidden position with the most recent `startedAt`.
+ * 3. Otherwise, undefined (no eligible position).
  */
 
 export interface PrimaryPositionCandidate {
   startedAt?: string;
   endedAt?: string;
   primary?: boolean;
+  hidden?: boolean;
 }
 
 export function pickPrimaryPosition<T extends PrimaryPositionCandidate>(
@@ -23,7 +28,7 @@ export function pickPrimaryPosition<T extends PrimaryPositionCandidate>(
 ): T | undefined {
   if (!positions || positions.length === 0) return undefined;
 
-  const active = positions.filter((p) => !p.endedAt);
+  const active = positions.filter((p) => !p.endedAt && !p.hidden);
   if (active.length === 0) return undefined;
 
   const flagged = active.find((p) => p.primary === true);

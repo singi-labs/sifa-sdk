@@ -9,6 +9,7 @@ interface TestPosition {
   startedAt?: string;
   endedAt?: string;
   primary?: boolean;
+  hidden?: boolean;
 }
 
 const meta: TestPosition = {
@@ -64,6 +65,28 @@ describe('pickPrimaryPosition', () => {
 
   it('returns undefined when every position has ended', () => {
     const positions = [oldEnded, { ...gothamPrimary, endedAt: '2024-01' }];
+    expect(pickPrimaryPosition(positions)).toBeUndefined();
+  });
+
+  it('skips a hidden position even when it is the most recent active role', () => {
+    // The reported bug: a hidden, non-primary role was surfaced as the current role.
+    const positions = [
+      { ...meta, hidden: true },
+      { ...gothamPrimary, primary: false },
+    ];
+    expect(pickPrimaryPosition(positions)?.rkey).toBe('gotham');
+  });
+
+  it('skips a hidden position even if it is flagged primary (hidden wins)', () => {
+    const positions = [{ ...gothamPrimary, hidden: true }, meta];
+    expect(pickPrimaryPosition(positions)?.rkey).toBe('meta');
+  });
+
+  it('returns undefined when every active position is hidden', () => {
+    const positions = [
+      { ...meta, hidden: true },
+      { ...gothamPrimary, hidden: true },
+    ];
     expect(pickPrimaryPosition(positions)).toBeUndefined();
   });
 
