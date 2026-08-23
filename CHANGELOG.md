@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.14.5
+
+### Patch Changes
+
+- 05654e7: Export `PUBLICATION_TYPE_OPTIONS`, `PUBLICATION_TYPE_LABELS`, `getPublicationTypeLabel`, `PublicationTypeOption`, and `normalizeDoi` from the package root. They shipped in the previous release but only inside the module tree, and the SDK has no `./taxonomy` or `./format` subpath, so no consumer could reach them.
+
 ## 0.14.4
 
 ### Patch Changes
