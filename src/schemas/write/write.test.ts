@@ -179,6 +179,45 @@ describe('PublicationWriteSchema authors', () => {
   });
 });
 
+describe('PublicationWriteSchema doi and type (singi-labs/sifa-workspace#386)', () => {
+  it('keeps a bare DOI', () => {
+    const parsed = PublicationWriteSchema.safeParse({ title: 'A Paper', doi: '10.1234/example' });
+    expect(parsed.success && parsed.data.doi).toBe('10.1234/example');
+  });
+
+  it('normalizes a pasted resolver URL to the bare DOI', () => {
+    // Publisher pages and citation managers hand you the URL. Storing it as
+    // written would leave three spellings of one identifier and nothing to
+    // dedupe on.
+    const parsed = PublicationWriteSchema.safeParse({
+      title: 'A Paper',
+      doi: 'https://doi.org/10.1234/example',
+    });
+    expect(parsed.success && parsed.data.doi).toBe('10.1234/example');
+  });
+
+  it('accepts a null doi (cleared on the form)', () => {
+    const parsed = PublicationWriteSchema.safeParse({ title: 'A Paper', doi: null });
+    expect(parsed.success && parsed.data.doi).toBe(null);
+  });
+
+  it('keeps a known ORCID work type', () => {
+    const parsed = PublicationWriteSchema.safeParse({ title: 'A Paper', type: 'journal-article' });
+    expect(parsed.success && parsed.data.type).toBe('journal-article');
+  });
+
+  it('keeps a type outside the known set', () => {
+    // Open on purpose: a publication from Standard.site, RSS, or typed by hand
+    // need not fit ORCID's list.
+    const parsed = PublicationWriteSchema.safeParse({ title: 'A Paper', type: 'zine' });
+    expect(parsed.success && parsed.data.type).toBe('zine');
+  });
+
+  it('is valid with neither', () => {
+    expect(PublicationWriteSchema.safeParse({ title: 'A Paper' }).success).toBe(true);
+  });
+});
+
 describe('ProjectWriteSchema members', () => {
   it('accepts a member with only a did', () => {
     const parsed = ProjectWriteSchema.safeParse({

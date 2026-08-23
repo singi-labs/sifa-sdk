@@ -96,6 +96,12 @@ export {
   type PresentationRoleOption,
 } from './presentation-role.js';
 export {
+  PUBLICATION_TYPE_LABELS,
+  PUBLICATION_TYPE_OPTIONS,
+  getPublicationTypeLabel,
+  type PublicationTypeOption,
+} from './publication-type.js';
+export {
   PRESENTATION_LINK_TYPE_LABELS,
   PRESENTATION_LINK_TYPE_OPTIONS,
   getPresentationLinkTypeLabel,

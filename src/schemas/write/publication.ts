@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { normalizeDoi } from '../../format/doi.js';
 import { optionalUrl } from './shared.js';
 
 /**
@@ -36,6 +37,16 @@ export const PublicationWriteSchema = z.object({
   // drops unknown keys silently, so the editor reported success and wrote
   // nothing.
   authors: z.array(publicationAuthorWriteSchema).max(50).optional(),
+  doi: z
+    .string()
+    .max(256)
+    .nullable()
+    .optional()
+    .transform((val) => (val ? normalizeDoi(val) : val)),
+  // Open set. The known values are ORCID's work types (PUBLICATION_TYPE_OPTIONS),
+  // and a value outside them is kept as written: a publication that reached Sifa
+  // from Standard.site, RSS, or by hand need not fit ORCID's list.
+  type: z.string().max(64).nullable().optional(),
 });
 
 export type PublicationWriteInput = z.infer<typeof PublicationWriteSchema>;
