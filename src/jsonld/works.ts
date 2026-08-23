@@ -8,6 +8,7 @@
  * `./terms.js`.
  */
 
+import { normalizeDoi } from '../format/doi.js';
 import { buildTalkSlug } from '../format/talk-slug.js';
 import { filterHidden } from '../profile/section-model.js';
 import { normaliseBaseUrl, profileUrl } from './url.js';
@@ -247,11 +248,6 @@ export interface PublicationInput {
   readonly hidden?: boolean;
 }
 
-/** Strip any resolver prefix so the bare DOI is what gets published. */
-function bareDoi(doi: string): string {
-  return doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:/i, '');
-}
-
 export function buildPublicationJsonLd(
   publication: PublicationInput,
   author: WorkAuthor,
@@ -272,7 +268,7 @@ export function buildPublicationJsonLd(
         }))
       : [authorNode(author, baseUrl, s)];
 
-  const doi = publication.doi ? bareDoi(publication.doi) : undefined;
+  const doi = publication.doi ? normalizeDoi(publication.doi) : undefined;
 
   return {
     '@context': 'https://schema.org',
