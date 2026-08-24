@@ -79,6 +79,39 @@ describe('buildMetaDescription', () => {
     expect(desc).not.toContain('&#231;');
   });
 
+  it('does not repeat the role line when the headline already equals it', () => {
+    const desc = buildMetaDescription({
+      handle: 'holke.xyz',
+      headline: 'Founder and Director at Hypercerts Foundation',
+      positions: [
+        {
+          company: 'Hypercerts Foundation',
+          title: 'Founder and Director',
+          startedAt: '2022-04',
+          primary: true,
+        },
+      ],
+    });
+    expect(desc).toBe('Founder and Director at Hypercerts Foundation');
+  });
+
+  it('still appends location after a headline that equals the role line', () => {
+    const desc = buildMetaDescription({
+      handle: 'holke.xyz',
+      headline: 'Founder and Director at Hypercerts Foundation',
+      positions: [
+        {
+          company: 'Hypercerts Foundation',
+          title: 'Founder and Director',
+          startedAt: '2022-04',
+          primary: true,
+        },
+      ],
+      location: { country: 'Germany', locality: 'Berlin' },
+    });
+    expect(desc).toBe('Founder and Director at Hypercerts Foundation · Berlin, Germany');
+  });
+
   it('excludes hidden positions', () => {
     const desc = buildMetaDescription({
       handle: 'gui.do',

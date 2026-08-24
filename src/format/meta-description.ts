@@ -7,6 +7,7 @@
  */
 
 import { pickPrimaryPosition } from '../logic/primary-position.js';
+import { isRoleLineRedundant } from '../profile/headline-role-dedupe.js';
 import { filterHidden } from '../profile/section-model.js';
 import type { LocationValue } from '../types/index.js';
 import { formatLocation } from './location-utils.js';
@@ -56,7 +57,12 @@ export function buildMetaDescription(profile: MetaDescriptionInput): string {
     if (currentPosition.title) positionParts.push(currentPosition.title);
     const company = currentPosition.entityName ?? currentPosition.company;
     if (company) positionParts.push(`at ${company}`);
-    if (positionParts.length > 0) parts.push(positionParts.join(' '));
+    if (positionParts.length > 0) {
+      const roleLine = positionParts.join(' ');
+      // Skip the derived role line when the headline already says the same thing
+      // (common after LinkedIn import, where the headline is "Title at Company").
+      if (!isRoleLineRedundant(profile.headline, roleLine)) parts.push(roleLine);
+    }
   }
 
   if (profile.location) {
