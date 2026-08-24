@@ -23,6 +23,7 @@ export {
 
 export { sortByActiveDateRange } from './range-sort.js';
 export { sortLanguagesByProficiency } from './language-sort.js';
+export { isRoleLineRedundant } from './headline-role-dedupe.js';
 
 export {
   INVOLVEMENT_HEADING_ORDER,
