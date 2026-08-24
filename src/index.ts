@@ -389,6 +389,7 @@ export {
   getVisibleSectionIds,
   groupInvolvementByHeading,
   hoistPrimary,
+  isRoleLineRedundant,
   isSectionPopulated,
   sortByActiveDateRange,
   sortCertifications,
