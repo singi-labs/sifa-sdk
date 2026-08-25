@@ -1,7 +1,7 @@
 {
   "$schema": "https://sifa.id/schemas/activity-tiers/v1.json",
-  "version": "1.1.0",
-  "updated": "2026-07-29",
+  "version": "1.2.0",
+  "updated": "2026-08-25",
   "tiers": {
     "creation": {
       "label": "Made",
@@ -28,26 +28,6 @@
     "app.atmobb.discussion.thread": {
       "tier": "creation",
       "app": "atmobb"
-    },
-    "at.locale.project": {
-      "tier": "creation",
-      "app": "locale",
-      "notes": "A localization project the actor owns: git source, source and target locales."
-    },
-    "at.locale.translation": {
-      "tier": "creation",
-      "app": "locale",
-      "notes": "One authored translated string for a message key in a target locale."
-    },
-    "blog.pckt.mini.post": {
-      "tier": "creation",
-      "app": "pckt",
-      "notes": "A pckt microblog post. Long-form pckt posts are site.standard.document instead."
-    },
-    "app.photosky.collection": {
-      "tier": "creation",
-      "app": "zeens",
-      "notes": "A curated photo collection on Zeens (still the app.photosky namespace)."
     },
     "app.beaconbits.beacon": {
       "tier": "creation",
@@ -114,6 +94,16 @@
       "app": "bluesky",
       "notes": "Diverges from app.bsky.graph.follow (action) on purpose: verifying another account's handle is a deliberate trust statement the actor authors, not a tap. Sifa renders it with its own card."
     },
+    "app.certified.actor.membership": {
+      "tier": "creation",
+      "app": "certified",
+      "notes": "Joining a group is a commitment, same shape as a Colibri or Open Social membership."
+    },
+    "app.certified.badge.award": {
+      "tier": "creation",
+      "app": "certified",
+      "notes": "An endorsement issued to another DID. A trust signal the actor contributes, like a Bluesky verification."
+    },
     "app.collectivesocial.feed.list": {
       "tier": "creation",
       "app": "collectivesocial",
@@ -122,6 +112,11 @@
     "app.mcp.server": {
       "tier": "creation",
       "app": "mcp"
+    },
+    "app.photosky.collection": {
+      "tier": "creation",
+      "app": "zeens",
+      "notes": "A curated photo collection on Zeens (still the app.photosky namespace)."
     },
     "app.sidetrail.trail": {
       "tier": "creation",
@@ -140,6 +135,16 @@
       "app": "userinput",
       "notes": "Replies are authored text, consistent with app.bsky.feed.post covering replies."
     },
+    "at.locale.project": {
+      "tier": "creation",
+      "app": "locale",
+      "notes": "A localization project the actor owns: git source, source and target locales."
+    },
+    "at.locale.translation": {
+      "tier": "creation",
+      "app": "locale",
+      "notes": "One authored translated string for a message key in a target locale."
+    },
     "at.margin.annotation": {
       "tier": "creation",
       "app": "margin",
@@ -147,12 +152,12 @@
     },
     "at.margin.bookmark": {
       "tier": "filtered",
-      "notes": "Bookmark — consumption signal, not creation.",
+      "notes": "Bookmark \u2014 consumption signal, not creation.",
       "app": "margin"
     },
     "at.margin.highlight": {
       "tier": "filtered",
-      "notes": "Highlight — consumption signal, not creation.",
+      "notes": "Highlight \u2014 consumption signal, not creation.",
       "app": "margin"
     },
     "at.margin.note": {
@@ -166,6 +171,11 @@
     "at.youandme.connection": {
       "tier": "creation",
       "app": "youandme"
+    },
+    "blog.pckt.mini.post": {
+      "tier": "creation",
+      "app": "pckt",
+      "notes": "A pckt microblog post. Long-form pckt posts are site.standard.document instead."
     },
     "blue.flashes.feed.post": {
       "tier": "creation",
@@ -184,6 +194,11 @@
       "tier": "creation",
       "app": "minomobi"
     },
+    "com.shinolabs.pinksea.oekaki": {
+      "tier": "creation",
+      "app": "pinksea",
+      "notes": "A drawing made in PinkSea's canvas, stored as an image blob with alt text and tags."
+    },
     "com.voxport.podcast.series": {
       "tier": "creation",
       "app": "voxport"
@@ -199,7 +214,7 @@
     },
     "community.lexicon.bookmarks.bookmark": {
       "tier": "filtered",
-      "notes": "Bookmark — consumption signal.",
+      "notes": "Bookmark \u2014 consumption signal.",
       "app": "kipclip"
     },
     "community.lexicon.calendar.rsvp": {
@@ -289,7 +304,7 @@
     "forum.barazo.reply": {
       "tier": "action",
       "app": "barazo",
-      "notes": "Short conversational reply — engagement signal."
+      "notes": "Short conversational reply \u2014 engagement signal."
     },
     "forum.barazo.reputation.event": {
       "tier": "creation",
@@ -345,6 +360,11 @@
       "app": "sifa",
       "notes": "OAuth scope record."
     },
+    "id.sifa.confirmation": {
+      "tier": "action",
+      "app": "sifa",
+      "notes": "Confirmation that a record naming the actor is accurate (co-speaker credit, project membership)."
+    },
     "id.sifa.endorsement": {
       "tier": "creation",
       "app": "sifa",
@@ -354,11 +374,6 @@
       "tier": "action",
       "app": "sifa",
       "notes": "Confirmation/acceptance of an endorsement received."
-    },
-    "id.sifa.confirmation": {
-      "tier": "action",
-      "app": "sifa",
-      "notes": "Confirmation that a record naming the actor is accurate (co-speaker credit, project membership)."
     },
     "id.sifa.graph.connection": {
       "tier": "creation",
@@ -501,7 +516,7 @@
     },
     "network.cosmik.collection": {
       "tier": "filtered",
-      "notes": "Stale registry id — Cosmik formerly in app registry.",
+      "notes": "Stale registry id \u2014 Cosmik formerly in app registry.",
       "app": "cosmik"
     },
     "network.cosmik.collectionLink": {
@@ -519,6 +534,31 @@
     "one.papili.post": {
       "tier": "creation",
       "app": "papili"
+    },
+    "org.hypercerts.claim.activity": {
+      "tier": "creation",
+      "app": "hypercerts",
+      "notes": "A hypercert: an authored claim of work done, with title, description, and weighted contributors."
+    },
+    "org.hypercerts.claim.collection": {
+      "tier": "creation",
+      "app": "hypercerts",
+      "notes": "Older shape of the project container that groups claims. Superseded by org.hypercerts.collection."
+    },
+    "org.hypercerts.claim.evaluation": {
+      "tier": "creation",
+      "app": "hypercerts",
+      "notes": "An assessment of a claim carrying a score and a written summary. An opinion with a body."
+    },
+    "org.hypercerts.collection": {
+      "tier": "creation",
+      "app": "hypercerts",
+      "notes": "An authored project container grouping hypercert claims, with its own title, banner, and description."
+    },
+    "org.impactindexer.review.comment": {
+      "tier": "creation",
+      "app": "impactindexer",
+      "notes": "A written review of a hypercert claim, like a Popfeed or BookHive review."
     },
     "org.v-it.skill": {
       "tier": "creation",
@@ -550,7 +590,7 @@
     "place.stream.key": {
       "tier": "filtered",
       "app": "streamplace",
-      "notes": "Stream key — sensitive infrastructure record."
+      "notes": "Stream key \u2014 sensitive infrastructure record."
     },
     "place.stream.livestream": {
       "tier": "creation",
@@ -662,7 +702,7 @@
     "social.colibri.message": {
       "tier": "filtered",
       "app": "colibri",
-      "notes": "Chat message — high-volume conversational signal, not portfolio."
+      "notes": "Chat message \u2014 high-volume conversational signal, not portfolio."
     },
     "social.colibri.reaction": {
       "tier": "filtered",
@@ -800,7 +840,7 @@
     },
     "xyz.statusphere.status": {
       "tier": "filtered",
-      "notes": "Statusphere emoji status — leisure signal.",
+      "notes": "Statusphere emoji status \u2014 leisure signal.",
       "app": "statusphere"
     }
   }
