@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { ActivityItem } from './activity-item.js';
 import { streamCardVMSchema } from './stream-card-vm-schema.js';
 import { toStreamCardVM, toStreamCardVMs } from './to-stream-card-vm.js';
+import { isVisibleActivityItem } from '../cards/visibility.js';
 
 const DID = 'did:plc:author';
 
@@ -565,5 +566,53 @@ describe('hypercert details passthrough', () => {
   it('produces a VM that still satisfies the schema', () => {
     const [vm] = toStreamCardVMs([{ ...claimItem, hypercertDetails: details }]);
     expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+});
+
+describe('certified details passthrough', () => {
+  const details = {
+    badge: {
+      title: 'AI Readiness Evaluator',
+      description: 'Awarded to credentialed evaluators authorized to conduct assessments.',
+      icon: '\u{1F3C5}',
+      badgeType: 'evaluator',
+    },
+    recipient: { did: 'did:plc:rs55', handle: 'sharfyae.bsky.social', displayName: 'Sharfy' },
+  };
+
+  const awardItem = {
+    uri: 'at://did:plc:abc/app.certified.badge.award/3mqlu7nr4lb2i',
+    cid: 'bafytest',
+    collection: 'app.certified.badge.award',
+    rkey: '3mqlu7nr4lb2i',
+    record: { $type: 'app.certified.badge.award' },
+    indexedAt: '2026-07-14T09:08:00.947Z',
+    appId: 'certified',
+    appName: 'Certified',
+    category: 'Endorsements',
+  };
+
+  it('carries certifiedDetails through the transform', () => {
+    const [vm] = toStreamCardVMs([{ ...awardItem, certifiedDetails: details }]);
+    expect(vm?.certifiedDetails).toEqual(details);
+  });
+
+  it('produces a VM that still satisfies the schema', () => {
+    const [vm] = toStreamCardVMs([{ ...awardItem, certifiedDetails: details }]);
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+});
+
+describe('certified badge response visibility', () => {
+  it('hides a rejected badge and shows an accepted one', () => {
+    // A badge you declined is not a credential, and publishing declined
+    // badges would be a poor call.
+    expect(isVisibleActivityItem('app.certified.badge.response', { response: 'accepted' })).toBe(
+      true,
+    );
+    expect(isVisibleActivityItem('app.certified.badge.response', { response: 'rejected' })).toBe(
+      false,
+    );
+    expect(isVisibleActivityItem('app.certified.badge.response', {})).toBe(false);
   });
 });

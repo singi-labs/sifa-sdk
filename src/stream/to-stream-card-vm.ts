@@ -975,6 +975,7 @@ export function toStreamCardVM(
   // sidecar records. Set before the switch, like sourceUrl above, so every
   // body-variant return path keeps it.
   if (item.hypercertDetails) vm.hypercertDetails = item.hypercertDetails;
+  if (item.certifiedDetails) vm.certifiedDetails = item.certifiedDetails;
 
   // Repost / reply target, normalized through the same transform. Its own
   // sourceUrl is computed by this recursion.

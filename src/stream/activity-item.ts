@@ -38,6 +38,47 @@ export interface HypercertDetailsView {
   attachments: HypercertAttachmentView[];
 }
 
+/** An account a Certified record points at: a badge recipient, or a group. */
+export interface CertifiedActorView {
+  did: string;
+  /**
+   * The account's handle. Falls back to the DID when nothing resolved. Note
+   * that some accounts in this ecosystem are not on Bluesky at all (the
+   * Hypercerts Foundation's own account resolves only through its DID
+   * document), so a Bluesky-only lookup is not sufficient.
+   */
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+}
+
+/** The badge definition behind an award: what the badge is, and why. */
+export interface CertifiedBadgeView {
+  title: string;
+  /** Why the badge exists, straight from the definition record. */
+  description?: string;
+  /** Emoji from the definition, e.g. a medal. */
+  icon?: string;
+  /** e.g. "endorsement", "evaluator". */
+  badgeType?: string;
+}
+
+/**
+ * Certified enrichment, resolved by sifa-api. Covers both directions: a badge
+ * the person awarded to someone else, and one they received and accepted.
+ */
+export interface CertifiedDetailsView {
+  badge?: CertifiedBadgeView;
+  /** Who received the badge, for an award the person issued. */
+  recipient?: CertifiedActorView;
+  /** Who issued the badge, for one the person received and accepted. */
+  issuer?: CertifiedActorView;
+  /** The group joined, for a membership record. */
+  group?: CertifiedActorView;
+  /** Role on a membership, e.g. "owner", "admin", "member". */
+  role?: string;
+}
+
 export interface ActivityItem {
   /** Full at-uri of the record: stable key + permalink source. */
   uri: string;
@@ -87,4 +128,9 @@ export interface ActivityItem {
    * responses predating the field.
    */
   hypercertDetails?: HypercertDetailsView;
+  /**
+   * Certified enrichment: the badge behind an award and the resolved accounts
+   * it points at. Absent for non-Certified items and legacy responses.
+   */
+  certifiedDetails?: CertifiedDetailsView;
 }
