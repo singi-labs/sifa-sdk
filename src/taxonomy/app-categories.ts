@@ -16,12 +16,14 @@
  */
 
 export const APP_CATEGORIES = {
+  Art: { phosphorIcon: 'PaintBrush' },
   Articles: { phosphorIcon: 'Article' },
   Chat: { phosphorIcon: 'ChatsCircle' },
   Code: { phosphorIcon: 'Code' },
   Domains: { phosphorIcon: 'Globe' },
   Endorsements: { phosphorIcon: 'HandHeart' },
   Events: { phosphorIcon: 'CalendarBlank' },
+  Impact: { phosphorIcon: 'Certificate' },
   Links: { phosphorIcon: 'LinkSimple' },
   Lists: { phosphorIcon: 'ListBullets' },
   Music: { phosphorIcon: 'MusicNote' },
