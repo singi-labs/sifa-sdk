@@ -109,6 +109,7 @@ export const APP_CATEGORY_MAP = {
   hypercerts: 'Impact', // org.hypercerts.{claim.activity,collection} — authored claims of work done, and the project collections that group them
   certified: 'Endorsements', // app.certified.{badge.award,actor.membership} — endorsements issued to another DID, and group memberships
   impactindexer: 'Reviews', // org.impactindexer.review.comment — written reviews of a hypercert claim
+  pinksea: 'Art', // com.shinolabs.pinksea.oekaki — hand-drawn artwork posted to the PinkSea oekaki BBS
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)

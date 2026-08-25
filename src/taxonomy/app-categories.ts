@@ -16,6 +16,7 @@
  */
 
 export const APP_CATEGORIES = {
+  Art: { phosphorIcon: 'PaintBrush' },
   Articles: { phosphorIcon: 'Article' },
   Chat: { phosphorIcon: 'ChatsCircle' },
   Code: { phosphorIcon: 'Code' },

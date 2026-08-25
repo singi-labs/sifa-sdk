@@ -181,6 +181,29 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     urlPattern: 'https://kich.io/recipes/{rkey}',
     profileUrlPattern: 'https://kich.io',
   },
+  pinksea: {
+    // PinkSea oekaki viewer. Verified live: GET /{did}/oekaki/{rkey} returns
+    // 200 AND its og:image resolves to harbor.pinksea.art/{did}/{blobCid}
+    // carrying the same CID as the record, so the route really is per-record
+    // and not just an SPA catch-all.
+    urlPattern: 'https://pinksea.art/{did}/oekaki/{rkey}',
+    profileUrlPattern: 'https://pinksea.art/{did}',
+  },
+  hypercerts: {
+    // No confirmed public per-record viewer. hyperscan.dev is a network-wide
+    // search explorer (its input takes "DID, handle, AT-URI, or PDS host"),
+    // and hypercerts.org 404s on every claim route tried. Recognized so the
+    // pill renders, but cards stay non-clickable.
+  },
+  certified: {
+    // certified.app is fully client-rendered and returns an identical
+    // "Loading" shell for a real DID and a nonsense one, so no per-record
+    // route could be verified. Non-clickable until one is confirmed.
+  },
+  impactindexer: {
+    // Reviews are surfaced through hyperscan.dev/review, which has no
+    // per-record route. Non-clickable.
+  },
   recipe: {
     // recipe.exchange viewer. Verified: GET /recipes/{rkey} returns 200 (rkey
     // alone; no did needed) and /profiles/{handle} returns 200 for the author
@@ -289,4 +312,9 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['pub.chive.', 'chive'],
   // Onboard from helene-cook.eu profile audit. Zeens kept its old NSID.
   ['app.photosky.', 'zeens'],
+  // Onboard from the holke.xyz profile audit.
+  ['org.hypercerts.', 'hypercerts'],
+  ['app.certified.', 'certified'],
+  ['org.impactindexer.', 'impactindexer'],
+  ['com.shinolabs.pinksea.', 'pinksea'],
 ];
