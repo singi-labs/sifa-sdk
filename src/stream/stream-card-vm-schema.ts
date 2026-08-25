@@ -245,6 +245,30 @@ const hypercertDetailsSchema = z.object({
   attachments: z.array(z.object({ title: z.string().optional(), url: z.string() })),
 });
 
+/** An account a Certified record points at. */
+const certifiedActorSchema = z.object({
+  did: z.string(),
+  handle: z.string(),
+  displayName: z.string().optional(),
+  avatar: z.string().optional(),
+});
+
+/** Certified badge + resolved accounts, hydrated by sifa-api. */
+const certifiedDetailsSchema = z.object({
+  badge: z
+    .object({
+      title: z.string(),
+      description: z.string().optional(),
+      icon: z.string().optional(),
+      badgeType: z.string().optional(),
+    })
+    .optional(),
+  recipient: certifiedActorSchema.optional(),
+  issuer: certifiedActorSchema.optional(),
+  group: certifiedActorSchema.optional(),
+  role: z.string().optional(),
+});
+
 /** Zod schema for a {@link StreamCardVM}. Recursive through `subject.post`. */
 export const streamCardVMSchema: z.ZodType<StreamCardVM> = z.lazy(() =>
   z.object({
@@ -263,5 +287,6 @@ export const streamCardVMSchema: z.ZodType<StreamCardVM> = z.lazy(() =>
     theme: streamThemeSchema.optional(),
     subject: z.lazy(() => streamCardSubjectSchema).optional(),
     hypercertDetails: hypercertDetailsSchema.optional(),
+    certifiedDetails: certifiedDetailsSchema.optional(),
   }),
 );

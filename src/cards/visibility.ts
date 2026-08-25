@@ -48,12 +48,23 @@ function marginAnnotationHasBody(record: Record<string, unknown>): boolean {
   return false;
 }
 
+/**
+ * A badge response is the recipient's own accept/decline of a badge someone
+ * else awarded them. An accepted one is a credential the person holds and is
+ * worth surfacing; a rejected one is not, and publishing someone's declined
+ * badges would be a poor call. Anything other than "accepted" stays hidden.
+ */
+function certifiedBadgeAccepted(record: Record<string, unknown>): boolean {
+  return record.response === 'accepted';
+}
+
 export const ACTIVITY_VISIBILITY_RULES: Readonly<Record<string, VisibilityPredicate>> =
   Object.freeze({
     'buzz.bookhive.book': bookhiveHasOpinion,
     'app.beaconbits.beacon': beaconbitsHasContent,
     'at.margin.bookmark': marginBookmarkHasSource,
     'at.margin.annotation': marginAnnotationHasBody,
+    'app.certified.badge.response': certifiedBadgeAccepted,
   });
 
 /**
