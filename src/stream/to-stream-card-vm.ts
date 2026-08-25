@@ -971,6 +971,11 @@ export function toStreamCardVM(
     if (sourceUrl) vm.sourceUrl = sourceUrl;
   }
 
+  // Hypercert credit roll + outbound links, resolved by sifa-api out of
+  // sidecar records. Set before the switch, like sourceUrl above, so every
+  // body-variant return path keeps it.
+  if (item.hypercertDetails) vm.hypercertDetails = item.hypercertDetails;
+
   // Repost / reply target, normalized through the same transform. Its own
   // sourceUrl is computed by this recursion.
   if (item.subject) {
