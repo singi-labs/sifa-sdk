@@ -8,6 +8,36 @@
  * embeds, content labels) are layered on in sifa-web and are not part of the
  * shared contract.
  */
+export interface HypercertContributorView {
+  displayName: string;
+  imageUrl?: string;
+  /**
+   * Where the contributor lives. A GitHub profile URL on every
+   * `contributorInformation` record sampled to date, never a DID or atproto
+   * handle, so this does not resolve to a Sifa profile.
+   */
+  identifier?: string;
+  /** Percentage share of the claim; weights across a claim sum to 100. */
+  weight?: number;
+}
+
+export interface HypercertAttachmentView {
+  title?: string;
+  url: string;
+}
+
+/**
+ * Contributor and attachment detail for an `org.hypercerts.claim.activity`
+ * record, resolved by sifa-api out of sidecar records in the claim's own repo.
+ * A card cannot reach them itself.
+ */
+export interface HypercertDetailsView {
+  contributors: HypercertContributorView[];
+  /** Total before truncation, so a renderer can show "+N more". */
+  contributorCount: number;
+  attachments: HypercertAttachmentView[];
+}
+
 export interface ActivityItem {
   /** Full at-uri of the record: stable key + permalink source. */
   uri: string;
@@ -51,4 +81,10 @@ export interface ActivityItem {
    * a `StreamCardVM` too.
    */
   subject?: ActivityItem;
+  /**
+   * Hypercert claim enrichment, set by sifa-api. Absent for non-hypercert
+   * items, for claims with neither contributors nor attachments, and for
+   * responses predating the field.
+   */
+  hypercertDetails?: HypercertDetailsView;
 }

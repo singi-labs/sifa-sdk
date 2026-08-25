@@ -231,6 +231,20 @@ export const streamCardSubjectSchema: z.ZodType<StreamCardSubject> = z.discrimin
   }),
 ]);
 
+/** Hypercert credit roll + outbound links, hydrated by sifa-api. */
+const hypercertDetailsSchema = z.object({
+  contributors: z.array(
+    z.object({
+      displayName: z.string(),
+      imageUrl: z.string().optional(),
+      identifier: z.string().optional(),
+      weight: z.number().optional(),
+    }),
+  ),
+  contributorCount: z.number(),
+  attachments: z.array(z.object({ title: z.string().optional(), url: z.string() })),
+});
+
 /** Zod schema for a {@link StreamCardVM}. Recursive through `subject.post`. */
 export const streamCardVMSchema: z.ZodType<StreamCardVM> = z.lazy(() =>
   z.object({
@@ -248,5 +262,6 @@ export const streamCardVMSchema: z.ZodType<StreamCardVM> = z.lazy(() =>
     externalLink: streamExternalLinkSchema.optional(),
     theme: streamThemeSchema.optional(),
     subject: z.lazy(() => streamCardSubjectSchema).optional(),
+    hypercertDetails: hypercertDetailsSchema.optional(),
   }),
 );

@@ -1,6 +1,7 @@
 import type { RgbColor } from '../format/wcag-contrast.js';
 import type { ActivityTier } from '../taxonomy/activity-tiers.js';
 import type { StreamVerb } from './verbs.js';
+import type { HypercertDetailsView } from './activity-item.js';
 
 /**
  * The app a stream item originated from, resolved from the app registry.
@@ -273,4 +274,10 @@ export interface StreamCardVM {
   externalLink?: StreamExternalLink;
   theme?: StreamTheme;
   subject?: StreamCardSubject;
+  /**
+   * Contributor and attachment detail for a hypercert claim, passed through
+   * from the `ActivityItem` sifa-api hydrated. Renderers show a credit roll
+   * and the claim's outbound links instead of a bare contributor count.
+   */
+  hypercertDetails?: HypercertDetailsView;
 }

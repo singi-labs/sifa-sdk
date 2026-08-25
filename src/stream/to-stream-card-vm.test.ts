@@ -523,3 +523,47 @@ describe('toStreamCardVMs — batch + visibility filter', () => {
     expect(vms[0]?.uri).toBe(visible.uri);
   });
 });
+
+describe('hypercert details passthrough', () => {
+  const details = {
+    contributorCount: 16,
+    contributors: [
+      {
+        displayName: 'essential-randomness',
+        imageUrl: 'https://avatars.githubusercontent.com/u/47095486?v=4',
+        identifier: 'https://github.com/essential-randomness',
+        weight: 47.29,
+      },
+    ],
+    attachments: [{ title: 'Repository', url: 'https://github.com/hypercerts-org' }],
+  };
+
+  const claimItem = {
+    uri: 'at://did:plc:abc/org.hypercerts.claim.activity/3mi5vrbzknavp',
+    cid: 'bafytest',
+    collection: 'org.hypercerts.claim.activity',
+    rkey: '3mi5vrbzknavp',
+    record: { $type: 'org.hypercerts.claim.activity', title: 'atmosphereconf' },
+    indexedAt: '2026-03-29T00:36:57.599Z',
+    appId: 'hypercerts',
+    appName: 'Hypercerts',
+    category: 'Impact',
+  };
+
+  it('carries hypercertDetails through the transform', () => {
+    // Regression: the field reached the api but was dropped here, so stream
+    // cards silently fell back to a bare contributor count.
+    const [vm] = toStreamCardVMs([{ ...claimItem, hypercertDetails: details }]);
+    expect(vm?.hypercertDetails).toEqual(details);
+  });
+
+  it('leaves hypercertDetails unset when the item has none', () => {
+    const [vm] = toStreamCardVMs([claimItem]);
+    expect(vm?.hypercertDetails).toBeUndefined();
+  });
+
+  it('produces a VM that still satisfies the schema', () => {
+    const [vm] = toStreamCardVMs([{ ...claimItem, hypercertDetails: details }]);
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+});
