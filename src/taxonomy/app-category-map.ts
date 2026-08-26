@@ -111,6 +111,9 @@ export const APP_CATEGORY_MAP = {
   impactindexer: 'Reviews', // org.impactindexer.review.comment — written reviews of a hypercert claim
   pinksea: 'Art', // com.shinolabs.pinksea.oekaki — hand-drawn artwork posted to the PinkSea oekaki BBS
 
+  // Onboard from the tijs.org profile audit.
+  dropanchor: 'Places', // app.dropanchor.checkin — location check-ins (place, geo, optional review text)
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',

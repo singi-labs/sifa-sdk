@@ -327,6 +327,27 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('dropanchor', () => {
+    it('maps app.dropanchor.checkin to the dropanchor app', () => {
+      expect(getAppIdForCollection('app.dropanchor.checkin')).toBe('dropanchor');
+    });
+
+    it('links a check-in to /checkin/{rkey} using its own rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/app.dropanchor.checkin/3mgzw2gt5uu23',
+          rkey: '3mgzw2gt5uu23',
+          collection: 'app.dropanchor.checkin',
+          record: {
+            text: 'Nice session!',
+            address: { name: 'Revolt Bouldering Gym' },
+          },
+        }),
+      ).toBe('https://dropanchor.app/checkin/3mgzw2gt5uu23');
+    });
+  });
+
   describe('atmoBB forum', () => {
     it('links a discussion reply to its parent thread page from record.thread.uri', () => {
       expect(
