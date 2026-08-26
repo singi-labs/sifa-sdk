@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.1
+
+### Patch Changes
+
+- 065cdd6: Add Dropanchor (app.dropanchor.checkin) to the app category map, activity tiers, and URL patterns. Check-ins are categorized as Places and link to https://dropanchor.app/checkin/{rkey}.
+
 ## 0.18.0
 
 ### Minor Changes
