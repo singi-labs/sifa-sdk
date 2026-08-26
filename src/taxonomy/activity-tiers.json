@@ -114,6 +114,11 @@
       "app": "collectivesocial",
       "notes": "Auto-created default Inbox lists are filtered at the consumer layer via isDefault=true predicate."
     },
+    "app.dropanchor.checkin": {
+      "tier": "creation",
+      "app": "dropanchor",
+      "notes": "A location check-in (place, geo, category, optional review text). Authored, so creation. app.dropanchor.like is excluded backend-side."
+    },
     "app.mcp.server": {
       "tier": "creation",
       "app": "mcp"

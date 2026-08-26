@@ -231,6 +231,12 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     urlPattern: 'https://chive.pub/eprints/at%3A%2F%2F{did}%2Fpub.chive.eprint.submission%2F{rkey}',
     profileUrlPattern: 'https://chive.pub/authors/{did}',
   },
+  dropanchor: {
+    // Dropanchor (dropanchor.app) renders each check-in at /checkin/{rkey} —
+    // the record's own rkey, no did/handle needed. Documented as the OG-tagged
+    // share URL in the dropanchorapp repos. A self-permalink for this record.
+    urlPattern: 'https://dropanchor.app/checkin/{rkey}',
+  },
 });
 
 /**
@@ -317,4 +323,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['app.certified.', 'certified'],
   ['org.impactindexer.', 'impactindexer'],
   ['com.shinolabs.pinksea.', 'pinksea'],
+  // Onboard from tijs.org profile audit.
+  ['app.dropanchor.', 'dropanchor'],
 ];
