@@ -348,6 +348,22 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('askeverything', () => {
+    it('maps app.askeverything.feed.answer to the askeverything app', () => {
+      expect(getAppIdForCollection('app.askeverything.feed.answer')).toBe('askeverything');
+    });
+
+    it('links an answer to the author profile (no per-item URL, internal ids)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'app.askeverything.feed.answer',
+          record: { text: 'Both. Both is good.' },
+        }),
+      ).toBe('https://askeverything.app/profile/alice.test');
+    });
+  });
+
   describe('atmoBB forum', () => {
     it('links a discussion reply to its parent thread page from record.thread.uri', () => {
       expect(

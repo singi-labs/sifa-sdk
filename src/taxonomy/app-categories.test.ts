@@ -65,6 +65,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('atfund')).toBe('Endorsements');
     expect(categoryForApp('crate')).toBe('Articles');
     expect(categoryForApp('dropanchor')).toBe('Places');
+    expect(categoryForApp('askeverything')).toBe('Q&A');
     expect(categoryForApp('atmorsvp')).toBe('Events');
     expect(categoryForApp('opensocial')).toBe('Social');
     expect(categoryForApp('kevara')).toBe('Events');

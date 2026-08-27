@@ -237,6 +237,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // share URL in the dropanchorapp repos. A self-permalink for this record.
     urlPattern: 'https://dropanchor.app/checkin/{rkey}',
   },
+  askeverything: {
+    // Ask Everything (askeverything.app) keys its public answer route
+    // (/answer/{id}) on an internal DB id, not the atproto rkey, so there's no
+    // per-record permalink we can build from {did, rkey}. Its profile route
+    // /profile/{handle} does resolve by atproto handle, so fall back to that.
+    profileUrlPattern: 'https://askeverything.app/profile/{handle}',
+  },
 });
 
 /**
@@ -325,4 +332,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['com.shinolabs.pinksea.', 'pinksea'],
   // Onboard from tijs.org profile audit.
   ['app.dropanchor.', 'dropanchor'],
+  // Onboard from angrydutchman.houseofmadness.org profile audit.
+  ['app.askeverything.', 'askeverything'],
 ];

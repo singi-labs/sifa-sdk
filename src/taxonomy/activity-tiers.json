@@ -119,6 +119,11 @@
       "app": "dropanchor",
       "notes": "A location check-in (place, geo, category, optional review text). Authored, so creation. app.dropanchor.like is excluded backend-side."
     },
+    "app.askeverything.feed.answer": {
+      "tier": "creation",
+      "app": "askeverything",
+      "notes": "An authored answer to a community question (opinion with body text). app.askeverything.actor.* and graph.follow are excluded backend-side."
+    },
     "app.mcp.server": {
       "tier": "creation",
       "app": "mcp"
