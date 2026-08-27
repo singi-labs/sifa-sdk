@@ -66,6 +66,8 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('crate')).toBe('Articles');
     expect(categoryForApp('dropanchor')).toBe('Places');
     expect(categoryForApp('askeverything')).toBe('Q&A');
+    expect(categoryForApp('greengale')).toBe('Articles');
+    expect(categoryForApp('kut')).toBe('Social');
     expect(categoryForApp('atmorsvp')).toBe('Events');
     expect(categoryForApp('opensocial')).toBe('Social');
     expect(categoryForApp('kevara')).toBe('Events');

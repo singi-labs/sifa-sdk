@@ -116,6 +116,8 @@ export const APP_CATEGORY_MAP = {
 
   // Onboard from the angrydutchman.houseofmadness.org profile audit.
   askeverything: 'Q&A', // app.askeverything.feed.answer — authored answers to community questions
+  greengale: 'Articles', // app.greengale.blog.entry — authored blog posts (title, subtitle, Markdown body)
+  kut: 'Social', // social.kut.community.membership — joining a Kut community (a commitment)
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
