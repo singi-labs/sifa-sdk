@@ -114,6 +114,9 @@ export const APP_CATEGORY_MAP = {
   // Onboard from the tijs.org profile audit.
   dropanchor: 'Places', // app.dropanchor.checkin — location check-ins (place, geo, optional review text)
 
+  // Onboard from the angrydutchman.houseofmadness.org profile audit.
+  askeverything: 'Q&A', // app.askeverything.feed.answer — authored answers to community questions
+
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)
   linkat: 'Links',

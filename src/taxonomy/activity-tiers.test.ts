@@ -15,6 +15,8 @@ describe('getActivityTier', () => {
     expect(getActivityTier('pics.pixl.image')).toBe('creation');
     // Dropanchor check-ins are authored location entries.
     expect(getActivityTier('app.dropanchor.checkin')).toBe('creation');
+    // Ask Everything answers are authored responses to community questions.
+    expect(getActivityTier('app.askeverything.feed.answer')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {
