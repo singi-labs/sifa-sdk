@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.2
+
+### Patch Changes
+
+- 7203920: Add Ask Everything (askeverything.app) to the app category map, activity tiers, and URL patterns. `app.askeverything.feed.answer` is Q&A-tier authored content; cards link to the author's Ask Everything profile.
+
 ## 0.18.1
 
 ### Patch Changes
