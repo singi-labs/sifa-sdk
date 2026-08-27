@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.3
+
+### Patch Changes
+
+- 2215e7a: Add GreenGale (blog posts) and Kut (community memberships) to the app category map, activity tiers, and URL patterns. GreenGale entries link to `/{handle}/{rkey}`; Kut memberships link to the joined community, parsed from the membership's `community.uri`.
+
 ## 0.18.2
 
 ### Patch Changes
