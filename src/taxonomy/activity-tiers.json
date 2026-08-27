@@ -124,6 +124,16 @@
       "app": "askeverything",
       "notes": "An authored answer to a community question (opinion with body text). app.askeverything.actor.* and graph.follow are excluded backend-side."
     },
+    "app.greengale.blog.entry": {
+      "tier": "creation",
+      "app": "greengale",
+      "notes": "An authored blog post (title, subtitle, Markdown body, visibility). app.greengale.document and app.greengale.publication (drafts/containers) are excluded backend-side."
+    },
+    "social.kut.community.membership": {
+      "tier": "creation",
+      "app": "kut",
+      "notes": "Joining a Kut community, a commitment. Mirrors Colibri/OpenSocial memberships, which are creation-tier."
+    },
     "app.mcp.server": {
       "tier": "creation",
       "app": "mcp"

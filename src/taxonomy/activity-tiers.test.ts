@@ -17,6 +17,10 @@ describe('getActivityTier', () => {
     expect(getActivityTier('app.dropanchor.checkin')).toBe('creation');
     // Ask Everything answers are authored responses to community questions.
     expect(getActivityTier('app.askeverything.feed.answer')).toBe('creation');
+    // GreenGale blog posts are authored articles.
+    expect(getActivityTier('app.greengale.blog.entry')).toBe('creation');
+    // Kut community memberships are commitments (like Colibri/OpenSocial).
+    expect(getActivityTier('social.kut.community.membership')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {

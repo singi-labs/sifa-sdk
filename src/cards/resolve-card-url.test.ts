@@ -364,6 +364,52 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('greengale', () => {
+    it('maps app.greengale.blog.entry to the greengale app', () => {
+      expect(getAppIdForCollection('app.greengale.blog.entry')).toBe('greengale');
+    });
+
+    it('links a blog entry to /{handle}/{rkey}', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'app.greengale.blog.entry',
+          rkey: '3magbwklnr22t',
+          record: { title: 'An AI skeptic developer journey', visibility: 'public' },
+        }),
+      ).toBe('https://greengale.app/alice.test/3magbwklnr22t');
+    });
+  });
+
+  describe('kut', () => {
+    it('maps social.kut.community.membership to the kut app', () => {
+      expect(getAppIdForCollection('social.kut.community.membership')).toBe('kut');
+    });
+
+    it('links a membership to the joined community from community.uri (string)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'social.kut.community.membership',
+          record: {
+            community:
+              'at://did:plc:w7xvpie7buv7ozh53tlkdny7/social.kut.community.profile/kut-social',
+          },
+        }),
+      ).toBe('https://kut.social/community/kut-social');
+    });
+
+    it('falls back to the kut homepage when community.uri is missing', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'social.kut.community.membership',
+          record: {},
+        }),
+      ).toBe('https://kut.social');
+    });
+  });
+
   describe('atmoBB forum', () => {
     it('links a discussion reply to its parent thread page from record.thread.uri', () => {
       expect(

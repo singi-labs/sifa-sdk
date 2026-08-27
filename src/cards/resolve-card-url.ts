@@ -294,6 +294,31 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
     return { url: null, strategy: 'none' };
   }
 
+  // Kut membership: a `social.kut.community.membership` record has no page of
+  // its own. Link to the community it joined, parsed from record.community.uri.
+  // Kut renders communities at /community/{slug}, where the slug is the
+  // community-profile record's rkey (verified live). The community is a
+  // *different* record, so probe the URL.
+  if (collection === 'social.kut.community.membership') {
+    const community = record.community;
+    const communityUri =
+      typeof community === 'string'
+        ? community
+        : // Narrow the object branch to read an optional `uri`. The membership
+          // lexicon carries `community` as a bare at-uri string today; the cast
+          // tolerates a future strongRef `{ uri, cid }` shape without assuming it.
+          community != null && typeof community === 'object'
+          ? stringOrNull((community as Record<string, unknown>).uri)
+          : null;
+    if (communityUri) {
+      const parsed = parseAtUri(communityUri);
+      if (parsed) {
+        return urlHealth(`https://kut.social/community/${encodeURIComponent(parsed.rkey)}`);
+      }
+    }
+    return urlHealth(APP_URL_PATTERNS.kut?.profileUrlPattern ?? null);
+  }
+
   // atstore reviews: no per-review URL exists on atstore.fyi, and user profile
   // pages don't exist either. Deep-link to the reviewed product instead.
   // The slug comes from record.listingMeta (enriched by sifa-api from the

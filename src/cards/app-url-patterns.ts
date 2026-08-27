@@ -244,6 +244,18 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // /profile/{handle} does resolve by atproto handle, so fall back to that.
     profileUrlPattern: 'https://askeverything.app/profile/{handle}',
   },
+  greengale: {
+    // GreenGale (greengale.app) renders each blog entry at /{handle}/{rkey}.
+    // Verified live against a real post. Self-permalink for this record.
+    urlPattern: 'https://greengale.app/{handle}/{rkey}',
+    profileUrlPattern: 'https://greengale.app/{handle}',
+  },
+  kut: {
+    // Kut (kut.social) is a community app. A membership record has no page of
+    // its own; the card links to the community it joined, built from the
+    // membership's community.uri in resolve-card-url. Homepage fallback only.
+    profileUrlPattern: 'https://kut.social',
+  },
 });
 
 /**
@@ -334,4 +346,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['app.dropanchor.', 'dropanchor'],
   // Onboard from angrydutchman.houseofmadness.org profile audit.
   ['app.askeverything.', 'askeverything'],
+  ['app.greengale.', 'greengale'],
+  ['social.kut.', 'kut'],
 ];
