@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.4
+
+### Patch Changes
+
+- de8a3a7: Add `SELF_APP_ID` and `excludeSelfApp` for the synthetic Sifa entry in `activeApps`. The AppView injects a Sifa entry into a claimed profile's `activeApps` so external consumers of the public profile data can show Sifa as a platform; first-party surfaces filter it out with `excludeSelfApp`.
+
 ## 0.18.3
 
 ### Patch Changes
