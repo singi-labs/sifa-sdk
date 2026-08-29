@@ -365,6 +365,48 @@ describe('profileToJsonResume skills, languages, projects, publications, volunte
   });
 });
 
+describe('profileToJsonResume never emits blanks', () => {
+  // A record whose only name is whitespace should lose the key, not carry an
+  // empty string: a CV template renders `organization: ''` as a blank line
+  // under the entry, which reads as a rendering bug to whoever receives it.
+  it('omits volunteer.organization rather than emitting an empty string', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [{ rkey: '1', organization: '   ', role: 'Board member' }],
+    });
+    expect(r.volunteer?.[0]).toEqual({ position: 'Board member' });
+  });
+
+  it('omits education.institution rather than emitting an empty string', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      education: [{ rkey: '1', institution: '', degree: 'MSc' }],
+    });
+    expect(r.education?.[0]).toEqual({ studyType: 'MSc' });
+  });
+
+  it('routes the avatar and external account URLs through the sanitizer', () => {
+    const r = profileToJsonResume(
+      {
+        ...minimal,
+        avatar: 'https://cdn.example/a.jpg',
+        externalAccounts: [
+          {
+            rkey: '1',
+            platform: 'github',
+            url: 'https://github.com/gxjansen',
+            verifiable: true,
+            verified: true,
+          },
+        ],
+      },
+      { sanitize: (value) => `[${value}]` },
+    );
+    expect(r.basics?.image).toBe('[https://cdn.example/a.jpg]');
+    expect(r.basics?.profiles?.[0]?.url).toBe('[https://github.com/gxjansen]');
+  });
+});
+
 describe('profileToJsonResume meta and shape', () => {
   it('records the canonical profile URL and the schema version', () => {
     const r = profileToJsonResume(minimal);
