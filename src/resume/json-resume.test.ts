@@ -379,12 +379,17 @@ describe('profileToJsonResume meta and shape', () => {
     }
   });
 
+  // The transform here is deliberately meaningless. The emitter's contract is
+  // that it routes user-authored text through the caller's sanitizer; the real
+  // sanitizer is DOMPurify on the consuming side, and a tag-stripping regex
+  // standing in for it here would only be a worse one.
   it('applies the sanitizer to user-authored text', () => {
     const r = profileToJsonResume(
-      { ...minimal, about: '<script>x</script>bio' },
-      { sanitize: (s) => s.replace(/<[^>]*>/g, '') },
+      { ...minimal, about: 'bio', headline: 'title' },
+      { sanitize: (value) => `[${value}]` },
     );
-    expect(r.basics?.summary).toBe('xbio');
+    expect(r.basics?.summary).toBe('[bio]');
+    expect(r.basics?.label).toBe('[title]');
   });
 
   it('is JSON-serialisable without undefined leaking into the output', () => {
