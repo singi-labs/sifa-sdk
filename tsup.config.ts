@@ -17,6 +17,7 @@ export default defineConfig({
     'src/flags/index.ts',
     'src/badge/index.ts',
     'src/jsonld/index.ts',
+    'src/resume/index.ts',
   ],
   loader: {
     '.json': 'json',
