@@ -87,7 +87,7 @@ export interface JsonResumeLocation {
 export interface JsonResumeProfileLink {
   readonly network: string;
   readonly username?: string;
-  readonly url: string;
+  readonly url?: string;
 }
 
 export interface JsonResumeBasics {
@@ -109,7 +109,11 @@ export interface JsonResumeWork {
 }
 
 export interface JsonResumeVolunteer {
-  readonly organization: string;
+  /**
+   * Omitted when the record carries no organization name at all. Emitting an
+   * empty string would render as a blank organization line in a CV template.
+   */
+  readonly organization?: string;
   readonly position?: string;
   readonly summary?: string;
   readonly startDate?: string;
@@ -117,7 +121,8 @@ export interface JsonResumeVolunteer {
 }
 
 export interface JsonResumeEducation {
-  readonly institution: string;
+  /** Omitted when the record carries no institution name. See volunteer. */
+  readonly institution?: string;
   readonly area?: string;
   readonly studyType?: string;
   readonly startDate?: string;
@@ -282,14 +287,14 @@ export function profileToJsonResume(
     compact<JsonResumeProfileLink>({
       network: s(account.platform),
       username: text(account.label, s),
-      url: account.url,
+      url: text(account.url, s),
     }),
   );
 
   const basics = compact<JsonResumeBasics>({
     name,
     label: text(profile.headline, s),
-    image: profile.avatar,
+    image: text(profile.avatar, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
     location: mapLocation(profile.location, s),
@@ -308,7 +313,7 @@ export function profileToJsonResume(
 
   const volunteer = filterHidden(profile.volunteering).map((entry) =>
     compact<JsonResumeVolunteer>({
-      organization: orgName(entry.entityName, entry.organization, s) ?? '',
+      organization: orgName(entry.entityName, entry.organization, s),
       position: text(entry.role, s),
       summary: text(entry.description, s),
       startDate: toResumeDate(entry.startDate),
@@ -318,7 +323,7 @@ export function profileToJsonResume(
 
   const education = filterHidden(profile.education).map((entry) =>
     compact<JsonResumeEducation>({
-      institution: orgName(entry.entityName, entry.institution, s) ?? '',
+      institution: orgName(entry.entityName, entry.institution, s),
       area: text(entry.fieldOfStudy, s),
       studyType: text(entry.degree, s),
       startDate: toResumeDate(entry.startedAt),
