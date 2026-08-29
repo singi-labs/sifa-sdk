@@ -142,6 +142,16 @@
         "default": "./dist/jsonld/index.cjs"
       }
     },
+    "./resume": {
+      "import": {
+        "types": "./dist/resume/index.d.ts",
+        "default": "./dist/resume/index.js"
+      },
+      "require": {
+        "types": "./dist/resume/index.d.cts",
+        "default": "./dist/resume/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
