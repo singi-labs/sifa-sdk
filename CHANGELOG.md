@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.7
+
+### Patch Changes
+
+- 9067b37: Add per-item activity hide: `hideActivityItem`, `unhideActivityItem` and `fetchHiddenActivityItems` fetchers, the `useHideActivityItem`, `useUnhideActivityItem` and `useHiddenActivityItems` hooks, and the `hidden` flag on `ActivityItem`. Until now activity visibility was controllable at app or category level only, so hiding one off-topic post meant hiding the whole app.
+
 ## 0.18.6
 
 ### Patch Changes
