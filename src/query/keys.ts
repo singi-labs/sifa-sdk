@@ -94,6 +94,9 @@ export const sifaQueryKeys = {
     teaser: (handleOrDid: string) => ['sifa', 'activity', 'teaser', handleOrDid] as const,
     feed: (handleOrDid: string, opts: Record<string, unknown>) =>
       ['sifa', 'activity', 'feed', handleOrDid, opts] as const,
+    // Session-scoped: the AppView reads the caller's own hides from their
+    // cookie, so there is only ever one list per client.
+    hiddenItems: () => ['sifa', 'activity', 'hidden-items'] as const,
   },
 
   github: {
@@ -195,6 +198,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.activity.heatmap>
   | ReturnType<typeof sifaQueryKeys.activity.teaser>
   | ReturnType<typeof sifaQueryKeys.activity.feed>
+  | ReturnType<typeof sifaQueryKeys.activity.hiddenItems>
   | ReturnType<typeof sifaQueryKeys.endorsement.all>
   | ReturnType<typeof sifaQueryKeys.endorsement.count>
   | ReturnType<typeof sifaQueryKeys.endorsement.pending>

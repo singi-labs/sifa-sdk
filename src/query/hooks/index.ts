@@ -99,6 +99,11 @@ export {
   useHideProfileItem,
   useUnhideProfileItem,
 } from './use-profile-items-hide.js';
+export {
+  useHiddenActivityItems,
+  useHideActivityItem,
+  useUnhideActivityItem,
+} from './use-activity-items-hide.js';
 export { useStats } from './use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './use-apps.js';
 export { useAccounts } from './use-accounts.js';

@@ -129,6 +129,15 @@ export {
   type HiddenItemType,
   type HideProfileItemInput,
 } from './fetchers/profile-items-hide.js';
+export {
+  fetchHiddenActivityItems,
+  hideActivityItem,
+  unhideActivityItem,
+  type FetchHiddenActivityItemsOptions,
+  type HiddenActivityItem,
+  type HideActivityItemInput,
+  type UnhideActivityItemInput,
+} from './fetchers/activity-items-hide.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -392,6 +401,11 @@ export {
   useHideProfileItem,
   useUnhideProfileItem,
 } from './hooks/use-profile-items-hide.js';
+export {
+  useHiddenActivityItems,
+  useHideActivityItem,
+  useUnhideActivityItem,
+} from './hooks/use-activity-items-hide.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export { useAccounts } from './hooks/use-accounts.js';
