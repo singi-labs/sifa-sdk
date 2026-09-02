@@ -65,6 +65,12 @@ export interface ActivityItem {
    * gate media. See {@link ActivityLabel}.
    */
   labels?: ActivityLabel[];
+  /**
+   * The owner has hidden this item from their profile. Only ever set on the
+   * owner's own view of their feed -- every other surface omits hidden items
+   * rather than flagging them -- so a card can offer an unhide in place.
+   */
+  hidden?: boolean;
 }
 
 export interface ActivityTeaserResponse {

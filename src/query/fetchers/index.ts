@@ -133,6 +133,15 @@ export {
   type HiddenItemType,
   type HideProfileItemInput,
 } from './profile-items-hide.js';
+export {
+  fetchHiddenActivityItems,
+  hideActivityItem,
+  unhideActivityItem,
+  type FetchHiddenActivityItemsOptions,
+  type HiddenActivityItem,
+  type HideActivityItemInput,
+  type UnhideActivityItemInput,
+} from './activity-items-hide.js';
 export { fetchStats, type StatsResponse } from './stats.js';
 export {
   fetchAppsRegistry,
