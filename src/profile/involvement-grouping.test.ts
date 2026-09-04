@@ -34,6 +34,19 @@ describe('groupInvolvementByHeading', () => {
     expect(groups[0]?.items.map((i) => i.rkey)).toEqual(['new', 'old']);
   });
 
+  it('floats ongoing entries above more-recently-ended ones within a group', () => {
+    const groups = groupInvolvementByHeading([
+      inv({
+        rkey: 'ended',
+        kind: 'id.sifa.defs#involvementCharity',
+        startedAt: '2015',
+        endedAt: '2024',
+      }),
+      inv({ rkey: 'ongoing', kind: 'id.sifa.defs#involvementCharity', startedAt: '2018' }),
+    ]);
+    expect(groups[0]?.items.map((i) => i.rkey)).toEqual(['ongoing', 'ended']);
+  });
+
   it('routes an unknown kind to Other', () => {
     const groups = groupInvolvementByHeading([inv({ rkey: 'x', kind: 'id.sifa.defs#future' })]);
     expect(groups[0]?.heading).toBe('Other');
