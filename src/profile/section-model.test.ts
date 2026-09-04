@@ -26,10 +26,10 @@ describe('ALL_SECTIONS order (evidence-first)', () => {
     expect(ids).toEqual([
       'about',
       'career',
-      'skills',
       'projects',
       'presentations',
       'publications',
+      'skills',
       'credentials',
       'education',
       'courses',
@@ -41,8 +41,8 @@ describe('ALL_SECTIONS order (evidence-first)', () => {
     ]);
   });
 
-  it('places Skills right after Career', () => {
-    expect(ids.indexOf('skills')).toBe(ids.indexOf('career') + 1);
+  it('places Skills at the end of the Experience block, right after Publications', () => {
+    expect(ids.indexOf('skills')).toBe(ids.indexOf('publications') + 1);
   });
 
   it('places the show-your-work block (projects, talks, publications) above the formal block', () => {

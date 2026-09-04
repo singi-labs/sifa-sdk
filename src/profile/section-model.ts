@@ -32,15 +32,14 @@ export type SectionGroupId = (typeof SECTION_GROUPS)[number]['id'];
 
 /**
  * Profile body sections in render + nav order (evidence-first): identity and
- * activity lead, then living work (career, skills, projects, talks,
- * publications), then the formal record (credentials, education, courses), then
- * the rest. `ns` selects the consumer's i18n namespace for `labelKey`; `group`
+ * activity lead, then living work (career, projects, talks, publications, then
+ * skills), then the formal record (credentials, education, courses), then the
+ * rest. `ns` selects the consumer's i18n namespace for `labelKey`; `group`
  * ties the section to a {@link SECTION_GROUPS} header.
  */
 export const ALL_SECTIONS = [
   { id: 'about', labelKey: 'about', ns: 'profile' as const, group: 'overview' as const },
   { id: 'career', labelKey: 'career', ns: 'sections' as const, group: 'experience' as const },
-  { id: 'skills', labelKey: 'skills', ns: 'sections' as const, group: 'experience' as const },
   { id: 'projects', labelKey: 'projects', ns: 'sections' as const, group: 'experience' as const },
   {
     id: 'presentations',
@@ -54,6 +53,7 @@ export const ALL_SECTIONS = [
     ns: 'sections' as const,
     group: 'experience' as const,
   },
+  { id: 'skills', labelKey: 'skills', ns: 'sections' as const, group: 'experience' as const },
   {
     id: 'credentials',
     labelKey: 'credentials',
