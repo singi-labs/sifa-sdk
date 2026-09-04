@@ -369,6 +369,15 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
     return patternHealth('recipe', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
+  // atmob paste (atmob.in): the SPA viewer renders any paste by its full at-uri
+  // via a `?uri=` query param (verified in the app's app.js). Both
+  // paste.document and paste.bundle share that viewer, so build the URL from the
+  // item's own uri — a self-permalink for this record (record-checkable).
+  if (collection.startsWith('in.atmob.paste.')) {
+    if (uri) return recordHealth(`https://atmob.in/?uri=${encodeURIComponent(uri)}`);
+    return { url: null, strategy: 'none' };
+  }
+
   // --- Generic fallbacks ---
 
   // record.url is a common ad-hoc per-item URL (hyperboards, etc.). It is an
