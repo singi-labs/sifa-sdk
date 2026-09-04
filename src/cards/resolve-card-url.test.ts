@@ -33,6 +33,44 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('app.atmobb.discussion.thread')).toBe('atmobb');
     expect(getAppIdForCollection('pub.chive.eprint.submission')).toBe('chive');
     expect(getAppIdForCollection('app.photosky.collection')).toBe('zeens');
+    expect(getAppIdForCollection('in.atmob.paste.document')).toBe('atmob');
+    expect(getAppIdForCollection('in.atmob.paste.bundle')).toBe('atmob');
+    expect(getAppIdForCollection('ma.tokono.byov.video')).toBe('tokono');
+    expect(getAppIdForCollection('agency.portable.membership')).toBe('portable');
+  });
+
+  it('builds the atmob paste viewer URL from the record at-uri', () => {
+    const uri = 'at://did:plc:abc/in.atmob.paste.document/3mrkqaspbni23';
+    expect(
+      resolveCardUrl({
+        collection: 'in.atmob.paste.document',
+        record: { title: 'note' },
+        uri,
+        rkey: '3mrkqaspbni23',
+        authorDid: 'did:plc:abc',
+      }),
+    ).toBe(`https://atmob.in/?uri=${encodeURIComponent(uri)}`);
+  });
+
+  it('leaves tokono video and portable membership non-clickable', () => {
+    expect(
+      resolveCardUrl({
+        collection: 'ma.tokono.byov.video',
+        record: { title: 'Second' },
+        uri: 'at://did:plc:abc/ma.tokono.byov.video/3leyt3khgce2y',
+        rkey: '3leyt3khgce2y',
+        authorDid: 'did:plc:abc',
+      }),
+    ).toBeNull();
+    expect(
+      resolveCardUrl({
+        collection: 'agency.portable.membership',
+        record: { role: 'fascinator' },
+        uri: 'at://did:plc:abc/agency.portable.membership/xyz',
+        rkey: 'xyz',
+        authorDid: 'did:plc:abc',
+      }),
+    ).toBeNull();
   });
 
   it('falls back to the first two NSID segments for unknown apps', () => {

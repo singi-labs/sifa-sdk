@@ -21,6 +21,11 @@ describe('getActivityTier', () => {
     expect(getActivityTier('app.greengale.blog.entry')).toBe('creation');
     // Kut community memberships are commitments (like Colibri/OpenSocial).
     expect(getActivityTier('social.kut.community.membership')).toBe('creation');
+    // Profile-of-the-day audit onboards.
+    expect(getActivityTier('in.atmob.paste.document')).toBe('creation');
+    expect(getActivityTier('in.atmob.paste.bundle')).toBe('creation');
+    expect(getActivityTier('ma.tokono.byov.video')).toBe('creation');
+    expect(getActivityTier('agency.portable.membership')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {

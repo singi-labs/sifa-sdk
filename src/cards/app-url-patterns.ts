@@ -256,6 +256,22 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // membership's community.uri in resolve-card-url. Homepage fallback only.
     profileUrlPattern: 'https://kut.social',
   },
+  atmob: {
+    // atmob (atmob.in) is a paste app. Its SPA viewer renders any paste by its
+    // full at-uri via a `?uri=` query param (verified in the app's app.js:
+    // `location.search = ?uri=${encodeURIComponent(uri)}`). Both paste.document
+    // and paste.bundle share that viewer, so the per-record URL is built
+    // bespoke from the item's own uri in resolve-card-url. No pattern here.
+  },
+  tokono: {
+    // tokono (tokono.ma) hosts "bring your own video" records, but tokono.ma is
+    // the owner's static personal site with no public per-video viewer route.
+    // Cards render non-clickable.
+  },
+  portable: {
+    // agency.portable (handle portable.agency) has no resolving website, and a
+    // membership record has no page of its own. Cards render non-clickable.
+  },
 });
 
 /**
@@ -348,4 +364,8 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['app.askeverything.', 'askeverything'],
   ['app.greengale.', 'greengale'],
   ['social.kut.', 'kut'],
+  // Onboard from the upcoming profile-of-the-day audit.
+  ['in.atmob.paste.', 'atmob'],
+  ['ma.tokono.byov.', 'tokono'],
+  ['agency.portable.', 'portable'],
 ];
