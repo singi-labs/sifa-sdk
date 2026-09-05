@@ -67,6 +67,10 @@ export function useConfirmEndorsement(
         await queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.endorsement.pending(),
         });
+        // Keep the header bell badge in step with the resolved task.
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.inbox.counts(),
+        });
         if (subjectHandleOrDid) {
           await queryClient.invalidateQueries({
             queryKey: sifaQueryKeys.profile.byHandle(subjectHandleOrDid),
@@ -99,6 +103,10 @@ export function useDismissEndorsement(
       if (result.success) {
         await queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.endorsement.pending(),
+        });
+        // Keep the header bell badge in step with the resolved task.
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.inbox.counts(),
         });
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);

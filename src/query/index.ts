@@ -89,6 +89,7 @@ export {
   type PendingEndorsement,
   type PendingEndorsementsPage,
   type DismissEndorsementInput,
+  type FetchPendingEndorsementsOptions,
 } from './fetchers/endorsement-inbox.js';
 export {
   fetchPendingConfirmations,
@@ -101,7 +102,26 @@ export {
   type GivenConfirmation,
   type ConfirmationInput,
   type ConfirmationSubjectInput,
+  type FetchConfirmationsOptions,
 } from './fetchers/confirmations.js';
+export {
+  fetchInboxCounts,
+  type InboxCounts,
+  type FetchInboxCountsOptions,
+} from './fetchers/inbox.js';
+export {
+  fetchUnlinkedPositions,
+  type UnlinkedPosition,
+  type UnlinkedPositionsResult,
+  type FetchUnlinkedPositionsOptions,
+} from './fetchers/unlinked-positions.js';
+export {
+  fetchProfileCompleteness,
+  PROFILE_COMPLETENESS_SIGNALS,
+  type ProfileCompleteness,
+  type ProfileCompletenessSignal,
+  type FetchProfileCompletenessOptions,
+} from './fetchers/profile-completeness.js';
 export { fetchResolveActor, fetchTypeaheadActors } from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
@@ -382,6 +402,9 @@ export {
   useDismissConfirmation,
   useRevokeConfirmation,
 } from './hooks/use-confirmations.js';
+export { useInboxCounts } from './hooks/use-inbox.js';
+export { useUnlinkedPositions } from './hooks/use-unlinked-positions.js';
+export { useProfileCompleteness } from './hooks/use-profile-completeness.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';
 export {
