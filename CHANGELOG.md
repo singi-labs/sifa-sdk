@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.11
+
+### Patch Changes
+
+- 9cd5fcf: Add `claimed` to actor cards (`ActorCard`, `CoSpeakerView`, `ProjectMemberView`) and an `actorShowsIdentity(actor)` predicate. A person named on someone's record shows their name and profile link when confirmed or when they hold a claimed Sifa account; otherwise it stays a bare handle.
+
 ## 0.18.10
 
 ### Patch Changes
