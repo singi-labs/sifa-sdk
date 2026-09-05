@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.13
+
+### Patch Changes
+
+- 5f17877: Add the shared `agentRef` entity-reference: `agentRefSchema` (with `AgentRef` type) mirroring `id.sifa.defs#agentRef`, and the `resolveAgentRef` dual-read resolver (object-level precedence, nested wins over the legacy flat fields). Primitives for the flat-to-agentRef record migration; no record schema references it yet.
+
 ## 0.18.12
 
 ### Patch Changes
