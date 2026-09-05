@@ -51,6 +51,7 @@ export {
   updatePosition,
 } from './positions.js';
 export { createEducation, deleteEducation, updateEducation } from './education.js';
+export { setSectionPrimary, unsetSectionPrimary, type PrimarySection } from './section-primary.js';
 export { createSkill, deleteSkill, updateSkill } from './skills.js';
 export { createRecord, deleteRecord, updateRecord } from './records.js';
 export {

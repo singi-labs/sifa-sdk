@@ -19,6 +19,8 @@ export {
 
 export { pickPrimaryPosition, type PrimaryPositionCandidate } from './primary-position.js';
 
+export { pickPrimaryFlagged, type PrimaryFlagCandidate } from './primary-item.js';
+
 export {
   summarizeProfileView,
   type ProfileSummary,

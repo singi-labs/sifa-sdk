@@ -19,6 +19,7 @@ export const ProfilePublicationRecordSchema = z.object({
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   authors: z.array(PublicationAuthorSchema).max(50).optional(),
   publishedAt: partialDateSchema.optional(),
+  isPrimary: z.boolean().optional(),
   createdAt: datetimeSchema,
 });
 

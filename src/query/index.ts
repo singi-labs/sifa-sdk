@@ -41,6 +41,11 @@ export {
 } from './fetchers/positions.js';
 export { createEducation, deleteEducation, updateEducation } from './fetchers/education.js';
 export {
+  setSectionPrimary,
+  unsetSectionPrimary,
+  type PrimarySection,
+} from './fetchers/section-primary.js';
+export {
   createSkill,
   deleteSkill,
   updateSkill,
@@ -357,6 +362,10 @@ export {
   useUpdateEducation,
   type UpdateEducationVariables,
 } from './hooks/use-education-mutations.js';
+export {
+  useSetSectionPrimary,
+  useUnsetSectionPrimary,
+} from './hooks/use-section-primary-mutations.js';
 export {
   useCreateSkill,
   useDeleteSkill,
