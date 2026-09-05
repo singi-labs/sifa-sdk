@@ -365,6 +365,7 @@ export {
   countRecentActivity,
   SELF_APP_ID,
   excludeSelfApp,
+  actorShowsIdentity,
   type DailyActivityCount,
   type AppWithId,
   type DimensionKey,
