@@ -98,12 +98,18 @@ export interface ProjectView {
   sameAs?: string;
 }
 
-/** A person named as a member of a project. Identity fields appear only once confirmed. */
+/**
+ * A person named as a member of a project (also used for involvement
+ * collaborators). Identity fields appear when the person's identity may be
+ * shown -- when `confirmed` or `claimed` (see `actorShowsIdentity`).
+ */
 export interface ProjectMemberView {
   did: string;
   handle: string;
   displayName?: string;
   avatar?: string;
+  /** True when the member has a claimed Sifa account (see `actorShowsIdentity`). */
+  claimed?: boolean;
   confirmed?: boolean;
   confirmedStale?: boolean;
   role?: string;
@@ -192,10 +198,10 @@ export interface DurationView {
 /**
  * A co-speaker on a presentation delivery.
  *
- * `displayName` and `avatar` are served only once `confirmed` is true. The
- * lexicon also declares an unlinked free-text `name`, which the AppView has
- * never emitted -- the record field is `format: did`, so there is nothing to
- * emit it from.
+ * `displayName` and `avatar` are served when the person's identity may be shown
+ * -- when `confirmed` or `claimed` (see `actorShowsIdentity`). The lexicon also
+ * declares an unlinked free-text `name`, which the AppView has never emitted --
+ * the record field is `format: did`, so there is nothing to emit it from.
  */
 export interface CoSpeakerView {
   did?: string;
@@ -203,6 +209,8 @@ export interface CoSpeakerView {
   displayName?: string;
   avatar?: string;
   hasSifaProfile?: boolean;
+  /** True when the co-speaker has a claimed Sifa account (see `actorShowsIdentity`). */
+  claimed?: boolean;
   confirmed?: boolean;
   confirmedStale?: boolean;
   name?: string;

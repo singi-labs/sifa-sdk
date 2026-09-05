@@ -476,24 +476,32 @@ export interface PresentationLinkView {
 }
 
 /**
- * A co-speaker on a delivery, hydrated from a stored DID to a profile card.
- * Any atproto account; `hasSifaProfile` is true when they have a claimed Sifa
- * profile (vs an unclaimed atproto account that still renders at /p/<handle>).
- */
-/**
  * Another person named on someone's record, as rendered by the AppView.
  *
- * `displayName` and `avatar` are present only when `confirmed` is true. An
- * unconfirmed claim renders as a bare handle with no identity attached and no
- * link to a profile: naming someone is a claim, and until they affirm it the
- * claim must not borrow their face.
+ * `displayName` and `avatar` are present when the person's identity may be
+ * shown -- i.e. when {@link actorShowsIdentity} holds (`confirmed` or
+ * `claimed`). Otherwise the card is a bare handle with no identity attached and
+ * no link to a profile: naming someone is a claim, and until they affirm it (or
+ * hold a claimed Sifa account that can be notified of the claim) the claim must
+ * not borrow their face.
  */
 export interface ActorCard {
   did: string;
   handle: string;
   displayName?: string;
   avatar?: string;
+  /**
+   * True when Sifa has indexed this account at all -- including an unclaimed
+   * atproto account seen via the firehose, which still renders at /p/<handle>.
+   * Broader than {@link claimed}; not on its own a reason to show identity.
+   */
   hasSifaProfile?: boolean;
+  /**
+   * True when the named person has a claimed Sifa account (has authenticated
+   * via OAuth). A claimed account can be notified of a pending claim, so its
+   * identity is shown even before confirmation -- see {@link actorShowsIdentity}.
+   */
+  claimed?: boolean;
   /** True once the named person has published a matching `id.sifa.confirmation`. */
   confirmed?: boolean;
   /**
