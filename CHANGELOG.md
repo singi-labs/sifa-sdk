@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.20
+
+### Patch Changes
+
+- b5219f8: Expose `agentRef` on the profile view types (`ProfilePosition`, `ProfileEducation`, `ProfileCertification`, `ProfileVolunteering`, `ProfileHonor`, `ProfileCourse`, `ProfileInvestment`, `ProfileInvolvement`) so consumers can read the canonical nested org reference the AppView emits (#511). Additive optional field, typed as `AgentRef`.
+
 ## 0.18.19
 
 ### Patch Changes
