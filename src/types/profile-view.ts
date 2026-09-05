@@ -73,6 +73,14 @@ export interface SkillView {
   /** Freeform user-defined grouping label nested under `category` (#305). */
   subCategory?: string;
   positionRkeys?: string[];
+  /** CID of the skill record, for referencing it when endorsing. */
+  cid?: string;
+  /** Number of confirmed endorsements of this skill. */
+  endorsementCount?: number;
+  /** Whether this skill has any confirmed endorsements. */
+  endorsed?: boolean;
+  /** Prior names this skill was endorsed under before it was renamed. */
+  endorsedAs?: string[];
 }
 
 export interface CertificationView {
