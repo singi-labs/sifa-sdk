@@ -403,6 +403,101 @@ describe('buildProfileHighlights - co-people (exclude owner, name others)', () =
   });
 });
 
+describe('buildProfileHighlights - primary override', () => {
+  it('education: a flagged item wins over the most-recent one', () => {
+    const { row2 } = buildProfileHighlights(
+      profile({
+        education: [
+          { rkey: 'recent', institution: 'Recent U', startedAt: '2022-01' },
+          { rkey: 'flagged', institution: 'Chosen U', startedAt: '2005-01', primary: true },
+        ],
+      }),
+      { today: TODAY },
+    );
+    expect(row2.find((t) => t.section === 'education')?.title).toBe('Chosen U');
+  });
+
+  it('publication: a flagged item wins over the newest one', () => {
+    const { row1 } = buildProfileHighlights(
+      profile({
+        publications: [
+          { rkey: 'new', title: 'Newest', date: '2026-01' },
+          { rkey: 'flagged', title: 'Chosen', date: '2019-01', primary: true },
+        ],
+      }),
+      { today: TODAY },
+    );
+    expect(row1.find((t) => t.section === 'publication')?.title).toBe('Chosen');
+  });
+
+  it('involvement: only an ongoing flagged item is honored', () => {
+    const { row2 } = buildProfileHighlights(
+      profile({
+        involvement: [
+          { rkey: 'newest', kind: 'community', role: 'Newest', startedAt: '2025-01' },
+          {
+            rkey: 'flagged',
+            kind: 'community',
+            role: 'Chosen',
+            startedAt: '2021-01',
+            primary: true,
+          },
+        ],
+      }),
+      { today: TODAY },
+    );
+    expect(row2.find((t) => t.section === 'involvement')?.title).toBe('Chosen');
+  });
+
+  it('project: only an ongoing flagged item is honored', () => {
+    const { row2 } = buildProfileHighlights(
+      profile({
+        projects: [
+          { rkey: 'newest', name: 'Newest', startDate: '2025-01' },
+          { rkey: 'flagged', name: 'Chosen', startDate: '2021-01', primary: true },
+        ],
+      }),
+      { today: TODAY },
+    );
+    expect(row2.find((t) => t.section === 'project')?.title).toBe('Chosen');
+  });
+
+  it('talk: a flagged reusable talk wins over a more recent non-primary one', () => {
+    const { row1 } = buildProfileHighlights(
+      profile({
+        presentations: [
+          {
+            rkey: 'recent',
+            title: 'Recent talk',
+            deliveries: [{ rkey: 'd1', eventName: 'DevConf', date: '2026-05-01' }],
+          },
+          {
+            rkey: 'flagged',
+            title: 'Chosen talk',
+            primary: true,
+            deliveries: [{ rkey: 'd2', eventName: 'IOSP', date: '2024-05-01' }],
+          },
+        ],
+      }),
+      { today: TODAY },
+    );
+    expect(row1.find((t) => t.section === 'talk')?.title).toBe('Chosen talk');
+  });
+
+  it('falls back to the automatic pick when nothing is flagged', () => {
+    const { row2 } = buildProfileHighlights(
+      profile({
+        education: [
+          { rkey: 'a', institution: 'Older', startedAt: '2005-01' },
+          { rkey: 'b', institution: 'Newer', startedAt: '2020-01' },
+        ],
+      }),
+      { today: TODAY },
+    );
+    expect(row2.find((t) => t.section === 'education')?.title).toBe('Newer');
+  });
+});
+
 describe('shouldRenderHighlights - collapse threshold', () => {
   it('renders when there are two or more tiles', () => {
     const rows = buildProfileHighlights(

@@ -14,6 +14,7 @@
  * display strings ("Since …", day-level event dates) live here.
  */
 import { pickPrimaryPosition } from '../logic/primary-position.js';
+import { pickPrimaryFlagged } from '../logic/primary-item.js';
 import {
   sortByDateDesc,
   lexiconDateExtractor,
@@ -143,6 +144,8 @@ interface TalkOccasion {
   title: string;
   delivery: ProfilePresentationDelivery;
   imageUrl?: string;
+  /** True when this occasion belongs to a talk the user flagged primary. */
+  primary?: boolean;
 }
 
 /**
@@ -165,7 +168,13 @@ function pickTalk(
     const date = dated.reduce((max, d) => (d.date && d.date > max ? d.date : max), '');
     const delivery = dated.find((d) => d.date === date);
     if (!delivery) continue;
-    occasions.push({ date, title: p.title, delivery, imageUrl: p.coverImageUrl ?? undefined });
+    occasions.push({
+      date,
+      title: p.title,
+      delivery,
+      imageUrl: p.coverImageUrl ?? undefined,
+      primary: p.primary === true,
+    });
   }
   for (const d of deliveries) {
     const standalone = !d.presentationRkey || !talkRkeys.has(d.presentationRkey);
@@ -174,7 +183,12 @@ function pickTalk(
   }
 
   if (!occasions.length) return undefined;
-  const best = occasions.reduce((a, b) => (b.date > a.date ? b : a));
+  // A flagged primary talk wins over the automatic latest/soonest pick. Standalone
+  // sessions never carry the flag, so the pool is empty unless a reusable talk is
+  // primary, in which case its most recent or soonest occasion is used.
+  const primaryOccasions = occasions.filter((o) => o.primary);
+  const pool = primaryOccasions.length ? primaryOccasions : occasions;
+  const best = pool.reduce((a, b) => (b.date > a.date ? b : a));
   const { delivery } = best;
 
   return {
@@ -224,8 +238,11 @@ export function buildProfileHighlights(
   );
   if (talk) row1.push(talk);
 
-  // --- Row 1: Publication ---
-  const publication = sortByDateDesc(visible(profile.publications), singleDateExtractor)[0];
+  // --- Row 1: Publication (any item may be the user-flagged primary) ---
+  const visiblePublications = visible(profile.publications);
+  const publication =
+    pickPrimaryFlagged(visiblePublications) ??
+    sortByDateDesc(visiblePublications, singleDateExtractor)[0];
   if (publication) {
     // Drop the venue when it is the owner themself: self-published articles carry
     // the owner's own handle or display name as publisher/publicationName, which
@@ -264,8 +281,11 @@ export function buildProfileHighlights(
     });
   }
 
-  // --- Row 2: Education (always shown; falls back to a Course) ---
-  const education = sortByDateDesc(visible(profile.education), lexiconDateExtractor)[0];
+  // --- Row 2: Education (always shown; any item may be primary; falls back to a Course) ---
+  const visibleEducation = visible(profile.education);
+  const education =
+    pickPrimaryFlagged(visibleEducation) ??
+    sortByDateDesc(visibleEducation, lexiconDateExtractor)[0];
   if (education) {
     const institution = education.entityName ?? education.institution;
     const title = education.degree || education.fieldOfStudy || institution || 'Education';
@@ -291,9 +311,10 @@ export function buildProfileHighlights(
     }
   }
 
-  // --- Row 2: Project (only when ongoing) ---
+  // --- Row 2: Project (only when ongoing; an ongoing project may be primary) ---
   const ongoingProjects = visible(profile.projects).filter((p) => !p.endDate);
-  const project = sortByDateDesc(ongoingProjects, dateRangeExtractor)[0];
+  const project =
+    pickPrimaryFlagged(ongoingProjects) ?? sortByDateDesc(ongoingProjects, dateRangeExtractor)[0];
   if (project) {
     row2.push({
       section: 'project',
@@ -305,9 +326,11 @@ export function buildProfileHighlights(
     });
   }
 
-  // --- Row 2: Involvement (only when ongoing) ---
+  // --- Row 2: Involvement (only when ongoing; an ongoing involvement may be primary) ---
   const ongoingInvolvement = visible(profile.involvement).filter((i) => !i.endedAt);
-  const involvement = sortByDateDesc(ongoingInvolvement, lexiconDateExtractor)[0];
+  const involvement =
+    pickPrimaryFlagged(ongoingInvolvement) ??
+    sortByDateDesc(ongoingInvolvement, lexiconDateExtractor)[0];
   if (involvement) {
     row2.push({
       section: 'involvement',
