@@ -1,3 +1,5 @@
+import type { AgentRef } from '../schemas/shared.js';
+
 export interface LocationValue {
   city?: string;
   /** community.lexicon.location.address field -- preferred over `city`. */
@@ -34,6 +36,12 @@ export interface ProfilePosition {
    * `company`).
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   /**
    * Company-page slug for a durably-linked position, resolved by the AppView at
    * read time alongside `entityName` (#159). Lets a consumer link the company
@@ -85,6 +93,12 @@ export interface ProfileEducation {
    * `institution`).
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   degree?: string;
   fieldOfStudy?: string;
   description?: string;
@@ -194,6 +208,12 @@ export interface ProfileCertification {
    * `authority`).
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   issueDate?: string;
   expiryDate?: string;
   credentialUrl?: string;
@@ -304,6 +324,12 @@ export interface ProfileVolunteering {
    * `organization`).
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   role?: string;
   cause?: string;
   startDate?: string;
@@ -328,6 +354,12 @@ export interface ProfileHonor {
    * entry. Absent for free-text or unresolved entries (fall back to `issuer`).
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   date?: string;
   description?: string;
   hidden?: boolean;
@@ -376,6 +408,12 @@ export interface ProfileInvestment {
   entityRef?: string;
   /** Resolved canonical name of the linked company. Render over `company` when present. */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   /** How the capital went in. Angel, syndicate member or LP -- never GP. */
   role?: string;
   /** The company's funding stage at the time of the investment, not its stage today. */
@@ -419,6 +457,12 @@ export interface ProfileInvolvement {
    * free-text or unresolved entries.
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   location?: LocationValue | null;
   skills?: SkillRef[];
   /** Skill records resolved from `skills`, for display. */
@@ -465,6 +509,12 @@ export interface ProfileCourse {
    * `institution`).
    */
   entityName?: string;
+  /**
+   * Canonical org reference (#511): a nested mirror of the flat
+   * name / did / entityRef fields. Prefer it when present; the nested
+   * shape wins over the flat fields (resolveAgentRef precedence).
+   */
+  agentRef?: AgentRef;
   number?: string;
   /** rkey of the associated certification, resolved from the course's
    * `credential` at-uri. Used to join the course to a certification in the
