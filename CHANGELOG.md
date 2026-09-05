@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.19
+
+### Patch Changes
+
+- 62afc7f: Add `claimerDisplayName` to `GivenConfirmation` so the "Things you have confirmed" surface can render a name instead of a bare handle.
+
 ## 0.18.18
 
 ### Patch Changes
