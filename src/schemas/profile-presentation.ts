@@ -48,6 +48,7 @@ export const ProfilePresentationRecordSchema = z.object({
   writeupRef: externalRecordRefSchema.optional(),
   // Optional uploaded cover image for the talk page.
   coverImage: BlobRefSchema.optional(),
+  isPrimary: z.boolean().optional(),
   createdAt: datetimeSchema,
 });
 

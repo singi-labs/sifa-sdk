@@ -92,6 +92,8 @@ export interface ProfileEducation {
   startedAt?: string;
   endedAt?: string;
   hidden?: boolean;
+  /** User-flagged primary education entry, surfaced in the Highlights block. */
+  primary?: boolean;
 }
 
 export interface ProfileSkill {
@@ -215,6 +217,8 @@ export interface ProfileProject {
   /** AT-URI of the same record on another person's profile, when they keep one. */
   sameAs?: string;
   hidden?: boolean;
+  /** User-flagged primary project, surfaced in the Highlights block. Ongoing only. */
+  primary?: boolean;
 }
 
 export interface PublicationContributor {
@@ -261,6 +265,8 @@ export interface ProfilePublication {
   verifiedVia?: string;
   orcidPutCode?: number;
   hidden?: boolean;
+  /** User-flagged primary publication, surfaced in the Highlights block. */
+  primary?: boolean;
   orcidCorroborated?: boolean;
   pendingVerification?: boolean;
   appId?: string;
@@ -424,6 +430,8 @@ export interface ProfileInvolvement {
    */
   legacy?: boolean;
   hidden?: boolean;
+  /** User-flagged primary involvement, surfaced in the Highlights block. Ongoing only. */
+  primary?: boolean;
   /** Other people named on this involvement, hydrated from the stored DIDs. */
   collaborators?: ProjectMemberCard[];
   /** AT-URI of the same involvement as recorded on another person's profile. */
@@ -580,6 +588,8 @@ export interface ProfilePresentation {
   /** Resolved URL of the uploaded cover image, when present. */
   coverImageUrl?: string | null;
   hidden?: boolean;
+  /** User-flagged primary talk, surfaced in the Highlights block. Talks only, not sessions. */
+  primary?: boolean;
   deliveries?: ProfilePresentationDelivery[];
 }
 

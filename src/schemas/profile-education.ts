@@ -29,6 +29,7 @@ export const ProfileEducationRecordSchema = z.object({
   startedAt: partialDateSchema.optional(),
   endedAt: partialDateSchema.optional(),
   labels: selfLabelsSchema.optional(),
+  isPrimary: z.boolean().optional(),
   createdAt: datetimeSchema,
 });
 

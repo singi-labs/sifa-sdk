@@ -64,6 +64,7 @@ export interface EducationView {
   description?: string;
   startedAt?: string;
   endedAt?: string;
+  primary?: boolean;
 }
 
 export interface SkillView {
@@ -104,6 +105,7 @@ export interface ProjectView {
   /** AT-URI of the same project as recorded elsewhere, when this entry duplicates another. */
   /** AT-URI of the same record on another person's profile, when they keep one. */
   sameAs?: string;
+  primary?: boolean;
 }
 
 /**
@@ -159,6 +161,7 @@ export interface InvolvementView {
   collaborators?: ProjectMemberView[];
   /** AT-URI of the same involvement as recorded on another person's profile. */
   sameAs?: string;
+  primary?: boolean;
 }
 
 export interface ContributorView {
@@ -187,6 +190,7 @@ export interface PublicationView {
   publicationUrl?: string;
   publicationName?: string;
   image?: string;
+  primary?: boolean;
 }
 
 export interface CourseView {
@@ -254,6 +258,7 @@ export interface PresentationView {
   links?: PresentationLinkView[];
   writeupUri?: string;
   coverImageUrl?: string;
+  primary?: boolean;
   deliveries: PresentationDeliveryView[];
 }
 

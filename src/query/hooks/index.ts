@@ -40,6 +40,7 @@ export {
   useUpdateEducation,
   type UpdateEducationVariables,
 } from './use-education-mutations.js';
+export { useSetSectionPrimary, useUnsetSectionPrimary } from './use-section-primary-mutations.js';
 export {
   useCreateSkill,
   useDeleteSkill,

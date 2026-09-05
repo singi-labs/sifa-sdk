@@ -66,6 +66,7 @@ export const ProfileInvolvementRecordSchema = z
     labels: selfLabelsSchema.optional(),
     collaborators: z.array(projectMemberRefSchema).max(50).optional(),
     sameAs: externalRecordRefSchema.optional(),
+    isPrimary: z.boolean().optional(),
     createdAt: datetimeSchema,
   })
   .passthrough();
