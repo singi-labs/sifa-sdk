@@ -48,6 +48,8 @@ export interface GivenConfirmation {
   subjectUri: string;
   claimerDid: string;
   claimerHandle?: string;
+  /** Claimer's display name (Sifa override wins), for naming them without a handle. */
+  claimerDisplayName?: string;
   relation: string;
   /** The name as it stood when confirmed, so a rename shows as a difference. */
   subjectName: string;
