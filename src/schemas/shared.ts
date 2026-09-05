@@ -85,6 +85,25 @@ export const externalRecordRefSchema = z.object({
 });
 
 /**
+ * Shared reference to an organization or person named by a record. Mirrors
+ * `id.sifa.defs#agentRef`. `name` is a point-in-time snapshot label captured
+ * when the record was saved; `did` and `entityRef` are the durable identity and
+ * should be resolved live. `name` is required so an empty object cannot validate
+ * as a no-op. `.passthrough()` (not `.strict()`): external apps may emit fields a
+ * newer schema will define, and dropping them on a round-trip would silently
+ * lose data.
+ */
+export const agentRefSchema = z
+  .object({
+    name: z.string().min(1).refine(maxGraphemes(256)).max(2560),
+    did: didSchema.optional(),
+    entityRef: uriSchema.optional(),
+  })
+  .passthrough();
+
+export type AgentRef = z.infer<typeof agentRefSchema>;
+
+/**
  * Self-labels shape from `com.atproto.label.defs#selfLabels`. Modelled
  * permissively because clients rarely construct this directly; the AppView
  * handles label validation.
