@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.14
+
+### Patch Changes
+
+- 0947aa7: Add `cid`, `endorsementCount`, `endorsed`, and `endorsedAs` to `SkillView`. The AppView already serves these on each skill; TS consumers can now read the endorsement summary without casting.
+
 ## 0.18.13
 
 ### Patch Changes
