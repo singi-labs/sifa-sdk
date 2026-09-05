@@ -42,24 +42,32 @@ export interface FetchInboxCountsOptions extends ApiFetchOptions {
  * error (`isError` stays false); a persistently-down endpoint is indistinguishable
  * from a genuine zero. That trade-off is deliberate for a poll-driven badge.
  */
+/** Coerce a server-supplied count to a safe non-negative integer. */
+function toCount(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? Math.trunc(value) : 0;
+}
+
 export async function fetchInboxCounts(
   config: SifaApiConfig,
   options: FetchInboxCountsOptions = {},
 ): Promise<InboxCounts> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
+  // Destructure cookieHeader out before spreading so the raw Cookie header (a
+  // session token) never lands as a top-level property on the fetch init.
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
 
   try {
     const data = await apiFetch<InboxCounts>(config, '/api/inbox/counts', {
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
-      ...options,
+      ...rest,
       headers,
     });
     return {
-      tasks: data?.tasks ?? 0,
-      unreadNotifications: data?.unreadNotifications ?? 0,
+      tasks: toCount(data?.tasks),
+      unreadNotifications: toCount(data?.unreadNotifications),
     };
   } catch {
     return { tasks: 0, unreadNotifications: 0 };

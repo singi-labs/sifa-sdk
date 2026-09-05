@@ -39,18 +39,19 @@ export async function fetchUnlinkedPositions(
   config: SifaApiConfig,
   options: FetchUnlinkedPositionsOptions = {},
 ): Promise<UnlinkedPositionsResult> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
 
   try {
     const data = await apiFetch<UnlinkedPositionsResult>(config, '/api/positions/unlinked', {
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
-      ...options,
+      ...rest,
       headers,
     });
-    return { positions: data?.positions ?? [] };
+    return { positions: Array.isArray(data?.positions) ? data.positions : [] };
   } catch {
     return { positions: [] };
   }

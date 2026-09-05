@@ -75,14 +75,15 @@ export async function fetchPendingEndorsements(
   config: SifaApiConfig,
   options: FetchPendingEndorsementsOptions = {},
 ): Promise<PendingEndorsementsPage> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
   try {
     const data = await apiFetch<PendingEndorsementsPage>(config, '/api/endorsements/pending', {
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
-      ...options,
+      ...rest,
       headers,
     });
     return { endorsements: data?.endorsements ?? [], cursor: data?.cursor };

@@ -50,8 +50,9 @@ export async function fetchProfileCompleteness(
   config: SifaApiConfig,
   options: FetchProfileCompletenessOptions = {},
 ): Promise<ProfileCompleteness> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
 
   const empty: ProfileCompleteness = {
     complete: true,
@@ -65,11 +66,11 @@ export async function fetchProfileCompleteness(
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
-      ...options,
+      ...rest,
       headers,
     });
     if (!data) return empty;
-    const missing = data.missing ?? [];
+    const missing = Array.isArray(data.missing) ? data.missing : [];
     return {
       complete: data.complete ?? missing.length === 0,
       score: data.score ?? PROFILE_COMPLETENESS_SIGNALS.length - missing.length,

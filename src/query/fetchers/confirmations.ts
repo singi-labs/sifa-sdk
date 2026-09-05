@@ -99,14 +99,15 @@ export async function fetchPendingConfirmations(
   config: SifaApiConfig,
   options: FetchConfirmationsOptions = {},
 ): Promise<PendingConfirmationsPage> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
   try {
     const data = await apiFetch<PendingConfirmationsPage>(config, '/api/confirmations/pending', {
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
-      ...options,
+      ...rest,
       headers,
     });
     return { confirmations: data?.confirmations ?? [], cursor: data?.cursor };
@@ -129,13 +130,14 @@ export async function fetchGivenConfirmations(
   config: SifaApiConfig,
   options: FetchConfirmationsOptions = {},
 ): Promise<{ confirmations: GivenConfirmation[] }> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
   try {
     const data = await apiFetch<{ confirmations: GivenConfirmation[] }>(
       config,
       '/api/confirmations/mine',
-      { cache: 'no-store', credentials: 'include', timeoutMs: 5000, ...options, headers },
+      { cache: 'no-store', credentials: 'include', timeoutMs: 5000, ...rest, headers },
     );
     return { confirmations: data?.confirmations ?? [] };
   } catch {
