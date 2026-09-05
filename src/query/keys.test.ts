@@ -44,6 +44,15 @@ describe('sifaQueryKeys', () => {
     expect(one.slice(0, all.length)).toEqual(all);
   });
 
+  it('exposes the inbox, unlinked-position and profile-completeness keys', () => {
+    expect(sifaQueryKeys.inbox.counts()).toEqual(['sifa', 'inbox', 'counts']);
+    expect(sifaQueryKeys.position.unlinked()).toEqual(['sifa', 'position', 'unlinked']);
+    expect(sifaQueryKeys.profile.completeness()).toEqual(['sifa', 'profile', 'completeness']);
+    // inbox.counts() nests under inbox.all() for hierarchical invalidation.
+    const all = sifaQueryKeys.inbox.all();
+    expect(sifaQueryKeys.inbox.counts().slice(0, all.length)).toEqual(all);
+  });
+
   it('exposes admin feature-allowlist key under admin.*', () => {
     expect(sifaQueryKeys.admin.featureAllowlist('FEED_V5_ENABLED')).toEqual([
       'sifa',

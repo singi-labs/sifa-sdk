@@ -98,6 +98,10 @@ export function useCreateConfirmation(
         await queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.confirmation.given(),
         });
+        // Keep the header bell badge in step with the resolved task.
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.inbox.counts(),
+        });
         if (claimerHandleOrDid) {
           await queryClient.invalidateQueries({
             queryKey: sifaQueryKeys.profile.byHandle(claimerHandleOrDid),
@@ -128,6 +132,10 @@ export function useDismissConfirmation(
         await queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.confirmation.pending(),
         });
+        // Keep the header bell badge in step with the resolved task.
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.inbox.counts(),
+        });
       }
       await options?.onSuccess?.(result, variables, onMutateResult, context);
     },
@@ -153,6 +161,13 @@ export function useRevokeConfirmation(
       if (result.success) {
         await queryClient.invalidateQueries({
           queryKey: sifaQueryKeys.confirmation.pending(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.confirmation.given(),
+        });
+        // Keep the header bell badge in step with the resolved task.
+        await queryClient.invalidateQueries({
+          queryKey: sifaQueryKeys.inbox.counts(),
         });
         if (claimerHandleOrDid) {
           await queryClient.invalidateQueries({

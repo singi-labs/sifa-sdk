@@ -94,6 +94,7 @@ export {
   type PendingEndorsement,
   type PendingEndorsementsPage,
   type DismissEndorsementInput,
+  type FetchPendingEndorsementsOptions,
 } from './endorsement-inbox.js';
 export {
   fetchPendingConfirmations,
@@ -106,7 +107,22 @@ export {
   type GivenConfirmation,
   type ConfirmationInput,
   type ConfirmationSubjectInput,
+  type FetchConfirmationsOptions,
 } from './confirmations.js';
+export { fetchInboxCounts, type InboxCounts, type FetchInboxCountsOptions } from './inbox.js';
+export {
+  fetchUnlinkedPositions,
+  type UnlinkedPosition,
+  type UnlinkedPositionsResult,
+  type FetchUnlinkedPositionsOptions,
+} from './unlinked-positions.js';
+export {
+  fetchProfileCompleteness,
+  PROFILE_COMPLETENESS_SIGNALS,
+  type ProfileCompleteness,
+  type ProfileCompletenessSignal,
+  type FetchProfileCompletenessOptions,
+} from './profile-completeness.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './marque-domains.js';
 export {

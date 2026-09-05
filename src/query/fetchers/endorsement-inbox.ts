@@ -53,6 +53,16 @@ export interface DismissEndorsementInput {
   rkey: string;
 }
 
+/** Options for {@link fetchPendingEndorsements}, adding RSC cookie forwarding. */
+export interface FetchPendingEndorsementsOptions extends ApiFetchOptions {
+  /**
+   * Pass the caller's `Cookie` header on Next.js RSC server-side calls.
+   * `credentials: 'include'` does NOT propagate browser cookies in RSC,
+   * so authenticated server fetches must forward the header explicitly.
+   */
+  cookieHeader?: string;
+}
+
 /**
  * Endorsements awaiting the signed-in user's decision. Requires credentials --
  * the AppView reads the subject DID from the session, not from a parameter, so
@@ -63,14 +73,17 @@ export interface DismissEndorsementInput {
  */
 export async function fetchPendingEndorsements(
   config: SifaApiConfig,
-  options: ApiFetchOptions = {},
+  options: FetchPendingEndorsementsOptions = {},
 ): Promise<PendingEndorsementsPage> {
+  const headers: Record<string, string> = { ...(options.headers ?? {}) };
+  if (options.cookieHeader) headers.cookie = options.cookieHeader;
   try {
     const data = await apiFetch<PendingEndorsementsPage>(config, '/api/endorsements/pending', {
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
       ...options,
+      headers,
     });
     return { endorsements: data?.endorsements ?? [], cursor: data?.cursor };
   } catch {

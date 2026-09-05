@@ -19,11 +19,24 @@ export const sifaQueryKeys = {
     view: (actor: string) => ['sifa', 'profile', 'view', actor] as const,
     externalAccounts: (handleOrDid: string) =>
       ['sifa', 'profile', 'external-accounts', handleOrDid] as const,
+    // Session-scoped: the AppView reads the owner from the session cookie, so
+    // there is only ever one completeness result per client.
+    completeness: () => ['sifa', 'profile', 'completeness'] as const,
   },
 
   position: {
     all: () => ['sifa', 'position'] as const,
     byOwner: (did: string) => ['sifa', 'position', 'by-owner', did] as const,
+    // Session-scoped: the AppView reads the owner from the session cookie.
+    unlinked: () => ['sifa', 'position', 'unlinked'] as const,
+  },
+
+  // Aggregate inbox counts for the header bell badge (session-scoped). The first
+  // aggregate namespace: it fans in across confirmations, endorsements, drift,
+  // unlinked positions and profile completeness on the server.
+  inbox: {
+    all: () => ['sifa', 'inbox'] as const,
+    counts: () => ['sifa', 'inbox', 'counts'] as const,
   },
 
   search: {
@@ -165,8 +178,12 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.profile.byHandle>
   | ReturnType<typeof sifaQueryKeys.profile.atFundLink>
   | ReturnType<typeof sifaQueryKeys.profile.externalAccounts>
+  | ReturnType<typeof sifaQueryKeys.profile.completeness>
   | ReturnType<typeof sifaQueryKeys.position.all>
   | ReturnType<typeof sifaQueryKeys.position.byOwner>
+  | ReturnType<typeof sifaQueryKeys.position.unlinked>
+  | ReturnType<typeof sifaQueryKeys.inbox.all>
+  | ReturnType<typeof sifaQueryKeys.inbox.counts>
   | ReturnType<typeof sifaQueryKeys.search.all>
   | ReturnType<typeof sifaQueryKeys.search.profiles>
   | ReturnType<typeof sifaQueryKeys.search.canonicalSkills>

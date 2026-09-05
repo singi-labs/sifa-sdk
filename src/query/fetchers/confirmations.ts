@@ -77,6 +77,16 @@ export interface ConfirmationSubjectInput {
   subjectUri: string;
 }
 
+/** Options for the read fetchers, adding the RSC cookie-forwarding escape hatch. */
+export interface FetchConfirmationsOptions extends ApiFetchOptions {
+  /**
+   * Pass the caller's `Cookie` header on Next.js RSC server-side calls.
+   * `credentials: 'include'` does NOT propagate browser cookies in RSC,
+   * so authenticated server fetches must forward the header explicitly.
+   */
+  cookieHeader?: string;
+}
+
 /**
  * Claims awaiting the signed-in user's decision. Requires credentials -- the
  * AppView reads the subject DID from the session, not from a parameter, so
@@ -87,14 +97,17 @@ export interface ConfirmationSubjectInput {
  */
 export async function fetchPendingConfirmations(
   config: SifaApiConfig,
-  options: ApiFetchOptions = {},
+  options: FetchConfirmationsOptions = {},
 ): Promise<PendingConfirmationsPage> {
+  const headers: Record<string, string> = { ...(options.headers ?? {}) };
+  if (options.cookieHeader) headers.cookie = options.cookieHeader;
   try {
     const data = await apiFetch<PendingConfirmationsPage>(config, '/api/confirmations/pending', {
       cache: 'no-store',
       credentials: 'include',
       timeoutMs: 5000,
       ...options,
+      headers,
     });
     return { confirmations: data?.confirmations ?? [], cursor: data?.cursor };
   } catch {
@@ -114,13 +127,15 @@ export async function fetchPendingConfirmations(
  */
 export async function fetchGivenConfirmations(
   config: SifaApiConfig,
-  options: ApiFetchOptions = {},
+  options: FetchConfirmationsOptions = {},
 ): Promise<{ confirmations: GivenConfirmation[] }> {
+  const headers: Record<string, string> = { ...(options.headers ?? {}) };
+  if (options.cookieHeader) headers.cookie = options.cookieHeader;
   try {
     const data = await apiFetch<{ confirmations: GivenConfirmation[] }>(
       config,
       '/api/confirmations/mine',
-      { cache: 'no-store', credentials: 'include', timeoutMs: 5000, ...options },
+      { cache: 'no-store', credentials: 'include', timeoutMs: 5000, ...options, headers },
     );
     return { confirmations: data?.confirmations ?? [] };
   } catch {
