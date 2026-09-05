@@ -30,3 +30,16 @@ export {
   groupInvolvementByHeading,
   type InvolvementGroup,
 } from './involvement-grouping.js';
+
+export {
+  buildProfileHighlights,
+  shouldRenderHighlights,
+  formatSpanDate,
+  formatSingleDate,
+  formatEventDate,
+  type ProfileHighlightsInput,
+  type ProfileHighlightSection,
+  type ProfileHighlightStatus,
+  type ProfileHighlightTile,
+  type BuildProfileHighlightsOptions,
+} from './highlights.js';

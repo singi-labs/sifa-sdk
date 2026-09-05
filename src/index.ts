@@ -414,6 +414,22 @@ export {
   type SectionId,
 } from './profile/index.js';
 
+// Profile "Highlights" block: selection + labeling of the one ongoing (or
+// most-recent) record per section. Shared by the sifa-web profile page and the
+// personal-site renderer so the two surfaces never diverge on what's featured.
+export {
+  buildProfileHighlights,
+  shouldRenderHighlights,
+  formatSpanDate,
+  formatSingleDate,
+  formatEventDate,
+  type ProfileHighlightsInput,
+  type ProfileHighlightSection,
+  type ProfileHighlightStatus,
+  type ProfileHighlightTile,
+  type BuildProfileHighlightsOptions,
+} from './profile/index.js';
+
 export {
   AtmosphereFeedItemSchema,
   BlobRefSchema,
