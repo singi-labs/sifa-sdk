@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { type SifaApiConfig } from '../client.js';
-import { fetchUnlinkedPositions } from './unlinked-positions.js';
+import { fetchUnlinkedPositions, dismissUnlinkedPosition } from './unlinked-positions.js';
 
 const baseConfig: SifaApiConfig = { baseUrl: 'https://api.example' };
 
@@ -37,5 +37,20 @@ describe('fetchUnlinkedPositions', () => {
     );
     const init = getCall(fetchImpl)[1];
     expect((init.headers as Record<string, string>).cookie).toBe('session=abc');
+  });
+});
+
+describe('dismissUnlinkedPosition', () => {
+  it('POSTs the rkey to the dismiss endpoint and reports success', async () => {
+    const fetchImpl = jsonFetch({ success: true });
+    const result = await dismissUnlinkedPosition(
+      { ...baseConfig, fetch: fetchImpl },
+      { rkey: 'r1' },
+    );
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toContain('/api/positions/unlinked/dismiss');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body as string)).toEqual({ rkey: 'r1' });
+    expect(result.success).toBe(true);
   });
 });

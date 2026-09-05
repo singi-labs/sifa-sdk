@@ -111,9 +111,11 @@ export {
 } from './fetchers/inbox.js';
 export {
   fetchUnlinkedPositions,
+  dismissUnlinkedPosition,
   type UnlinkedPosition,
   type UnlinkedPositionsResult,
   type FetchUnlinkedPositionsOptions,
+  type DismissUnlinkedPositionInput,
 } from './fetchers/unlinked-positions.js';
 export {
   fetchProfileCompleteness,
@@ -403,7 +405,10 @@ export {
   useRevokeConfirmation,
 } from './hooks/use-confirmations.js';
 export { useInboxCounts } from './hooks/use-inbox.js';
-export { useUnlinkedPositions } from './hooks/use-unlinked-positions.js';
+export {
+  useUnlinkedPositions,
+  useDismissUnlinkedPosition,
+} from './hooks/use-unlinked-positions.js';
 export { useProfileCompleteness } from './hooks/use-profile-completeness.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';

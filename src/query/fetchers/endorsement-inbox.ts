@@ -15,6 +15,10 @@ export interface PendingEndorsement {
    * Protocol app -- so the UI needs a fallback for having no name to show.
    */
   endorserHandle?: string;
+  /** Endorser's display name (Sifa override wins), for naming them without a handle. */
+  endorserDisplayName?: string;
+  /** Endorser's avatar URL (Sifa override wins). */
+  endorserAvatar?: string;
   rkey: string;
   /**
    * AT-URI of the endorsement record. The confirm mutation needs a strongRef,
