@@ -1,5 +1,15 @@
 # @singi-labs/sifa-sdk
 
+## 0.18.15
+
+### Patch Changes
+
+- fadc736: Inbox polish: add `endorserDisplayName` and `endorserAvatar` to `PendingEndorsement`
+  so the endorsement inbox can render a person rather than a bare handle, and add
+  `dismissUnlinkedPosition` + `useDismissUnlinkedPosition` for dismissing an
+  unlinked-company task (invalidates the unlinked-positions list and the inbox
+  counts on success).
+
 ## 0.18.14
 
 ### Patch Changes
