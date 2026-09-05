@@ -1,4 +1,10 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import {
+  apiFetch,
+  apiWrite,
+  type ApiFetchOptions,
+  type SifaApiConfig,
+  type WriteResult,
+} from '../client.js';
 
 /**
  * A position on the signed-in user's own profile whose free-text company is not
@@ -55,4 +61,23 @@ export async function fetchUnlinkedPositions(
   } catch {
     return { positions: [] };
   }
+}
+
+/** Body accepted by {@link dismissUnlinkedPosition}. */
+export interface DismissUnlinkedPositionInput {
+  /** rkey of the position whose unlinked-company task to dismiss. */
+  rkey: string;
+}
+
+/**
+ * Dismiss the unlinked-company task for one position. Writes nothing to any PDS;
+ * it stops the position reappearing in the Inbox (and drops it from the bell
+ * count) when there is no company entity worth linking.
+ */
+export function dismissUnlinkedPosition(
+  config: SifaApiConfig,
+  data: DismissUnlinkedPositionInput,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  return apiWrite(config, '/api/positions/unlinked/dismiss', 'POST', { body: data, ...options });
 }

@@ -112,9 +112,11 @@ export {
 export { fetchInboxCounts, type InboxCounts, type FetchInboxCountsOptions } from './inbox.js';
 export {
   fetchUnlinkedPositions,
+  dismissUnlinkedPosition,
   type UnlinkedPosition,
   type UnlinkedPositionsResult,
   type FetchUnlinkedPositionsOptions,
+  type DismissUnlinkedPositionInput,
 } from './unlinked-positions.js';
 export {
   fetchProfileCompleteness,
