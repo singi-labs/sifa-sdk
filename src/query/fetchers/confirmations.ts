@@ -43,11 +43,20 @@ export interface PendingConfirmationsPage {
   cursor?: string;
 }
 
-/** A confirmation the signed-in user has already given. */
+/**
+ * A confirmation the signed-in user has already given.
+ *
+ * This is an AppView READ shape, not a PDS record, so it is a hand-written
+ * interface like {@link PendingConfirmation} and {@link PendingConfirmation}'s
+ * siblings -- the Zod schemas in `../schemas` validate lexicon record writes,
+ * not these read DTOs. Fields are additive and passed through verbatim.
+ */
 export interface GivenConfirmation {
   subjectUri: string;
   claimerDid: string;
   claimerHandle?: string;
+  /** Claimer's display name (Sifa override wins), for naming them without a handle. */
+  claimerDisplayName?: string;
   relation: string;
   /** The name as it stood when confirmed, so a rename shows as a difference. */
   subjectName: string;
