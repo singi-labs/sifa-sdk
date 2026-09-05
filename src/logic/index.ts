@@ -39,6 +39,7 @@ export {
   ENTITY_REF_ANCHORS,
   type EntityRefAnchor,
 } from './entity-ref-anchor.js';
+export { resolveAgentRef, type AgentRefFlat } from './agent-ref.js';
 export {
   qualifiesAsOrg,
   isRegistrableDomainHandle,

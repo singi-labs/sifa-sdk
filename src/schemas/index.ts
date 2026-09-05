@@ -109,6 +109,7 @@ export {
   type ProfileVolunteeringRecord,
 } from './profile-volunteering.js';
 export {
+  agentRefSchema,
   atUriSchema,
   cidSchema,
   datetimeSchema,
@@ -121,6 +122,7 @@ export {
   skillRefSchema,
   strongRefSchema,
   uriSchema,
+  type AgentRef,
 } from './shared.js';
 export {
   ProfileInvestmentRecordSchema,

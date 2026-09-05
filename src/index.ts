@@ -379,6 +379,8 @@ export {
   type EntityRefAnchor,
   type CompanyFirmographics,
   type PersonalFacetContent,
+  resolveAgentRef,
+  type AgentRefFlat,
 } from './logic/index.js';
 
 // Profile section model: which sections render, in what order, their nav
@@ -515,6 +517,8 @@ export {
   type ProfileSkillRecord,
   type ProfileVolunteeringRecord,
   type PublicationAuthor,
+  agentRefSchema,
+  type AgentRef,
 } from './schemas/index.js';
 
 export {
