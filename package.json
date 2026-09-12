@@ -92,6 +92,16 @@
         "default": "./dist/query/hooks/index.cjs"
       }
     },
+    "./atproto": {
+      "import": {
+        "types": "./dist/atproto/index.d.ts",
+        "default": "./dist/atproto/index.js"
+      },
+      "require": {
+        "types": "./dist/atproto/index.d.cts",
+        "default": "./dist/atproto/index.cjs"
+      }
+    },
     "./tokens": {
       "import": {
         "types": "./dist/tokens/index.d.ts",
