@@ -28,6 +28,8 @@ export interface AtprotoWriteAgent {
   deleteLike(likeUri: string): Promise<void>;
   repost(uri: string, cid: string): Promise<StrongRef>;
   deleteRepost(repostUri: string): Promise<void>;
+  follow(subjectDid: string): Promise<StrongRef>;
+  deleteFollow(followUri: string): Promise<void>;
 }
 
 /**
@@ -54,4 +56,17 @@ export function repostRecord(agent: AtprotoWriteAgent, subject: StrongRef): Prom
 /** Remove a repost, given the repost record's AT-URI (from {@link repostRecord}). */
 export function unrepostRecord(agent: AtprotoWriteAgent, repostUri: string): Promise<void> {
   return agent.deleteRepost(repostUri);
+}
+
+/**
+ * Follow an actor by DID. The returned ref is the follow record itself, which
+ * {@link unfollowUser} needs to undo it.
+ */
+export function followUser(agent: AtprotoWriteAgent, subjectDid: string): Promise<StrongRef> {
+  return agent.follow(subjectDid);
+}
+
+/** Unfollow, given the follow record's AT-URI (from {@link followUser}). */
+export function unfollowUser(agent: AtprotoWriteAgent, followUri: string): Promise<void> {
+  return agent.deleteFollow(followUri);
 }
