@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   type AtprotoWriteAgent,
+  followUser,
   likeRecord,
   repostRecord,
+  unfollowUser,
   unlikeRecord,
   unrepostRecord,
 } from './index';
@@ -16,6 +18,10 @@ function makeAgent() {
       Promise.resolve({ uri: 'at://me/app.bsky.feed.repost/1', cid: 'repostcid' }),
     ),
     deleteRepost: vi.fn(() => Promise.resolve()),
+    follow: vi.fn(() =>
+      Promise.resolve({ uri: 'at://me/app.bsky.graph.follow/1', cid: 'followcid' }),
+    ),
+    deleteFollow: vi.fn(() => Promise.resolve()),
   } satisfies AtprotoWriteAgent;
 }
 
@@ -46,5 +52,18 @@ describe('atproto write helpers', () => {
     const agent = makeAgent();
     await unrepostRecord(agent, 'at://me/app.bsky.feed.repost/1');
     expect(agent.deleteRepost).toHaveBeenCalledWith('at://me/app.bsky.feed.repost/1');
+  });
+
+  it('followUser follows the DID and returns the follow record ref', async () => {
+    const agent = makeAgent();
+    const ref = await followUser(agent, 'did:plc:someone');
+    expect(agent.follow).toHaveBeenCalledWith('did:plc:someone');
+    expect(ref).toEqual({ uri: 'at://me/app.bsky.graph.follow/1', cid: 'followcid' });
+  });
+
+  it('unfollowUser deletes the follow by its uri', async () => {
+    const agent = makeAgent();
+    await unfollowUser(agent, 'at://me/app.bsky.graph.follow/1');
+    expect(agent.deleteFollow).toHaveBeenCalledWith('at://me/app.bsky.graph.follow/1');
   });
 });
