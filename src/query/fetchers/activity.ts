@@ -42,6 +42,15 @@ export interface ActivityItem {
   category: string;
   indexedAt: string;
   /**
+   * The record author's handle / display name / avatar, injected by the server
+   * on MULTI-author feeds (the following feed) so a card can show whose activity
+   * it is. Unset on the per-author activity feed (all one author). Mirrors the
+   * stream `ActivityItem`'s author fields the view-model transform reads.
+   */
+  authorHandle?: string;
+  authorDisplayName?: string;
+  authorAvatar?: string;
+  /**
    * Set by the server when an `app.bsky.embed.record` quote was already
    * resolved upstream (AppView path). Mutually exclusive with `quotedPostUri`.
    */

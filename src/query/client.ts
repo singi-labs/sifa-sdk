@@ -16,6 +16,16 @@ export interface SifaApiConfig {
    * consumers can leave this unset.
    */
   fetch?: typeof fetch;
+  /**
+   * Optional per-request auth-token minter for auth-required reads. The NATIVE
+   * app supplies this (it has no sifa-api session cookie): given a method NSID
+   * (`lxm`), it mints a short-lived AT Protocol service-auth JWT on the user's
+   * PDS (see the SDK's `/atproto` `mintServiceAuthToken`) and returns it; the
+   * fetcher attaches it as `Authorization: Bearer`. Web omits this and relies on
+   * its session cookie (`credentials: 'include'`). Return `null` to send no
+   * token. See `sifa-api` `createIdentityMiddleware`.
+   */
+  getAuthToken?: (lxm: string) => Promise<string | null>;
 }
 
 /** Options accepted by {@link apiFetch}. */

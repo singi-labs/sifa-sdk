@@ -6,7 +6,7 @@ import {
   type SifaApiConfig,
   type WriteResult,
 } from '../client.js';
-import type { FollowFeedPage } from '../../schemas/feed.js';
+import type { ActivityFeedResponse } from './activity.js';
 
 export interface FollowProfile {
   did: string;
@@ -159,58 +159,49 @@ export async function getFollowing(
   }
 }
 
-/**
- * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
- *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
- *   Stream are two distinct surfaces with different data paths (Barazo API
- *   for Timeline, live PDS reads + Valkey for Stream). These collapsed feed
- *   types are no longer consumed. Scheduled for removal in next major bump.
- */
+/** The method binding for the following-feed service-auth token; MUST match the
+ *  sifa-api endpoint's `lxm`. */
+export const FOLLOWING_FEED_LXM = 'id.sifa.feed.getFollowingFeed';
+
+/** Options for {@link fetchFollowingFeed}. */
 export interface FetchFollowingFeedOptions extends ApiFetchOptions {
-  cursor?: string;
   limit?: number;
-  /**
-   * Comma-separated category filter (per sifa-api#673 TR10). Forwarded
-   * as-is; the server validates allowed values.
-   */
-  categories?: string[];
+  /** Forward a `Cookie` header on Next.js RSC server-side calls (web). */
   cookieHeader?: string;
 }
 
 /**
- * V5 home feed: Sifa events + curated ATmosphere creation events filtered
- * by the authenticated viewer's followees. Composite cursor (per E5/TR4).
- * Returns an empty page on error.
+ * The viewer's cross-app following feed: what OTHER apps their connections use
+ * (Tangled, WhiteWind, Smoke Signal, ...) — Bluesky is excluded server-side, as
+ * it is the least interesting part and other apps already surface it.
  *
- * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
- *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
- *   Stream are two distinct surfaces with different data paths (Barazo API
- *   for Timeline, live PDS reads + Valkey for Stream). This fetcher is no
- *   longer consumed. Scheduled for removal in next major bump.
+ * Auth is identity-only server-side, so the NATIVE app supplies
+ * `config.getAuthToken` to mint a service-auth Bearer, while WEB relies on its
+ * session cookie (`credentials: 'include'`). Returns `null` on error. v1 is a
+ * finite first page (no cursor yet).
  */
-export async function getFollowingFeed(
+export async function fetchFollowingFeed(
   config: SifaApiConfig,
   opts: FetchFollowingFeedOptions = {},
-): Promise<FollowFeedPage> {
+): Promise<ActivityFeedResponse | null> {
   const params = new URLSearchParams();
-  if (opts.cursor) params.set('cursor', opts.cursor);
   if (opts.limit) params.set('limit', String(opts.limit));
-  if (opts.categories && opts.categories.length > 0) {
-    params.set('categories', opts.categories.join(','));
-  }
   const qs = params.toString();
 
   const headers: Record<string, string> = { ...(opts.headers ?? {}) };
   if (opts.cookieHeader) headers.cookie = opts.cookieHeader;
+  if (config.getAuthToken) {
+    const token = await config.getAuthToken(FOLLOWING_FEED_LXM);
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
 
   try {
-    const res = await apiFetch<{ items: FollowFeedPage['items']; cursor?: string | null }>(
+    return await apiFetch<ActivityFeedResponse>(
       config,
       `/api/following/feed${qs ? `?${qs}` : ''}`,
       { credentials: 'include', cache: 'no-store', ...opts, headers },
     );
-    return { items: res.items ?? [], cursor: res.cursor ?? null };
   } catch {
-    return { items: [], cursor: null };
+    return null;
   }
 }
