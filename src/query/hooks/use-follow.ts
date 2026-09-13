@@ -205,7 +205,10 @@ export function useFollowingFeed(
 ) {
   const config = useSifaConfig();
   return useQuery({
-    queryKey: sifaQueryKeys.follow.feed({ limit: opts.limit }),
+    queryKey: sifaQueryKeys.follow.feed({
+      limit: opts.limit,
+      includeBluesky: opts.includeBluesky,
+    }),
     queryFn: () => fetchFollowingFeed(config, opts),
     ...options,
   });

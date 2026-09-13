@@ -118,6 +118,18 @@ describe('fetchFollowingFeed', () => {
     expect(url).toBe('https://api.example/api/following/feed?limit=50');
   });
 
+  it('sends includeBluesky=true only when opted in', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchFollowingFeed({ ...config, fetch: fetchImpl }, { includeBluesky: true });
+    expect(getCall(fetchImpl)[0]).toBe(
+      'https://api.example/api/following/feed?includeBluesky=true',
+    );
+
+    const fetchImpl2 = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchFollowingFeed({ ...config, fetch: fetchImpl2 }, { includeBluesky: false });
+    expect(getCall(fetchImpl2)[0]).toBe('https://api.example/api/following/feed');
+  });
+
   it('attaches a service-auth Bearer when config.getAuthToken is provided', async () => {
     const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
     const getAuthToken = vi.fn((lxm: string) => Promise.resolve(`token-for-${lxm}`));
