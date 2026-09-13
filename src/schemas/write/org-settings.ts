@@ -13,6 +13,44 @@ const orgLogoBlobSchema = z.object({
 });
 
 /**
+ * Structured physical address (headquarters, offices). Mirrors
+ * `orgAddressSchema` in sifa-api `src/routes/org-settings.ts`: every field is
+ * optional and country is NOT ISO-gated here (Sifa handles country codes and
+ * final caps at the app layer).
+ */
+const orgAddressSchema = z.object({
+  country: z.string().max(255).optional(),
+  postalCode: z.string().max(64).optional(),
+  region: z.string().max(255).optional(),
+  locality: z.string().max(255).optional(),
+  street: z.string().max(2048).optional(),
+  name: z.string().max(255).optional(),
+});
+
+/**
+ * A featured link (name + url). Mirrors `orgLinkSchema` in sifa-api: the url
+ * MUST be http(s) -- DOMPurify does not strip a `javascript:`/`data:` scheme
+ * from a bare string, so the scheme is rejected here to prevent stored XSS.
+ */
+const orgLinkSchema = z.object({
+  name: z.string().min(1).max(255),
+  url: z
+    .string()
+    .max(2048)
+    .refine(
+      (u) => {
+        try {
+          const { protocol } = new URL(u);
+          return protocol === 'http:' || protocol === 'https:';
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Only http(s) URLs are allowed' },
+    ),
+});
+
+/**
  * Body accepted by `PUT /api/org/profile` (edit the org record).
  *
  * Mirrors `profileBodySchema` in sifa-api `src/routes/org-settings.ts` EXACTLY.
@@ -27,6 +65,16 @@ export const OrgProfileUpdateRequestSchema = z.object({
   contact: z.string().max(320).optional(),
   entityRefs: z.array(z.string().min(1).max(2048)).min(1).max(20),
   logo: orgLogoBlobSchema.optional(),
+  /** Structured physical locations (headquarters, offices) shown on the org page. */
+  addresses: z.array(orgAddressSchema).max(20).optional(),
+  /**
+   * Self-selected headcount band (a declared bucket, never a calculated count).
+   * Open string: any value is accepted so future ranges do not break the
+   * contract; the lexicon documents the offered `knownValues`.
+   */
+  companySize: z.string().max(64).optional(),
+  /** Featured links surfaced on the org page (each url http(s)). */
+  links: z.array(orgLinkSchema).max(20).optional(),
   /** Sole-trader opt-in; see {@link OrgClaimRequestSchema}. Flippable after the claim. */
   personalProfileVisible: z.boolean().optional(),
 });
