@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.2
+
+### Patch Changes
+
+- b3399e9: Add an `includeBluesky` opt-in to `fetchFollowingFeed` and `useFollowingFeed` (default off). When true the fetcher sends `?includeBluesky=true`, and the flag is part of the query key so the two variants cache independently.
+
 ## 0.19.1
 
 ### Patch Changes
