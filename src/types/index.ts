@@ -729,6 +729,16 @@ export interface OrgLinkView {
 }
 
 /**
+ * A self-declared industry/domain pair on the org view. Mirrors the person
+ * profile's industry/domain shape; `industry` is always present, `domain` is an
+ * optional refinement (`null` when absent).
+ */
+export interface OrgIndustryView {
+  industry: string;
+  domain: string | null;
+}
+
+/**
  * The org-profile fields exposed on the profile resolve when the org rendering
  * floor is met. Narrow on purpose: `contact` is never included (not rendered
  * publicly); record URI/CID are internal. Mirrors sifa-api's `OrgProfileView`.
@@ -744,6 +754,12 @@ export interface OrgProfileView {
   /** Self-selected headcount range (declared bucket, never calculated). */
   companySize: string | null;
   links: OrgLinkView[] | null;
+  /** Self-declared industry/domain pairs. */
+  industries: OrgIndustryView[] | null;
+  /** Self-declared founding date (year / YYYY-MM / YYYY-MM-DD). */
+  founded: string | null;
+  /** Self-declared "also known as" names / acronyms. */
+  aliases: string[] | null;
 }
 
 /**
