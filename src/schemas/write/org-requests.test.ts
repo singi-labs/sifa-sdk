@@ -64,6 +64,105 @@ describe('OrgProfileUpdateRequestSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  // The /c/ page owner editors send addresses / companySize / links; the
+  // sifa-api profileBodySchema accepts all three. This schema must mirror it.
+  describe('addresses / companySize / links (mirror sifa-api profileBodySchema)', () => {
+    const base = { name: 'Acme', entityRefs: ['q'] };
+
+    it('accepts structured addresses, a companySize band, and featured links', () => {
+      const result = OrgProfileUpdateRequestSchema.safeParse({
+        ...base,
+        addresses: [{ country: 'NL', locality: 'Amsterdam', name: 'Head office' }],
+        companySize: '11-50',
+        links: [{ name: 'Blog', url: 'https://acme.com/blog' }],
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('treats all three as optional', () => {
+      expect(OrgProfileUpdateRequestSchema.safeParse(base).success).toBe(true);
+    });
+
+    it('rejects a link whose url is not http(s)', () => {
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          links: [{ name: 'x', url: 'javascript:alert(1)' }],
+        }).success,
+      ).toBe(false);
+    });
+
+    it('requires both name and url on a link', () => {
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          links: [{ url: 'https://acme.com' }],
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({ ...base, links: [{ name: 'x' }] }).success,
+      ).toBe(false);
+    });
+
+    it('caps addresses and links at 20 (matching sifa-api)', () => {
+      const address = { country: 'NL' };
+      const link = { name: 'x', url: 'https://acme.com' };
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          addresses: Array.from({ length: 20 }, () => address),
+        }).success,
+      ).toBe(true);
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          addresses: Array.from({ length: 21 }, () => address),
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          links: Array.from({ length: 21 }, () => link),
+        }).success,
+      ).toBe(false);
+    });
+  });
+
+  describe('self-declared industries / founded / aliases', () => {
+    const base = { name: 'Acme', entityRefs: ['q'] };
+
+    it('accepts industries, founded, and aliases', () => {
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          industries: [
+            { industry: 'id.sifa.defs#industryTechnology', domain: 'id.sifa.defs#domainHardware' },
+          ],
+          founded: '1998-03',
+          aliases: ['ACME', 'Acme Corp'],
+        }).success,
+      ).toBe(true);
+    });
+
+    it('requires the industry token and caps industries at 10 / aliases at 20', () => {
+      expect(OrgProfileUpdateRequestSchema.safeParse({ ...base, industries: [{}] }).success).toBe(
+        false,
+      );
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          industries: Array.from({ length: 11 }, () => ({ industry: 'x' })),
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          aliases: Array.from({ length: 21 }, (_, i) => `A${i}`),
+        }).success,
+      ).toBe(false);
+    });
+  });
 });
 
 describe('org domain + notification-email request schemas', () => {

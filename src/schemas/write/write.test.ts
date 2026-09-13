@@ -586,6 +586,89 @@ describe('OrgProfileWriteSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  // Field caps mirror sifa-api's orgAddressSchema / orgLinkSchema exactly (the
+  // array caps stay at 10 by design -- the UI limit -- while the API tolerates
+  // 20). Before this the SDK caps diverged and rejected values the endpoint
+  // accepts (e.g. a free-text country over 10 chars).
+  describe('field caps mirror the sifa-api endpoint', () => {
+    const base = { name: 'Acme', createdAt: '2024-01-01' };
+
+    it('accepts a free-text country up to 255 and rejects over 255', () => {
+      expect(
+        OrgProfileWriteSchema.safeParse({ ...base, addresses: [{ country: 'x'.repeat(255) }] })
+          .success,
+      ).toBe(true);
+      expect(
+        OrgProfileWriteSchema.safeParse({ ...base, addresses: [{ country: 'x'.repeat(256) }] })
+          .success,
+      ).toBe(false);
+    });
+
+    it('caps companySize at 64', () => {
+      expect(
+        OrgProfileWriteSchema.safeParse({ ...base, companySize: 'x'.repeat(64) }).success,
+      ).toBe(true);
+      expect(
+        OrgProfileWriteSchema.safeParse({ ...base, companySize: 'x'.repeat(65) }).success,
+      ).toBe(false);
+    });
+
+    it('caps a link name at 255', () => {
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          links: [{ name: 'x'.repeat(255), url: 'https://acme.com' }],
+        }).success,
+      ).toBe(true);
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          links: [{ name: 'x'.repeat(256), url: 'https://acme.com' }],
+        }).success,
+      ).toBe(false);
+    });
+
+    it('rejects a link url that is not http(s)', () => {
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          links: [{ name: 'x', url: 'javascript:alert(1)' }],
+        }).success,
+      ).toBe(false);
+    });
+  });
+
+  describe('self-declared industries / founded / aliases', () => {
+    const base = { name: 'Acme', createdAt: '2024-01-01' };
+
+    it('accepts industries, founded, and aliases', () => {
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          industries: [{ industry: 'id.sifa.defs#industryTechnology' }],
+          founded: '1998',
+          aliases: ['ACME'],
+        }).success,
+      ).toBe(true);
+    });
+
+    it('requires the industry token and caps the arrays', () => {
+      expect(OrgProfileWriteSchema.safeParse({ ...base, industries: [{}] }).success).toBe(false);
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          industries: Array.from({ length: 11 }, () => ({ industry: 'x' })),
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          aliases: Array.from({ length: 21 }, (_, i) => `A${i}`),
+        }).success,
+      ).toBe(false);
+    });
+  });
 });
 
 describe('OrgEmploymentAttestationWriteSchema', () => {
