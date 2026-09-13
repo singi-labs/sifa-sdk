@@ -4,7 +4,7 @@ import {
   followUser,
   getFollowers,
   getFollowing,
-  getFollowingFeed,
+  fetchFollowingFeed,
   unfollowUser,
 } from './follow.js';
 import { type SifaApiConfig } from '../client.js';
@@ -101,28 +101,48 @@ describe('getFollowers / getFollowing', () => {
   });
 });
 
-describe('getFollowingFeed', () => {
-  it('GETs /api/following/feed and returns the page', async () => {
-    const fetchImpl = jsonFetch({ items: [], cursor: null });
-    const result = await getFollowingFeed({ ...config, fetch: fetchImpl });
-    expect(result).toEqual({ items: [], cursor: null });
-    const [url] = getCall(fetchImpl);
+describe('fetchFollowingFeed', () => {
+  it('GETs /api/following/feed and returns the response', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    const result = await fetchFollowingFeed({ ...config, fetch: fetchImpl });
+    expect(result).toEqual({ items: [], cursor: null, hasMore: false });
+    const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/following/feed');
+    expect(init.credentials).toBe('include');
   });
 
-  it('joins categories with commas', async () => {
-    const fetchImpl = jsonFetch({ items: [], cursor: null });
-    await getFollowingFeed(
-      { ...config, fetch: fetchImpl },
-      { categories: ['Articles', 'Posts'], limit: 50 },
-    );
+  it('passes the limit', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchFollowingFeed({ ...config, fetch: fetchImpl }, { limit: 50 });
     const [url] = getCall(fetchImpl);
-    expect(url).toBe('https://api.example/api/following/feed?limit=50&categories=Articles%2CPosts');
+    expect(url).toBe('https://api.example/api/following/feed?limit=50');
   });
 
-  it('returns empty page on error', async () => {
+  it('attaches a service-auth Bearer when config.getAuthToken is provided', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    const getAuthToken = vi.fn((lxm: string) => Promise.resolve(`token-for-${lxm}`));
+    await fetchFollowingFeed({ ...config, fetch: fetchImpl, getAuthToken });
+    expect(getAuthToken).toHaveBeenCalledWith('id.sifa.feed.getFollowingFeed');
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>).Authorization).toBe(
+      'Bearer token-for-id.sifa.feed.getFollowingFeed',
+    );
+  });
+
+  it('sends no Bearer when getAuthToken returns null (web cookie path)', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchFollowingFeed({
+      ...config,
+      fetch: fetchImpl,
+      getAuthToken: () => Promise.resolve(null),
+    });
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>).Authorization).toBeUndefined();
+  });
+
+  it('returns null on error', async () => {
     const fetchImpl = jsonFetch({ message: 'bad' }, 500);
-    const result = await getFollowingFeed({ ...config, fetch: fetchImpl });
-    expect(result).toEqual({ items: [], cursor: null });
+    const result = await fetchFollowingFeed({ ...config, fetch: fetchImpl });
+    expect(result).toBeNull();
   });
 });

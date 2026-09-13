@@ -15,10 +15,10 @@ import { type WriteResult } from '../client.js';
 import { useSifaConfig } from '../config.js';
 import {
   fetchFollowing,
+  fetchFollowingFeed,
   followUser,
   getFollowers,
   getFollowing,
-  getFollowingFeed,
   unfollowUser,
   type FetchFollowListOptions,
   type FetchFollowingFeedOptions,
@@ -27,7 +27,7 @@ import {
   type FollowUserResult,
   type FollowingResponse,
 } from '../fetchers/follow.js';
-import type { FollowFeedPage } from '../../schemas/feed.js';
+import type { ActivityFeedResponse } from '../fetchers/activity.js';
 import { sifaQueryKeys } from '../keys.js';
 
 /**
@@ -187,36 +187,26 @@ export function useFollowingList(
 /**
  * Infinite-query hook for the V5 home feed (authenticated viewer).
  *
- * @deprecated The `/api/following/feed` surface was reverted (sifa-api#674).
- *   Per `decisions/activity-data-strategy.md` the Sifa Timeline + ATmosphere
- *   Stream are two distinct surfaces with different data paths (Barazo API
- *   for Timeline, live PDS reads + Valkey for Stream). This hook is no
- *   longer consumed. Scheduled for removal in next major bump.
+ * The viewer's cross-app following feed: what OTHER apps their connections use.
+ * See {@link fetchFollowingFeed}. v1 is a finite first page (no infinite scroll
+ * yet). The native app must set `config.getAuthToken`; web uses its cookie.
  */
 export function useFollowingFeed(
-  opts: Omit<FetchFollowingFeedOptions, 'cursor'> = {},
+  opts: FetchFollowingFeedOptions = {},
   options?: Omit<
-    UseInfiniteQueryOptions<
-      FollowFeedPage,
+    UseQueryOptions<
+      ActivityFeedResponse | null,
       Error,
-      InfiniteData<FollowFeedPage>,
-      ReturnType<typeof sifaQueryKeys.follow.feed>,
-      string | undefined
+      ActivityFeedResponse | null,
+      ReturnType<typeof sifaQueryKeys.follow.feed>
     >,
-    'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
+    'queryKey' | 'queryFn'
   >,
 ) {
   const config = useSifaConfig();
-  // Drop AbortSignal/fetch-only fields from the key so cache identity stays stable across renders.
-  const keyOpts: Record<string, unknown> = {
-    limit: opts.limit,
-    categories: opts.categories,
-  };
-  return useInfiniteQuery({
-    queryKey: sifaQueryKeys.follow.feed(keyOpts),
-    queryFn: ({ pageParam }) => getFollowingFeed(config, { ...opts, cursor: pageParam }),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: FollowFeedPage) => lastPage.cursor ?? undefined,
+  return useQuery({
+    queryKey: sifaQueryKeys.follow.feed({ limit: opts.limit }),
+    queryFn: () => fetchFollowingFeed(config, opts),
     ...options,
   });
 }

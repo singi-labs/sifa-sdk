@@ -114,8 +114,8 @@ describe('useFollowers', () => {
 });
 
 describe('useFollowingFeed', () => {
-  it('fetches and exposes infinite query state', async () => {
-    const fetchImpl = jsonFetch({ items: [], cursor: null });
+  it('fetches the cross-app following feed', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
     const { Wrapper } = makeWrapper(fetchImpl);
 
     const { result } = renderHook(() => useFollowingFeed(), { wrapper: Wrapper });
@@ -123,7 +123,7 @@ describe('useFollowingFeed', () => {
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
-    expect(result.current.data?.pages[0]?.items).toEqual([]);
-    expect(result.current.hasNextPage).toBe(false);
+    expect(result.current.data?.items).toEqual([]);
+    expect(result.current.data?.hasMore).toBe(false);
   });
 });

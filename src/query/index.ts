@@ -225,7 +225,7 @@ export {
   followUser,
   getFollowers,
   getFollowing,
-  getFollowingFeed,
+  fetchFollowingFeed,
   unfollowUser,
   type FetchFollowListOptions,
   type FetchFollowingFeedOptions,
