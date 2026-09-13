@@ -166,14 +166,20 @@ export const FOLLOWING_FEED_LXM = 'id.sifa.feed.getFollowingFeed';
 /** Options for {@link fetchFollowingFeed}. */
 export interface FetchFollowingFeedOptions extends ApiFetchOptions {
   limit?: number;
+  /**
+   * Opt in to the viewer's Bluesky activity too. Off by default: the point of
+   * the feed is what connections do on OTHER apps.
+   */
+  includeBluesky?: boolean;
   /** Forward a `Cookie` header on Next.js RSC server-side calls (web). */
   cookieHeader?: string;
 }
 
 /**
  * The viewer's cross-app following feed: what OTHER apps their connections use
- * (Tangled, WhiteWind, Smoke Signal, ...) — Bluesky is excluded server-side, as
- * it is the least interesting part and other apps already surface it.
+ * (Tangled, WhiteWind, Smoke Signal, ...) — Bluesky is excluded server-side by
+ * default, as it is the least interesting part and other apps already surface
+ * it. Pass `includeBluesky: true` to bring it back in.
  *
  * Auth is identity-only server-side, so the NATIVE app supplies
  * `config.getAuthToken` to mint a service-auth Bearer, while WEB relies on its
@@ -186,6 +192,7 @@ export async function fetchFollowingFeed(
 ): Promise<ActivityFeedResponse | null> {
   const params = new URLSearchParams();
   if (opts.limit) params.set('limit', String(opts.limit));
+  if (opts.includeBluesky) params.set('includeBluesky', 'true');
   const qs = params.toString();
 
   const headers: Record<string, string> = { ...(opts.headers ?? {}) };
