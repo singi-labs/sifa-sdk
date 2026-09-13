@@ -638,6 +638,37 @@ describe('OrgProfileWriteSchema', () => {
       ).toBe(false);
     });
   });
+
+  describe('self-declared industries / founded / aliases', () => {
+    const base = { name: 'Acme', createdAt: '2024-01-01' };
+
+    it('accepts industries, founded, and aliases', () => {
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          industries: [{ industry: 'id.sifa.defs#industryTechnology' }],
+          founded: '1998',
+          aliases: ['ACME'],
+        }).success,
+      ).toBe(true);
+    });
+
+    it('requires the industry token and caps the arrays', () => {
+      expect(OrgProfileWriteSchema.safeParse({ ...base, industries: [{}] }).success).toBe(false);
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          industries: Array.from({ length: 11 }, () => ({ industry: 'x' })),
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileWriteSchema.safeParse({
+          ...base,
+          aliases: Array.from({ length: 21 }, (_, i) => `A${i}`),
+        }).success,
+      ).toBe(false);
+    });
+  });
 });
 
 describe('OrgEmploymentAttestationWriteSchema', () => {

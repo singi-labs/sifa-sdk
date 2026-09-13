@@ -75,6 +75,23 @@ export const OrgProfileUpdateRequestSchema = z.object({
   companySize: z.string().max(64).optional(),
   /** Featured links surfaced on the org page (each url http(s)). */
   links: z.array(orgLinkSchema).max(20).optional(),
+  /**
+   * Self-declared industry/domain pairs (same shape as the person profile).
+   * Registry-sourced classifications are layered separately, not self-declared.
+   */
+  industries: z
+    .array(
+      z.object({
+        industry: z.string().max(100),
+        domain: z.string().max(100).optional(),
+      }),
+    )
+    .max(10)
+    .optional(),
+  /** Self-declared founding date: year (YYYY), month (YYYY-MM), or full date (YYYY-MM-DD). */
+  founded: z.string().max(10).optional(),
+  /** Self-declared alternative names / acronyms ("also known as"). */
+  aliases: z.array(z.string().max(200)).max(20).optional(),
   /** Sole-trader opt-in; see {@link OrgClaimRequestSchema}. Flippable after the claim. */
   personalProfileVisible: z.boolean().optional(),
 });

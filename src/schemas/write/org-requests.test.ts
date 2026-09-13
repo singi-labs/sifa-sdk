@@ -128,6 +128,41 @@ describe('OrgProfileUpdateRequestSchema', () => {
       ).toBe(false);
     });
   });
+
+  describe('self-declared industries / founded / aliases', () => {
+    const base = { name: 'Acme', entityRefs: ['q'] };
+
+    it('accepts industries, founded, and aliases', () => {
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          industries: [
+            { industry: 'id.sifa.defs#industryTechnology', domain: 'id.sifa.defs#domainHardware' },
+          ],
+          founded: '1998-03',
+          aliases: ['ACME', 'Acme Corp'],
+        }).success,
+      ).toBe(true);
+    });
+
+    it('requires the industry token and caps industries at 10 / aliases at 20', () => {
+      expect(OrgProfileUpdateRequestSchema.safeParse({ ...base, industries: [{}] }).success).toBe(
+        false,
+      );
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          industries: Array.from({ length: 11 }, () => ({ industry: 'x' })),
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileUpdateRequestSchema.safeParse({
+          ...base,
+          aliases: Array.from({ length: 21 }, (_, i) => `A${i}`),
+        }).success,
+      ).toBe(false);
+    });
+  });
 });
 
 describe('org domain + notification-email request schemas', () => {

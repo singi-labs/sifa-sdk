@@ -58,6 +58,20 @@ export const OrgProfileWriteSchema = z.object({
   addresses: z.array(orgAddressWriteSchema).max(10).nullable().optional(),
   companySize: z.string().max(64).nullable().optional(),
   links: z.array(orgLinkWriteSchema).max(10).nullable().optional(),
+  // Self-declared narrative fields; registry facts (LEI, registration number,
+  // legal form, ticker) stay internal and are never self-declared.
+  industries: z
+    .array(
+      z.object({
+        industry: z.string().max(100),
+        domain: z.string().max(100).nullable().optional(),
+      }),
+    )
+    .max(10)
+    .nullable()
+    .optional(),
+  founded: z.string().max(10).nullable().optional(),
+  aliases: z.array(z.string().max(200)).max(20).nullable().optional(),
   personalProfileVisible: z.boolean().nullable().optional(),
   createdAt: z.string(),
 });

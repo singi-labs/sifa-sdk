@@ -137,4 +137,53 @@ describe('OrgProfileRecordSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  // Self-declared narrative fields (industries / founded / aliases). Registry
+  // facts (LEI, registration number, ...) are NOT self-declared and never enter
+  // this record.
+  describe('self-declared industries / founded / aliases', () => {
+    const at = '2026-07-16T00:00:00.000Z';
+
+    it('accepts industry/domain pairs, a founded date, and aliases', () => {
+      expect(
+        OrgProfileRecordSchema.safeParse({
+          name: 'Acme',
+          industries: [
+            { industry: 'id.sifa.defs#industryTechnology', domain: 'id.sifa.defs#domainHardware' },
+            { industry: 'id.sifa.defs#industryManufacturing' },
+          ],
+          founded: '1998',
+          aliases: ['Acme Corp', 'ACME'],
+          createdAt: at,
+        }).success,
+      ).toBe(true);
+    });
+
+    it('requires the industry token on an industries entry', () => {
+      expect(
+        OrgProfileRecordSchema.safeParse({ name: 'Acme', industries: [{}], createdAt: at }).success,
+      ).toBe(false);
+    });
+
+    it('caps industries at 10, founded at 10 chars, aliases at 20', () => {
+      expect(
+        OrgProfileRecordSchema.safeParse({
+          name: 'Acme',
+          industries: Array.from({ length: 11 }, () => ({ industry: 'x' })),
+          createdAt: at,
+        }).success,
+      ).toBe(false);
+      expect(
+        OrgProfileRecordSchema.safeParse({ name: 'Acme', founded: '2020-01-01T', createdAt: at })
+          .success,
+      ).toBe(false);
+      expect(
+        OrgProfileRecordSchema.safeParse({
+          name: 'Acme',
+          aliases: Array.from({ length: 21 }, (_, i) => `Alias ${i}`),
+          createdAt: at,
+        }).success,
+      ).toBe(false);
+    });
+  });
 });

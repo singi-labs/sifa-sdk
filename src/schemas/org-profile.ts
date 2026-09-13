@@ -53,6 +53,26 @@ export const OrgProfileRecordSchema = z.object({
   /** Featured links or content surfaced on the org profile. */
   links: z.array(orgLinkSchema).max(10).optional(),
   /**
+   * Self-declared industry/domain pairs (same shape as the person profile's
+   * `industries`). Registry-sourced classifications are layered separately.
+   */
+  industries: z
+    .array(
+      z.object({
+        industry: z.string().max(100),
+        domain: z.string().max(100).optional(),
+      }),
+    )
+    .max(10)
+    .optional(),
+  /** Self-declared founding date: a year (YYYY), month (YYYY-MM), or full date (YYYY-MM-DD). */
+  founded: z.string().max(10).optional(),
+  /** Self-declared alternative names / acronyms ("also known as"). */
+  aliases: z
+    .array(z.string().refine(maxGraphemes(200)).max(2000))
+    .max(20)
+    .optional(),
+  /**
    * Whether the account holder's personal profile stays visible alongside this
    * org profile. For sole traders whose personal domain is also their trade
    * name: one account, two facets, both pages render. Absent or false means the
