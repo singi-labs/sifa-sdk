@@ -37,6 +37,41 @@ describe('OrgClaimRequestSchema', () => {
       OrgClaimRequestSchema.safeParse({ name: 'Acme', entityRefs: [], authorityAck: true }).success,
     ).toBe(false);
   });
+
+  it('accepts the self-declared fields seeded at claim time', () => {
+    expect(
+      OrgClaimRequestSchema.safeParse({
+        name: 'Acme',
+        entityRefs: ['q'],
+        authorityAck: true,
+        addresses: [{ country: 'NL', locality: 'Amsterdam' }],
+        companySize: '11-50',
+        links: [{ name: 'Blog', url: 'https://acme.com/blog' }],
+        industries: [{ industry: 'id.sifa.defs#industryTechnology' }],
+        founded: '1998',
+        aliases: ['ACME'],
+      }).success,
+    ).toBe(true);
+  });
+
+  it('rejects a non-http(s) link url and a malformed founded on the claim body', () => {
+    expect(
+      OrgClaimRequestSchema.safeParse({
+        name: 'Acme',
+        entityRefs: ['q'],
+        authorityAck: true,
+        links: [{ name: 'x', url: 'javascript:alert(1)' }],
+      }).success,
+    ).toBe(false);
+    expect(
+      OrgClaimRequestSchema.safeParse({
+        name: 'Acme',
+        entityRefs: ['q'],
+        authorityAck: true,
+        founded: 'not-a-date',
+      }).success,
+    ).toBe(false);
+  });
 });
 
 describe('OrgProfileUpdateRequestSchema', () => {
