@@ -27,7 +27,7 @@ import {
   type FollowUserResult,
   type FollowingResponse,
 } from '../fetchers/follow.js';
-import type { ActivityFeedResponse } from '../fetchers/activity.js';
+import type { FollowingFeedResponse } from '../fetchers/follow.js';
 import { sifaQueryKeys } from '../keys.js';
 
 /**
@@ -195,9 +195,9 @@ export function useFollowingFeed(
   opts: FetchFollowingFeedOptions = {},
   options?: Omit<
     UseQueryOptions<
-      ActivityFeedResponse | null,
+      FollowingFeedResponse | null,
       Error,
-      ActivityFeedResponse | null,
+      FollowingFeedResponse | null,
       ReturnType<typeof sifaQueryKeys.follow.feed>
     >,
     'queryKey' | 'queryFn'
@@ -205,9 +205,12 @@ export function useFollowingFeed(
 ) {
   const config = useSifaConfig();
   return useQuery({
+    // `app` is part of the key: each source tab is its own cache entry, so
+    // switching tabs does not serve the previous tab's items.
     queryKey: sifaQueryKeys.follow.feed({
       limit: opts.limit,
       includeBluesky: opts.includeBluesky,
+      app: opts.app,
     }),
     queryFn: () => fetchFollowingFeed(config, opts),
     ...options,
