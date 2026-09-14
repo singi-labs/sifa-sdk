@@ -1,5 +1,15 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.5
+
+### Patch Changes
+
+- 6c3defb: Add a `name` to the `location` Place in presentation Event JSON-LD. The
+  structured-address branch emitted an `address` with no `name`, which Google
+  Search Console flags as "Missing field 'name' (in 'location')". The name is
+  composed from locality, region, and the readable country name (e.g. "Rotterdam,
+  South Holland, Netherlands").
+
 ## 0.19.4
 
 ### Patch Changes
