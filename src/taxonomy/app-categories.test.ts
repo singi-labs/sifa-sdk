@@ -70,6 +70,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('kut')).toBe('Social');
     expect(categoryForApp('atmorsvp')).toBe('Events');
     expect(categoryForApp('opensocial')).toBe('Social');
+    expect(categoryForApp('atcommons')).toBe('Social');
     expect(categoryForApp('kevara')).toBe('Events');
     expect(categoryForApp('marque')).toBe('Domains');
     expect(categoryForApp('atcr')).toBe('Code');

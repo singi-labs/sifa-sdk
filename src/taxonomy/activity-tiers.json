@@ -312,6 +312,11 @@
       "notes": "Skyboard task record.",
       "app": "skyboard"
     },
+    "eu.atcommons.member": {
+      "tier": "creation",
+      "app": "atcommons",
+      "notes": "Joining a national AT Protocol community commons, classified like community.opensocial.membership (creation)."
+    },
     "events.smokesignal.profile": {
       "tier": "filtered",
       "app": "smokesignal",

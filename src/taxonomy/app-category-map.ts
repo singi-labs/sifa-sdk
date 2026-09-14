@@ -54,6 +54,10 @@ export const APP_CATEGORY_MAP = {
   crate: 'Articles',
   atmorsvp: 'Events',
   opensocial: 'Social',
+  // eu.atcommons.member — a self-asserted declaration of belonging to a
+  // national AT Protocol community commons (atproto.nl, atproto.eu, ...).
+  // Same shape as the colibri / opensocial membership commitment.
+  atcommons: 'Social',
   // Kevara speaker-directory listing — a professional speaking-availability
   // declaration (talk topics, formats like keynote/panel/conference-talk).
   // Grouped under Events as the closest fit (speaking engagements).
