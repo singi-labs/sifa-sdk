@@ -118,6 +118,36 @@ describe('fetchFollowingFeed', () => {
     expect(url).toBe('https://api.example/api/following/feed?limit=50');
   });
 
+  it('sends the selected app as ?app', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchFollowingFeed({ ...config, fetch: fetchImpl }, { app: 'tangled' });
+    expect(getCall(fetchImpl)[0]).toBe('https://api.example/api/following/feed?app=tangled');
+  });
+
+  // A source tab decides Bluesky on its own: sending both would let the flag
+  // contradict the tab the viewer picked.
+  it('drops includeBluesky when an app is selected', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchFollowingFeed(
+      { ...config, fetch: fetchImpl },
+      { app: 'tangled', includeBluesky: true },
+    );
+    expect(getCall(fetchImpl)[0]).toBe('https://api.example/api/following/feed?app=tangled');
+  });
+
+  it('returns the apps list and empty reason', async () => {
+    const fetchImpl = jsonFetch({
+      items: [],
+      cursor: null,
+      hasMore: false,
+      reason: 'no_follows',
+      apps: [{ id: 'tangled', name: 'Tangled', count: 3 }],
+    });
+    const result = await fetchFollowingFeed({ ...config, fetch: fetchImpl });
+    expect(result?.reason).toBe('no_follows');
+    expect(result?.apps).toEqual([{ id: 'tangled', name: 'Tangled', count: 3 }]);
+  });
+
   it('sends includeBluesky=true only when opted in', async () => {
     const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
     await fetchFollowingFeed({ ...config, fetch: fetchImpl }, { includeBluesky: true });

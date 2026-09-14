@@ -163,16 +163,57 @@ export async function getFollowing(
  *  sifa-api endpoint's `lxm`. */
 export const FOLLOWING_FEED_LXM = 'id.sifa.feed.getFollowingFeed';
 
+/** One app the viewer's network is active on, for the feed's source tabs. */
+export interface FollowingFeedApp {
+  /** Registry app id, e.g. `tangled`. Pass back as {@link FetchFollowingFeedOptions.app}. */
+  id: string;
+  name: string;
+  /** Summed recent activity across the network; the tab ordering. */
+  count: number;
+}
+
+/**
+ * Why a following-feed page came back empty. Lets a client say something true
+ * per case instead of one catch-all sentence, and point at the right next step.
+ */
+export type FollowingFeedEmptyReason =
+  | 'no_follows'
+  | 'no_visible_follows'
+  | 'no_cross_app_activity'
+  | 'no_recent_records'
+  | 'all_hidden'
+  | 'nothing_renderable'
+  | 'hydration_failed';
+
 /** Options for {@link fetchFollowingFeed}. */
 export interface FetchFollowingFeedOptions extends ApiFetchOptions {
   limit?: number;
   /**
    * Opt in to the viewer's Bluesky activity too. Off by default: the point of
    * the feed is what connections do on OTHER apps.
+   *
+   * Ignored when {@link app} is set, since a source tab selects one app.
    */
   includeBluesky?: boolean;
+  /**
+   * Restrict the page to one app (a registry id from the response's `apps`).
+   * This is what a source tab selects. `app: 'bluesky'` selects Bluesky even
+   * though it is excluded from the default mixed view.
+   */
+  app?: string;
   /** Forward a `Cookie` header on Next.js RSC server-side calls (web). */
   cookieHeader?: string;
+}
+
+/** The following feed's response: an activity feed plus its tab metadata. */
+export interface FollowingFeedResponse extends ActivityFeedResponse {
+  /**
+   * Apps the viewer's network is actually active on, most active first.
+   * Present on empty pages too, so a client's tabs survive a quiet tab.
+   */
+  apps?: FollowingFeedApp[];
+  /** Set only when `items` is empty. */
+  reason?: FollowingFeedEmptyReason;
 }
 
 /**
@@ -189,10 +230,12 @@ export interface FetchFollowingFeedOptions extends ApiFetchOptions {
 export async function fetchFollowingFeed(
   config: SifaApiConfig,
   opts: FetchFollowingFeedOptions = {},
-): Promise<ActivityFeedResponse | null> {
+): Promise<FollowingFeedResponse | null> {
   const params = new URLSearchParams();
   if (opts.limit) params.set('limit', String(opts.limit));
-  if (opts.includeBluesky) params.set('includeBluesky', 'true');
+  // A selected tab decides Bluesky on its own, so the flag is not also sent.
+  if (opts.app) params.set('app', opts.app);
+  else if (opts.includeBluesky) params.set('includeBluesky', 'true');
   const qs = params.toString();
 
   const headers: Record<string, string> = { ...(opts.headers ?? {}) };
@@ -203,7 +246,7 @@ export async function fetchFollowingFeed(
   }
 
   try {
-    return await apiFetch<ActivityFeedResponse>(
+    return await apiFetch<FollowingFeedResponse>(
       config,
       `/api/following/feed${qs ? `?${qs}` : ''}`,
       { credentials: 'include', cache: 'no-store', ...opts, headers },
