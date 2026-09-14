@@ -148,14 +148,36 @@ function lookup(table: Readonly<Record<string, string>>, key: string | null | un
   return Object.prototype.hasOwnProperty.call(table, key) ? table[key] : undefined;
 }
 
+const REGION_NAMES = new Intl.DisplayNames('en', { type: 'region', fallback: 'code' });
+
+/** ISO 3166-1 alpha-2 code to a readable country name, falling back to the code. */
+function countryName(code: string): string {
+  if (code.length !== 2) return code;
+  try {
+    const name = REGION_NAMES.of(code.toUpperCase());
+    // ICU returns "Unknown Region" (locale pinned to 'en') for reserved or
+    // unassigned codes; the raw code is a more useful label than that.
+    if (!name || name === 'Unknown Region') return code;
+    return name;
+  } catch {
+    return code;
+  }
+}
+
 function deliveryPlace(delivery: PresentationDeliveryInput, s: (v: string) => string) {
   const addressLocality = delivery.locationLocality ?? undefined;
   const addressRegion = delivery.locationRegion ?? undefined;
   const addressCountry = delivery.countryCode ?? undefined;
 
   if (addressLocality || addressRegion || addressCountry) {
+    // Google flags an Event `location` Place that has no `name`, so we compose a
+    // readable label from the parts we have (venue names are not captured).
+    const name = [addressLocality, addressRegion, addressCountry && countryName(addressCountry)]
+      .filter(Boolean)
+      .join(', ');
     return {
       '@type': 'Place' as const,
+      ...(name && { name: s(name) }),
       address: {
         '@type': 'PostalAddress' as const,
         ...(addressLocality && { addressLocality: s(addressLocality) }),
