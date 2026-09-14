@@ -119,11 +119,83 @@ describe('buildPresentationJsonLd', () => {
       expect(ld.subjectOf![0]!.eventStatus).toBeUndefined();
     });
 
-    it('emits a structured place from the location fields', () => {
+    it('emits a structured place with a readable name from the location fields', () => {
       const ld = buildPresentationJsonLd(delivered, speaker);
       expect(ld.subjectOf![0]!.location).toEqual({
         '@type': 'Place',
+        name: 'Seattle, United States',
         address: { '@type': 'PostalAddress', addressLocality: 'Seattle', addressCountry: 'US' },
+      });
+    });
+
+    it('composes the place name from locality, region, and country', () => {
+      const ld = buildPresentationJsonLd(
+        {
+          ...delivered,
+          deliveries: [
+            {
+              ...delivered.deliveries[0]!,
+              locationLocality: 'Rotterdam',
+              locationRegion: 'South Holland',
+              countryCode: 'NL',
+            },
+          ],
+        },
+        speaker,
+      );
+      expect(ld.subjectOf![0]!.location).toEqual({
+        '@type': 'Place',
+        name: 'Rotterdam, South Holland, Netherlands',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Rotterdam',
+          addressRegion: 'South Holland',
+          addressCountry: 'NL',
+        },
+      });
+    });
+
+    it('names a country-only place with the country name', () => {
+      const ld = buildPresentationJsonLd(
+        {
+          ...delivered,
+          deliveries: [
+            {
+              ...delivered.deliveries[0]!,
+              locationLocality: undefined,
+              locationRegion: undefined,
+              countryCode: 'GB',
+            },
+          ],
+        },
+        speaker,
+      );
+      expect(ld.subjectOf![0]!.location).toEqual({
+        '@type': 'Place',
+        name: 'United Kingdom',
+        address: { '@type': 'PostalAddress', addressCountry: 'GB' },
+      });
+    });
+
+    it('falls back to the raw code when the country is unrecognised', () => {
+      const ld = buildPresentationJsonLd(
+        {
+          ...delivered,
+          deliveries: [
+            {
+              ...delivered.deliveries[0]!,
+              locationLocality: undefined,
+              locationRegion: undefined,
+              countryCode: 'ZZ',
+            },
+          ],
+        },
+        speaker,
+      );
+      expect(ld.subjectOf![0]!.location).toEqual({
+        '@type': 'Place',
+        name: 'ZZ',
+        address: { '@type': 'PostalAddress', addressCountry: 'ZZ' },
       });
     });
 
