@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.6
+
+### Patch Changes
+
+- 984ab1f: Recognize AT Commons (`eu.atcommons.member`) as a Social app: category map entry, creation-tier lexicon, and a members-directory URL fallback.
+
 ## 0.19.5
 
 ### Patch Changes
