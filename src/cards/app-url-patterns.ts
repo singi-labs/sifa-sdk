@@ -162,6 +162,12 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // with no public per-membership permalink. Profile fallback only.
     profileUrlPattern: 'https://opensocial.community',
   },
+  atcommons: {
+    // eu.atcommons.member records are self-asserted and live in the member's
+    // own repo; the commons sites (atproto.eu, atproto.nl) render a single
+    // members directory with no per-member permalink. Profile fallback only.
+    profileUrlPattern: 'https://atproto.eu/members',
+  },
   kevara: {
     // Kevara (professional network) has no live public web surface yet — its
     // domain doesn't resolve and there's no per-record viewer. Recognized so
@@ -322,6 +328,7 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['social.crate.', 'crate'],
   ['quest.atmo.', 'atmorsvp'],
   ['community.opensocial.', 'opensocial'],
+  ['eu.atcommons.', 'atcommons'],
   ['is.kevara.', 'kevara'],
   ['io.atcr.', 'atcr'],
   // Batch onboard — named pills for apps that were leaking as raw NSIDs.
