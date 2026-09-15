@@ -12,6 +12,10 @@ name: Term mappings drift
 # Deliberately NOT a required check, matching the first-party dependency flow
 # decision: a lexicon change landing before the SDK catches up is expected and
 # should not block unrelated PRs. It is a nightly signal, plus on-demand.
+#
+# Non-blocking does not mean silent, though: a failing scheduled run pushes a
+# Telegram alert and opens a deduped issue, which auto-closes on recovery. See
+# the steps at the bottom of the job.
 on:
   schedule:
     - cron: '17 4 * * *'
@@ -20,6 +24,8 @@ on:
     paths:
       - 'src/jsonld/term-mappings.json'
       - 'scripts/sync-term-mappings.mjs'
+      # Changing the check itself should exercise the check.
+      - '.github/workflows/term-mappings-drift.yml'
 
 permissions:
   contents: read
@@ -27,6 +33,12 @@ permissions:
 jobs:
   drift:
     runs-on: ubuntu-latest
+    # issues:write lets the failure/recovery steps manage the deduped drift
+    # issue with the default GITHUB_TOKEN (no PAT needed), matching the
+    # nightly-failure pattern in sifa-web's e2e-nightly.yml.
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Checkout sifa-sdk
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -62,3 +74,114 @@ jobs:
           echo "  1. Check out sifa-lexicons next to sifa-sdk"
           echo "  2. Run: pnpm sync:term-mappings"
           echo "  3. Commit the result with a changeset"
+
+      # Why the steps below exist: this job is deliberately not a required
+      # check, so a red scheduled run is invisible -- it leaves a mark in the
+      # Actions tab that nobody watches. It went red for three consecutive
+      # nights (2026-09-12..14) before anyone noticed (#608). Non-blocking has
+      # to mean "does not block a PR", not "nobody finds out".
+      #
+      # Scoped to `schedule` on purpose. A pull_request run already reports on
+      # the PR itself, and a workflow_dispatch run has a human watching it;
+      # neither needs an issue filed.
+
+      # Push alert. Mirrors sifa-web's e2e-nightly.yml. The secrets are
+      # currently set on sifa-web only, so until they are added here (or
+      # promoted to org level) this step warns and skips -- the issue below is
+      # the signal that works with no setup at all.
+      - name: Alert on failure (Telegram)
+        if: failure() && github.event_name == 'schedule'
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "::warning::Telegram secrets not set; skipping failure alert"
+            exit 0
+          fi
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          text=$(printf '🔴 Term mappings drift\n%s no longer matches sifa-lexicons.\nRepo: %s\nRun: %s' \
+            "src/jsonld/term-mappings.json" "$GITHUB_REPOSITORY" "$run_url")
+          curl -sS --fail --max-time 30 \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "disable_web_page_preview=true" \
+            --data-urlencode "text=${text}"
+
+      # Durable record: one deduped issue, so there is a stable #number to
+      # triage rather than an ephemeral ping. Re-failures comment instead of
+      # opening a second issue.
+      - name: Open or update drift issue
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const label = 'ci:term-mappings-drift';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            // Ensure the label exists (idempotent, and true on the first run).
+            try {
+              await github.rest.issues.getLabel({ ...context.repo, name: label });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  ...context.repo, name: label, color: 'b60205',
+                  description: 'term-mappings.json has drifted from sifa-lexicons',
+                });
+              } else { throw e; }
+            }
+            const existing = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: label,
+            });
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: existing.data[0].number,
+                body: `Still drifted as of \`${context.sha.slice(0, 7)}\` — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                ...context.repo,
+                title: 'Term mappings have drifted from sifa-lexicons',
+                labels: [label],
+                body: [
+                  '`src/jsonld/term-mappings.json` no longer matches',
+                  '`sifa-lexicons@main`. The lexicons are the source of truth, so',
+                  'the copy here needs refreshing.',
+                  '',
+                  `- Run: ${runUrl}`,
+                  `- Commit: \`${context.sha.slice(0, 7)}\``,
+                  '',
+                  'To resolve:',
+                  '1. Check out sifa-lexicons next to sifa-sdk',
+                  '2. Run `pnpm sync:term-mappings`',
+                  '3. Commit the result with a changeset',
+                  '',
+                  'This issue auto-closes when the check next passes on `main`.',
+                ].join('\n'),
+              });
+            }
+
+      # Recovery. Also runs on workflow_dispatch so the usual fix flow --
+      # merge the resync, dispatch the job to confirm -- closes the issue
+      # immediately instead of waiting for the next night. Excludes
+      # pull_request: a green PR run says nothing about the state of main.
+      - name: Close drift issue on recovery
+        if: success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const label = 'ci:term-mappings-drift';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const open = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: label,
+            });
+            for (const issue of open.data) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: issue.number,
+                body: `Back in sync — closing. ${runUrl}`,
+              });
+              await github.rest.issues.update({
+                ...context.repo, issue_number: issue.number,
+                state: 'closed', state_reason: 'completed',
+              });
+            }
