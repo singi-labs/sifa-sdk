@@ -1,5 +1,6 @@
 /**
- * Direct-to-PDS write helpers for AT Protocol interactions (like, repost).
+ * Direct-to-PDS write helpers for AT Protocol interactions (like, repost, follow,
+ * endorsement confirmation).
  *
  * The native app performs OAuth on-device and holds its own authenticated agent,
  * then writes records directly to the user's PDS. These helpers are the shared,
@@ -69,4 +70,59 @@ export function followUser(agent: AtprotoWriteAgent, subjectDid: string): Promis
 /** Unfollow, given the follow record's AT-URI (from {@link followUser}). */
 export function unfollowUser(agent: AtprotoWriteAgent, followUri: string): Promise<void> {
   return agent.deleteFollow(followUri);
+}
+
+/** Collection NSID (and record `$type`) for an endorsement confirmation. */
+const ENDORSEMENT_CONFIRMATION_COLLECTION = 'id.sifa.endorsement.confirmation';
+
+/**
+ * The subset of an authenticated agent used to write a record to an arbitrary
+ * collection. Convenience methods like {@link AtprotoWriteAgent.like} do not
+ * cover custom `id.sifa.*` collections, so those go through `createRecord`.
+ * Declared structurally so the SDK needs no `@atproto/api` dependency; the app's
+ * real `Agent` satisfies it. `did` is the authenticated repo the record lands in.
+ */
+export interface AtprotoRecordWriteAgent {
+  did?: string;
+  com: {
+    atproto: {
+      repo: {
+        createRecord(input: {
+          repo: string;
+          collection: string;
+          record: Record<string, unknown>;
+        }): Promise<{ data: { uri: string; cid: string } }>;
+      };
+    };
+  };
+}
+
+/**
+ * Confirm an endorsement by writing an `id.sifa.endorsement.confirmation` record
+ * to the endorsee's own repository. `endorsement` is a strong ref to the
+ * endorser's endorsement record. `skill` links the skill this endorsement
+ * applies to: pass it when the endorsement proposed a skill the endorsee then
+ * created, or when a proposed name matched a skill the endorsee already had (the
+ * endorser cannot write to the endorsee's repo, so the skill record is theirs to
+ * create and reference). The returned ref is the confirmation record itself.
+ */
+export async function createEndorsementConfirmation(
+  agent: AtprotoRecordWriteAgent,
+  input: { endorsement: StrongRef; skill?: StrongRef },
+): Promise<StrongRef> {
+  if (!agent.did) {
+    throw new Error('createEndorsementConfirmation requires an authenticated agent with a did');
+  }
+  const record: Record<string, unknown> = {
+    $type: ENDORSEMENT_CONFIRMATION_COLLECTION,
+    endorsement: input.endorsement,
+    ...(input.skill ? { skill: input.skill } : {}),
+    createdAt: new Date().toISOString(),
+  };
+  const { data } = await agent.com.atproto.repo.createRecord({
+    repo: agent.did,
+    collection: ENDORSEMENT_CONFIRMATION_COLLECTION,
+    record,
+  });
+  return { uri: data.uri, cid: data.cid };
 }
