@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.9
+
+### Patch Changes
+
+- ec86161: Add `createEndorsementConfirmation` to the `/atproto` write helpers: writes an `id.sifa.endorsement.confirmation` record directly to the endorsee's PDS, with an optional `skill` strong ref for the confirmed skill. Adds the `AtprotoRecordWriteAgent` structural agent type for custom-collection writes that the convenience methods do not cover.
+
 ## 0.19.8
 
 ### Patch Changes
