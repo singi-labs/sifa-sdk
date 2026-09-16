@@ -2,7 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { type SifaApiConfig } from '../client.js';
 import { confirmEndorsement, createEndorsement } from './endorsements.js';
-import { dismissEndorsement, fetchPendingEndorsements } from './endorsement-inbox.js';
+import {
+  dismissEndorsement,
+  fetchPendingEndorsements,
+  PENDING_ENDORSEMENTS_LXM,
+} from './endorsement-inbox.js';
 import {
   createExternalAccount,
   deleteExternalAccount,
@@ -282,6 +286,28 @@ describe('endorsement inbox', () => {
     const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/endorsements/pending');
     expect(init.credentials).toBe('include');
+  });
+
+  it('attaches a service-auth Bearer when config.getAuthToken is provided (native)', async () => {
+    const fetchImpl = jsonFetch({ endorsements: [] });
+    const getAuthToken = vi.fn((lxm: string) => Promise.resolve(`token-for-${lxm}`));
+    await fetchPendingEndorsements({ ...baseConfig, fetch: fetchImpl, getAuthToken });
+    expect(getAuthToken).toHaveBeenCalledWith(PENDING_ENDORSEMENTS_LXM);
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>).Authorization).toBe(
+      `Bearer token-for-${PENDING_ENDORSEMENTS_LXM}`,
+    );
+  });
+
+  it('sends no Bearer when getAuthToken returns null (web cookie path)', async () => {
+    const fetchImpl = jsonFetch({ endorsements: [] });
+    await fetchPendingEndorsements({
+      ...baseConfig,
+      fetch: fetchImpl,
+      getAuthToken: () => Promise.resolve(null),
+    });
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>).Authorization).toBeUndefined();
   });
 
   it('tolerates a pending endorsement with no endorser handle', async () => {
