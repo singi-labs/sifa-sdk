@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.10
+
+### Patch Changes
+
+- 6b4e58d: `fetchPendingEndorsements` now attaches a native service-auth Bearer when `config.getAuthToken` is set, so the native app can read its endorsement inbox. Web keeps using its session cookie. Exports `PENDING_ENDORSEMENTS_LXM` (`id.sifa.endorsement.getPending`), which must match the sifa-api endpoint's method binding.
+
 ## 0.19.9
 
 ### Patch Changes
