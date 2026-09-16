@@ -57,6 +57,10 @@ export interface DismissEndorsementInput {
   rkey: string;
 }
 
+/** The method binding for the pending-inbox service-auth token; MUST match the
+ *  sifa-api endpoint's `lxm`. */
+export const PENDING_ENDORSEMENTS_LXM = 'id.sifa.endorsement.getPending';
+
 /** Options for {@link fetchPendingEndorsements}, adding RSC cookie forwarding. */
 export interface FetchPendingEndorsementsOptions extends ApiFetchOptions {
   /**
@@ -69,8 +73,12 @@ export interface FetchPendingEndorsementsOptions extends ApiFetchOptions {
 
 /**
  * Endorsements awaiting the signed-in user's decision. Requires credentials --
- * the AppView reads the subject DID from the session, not from a parameter, so
- * there is no way to read someone else's inbox.
+ * the AppView reads the subject DID from the caller's identity, not from a
+ * parameter, so there is no way to read someone else's inbox.
+ *
+ * Auth is identity-only server-side, so the NATIVE app supplies
+ * `config.getAuthToken` to mint a service-auth Bearer, while WEB relies on its
+ * session cookie (`credentials: 'include'`).
  *
  * Returns an empty page on failure so a broken inbox degrades to "nothing
  * pending" rather than breaking the surface hosting it.
@@ -82,6 +90,10 @@ export async function fetchPendingEndorsements(
   const { cookieHeader, ...rest } = options;
   const headers: Record<string, string> = { ...(rest.headers ?? {}) };
   if (cookieHeader) headers.cookie = cookieHeader;
+  if (config.getAuthToken) {
+    const token = await config.getAuthToken(PENDING_ENDORSEMENTS_LXM);
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
   try {
     const data = await apiFetch<PendingEndorsementsPage>(config, '/api/endorsements/pending', {
       cache: 'no-store',
