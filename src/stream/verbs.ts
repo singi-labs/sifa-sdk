@@ -27,6 +27,7 @@ export const STREAM_VERBS = [
   'liked',
   'followed',
   'bookmarked',
+  'registered',
 ] as const;
 
 export type StreamVerb = (typeof STREAM_VERBS)[number];
