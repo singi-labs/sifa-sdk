@@ -123,6 +123,17 @@ export interface ActivityItem {
    */
   subject?: ActivityItem;
   /**
+   * Resolved title of the record this one references (the commented-on document,
+   * the replied-to post), set by sifa-api. Shown on the two-tier line as the
+   * subject clause ("Commented on {subjectTitle}").
+   */
+  subjectTitle?: string;
+  /**
+   * Canonical http(s) URL of the referenced record, set by sifa-api, so the
+   * subject clause links out to what was acted on (the blog post, the event).
+   */
+  subjectUrl?: string;
+  /**
    * Hypercert claim enrichment, set by sifa-api. Absent for non-hypercert
    * items, for claims with neither contributors nor attachments, and for
    * responses predating the field.

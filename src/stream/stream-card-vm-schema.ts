@@ -228,6 +228,7 @@ export const streamCardSubjectSchema: z.ZodType<StreamCardSubject> = z.discrimin
     kind: z.literal('record'),
     uri: z.string(),
     title: z.string().optional(),
+    url: z.string().optional(),
   }),
 ]);
 
