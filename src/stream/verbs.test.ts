@@ -57,3 +57,14 @@ describe('getActivityVerbsVersion', () => {
     expect(version.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
+
+describe('relational verbs', () => {
+  it('maps memberships to joined and comments/rsvps to relational verbs', () => {
+    expect(verbForCollection('eu.atcommons.member')).toBe('joined');
+    expect(verbForCollection('social.colibri.membership')).toBe('joined');
+    expect(verbForCollection('pub.leaflet.comment')).toBe('commented');
+    expect(verbForCollection('app.userinput.reply')).toBe('replied');
+    expect(verbForCollection('community.lexicon.calendar.rsvp')).toBe('rsvped');
+    expect(verbForCollection('at.youandme.connection')).toBe('followed');
+  });
+});

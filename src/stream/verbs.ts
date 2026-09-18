@@ -18,6 +18,15 @@ export const STREAM_VERBS = [
   'shipped',
   'reviewed',
   'created',
+  // Relational verbs: a reaction or reference to someone else's thing. These
+  // read with the subject the two-tier line renders after them ("Commented on
+  // {doc}", "Followed {person}").
+  'commented',
+  'replied',
+  'rsvped',
+  'liked',
+  'followed',
+  'bookmarked',
 ] as const;
 
 export type StreamVerb = (typeof STREAM_VERBS)[number];
