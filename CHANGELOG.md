@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.16
+
+### Patch Changes
+
+- 6d2034e: Drop the app name from activity verb titles ("Shipped on Tangled" becomes "Shipped", "Shared on X" becomes "Shared", etc.). The two-tier line already shows the app in its source pill, so repeating it was redundant and truncated to "Shipped on..." on narrow mobile screens. Relational verbs keep their preposition, which points at the subject the line renders after them ("Commented on {doc}"), not the app.
+
 ## 0.19.15
 
 ### Patch Changes
