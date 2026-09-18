@@ -534,6 +534,17 @@ function applyEventRsvp(vm: StreamCardVM, record: Record<string, unknown>): Stre
     if (locationCountry) body.locationCountry = locationCountry;
   }
   vm.body = body;
+  // Expose the event as the line subject so "RSVP'd to {event}" reads as a
+  // sentence rather than a dangling "RSVP'd to". The event page is the record's
+  // own sourceUrl, so the subject needs no separate url.
+  const eventUri = nonBlankString(asRecord(record.subject)?.uri);
+  if (eventUri) {
+    vm.subject = {
+      kind: 'record',
+      uri: eventUri,
+      ...(body.eventName ? { title: body.eventName } : {}),
+    };
+  }
   return vm;
 }
 
@@ -822,7 +833,24 @@ function genericSubject(record: Record<string, unknown>): StreamCardSubject | un
   }
   const uri = nonBlankString(asRecord(subject)?.uri);
   if (uri && uri.startsWith('at://')) return { kind: 'record', uri };
+  // Reply records name their target as `reply.parent.uri` (bsky-shaped).
+  const parentUri = nonBlankString(asRecord(asRecord(record.reply)?.parent)?.uri);
+  if (parentUri && parentUri.startsWith('at://')) return { kind: 'record', uri: parentUri };
   return undefined;
+}
+
+/**
+ * Fold the api-resolved subject title/url onto a record subject, so the line's
+ * subject clause reads with the real name and links to what was acted on.
+ */
+function withResolvedSubjectMeta(
+  subject: StreamCardSubject,
+  item: ActivityItem,
+): StreamCardSubject {
+  if (subject.kind !== 'record') return subject;
+  const title = nonBlankString(item.subjectTitle) ?? subject.title;
+  const url = nonBlankString(item.subjectUrl);
+  return { ...subject, ...(title ? { title } : {}), ...(url ? { url } : {}) };
 }
 
 /** Recognize one facet feature (link / mention / tag), tolerating a missing $type. */
@@ -929,7 +957,7 @@ function applyGeneric(
   // Don't clobber a repost/reply subject already normalized from item.subject.
   if (!vm.subject) {
     const subject = genericSubject(record);
-    if (subject) vm.subject = subject;
+    if (subject) vm.subject = withResolvedSubjectMeta(subject, item);
   }
 
   let body: StreamCardBody;

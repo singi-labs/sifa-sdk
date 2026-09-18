@@ -513,3 +513,50 @@ describe('toStreamCardVM — relational titles', () => {
     expect(m.title).toMatch(/^Joined /);
   });
 });
+
+describe('toStreamCardVM — relational subject exposure', () => {
+  it('exposes the event as the RSVP subject so the connector never dangles', () => {
+    const vm = toStreamCardVM(
+      item('community.lexicon.calendar.rsvp', {
+        status: 'community.lexicon.calendar.rsvp#going',
+        subject: { uri: 'at://did:plc:host/community.lexicon.calendar.event/e1' },
+        eventMeta: { name: 'ATmosphere Conf' },
+      }),
+    );
+    expect(vm.title).toBe("RSVP'd to");
+    expect(vm.subject).toEqual({
+      kind: 'record',
+      uri: 'at://did:plc:host/community.lexicon.calendar.event/e1',
+      title: 'ATmosphere Conf',
+    });
+  });
+
+  it('folds the api-resolved subject title and url onto a comment subject', () => {
+    const vm = toStreamCardVM(
+      item(
+        'pub.leaflet.comment',
+        { text: 'nice', subject: { uri: 'at://did:plc:a/pub.leaflet.document/d1' } },
+        { subjectTitle: 'Why AT Proto', subjectUrl: 'https://leaflet.pub/d1' },
+      ),
+    );
+    expect(vm.subject).toEqual({
+      kind: 'record',
+      uri: 'at://did:plc:a/pub.leaflet.document/d1',
+      title: 'Why AT Proto',
+      url: 'https://leaflet.pub/d1',
+    });
+  });
+
+  it('reads a reply parent as the subject', () => {
+    const vm = toStreamCardVM(
+      item('app.userinput.reply', {
+        text: 'agreed',
+        reply: { parent: { uri: 'at://did:plc:x/app.userinput.discussion/1' } },
+      }),
+    );
+    expect(vm.subject).toMatchObject({
+      kind: 'record',
+      uri: 'at://did:plc:x/app.userinput.discussion/1',
+    });
+  });
+});

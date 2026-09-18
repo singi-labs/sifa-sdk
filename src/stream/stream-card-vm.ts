@@ -242,7 +242,7 @@ export type StreamCardBody =
 export type StreamCardSubject =
   | { kind: 'post'; post: StreamCardVM }
   | { kind: 'person'; did: string; handle?: string; displayName?: string; avatar?: string }
-  | { kind: 'record'; uri: string; title?: string };
+  | { kind: 'record'; uri: string; title?: string; url?: string };
 
 /**
  * Presentation-ready, framework-free, serializable view-model for one activity
