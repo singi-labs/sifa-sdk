@@ -217,6 +217,7 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
   liked: () => 'Liked',
   followed: () => 'Followed',
   bookmarked: () => 'Bookmarked',
+  registered: () => 'Registered',
 };
 
 function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {
@@ -737,6 +738,7 @@ const GENERIC_TEXT_ORDER = [
   'note',
   'caption',
   'summary',
+  'domain',
   'status',
 ] as const;
 

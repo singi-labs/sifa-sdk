@@ -560,3 +560,17 @@ describe('toStreamCardVM — relational subject exposure', () => {
     });
   });
 });
+
+describe('toStreamCardVM — marque domain', () => {
+  it('reads the domain as the content for a Marque registration', () => {
+    const vm = toStreamCardVM(
+      item('at.marque.domain', {
+        domain: 'example.com',
+        status: 'active',
+        createdAt: '2026-07-17T10:00:00.000Z',
+      }),
+    );
+    expect(vm.title).toBe('Registered');
+    expect(vm.body).toMatchObject({ kind: 'text', text: 'example.com' });
+  });
+});

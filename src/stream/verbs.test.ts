@@ -68,3 +68,9 @@ describe('relational verbs', () => {
     expect(verbForCollection('at.youandme.connection')).toBe('followed');
   });
 });
+
+describe('marque domains', () => {
+  it('registers a Marque domain', () => {
+    expect(verbForCollection('at.marque.domain')).toBe('registered');
+  });
+});
