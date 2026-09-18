@@ -506,11 +506,11 @@ describe('toStreamCardVM — relational titles', () => {
     expect(rsvp.title).toBe("RSVP'd to");
   });
 
-  it('titles a membership as Joined {app}, no dangling connector', () => {
+  it('titles a membership as bare Joined (the app is shown by the pill)', () => {
     const m = toStreamCardVM(
       item('eu.atcommons.member', { createdAt: '2026-07-17T10:00:00.000Z' }),
     );
-    expect(m.title).toMatch(/^Joined /);
+    expect(m.title).toBe('Joined');
   });
 });
 
