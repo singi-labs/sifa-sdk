@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.17
+
+### Patch Changes
+
+- 3d54e9e: Surface a domain registration's content on the two-tier line. Adds a `registered` verb (mapped to `at.marque.domain`) and reads a record's `domain` field in the generic text extractor, so a Marque line reads "Registered {domain}" instead of the meaningless "Shared: active".
+
 ## 0.19.16
 
 ### Patch Changes
