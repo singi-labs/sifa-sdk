@@ -315,6 +315,8 @@ export {
   streamRichSegmentSchema,
   streamSourceSchema,
   streamThemeSchema,
+  isSelfAuthoredRich,
+  renderAsLine,
   toStreamCardVM,
   toStreamCardVMs,
   type ActivityItem,
