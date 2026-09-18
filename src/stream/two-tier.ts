@@ -1,4 +1,10 @@
+import { isRelationalActivity } from '../taxonomy/relational.js';
 import type { StreamCardBody, StreamCardVM } from './stream-card-vm.js';
+
+/** The collection NSID from an at-uri (at://did/collection/rkey). */
+function collectionOf(uri: string): string {
+  return uri.split('/')[3] ?? '';
+}
 
 /**
  * Body kinds whose content is inherently rich enough to warrant a card when the
@@ -35,8 +41,13 @@ function isRich(vm: StreamCardVM): boolean {
  * endorsement) AND it carries rich content ({@link isRich}). A followee's own
  * photo or book log becomes a card; their comment on someone else's photo, or a
  * bare `:)` post, stays a line.
+ *
+ * A relational activity (comment, reply, RSVP, endorsement, membership, ...) is
+ * NEVER rich, even when it carries media: the line shows what was acted on and
+ * links out, rather than reproducing someone else's content.
  */
 export function isSelfAuthoredRich(vm: StreamCardVM): boolean {
+  if (isRelationalActivity(collectionOf(vm.uri))) return false;
   return vm.tier === 'creation' && isRich(vm);
 }
 

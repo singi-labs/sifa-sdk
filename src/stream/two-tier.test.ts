@@ -47,6 +47,17 @@ describe('isSelfAuthoredRich', () => {
     ).toBe(false);
   });
 
+  it('is false for a relational activity even with media (a comment on someone’s photo)', () => {
+    expect(
+      isSelfAuthoredRich(
+        vm({
+          uri: 'at://did:plc:actor/pub.leaflet.comment/1',
+          media: [{ alt: '', url: 'https://cdn.example/theirs.jpg' }],
+        }),
+      ),
+    ).toBe(false);
+  });
+
   it('is false for a thin creation that is only text (a bare “:)”)', () => {
     expect(isSelfAuthoredRich(vm({ body: { kind: 'text', text: ':)' } }))).toBe(false);
   });

@@ -126,6 +126,7 @@ export {
   findIndustry,
   getActivityTaxonomyVersion,
   getActivityTier,
+  isRelationalActivity,
   getCalendarEventModeLabel,
   getCalendarEventStatusLabel,
   getPresentationLinkTypeLabel,
