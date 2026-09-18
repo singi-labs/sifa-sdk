@@ -193,7 +193,10 @@ function buildAuthor(item: ActivityItem): StreamAuthor | undefined {
 // Post-type verbs drop the app name (the source pill already shows it, so
 // "Posted on Bluesky network" reads as redundant); verbs where the platform
 // adds meaning keep "on {App}".
-const TITLE_BY_VERB: Record<StreamVerb, (label: string) => string> = {
+// Relational verbs read as a sentence with the subject the two-tier line renders
+// after them. Those with a preposition drop it when no subject was found, so the
+// phrase never dangles ("Commented on {doc}" with a subject, "Commented" without).
+const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => string> = {
   posted: () => 'Posted',
   reposted: () => 'Reposted',
   published: (label) => `Published on ${label}`,
@@ -203,10 +206,39 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string) => string> = {
   shipped: (label) => `Shipped on ${label}`,
   reviewed: (label) => `Reviewed on ${label}`,
   created: (label) => `Shared on ${label}`,
+  commented: (_label, hasSubject) => (hasSubject ? 'Commented on' : 'Commented'),
+  replied: (_label, hasSubject) => (hasSubject ? 'Replied to' : 'Replied'),
+  rsvped: (_label, hasSubject) => (hasSubject ? "RSVP'd to" : "RSVP'd"),
+  liked: () => 'Liked',
+  followed: () => 'Followed',
+  bookmarked: () => 'Bookmarked',
 };
 
-function buildTitle(verb: StreamVerb, label: string): string {
-  return TITLE_BY_VERB[verb](label);
+function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {
+  return TITLE_BY_VERB[verb](label, hasSubject);
+}
+
+/**
+ * Whether the record points at another record it acted on: a strongRef
+ * `subject.uri`, a bare `at://` `subject`, or a reply `parent`/`root`. Drives
+ * the connector in a relational verb's title.
+ */
+function recordHasSubjectRef(record: Record<string, unknown> | null | undefined): boolean {
+  if (!record) return false;
+  const subject = record.subject;
+  if (typeof subject === 'string' && subject.startsWith('at://')) return true;
+  if (subject && typeof subject === 'object') {
+    const uri = (subject as Record<string, unknown>).uri;
+    if (typeof uri === 'string' && uri.length > 0) return true;
+  }
+  const reply = record.reply as Record<string, unknown> | undefined;
+  if (reply && typeof reply === 'object') {
+    for (const key of ['parent', 'root'] as const) {
+      const ref = reply[key] as Record<string, unknown> | undefined;
+      if (ref && typeof ref === 'object' && typeof ref.uri === 'string') return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -955,7 +987,7 @@ export function toStreamCardVM(
     source,
     tier: getActivityTier(item.collection),
     timestamp,
-    title: buildTitle(verb, source.label),
+    title: buildTitle(verb, source.label, recordHasSubjectRef(record)),
   };
 
   const author = buildAuthor(item);

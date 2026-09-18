@@ -458,7 +458,7 @@ describe('toStreamCardVM — subject widening', () => {
         createdAt: '2026-07-17T10:00:00.000Z',
       }),
     );
-    expect(vm.verb).toBe('joined');
+    expect(vm.verb).toBe('followed');
     expect(vm.subject).toEqual({ kind: 'person', did: subjectDid });
     expectValid(vm);
   });
@@ -482,5 +482,34 @@ describe('toStreamCardVM — subject widening', () => {
     );
     expect(vm.subject).toBeUndefined();
     expectValid(vm);
+  });
+});
+
+describe('toStreamCardVM — relational titles', () => {
+  it('adds the connector when a relational record references a subject', () => {
+    const comment = toStreamCardVM(
+      item('pub.leaflet.comment', {
+        text: 'nice',
+        subject: { uri: 'at://did:plc:a/pub.leaflet.document/d1' },
+        createdAt: '2026-07-17T10:00:00.000Z',
+      }),
+    );
+    expect(comment.title).toBe('Commented on');
+
+    const rsvp = toStreamCardVM(
+      item('community.lexicon.calendar.rsvp', {
+        status: 'community.lexicon.calendar.rsvp#going',
+        subject: { uri: 'at://did:plc:h/community.lexicon.calendar.event/e1' },
+        createdAt: '2026-07-17T10:00:00.000Z',
+      }),
+    );
+    expect(rsvp.title).toBe("RSVP'd to");
+  });
+
+  it('titles a membership as Joined {app}, no dangling connector', () => {
+    const m = toStreamCardVM(
+      item('eu.atcommons.member', { createdAt: '2026-07-17T10:00:00.000Z' }),
+    );
+    expect(m.title).toMatch(/^Joined /);
   });
 });

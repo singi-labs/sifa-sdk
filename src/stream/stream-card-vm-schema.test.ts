@@ -84,7 +84,7 @@ describe('streamCardVMSchema', () => {
   });
 
   it('rejects an unknown verb', () => {
-    expect(streamCardVMSchema.safeParse({ ...baseVM, verb: 'liked' }).success).toBe(false);
+    expect(streamCardVMSchema.safeParse({ ...baseVM, verb: 'frobnicated' }).success).toBe(false);
   });
 
   it('rejects an unknown body kind', () => {
