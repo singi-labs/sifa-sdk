@@ -218,6 +218,7 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
   followed: () => 'Followed',
   bookmarked: () => 'Bookmarked',
   registered: () => 'Registered',
+  annotated: () => 'Annotated',
 };
 
 function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {
@@ -843,6 +844,17 @@ function genericSubject(record: Record<string, unknown>): StreamCardSubject | un
   // Reply records name their target as `reply.parent.uri` (bsky-shaped).
   const parentUri = nonBlankString(asRecord(asRecord(record.reply)?.parent)?.uri);
   if (parentUri && parentUri.startsWith('at://')) return { kind: 'record', uri: parentUri };
+  // W3C-annotation shape: `target` names the annotated resource with a title
+  // and an http(s) `source` (Margin notes and highlights). The source is both
+  // the subject key and its link, so the line shows "Annotated {page title}".
+  const target = asRecord(record.target);
+  if (target) {
+    const source = httpUrl(target.source);
+    if (source) {
+      const title = nonBlankString(target.title);
+      return { kind: 'record', uri: source, ...(title ? { title } : {}), url: source };
+    }
+  }
   return undefined;
 }
 
