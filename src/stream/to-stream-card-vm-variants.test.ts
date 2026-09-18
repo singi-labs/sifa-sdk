@@ -574,3 +574,21 @@ describe('toStreamCardVM — marque domain', () => {
     expect(vm.body).toMatchObject({ kind: 'text', text: 'example.com' });
   });
 });
+
+describe('toStreamCardVM — annotation target', () => {
+  it('reads a Margin note target as the linked subject', () => {
+    const vm = toStreamCardVM(
+      item('at.margin.note', {
+        target: { title: 'Why AT Proto matters', source: 'https://example.com/post' },
+        createdAt: '2026-07-17T10:00:00.000Z',
+      }),
+    );
+    expect(vm.title).toBe('Annotated');
+    expect(vm.subject).toEqual({
+      kind: 'record',
+      uri: 'https://example.com/post',
+      title: 'Why AT Proto matters',
+      url: 'https://example.com/post',
+    });
+  });
+});

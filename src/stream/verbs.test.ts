@@ -74,3 +74,9 @@ describe('marque domains', () => {
     expect(verbForCollection('at.marque.domain')).toBe('registered');
   });
 });
+
+describe('margin notes', () => {
+  it('annotates a Margin note', () => {
+    expect(verbForCollection('at.margin.note')).toBe('annotated');
+  });
+});
