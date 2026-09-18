@@ -196,16 +196,21 @@ function buildAuthor(item: ActivityItem): StreamAuthor | undefined {
 // Relational verbs read as a sentence with the subject the two-tier line renders
 // after them. Those with a preposition drop it when no subject was found, so the
 // phrase never dangles ("Commented on {doc}" with a subject, "Commented" without).
+// App-name verbs stay bare: the source pill next to the line already shows the
+// app, so "Shipped on Tangled" beside a Tangled pill is redundant and (on a
+// narrow screen) truncates to "Shipped on...". The verb carries the action; the
+// pill carries the app. Relational verbs keep their preposition, which points at
+// the SUBJECT the line renders after them (not the app), e.g. "Commented on {doc}".
 const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => string> = {
   posted: () => 'Posted',
   reposted: () => 'Reposted',
-  published: (label) => `Published on ${label}`,
+  published: () => 'Published',
   presented: () => 'Gave a presentation',
   endorsed: () => 'Wrote an endorsement',
-  joined: (label) => `Joined ${label}`,
-  shipped: (label) => `Shipped on ${label}`,
-  reviewed: (label) => `Reviewed on ${label}`,
-  created: (label) => `Shared on ${label}`,
+  joined: () => 'Joined',
+  shipped: () => 'Shipped',
+  reviewed: () => 'Reviewed',
+  created: () => 'Shared',
   commented: (_label, hasSubject) => (hasSubject ? 'Commented on' : 'Commented'),
   replied: (_label, hasSubject) => (hasSubject ? 'Replied to' : 'Replied'),
   rsvped: (_label, hasSubject) => (hasSubject ? "RSVP'd to" : "RSVP'd"),

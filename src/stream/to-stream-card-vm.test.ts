@@ -52,10 +52,10 @@ describe('toStreamCardVM — verb titles', () => {
     });
     const vm = toStreamCardVM(review);
     expect(vm.verb).toBe('reviewed');
-    expect(vm.title).toBe('Reviewed on Popfeed');
+    expect(vm.title).toBe('Reviewed');
   });
 
-  it('uses "Shared on {app}" for the generic fallback', () => {
+  it('uses bare "Shared" for the generic fallback (app shown by the pill)', () => {
     const item = bskyPost({
       uri: `at://${DID}/com.example.widget/1`,
       collection: 'com.example.widget',
@@ -66,7 +66,7 @@ describe('toStreamCardVM — verb titles', () => {
     });
     const vm = toStreamCardVM(item);
     expect(vm.verb).toBe('created');
-    expect(vm.title).toBe('Shared on Example');
+    expect(vm.title).toBe('Shared');
   });
 });
 
@@ -87,8 +87,8 @@ describe('toStreamCardVM — generic / unknown', () => {
     const vm = toStreamCardVM(item);
     expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
     expect(vm.verb).toBe('created');
-    // Unknown collections fall back to the "Shared on {app}" title.
-    expect(vm.title).toBe('Shared on Example');
+    // Unknown collections fall back to the bare "Shared" title (pill shows the app).
+    expect(vm.title).toBe('Shared');
     // `name` is a recognized human-visible field → a text body.
     expect(vm.body).toEqual({ kind: 'text', text: 'a widget' });
   });
