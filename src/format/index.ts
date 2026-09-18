@@ -16,6 +16,11 @@ export {
   sortByDateDesc,
 } from './sort-by-date.js';
 export { normalizeDoi } from './doi.js';
+export {
+  formatRelationship,
+  parseEndorsementComment,
+  type ParsedEndorsementComment,
+} from './endorsement-context.js';
 export { sanitizeHandleInput } from './handle-utils.js';
 export { countryCodeToFlag, formatLocation, parseLocationString } from './location-utils.js';
 export { locationSegments } from './location-segments.js';
