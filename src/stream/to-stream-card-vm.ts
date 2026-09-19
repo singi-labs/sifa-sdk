@@ -219,6 +219,10 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
   bookmarked: () => 'Bookmarked',
   registered: () => 'Registered',
   annotated: () => 'Annotated',
+  streamed: () => 'Streamed',
+  wrote: () => 'Wrote',
+  wasAt: (_label, hasSubject) => (hasSubject ? 'Was at' : 'Was at'),
+  metWith: (_label, hasSubject) => (hasSubject ? 'Met with' : 'Met with'),
 };
 
 function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {
@@ -682,10 +686,18 @@ function applyStandardSite(vm: StreamCardVM, record: Record<string, unknown>): S
   return vm;
 }
 
-/** at.youandme.connection: the record's `subject` is a bare person DID. */
-function applyYouAndMe(vm: StreamCardVM, record: Record<string, unknown>): StreamCardVM {
+/**
+ * at.youandme.connection: the record's `subject` is a bare person DID. Fold the
+ * api-resolved handle/display name onto it (like the generic person path), so
+ * the "Met with {name}" line names and links the other person.
+ */
+function applyYouAndMe(
+  vm: StreamCardVM,
+  record: Record<string, unknown>,
+  item: ActivityItem,
+): StreamCardVM {
   const did = asNonEmptyString(record.subject);
-  if (did) vm.subject = { kind: 'person', did };
+  if (did) vm.subject = withResolvedSubjectMeta({ kind: 'person', did }, item);
   vm.body = { kind: 'generic' };
   return vm;
 }
@@ -1105,7 +1117,7 @@ export function toStreamCardVM(
     case 'site.standard.document':
       return record ? applyStandardSite(vm, record) : withGeneric(vm);
     case 'at.youandme.connection':
-      return record ? applyYouAndMe(vm, record) : withGeneric(vm);
+      return record ? applyYouAndMe(vm, record, item) : withGeneric(vm);
     case 'fyi.asq.answer':
       return record ? applyAsqAnswer(vm, record) : withGeneric(vm);
     case 'fediverse.post':

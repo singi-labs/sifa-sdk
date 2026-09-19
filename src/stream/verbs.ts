@@ -29,6 +29,10 @@ export const STREAM_VERBS = [
   'bookmarked',
   'registered',
   'annotated',
+  'streamed',
+  'wrote',
+  'wasAt',
+  'metWith',
 ] as const;
 
 export type StreamVerb = (typeof STREAM_VERBS)[number];
