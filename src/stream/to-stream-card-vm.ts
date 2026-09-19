@@ -386,10 +386,14 @@ function applyBskyPost(
   if (media) vm.media = media;
   if (externalLink) vm.externalLink = externalLink;
 
+  // An embed is the post's primary content and must win over the caption. If
+  // `text` took the body, the dispatch would render the caption alone and drop
+  // the image / link preview entirely (a bare box). The caption instead rides
+  // along on the media / link body's `text`.
   let body: StreamCardBody;
-  if (text) body = { kind: 'text', text };
-  else if (vm.media) body = { kind: 'media' };
-  else if (vm.externalLink) body = { kind: 'link' };
+  if (vm.media) body = text ? { kind: 'media', text } : { kind: 'media' };
+  else if (vm.externalLink) body = text ? { kind: 'link', text } : { kind: 'link' };
+  else if (text) body = { kind: 'text', text };
   else body = { kind: 'generic' };
   vm.body = body;
   return vm;
