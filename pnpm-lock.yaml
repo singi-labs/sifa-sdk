@@ -23,13 +23,13 @@ importers:
         version: 21.2.0
       '@tanstack/react-query':
         specifier: 5.101.4
-        version: 5.101.4(react@19.2.7)
+        version: 5.101.4(react@19.2.8)
       '@testing-library/react':
         specifier: 16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       '@types/react':
-        specifier: 19.2.17
-        version: 19.2.17
+        specifier: 19.2.18
+        version: 19.2.18
       '@vitest/coverage-v8':
         specifier: 3.2.1
         version: 3.2.1(vitest@3.2.1(@types/node@25.7.0)(jiti@2.6.1)(jsdom@30.0.1))
@@ -46,11 +46,11 @@ importers:
         specifier: 3.9.6
         version: 3.9.6
       react:
-        specifier: 19.2.7
-        version: 19.2.7
+        specifier: 19.2.8
+        version: 19.2.8
       react-dom:
         specifier: 19.2.7
-        version: 19.2.7(react@19.2.7)
+        version: 19.2.7(react@19.2.8)
       svgo:
         specifier: 4.0.2
         version: 4.0.2
@@ -769,8 +769,8 @@ packages:
   '@types/node@25.7.0':
     resolution: {integrity: sha512-z+pdZyxE+RTQE9AcboAZCb4otwcrvgHD+GlBpPgn0emDVt0ohrTMhAwlr2Wd9nZ+nihhYFxO2pThz3C5qSu2Eg==}
 
-  '@types/react@19.2.17':
-    resolution: {integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==}
+  '@types/react@19.2.18':
+    resolution: {integrity: sha512-AnzbBERsrLKtk2XSfTbYRLjQPdy116Sty4q+T+Bp3IC4l6jNBvreVPAHmpq9qhXQM7CXZPjLVmGMw9sy+hxQ3w==}
 
   '@typescript-eslint/eslint-plugin@8.67.0':
     resolution: {integrity: sha512-Un7Heoyj65NREbKAyIrFxeM143NZpExWmy1Nep4DLeQOeLlTeumPjoNKnBrU5D5moWXbPJgRa5Uwcdu0faVNGQ==}
@@ -1754,8 +1754,8 @@ packages:
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
-  react@19.2.7:
-    resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
+  react@19.2.8:
+    resolution: {integrity: sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==}
     engines: {node: '>=0.10.0'}
 
   read-yaml-file@1.1.0:
@@ -2776,10 +2776,10 @@ snapshots:
 
   '@tanstack/query-core@5.101.4': {}
 
-  '@tanstack/react-query@5.101.4(react@19.2.7)':
+  '@tanstack/react-query@5.101.4(react@19.2.8)':
     dependencies:
       '@tanstack/query-core': 5.101.4
-      react: 19.2.7
+      react: 19.2.8
 
   '@testing-library/dom@10.4.1':
     dependencies:
@@ -2792,14 +2792,14 @@ snapshots:
       picocolors: 1.1.1
       pretty-format: 27.5.1
 
-  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@babel/runtime': 7.29.2
       '@testing-library/dom': 10.4.1
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
+      react: 19.2.8
+      react-dom: 19.2.7(react@19.2.8)
     optionalDependencies:
-      '@types/react': 19.2.17
+      '@types/react': 19.2.18
 
   '@types/aria-query@5.0.4': {}
 
@@ -2824,7 +2824,7 @@ snapshots:
     dependencies:
       undici-types: 7.21.0
 
-  '@types/react@19.2.17':
+  '@types/react@19.2.18':
     dependencies:
       csstype: 3.2.3
 
@@ -3823,14 +3823,14 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-dom@19.2.7(react@19.2.7):
+  react-dom@19.2.7(react@19.2.8):
     dependencies:
-      react: 19.2.7
+      react: 19.2.8
       scheduler: 0.27.0
 
   react-is@17.0.2: {}
 
-  react@19.2.7: {}
+  react@19.2.8: {}
 
   read-yaml-file@1.1.0:
     dependencies:
