@@ -330,6 +330,34 @@ describe('applyGeneric — heuristics for unknown apps', () => {
     expect(vm.subject).toEqual({ kind: 'person', did: 'did:plc:friend' });
   });
 
+  it('titles a Beacon check-in "Was at" and captures the venue name on the location body', () => {
+    const vm = toStreamCardVM(
+      item('app.beaconbits.beacon', {
+        venueName: 'The Roastery',
+        shout: 'great coffee',
+        createdAt: '2026-09-19T00:00:00Z',
+      }),
+    );
+    expect(vm.title).toBe('Was at');
+    expect(vm.body).toMatchObject({ kind: 'location', venueName: 'The Roastery' });
+  });
+
+  it('folds the resolved person onto a You&Me "Met with" connection', () => {
+    const base = item('at.youandme.connection', { subject: 'did:plc:friend' });
+    const vm = toStreamCardVM({
+      ...base,
+      subjectHandle: 'friend.bsky.social',
+      subjectDisplayName: 'A Friend',
+    });
+    expect(vm.title).toBe('Met with');
+    expect(vm.subject).toEqual({
+      kind: 'person',
+      did: 'did:plc:friend',
+      handle: 'friend.bsky.social',
+      displayName: 'A Friend',
+    });
+  });
+
   it('folds the api-resolved handle and display name onto a person subject', () => {
     const base = item('com.example.connect', { subject: 'did:plc:friend' });
     const vm = toStreamCardVM({

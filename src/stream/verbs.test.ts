@@ -65,7 +65,17 @@ describe('relational verbs', () => {
     expect(verbForCollection('pub.leaflet.comment')).toBe('commented');
     expect(verbForCollection('app.userinput.reply')).toBe('replied');
     expect(verbForCollection('community.lexicon.calendar.rsvp')).toBe('rsvped');
-    expect(verbForCollection('at.youandme.connection')).toBe('followed');
+    expect(verbForCollection('at.youandme.connection')).toBe('metWith');
+  });
+});
+
+describe('per-app verb copy', () => {
+  it('maps app collections to their own verb instead of the "created"/"Shared" default', () => {
+    expect(verbForCollection('place.stream.livestream')).toBe('streamed');
+    expect(verbForCollection('fyi.atstore.listing.review')).toBe('reviewed');
+    expect(verbForCollection('blog.pckt.mini.post')).toBe('wrote');
+    expect(verbForCollection('app.beaconbits.beacon')).toBe('wasAt');
+    expect(verbForCollection('social.grain.gallery')).toBe('posted');
   });
 });
 

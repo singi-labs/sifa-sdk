@@ -458,7 +458,7 @@ describe('toStreamCardVM — subject widening', () => {
         createdAt: '2026-07-17T10:00:00.000Z',
       }),
     );
-    expect(vm.verb).toBe('followed');
+    expect(vm.verb).toBe('metWith');
     expect(vm.subject).toEqual({ kind: 'person', did: subjectDid });
     expectValid(vm);
   });
