@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.20
+
+### Patch Changes
+
+- 3168b4f: Resolve the person referenced by a follow (or any bare-DID subject) on the activity line. `ActivityItem` gains `subjectHandle` and `subjectDisplayName`, and `withResolvedSubjectMeta` now folds them onto a `person` subject, so the two-tier line can read "Followed {name}" and link to the profile instead of "Followed someone". sifa-api sets the fields by resolving the DID.
+
 ## 0.19.19
 
 ### Patch Changes
