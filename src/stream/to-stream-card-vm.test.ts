@@ -237,9 +237,57 @@ describe('toStreamCardVM — Bluesky post', () => {
       alt: 'a cat',
       aspectRatio: { width: 1000, height: 750 },
     });
-    // Text takes the body; media rides alongside on `vm.media` (the renderer
-    // draws it separately from the body).
-    expect(vm.body).toEqual({ kind: 'text', text: 'with pics' });
+    // The embed is the primary content, so it takes the body kind (`media`);
+    // the caption rides along on the body's `text`. A `text` body would make
+    // the dispatch render the caption alone and drop the image.
+    expect(vm.body).toEqual({ kind: 'media', text: 'with pics' });
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('gives a captioned image post a media body carrying the caption (embed wins over text)', () => {
+    const vm = toStreamCardVM(
+      bskyPost({
+        record: {
+          text: 'my cat',
+          createdAt: '2026-07-17T11:00:00.000Z',
+          embed: {
+            $type: 'app.bsky.embed.images',
+            images: [
+              {
+                alt: 'a cat',
+                image: { $type: 'blob', ref: { $link: 'bafkreicat' }, mimeType: 'image/jpeg' },
+              },
+            ],
+          },
+        },
+      }),
+    );
+    expect(vm.media).toHaveLength(1);
+    // Media body, NOT text — so the renderer draws the image, with the caption.
+    expect(vm.body).toEqual({ kind: 'media', text: 'my cat' });
+    expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
+  });
+
+  it('gives a captioned external-link post a link body carrying the caption (embed wins over text)', () => {
+    const vm = toStreamCardVM(
+      bskyPost({
+        record: {
+          text: 'worth a read',
+          createdAt: '2026-07-17T11:00:00.000Z',
+          embed: {
+            $type: 'app.bsky.embed.external',
+            external: {
+              uri: 'https://example.com/article',
+              title: 'An Article',
+              description: 'desc',
+            },
+          },
+        },
+      }),
+    );
+    expect(vm.externalLink).toEqual({ url: 'https://example.com/article', title: 'An Article' });
+    // Link body, NOT text — so the renderer draws the link preview, with the caption.
+    expect(vm.body).toEqual({ kind: 'link', text: 'worth a read' });
     expect(streamCardVMSchema.safeParse(vm).success).toBe(true);
   });
 
