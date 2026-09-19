@@ -259,8 +259,13 @@ function recordHasSubjectRef(record: Record<string, unknown> | null | undefined)
  * URLs are returned.
  */
 function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): string | undefined {
-  const authorDid = didFromUri(item.uri);
-  if (!authorDid) return undefined;
+  // A did-less uri does NOT mean no link: record-derived URLs (a Standard
+  // site's siteUrl + path, an ad-hoc record.url) resolve without any author
+  // identity. The following feed can key an item by handle, so bailing on a
+  // missing did dropped those links. Pass an empty did through instead; the
+  // pattern interpolator returns null for any `{did}`/`{handle}` it can't fill,
+  // so did/handle-only apps (Bluesky) still yield no fabricated link.
+  const authorDid = didFromUri(item.uri) ?? '';
   const authorHandle = asNonEmptyString(item.authorHandle) ?? asNonEmptyString(record.handle);
   const url = resolveCardUrl({
     collection: item.collection,
