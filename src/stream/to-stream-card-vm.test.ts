@@ -517,6 +517,47 @@ describe('toStreamCardVM — sourceUrl', () => {
     expect(vm.sourceUrl).toBe(`https://atmo.rsvp/p/${DID}/e/3kevent`);
   });
 
+  it('resolves a record-derived sourceUrl even when the uri carries no did', () => {
+    // The following feed can key an item by handle rather than did, so
+    // didFromUri finds nothing. A Standard site's URL comes from the record
+    // (siteUrl + path), not the author did, so it must still resolve —
+    // otherwise the feed renders an unlinked "Published: {title}".
+    const vm = toStreamCardVM({
+      uri: 'at://ewancroft.uk/site.standard.document/3mv',
+      cid: 'bafx',
+      collection: 'site.standard.document',
+      rkey: '3mv',
+      appId: 'standard',
+      appName: 'Standard',
+      category: 'Articles',
+      indexedAt: '2026-07-17T09:00:00.000Z',
+      record: {
+        $type: 'site.standard.document',
+        title: 'I Still Built It',
+        siteUrl: 'https://blog.ewancroft.uk',
+        path: '/3mv',
+      },
+    });
+    expect(vm.sourceUrl).toBe('https://blog.ewancroft.uk/3mv');
+  });
+
+  it('still omits a did/handle-only sourceUrl when the uri carries no did and no handle', () => {
+    // A bsky permalink needs a handle; with neither did (no did in the uri) nor
+    // handle, relaxing the did guard must NOT fabricate a broken link.
+    const vm = toStreamCardVM({
+      uri: 'at://not-a-did/app.bsky.feed.post/3kpost',
+      cid: 'bafyreipost',
+      collection: 'app.bsky.feed.post',
+      rkey: '3kpost',
+      appId: 'bluesky',
+      appName: 'Bluesky',
+      category: 'Posts',
+      indexedAt: '2026-07-17T09:00:00.000Z',
+      record: { $type: 'app.bsky.feed.post', text: 'hi', createdAt: '2026-07-17T09:00:00.000Z' },
+    });
+    expect(vm.sourceUrl).toBeUndefined();
+  });
+
   it('omits sourceUrl for an unknown / unlinkable collection', () => {
     const vm = toStreamCardVM({
       uri: `at://${DID}/com.example.widget/1`,
