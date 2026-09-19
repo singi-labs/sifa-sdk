@@ -134,6 +134,17 @@ export interface ActivityItem {
    */
   subjectUrl?: string;
   /**
+   * Resolved handle of the person this record references, set by sifa-api, when
+   * the subject is a bare DID (a follow, a block). Lets the line read
+   * "Followed {name}" and link to the person's profile.
+   */
+  subjectHandle?: string;
+  /**
+   * Resolved display name of the referenced person, set by sifa-api alongside
+   * {@link subjectHandle}. Preferred over the handle for the visible label.
+   */
+  subjectDisplayName?: string;
+  /**
    * Hypercert claim enrichment, set by sifa-api. Absent for non-hypercert
    * items, for claims with neither contributors nor attachments, and for
    * responses predating the field.
