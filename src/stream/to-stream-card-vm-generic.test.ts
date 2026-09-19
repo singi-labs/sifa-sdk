@@ -330,6 +330,21 @@ describe('applyGeneric — heuristics for unknown apps', () => {
     expect(vm.subject).toEqual({ kind: 'person', did: 'did:plc:friend' });
   });
 
+  it('folds the api-resolved handle and display name onto a person subject', () => {
+    const base = item('com.example.connect', { subject: 'did:plc:friend' });
+    const vm = toStreamCardVM({
+      ...base,
+      subjectHandle: 'friend.bsky.social',
+      subjectDisplayName: 'A Friend',
+    });
+    expect(vm.subject).toEqual({
+      kind: 'person',
+      did: 'did:plc:friend',
+      handle: 'friend.bsky.social',
+      displayName: 'A Friend',
+    });
+  });
+
   it('maps a bare record.url to an external link', () => {
     const vm = toStreamCardVM(item('com.example.link', { url: 'https://example.com/page' }));
     expect(vm.externalLink).toEqual({ url: 'https://example.com/page' });

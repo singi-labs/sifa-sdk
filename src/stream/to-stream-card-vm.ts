@@ -863,13 +863,25 @@ function genericSubject(record: Record<string, unknown>): StreamCardSubject | un
 }
 
 /**
- * Fold the api-resolved subject title/url onto a record subject, so the line's
- * subject clause reads with the real name and links to what was acted on.
+ * Fold the api-resolved subject metadata onto the subject, so the line reads
+ * with the real name and links out. For a record subject that is the referenced
+ * record's title/url ("Commented on {title}"); for a person subject (a follow,
+ * a block, whose subject is a bare DID) that is the resolved handle/display
+ * name, so the line reads "Followed {name}" and links to the profile.
  */
 function withResolvedSubjectMeta(
   subject: StreamCardSubject,
   item: ActivityItem,
 ): StreamCardSubject {
+  if (subject.kind === 'person') {
+    const handle = nonBlankString(item.subjectHandle) ?? subject.handle;
+    const displayName = nonBlankString(item.subjectDisplayName) ?? subject.displayName;
+    return {
+      ...subject,
+      ...(handle ? { handle } : {}),
+      ...(displayName ? { displayName } : {}),
+    };
+  }
   if (subject.kind !== 'record') return subject;
   const title = nonBlankString(item.subjectTitle) ?? subject.title;
   const url = nonBlankString(item.subjectUrl);
