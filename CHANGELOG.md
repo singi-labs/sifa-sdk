@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.23
+
+### Patch Changes
+
+- 61095ce: Two more per-app feed verbs and a Keytrace subject. at.fund endorsements read "Supported" (the endorsed person, a bare-DID subject, resolves like a follow). Keytrace claims read "Verified {account}" and expose the external account (its label + profile URL) as the subject, so the line names and links the account whose ownership was proven, instead of a bare "Shared".
+
 ## 0.19.22
 
 ### Patch Changes
