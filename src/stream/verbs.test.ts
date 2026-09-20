@@ -76,6 +76,8 @@ describe('per-app verb copy', () => {
     expect(verbForCollection('blog.pckt.mini.post')).toBe('wrote');
     expect(verbForCollection('app.beaconbits.beacon')).toBe('wasAt');
     expect(verbForCollection('social.grain.gallery')).toBe('posted');
+    expect(verbForCollection('fund.at.graph.endorse')).toBe('supported');
+    expect(verbForCollection('dev.keytrace.claim')).toBe('verified');
   });
 });
 

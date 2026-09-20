@@ -1,6 +1,6 @@
 {
   "$schema": "https://sifa.id/schemas/activity-verbs/v1.json",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "updated": "2026-09-20",
   "defaultVerb": "created",
   "verbs": {
@@ -26,9 +26,11 @@
     "community.nooki.membership": "joined",
     "community.opensocial.membership": "joined",
     "computer.aetheros.page": "published",
+    "dev.keytrace.claim": "verified",
     "eu.atcommons.member": "joined",
     "fm.plyr.comment": "commented",
     "forum.barazo.post": "posted",
+    "fund.at.graph.endorse": "supported",
     "fyi.atstore.listing.review": "reviewed",
     "fyi.unravel.frontpage.post": "posted",
     "id.sifa.endorsement": "endorsed",

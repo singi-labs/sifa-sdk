@@ -221,8 +221,10 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
   annotated: () => 'Annotated',
   streamed: () => 'Streamed',
   wrote: () => 'Wrote',
-  wasAt: (_label, hasSubject) => (hasSubject ? 'Was at' : 'Was at'),
-  metWith: (_label, hasSubject) => (hasSubject ? 'Met with' : 'Met with'),
+  wasAt: () => 'Was at',
+  metWith: () => 'Met with',
+  supported: () => 'Supported',
+  verified: () => 'Verified',
 };
 
 function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {
@@ -585,6 +587,19 @@ function applyKeytraceVerification(
   const profileUrl = asNonEmptyString(identity.profileUrl);
   if (profileUrl) body.profileUrl = profileUrl;
   vm.body = body;
+  // A Keytrace claim proves ownership of an EXTERNAL account, so the line reads
+  // "Verified {account}" and links out to it. Expose the external identity as
+  // the subject (its own record) so the compact line renders and links it,
+  // rather than showing a bare "Verified" with no object.
+  const accountLabel = subjectLabel ?? asNonEmptyString(record.type);
+  if (accountLabel) {
+    vm.subject = {
+      kind: 'record',
+      uri: '',
+      title: accountLabel,
+      ...(profileUrl ? { url: profileUrl } : {}),
+    };
+  }
   return vm;
 }
 

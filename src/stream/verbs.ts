@@ -33,6 +33,8 @@ export const STREAM_VERBS = [
   'wrote',
   'wasAt',
   'metWith',
+  'supported',
+  'verified',
 ] as const;
 
 export type StreamVerb = (typeof STREAM_VERBS)[number];
