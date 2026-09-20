@@ -249,6 +249,15 @@ describe('toStreamCardVM — verification', () => {
       subjectLabel: 'The Octocat',
       profileUrl: 'https://github.com/octocat',
     });
+    // "Verified {external account}" linked out to it.
+    expect(vm.verb).toBe('verified');
+    expect(vm.title).toBe('Verified');
+    expect(vm.subject).toEqual({
+      kind: 'record',
+      uri: '',
+      title: 'The Octocat',
+      url: 'https://github.com/octocat',
+    });
     expectValid(vm);
   });
 
