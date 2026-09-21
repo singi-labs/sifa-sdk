@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.24
+
+### Patch Changes
+
+- eae8365: Add the `@singi-labs/sifa-sdk/jev` subpath: TypeSafe System One (Jev) question builders, taxonomies, answer schemas, and threshold predicates for organisation dedup (Noul) and firmographic classification (Choice). Pure and network-free; the `systemOne` call itself stays server-side in sifa-api.
+
 ## 0.19.23
 
 ### Patch Changes
