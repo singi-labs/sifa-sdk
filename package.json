@@ -162,6 +162,16 @@
         "default": "./dist/resume/index.cjs"
       }
     },
+    "./jev": {
+      "import": {
+        "types": "./dist/jev/index.d.ts",
+        "default": "./dist/jev/index.js"
+      },
+      "require": {
+        "types": "./dist/jev/index.d.cts",
+        "default": "./dist/jev/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",

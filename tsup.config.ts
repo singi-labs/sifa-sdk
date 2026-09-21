@@ -19,6 +19,7 @@ export default defineConfig({
     'src/badge/index.ts',
     'src/jsonld/index.ts',
     'src/resume/index.ts',
+    'src/jev/index.ts',
   ],
   loader: {
     '.json': 'json',
