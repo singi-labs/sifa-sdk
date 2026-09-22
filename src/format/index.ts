@@ -1,7 +1,7 @@
 export { formatCompanyName } from './company-name.js';
 export { normalizeLegalForm } from './normalize-legal-form.js';
 export { normalizeCompanyKey } from './normalize-company-key.js';
-export { formatRelativeTime } from './format-time.js';
+export { formatIsoTitle, formatRelativeTime } from './format-time.js';
 export { formatPresentationDuration } from './format-duration.js';
 export { formatDateRange, formatTimelineDate } from './timeline.js';
 export {

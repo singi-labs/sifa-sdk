@@ -1,4 +1,20 @@
 /**
+ * Format a date string as a full ISO-8601 instant, for a `<time title>` tooltip
+ * (the exact timestamp behind a relative "5m ago"). Returns an empty string for
+ * an invalid or unparseable date rather than throwing.
+ *
+ * `new Date(x).toISOString()` throws `RangeError: Invalid time value` on a bad
+ * input, which crashed SSR wherever a record's timestamp fed a title attribute
+ * directly (GlitchTip SIFAID-M45). Guard the conversion the same way
+ * {@link formatRelativeTime} guards its own parse.
+ */
+export function formatIsoTitle(dateString: string): string {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '';
+  return date.toISOString();
+}
+
+/**
  * Format a date string as a relative time (e.g. "5m ago", "3d ago").
  * Returns an empty string for invalid or future dates.
  */
