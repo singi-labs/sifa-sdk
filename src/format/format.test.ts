@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatRelativeTime } from './format-time.js';
+import { formatIsoTitle, formatRelativeTime } from './format-time.js';
 import { sanitizeHandleInput } from './handle-utils.js';
 import { countryCodeToFlag, formatLocation, parseLocationString } from './location-utils.js';
 import {
@@ -46,6 +46,28 @@ describe('formatRelativeTime', () => {
   it('formats years ago', () => {
     const past = new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000).toISOString();
     expect(formatRelativeTime(past)).toBe('2y ago');
+  });
+});
+
+describe('formatIsoTitle', () => {
+  it('returns the canonical ISO string for a valid date', () => {
+    expect(formatIsoTitle('2026-09-22T10:00:00.000Z')).toBe('2026-09-22T10:00:00.000Z');
+  });
+
+  it('normalizes a parseable non-canonical date to ISO', () => {
+    expect(formatIsoTitle('2026-09-22')).toBe('2026-09-22T00:00:00.000Z');
+  });
+
+  // Regression for GlitchTip SIFAID-M45: `new Date(x).toISOString()` on a bad
+  // timestamp throws `RangeError: Invalid time value`, which crashed SSR where
+  // the value fed a <time title>. Return '' instead of throwing.
+  it('returns "" for an invalid date instead of throwing', () => {
+    expect(() => formatIsoTitle('not a date')).not.toThrow();
+    expect(formatIsoTitle('not a date')).toBe('');
+  });
+
+  it('returns "" for an empty string', () => {
+    expect(formatIsoTitle('')).toBe('');
   });
 });
 

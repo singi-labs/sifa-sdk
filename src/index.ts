@@ -215,6 +215,7 @@ export {
   formatDateRange,
   formatDisplayUrl,
   formatDistanceToNow,
+  formatIsoTitle,
   formatLocation,
   formatPresentationDuration,
   formatRelativeTime,
