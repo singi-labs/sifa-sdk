@@ -21,6 +21,13 @@ export interface DisplayUrl {
 }
 
 /**
+ * Non-web URL schemes that are safe to expose as an `href`. Anything outside
+ * http(s) and this set (notably `javascript:`, `data:`, `vbscript:`, `file:`) is
+ * dropped to an empty href so it can never become a navigable link.
+ */
+const SAFE_NON_WEB_SCHEMES = new Set(['mailto:', 'tel:', 'dns:']);
+
+/**
  * Best-effort parse. Tries the input as-is, then (for scheme-less input like
  * `example.com`) with an `https://` prefix. Returns `null` when neither parses,
  * so the caller can fall back instead of throwing -- an uncaught `new URL()`
@@ -69,11 +76,16 @@ export function formatDisplayUrl(url: string, options: FormatDisplayUrlOptions =
     return { display: raw.replace(/^dns:/i, ''), href: raw };
   }
 
-  // Non-web scheme (`dns:`, `mailto:`, ...): keep it addressable, strip the
-  // scheme for display.
+  // Non-web scheme: strip the scheme for display. Keep an href only for a
+  // known-safe scheme (`mailto:`, `tel:`, `dns:`); a dangerous scheme
+  // (`javascript:`, `data:`, `vbscript:`, `file:`, ...) parses fine and reaches
+  // here, so it must be neutralised to an empty href rather than returned
+  // verbatim, or it becomes a navigable link. Defence-in-depth for records
+  // stored before write-time validation existed.
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
     const display = raw.replace(/^[a-z][a-z0-9+.-]*:/i, '').replace(/^\/\//, '') || raw;
-    return { display, href: raw };
+    const href = SAFE_NON_WEB_SCHEMES.has(parsed.protocol) ? raw : '';
+    return { display, href };
   }
 
   const host = parsed.hostname.replace(/^www\./i, '');

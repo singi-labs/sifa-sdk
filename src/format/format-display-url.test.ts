@@ -98,4 +98,25 @@ describe('formatDisplayUrl', () => {
       );
     });
   });
+
+  // A dangerous scheme parses (so it reaches the non-web branch) and used to be
+  // returned as href verbatim. It must never become a navigable href, even for a
+  // record stored before write-time validation existed.
+  describe('dangerous scheme neutralization', () => {
+    it('empties href for a javascript: URL but never throws', () => {
+      const r = formatDisplayUrl('javascript:alert(document.cookie)');
+      expect(r.href).toBe('');
+    });
+
+    it('empties href for data: and vbscript: URLs', () => {
+      expect(formatDisplayUrl('data:text/html,<script>1</script>').href).toBe('');
+      expect(formatDisplayUrl('vbscript:msgbox(1)').href).toBe('');
+    });
+
+    it('keeps mailto:, tel: and dns: addressable', () => {
+      expect(formatDisplayUrl('mailto:x@gui.do').href).toBe('mailto:x@gui.do');
+      expect(formatDisplayUrl('tel:+31612345678').href).toBe('tel:+31612345678');
+      expect(formatDisplayUrl('dns:gui.do').href).toBe('dns:gui.do');
+    });
+  });
 });
