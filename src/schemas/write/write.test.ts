@@ -351,6 +351,17 @@ describe('normalizeUrl + optionalUrl', () => {
     expect(schema.parse('not a url')).toBeUndefined();
     expect(schema.parse(undefined)).toBeUndefined();
   });
+
+  // A dangerous scheme parses as a URL (`new URL('javascript:x')` does not throw),
+  // so the old parse-only check stored it. optionalUrl must drop anything that is
+  // not http(s) so a script-bearing scheme is never written to the PDS.
+  it('optionalUrl drops dangerous non-http(s) schemes', () => {
+    const schema = optionalUrl();
+    expect(schema.parse('javascript:alert(1)')).toBeUndefined();
+    expect(schema.parse('data:text/html,x')).toBeUndefined();
+    expect(schema.parse('http://x.com')).toBe('http://x.com');
+    expect(schema.parse('https://x.com')).toBe('https://x.com');
+  });
 });
 
 describe('httpUrlOrNull', () => {

@@ -8,8 +8,13 @@ export function normalizeUrl(val: string): string {
 }
 
 /**
- * Accept a URL string or silently drop it if invalid (returns `undefined`).
- * Preserves the write-time policy: bad URLs from imports are dropped, not rejected.
+ * Accept an http(s) URL string or silently drop it (returns `undefined`).
+ * Preserves the write-time policy: bad URLs from imports are dropped, not
+ * rejected. A dangerous scheme (`javascript:`, `data:`, ...) parses as a URL, so
+ * this drops anything that is not http(s) via {@link httpUrlOrNull} rather than a
+ * bare parse check, keeping a script-bearing scheme out of the stored record. All
+ * consumers of this schema are web-link fields (project/publication/involvement/
+ * certification URLs), so no non-http scheme is legitimate here.
  */
 export const optionalUrl = () =>
   z
@@ -17,12 +22,7 @@ export const optionalUrl = () =>
     .optional()
     .transform((val) => {
       if (!val) return undefined;
-      try {
-        new URL(val);
-        return val;
-      } catch {
-        return undefined;
-      }
+      return httpUrlOrNull(val) ?? undefined;
     });
 
 /**
