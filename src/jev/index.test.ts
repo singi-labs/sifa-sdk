@@ -95,6 +95,27 @@ describe('firmographic classification (Choice)', () => {
     expect(SIZE_BAND_TAXONOMY).toHaveProperty('unknown');
   });
 
+  it('org-type taxonomy has the expected key set (locks additions/removals)', () => {
+    expect(Object.keys(ORG_TYPE_TAXONOMY).sort()).toEqual(
+      [
+        'agency',
+        'company',
+        'cooperative',
+        'educational',
+        'foundation',
+        'government',
+        'healthcare_provider',
+        'nonprofit',
+        'other',
+        'political',
+        'professional_association',
+        'religious',
+        'research_institute',
+        'self_employed',
+      ].sort(),
+    );
+  });
+
   it('choice questions carry their taxonomy as criteria', () => {
     expect(INDUSTRY_CHOICE_QUESTION.type).toBe('choice');
     expect(Object.keys(INDUSTRY_CHOICE_QUESTION.criteria)).toEqual(Object.keys(INDUSTRY_TAXONOMY));
