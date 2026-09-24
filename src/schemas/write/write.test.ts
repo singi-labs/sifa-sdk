@@ -625,6 +625,16 @@ describe('OrgProfileWriteSchema', () => {
       ).toBe(false);
     });
 
+    it('accepts a companyType token and caps it at 64', () => {
+      expect(OrgProfileWriteSchema.safeParse({ ...base, companyType: 'cooperative' }).success).toBe(
+        true,
+      );
+      expect(OrgProfileWriteSchema.safeParse({ ...base, companyType: null }).success).toBe(true);
+      expect(
+        OrgProfileWriteSchema.safeParse({ ...base, companyType: 'x'.repeat(65) }).success,
+      ).toBe(false);
+    });
+
     it('caps a link name at 255', () => {
       expect(
         OrgProfileWriteSchema.safeParse({
