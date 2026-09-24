@@ -95,10 +95,25 @@ describe('firmographic classification (Choice)', () => {
     expect(SIZE_BAND_TAXONOMY).toHaveProperty('unknown');
   });
 
-  it('org-type taxonomy covers cooperative and other real org forms', () => {
-    for (const key of ['cooperative', 'foundation', 'self_employed', 'professional_association']) {
-      expect(ORG_TYPE_TAXONOMY).toHaveProperty(key);
-    }
+  it('org-type taxonomy has the expected key set (locks additions/removals)', () => {
+    expect(Object.keys(ORG_TYPE_TAXONOMY).sort()).toEqual(
+      [
+        'agency',
+        'company',
+        'cooperative',
+        'educational',
+        'foundation',
+        'government',
+        'healthcare_provider',
+        'nonprofit',
+        'other',
+        'political',
+        'professional_association',
+        'religious',
+        'research_institute',
+        'self_employed',
+      ].sort(),
+    );
   });
 
   it('choice questions carry their taxonomy as criteria', () => {

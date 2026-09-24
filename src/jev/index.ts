@@ -156,6 +156,7 @@ export const ORG_TYPE_TAXONOMY: Record<string, string> = {
   research_institute: 'Independent research institute or laboratory',
   healthcare_provider: 'Hospital, clinic, or healthcare provider',
   professional_association: 'Professional association, trade body, or trade union',
+  agency: 'Agency, consultancy, or professional-services firm',
   religious: 'Religious organisation',
   political: 'Political party or organisation',
   self_employed: 'Sole proprietor, freelancer, or self-employed individual',
