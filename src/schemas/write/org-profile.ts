@@ -57,6 +57,7 @@ export const OrgProfileWriteSchema = z.object({
   // though the sifa-api endpoint tolerates 20. Field caps below mirror the API.
   addresses: z.array(orgAddressWriteSchema).max(10).nullable().optional(),
   companySize: z.string().max(64).nullable().optional(),
+  companyType: z.string().max(64).nullable().optional(),
   links: z.array(orgLinkWriteSchema).max(10).nullable().optional(),
   // Self-declared narrative fields; registry facts (LEI, registration number,
   // legal form, ticker) stay internal and are never self-declared.

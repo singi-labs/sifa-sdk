@@ -50,6 +50,7 @@ export const OrgProfileRecordSchema = z.object({
    * string is accepted so future ranges do not break older records.
    */
   companySize: z.string().optional(),
+  companyType: z.string().optional(),
   /** Featured links or content surfaced on the org profile. */
   links: z.array(orgLinkSchema).max(10).optional(),
   /**

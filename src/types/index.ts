@@ -753,6 +753,7 @@ export interface OrgProfileView {
   addresses: OrgAddressView[] | null;
   /** Self-selected headcount range (declared bucket, never calculated). */
   companySize: string | null;
+  companyType: string | null;
   links: OrgLinkView[] | null;
   /** Self-declared industry/domain pairs. */
   industries: OrgIndustryView[] | null;

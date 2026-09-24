@@ -65,6 +65,7 @@ export const OrgClaimRequestSchema = z.object({
   entityRefs: z.array(z.string().min(1).max(2048)).min(1).max(20),
   addresses: z.array(orgAddressSchema).max(20).optional(),
   companySize: z.string().max(64).optional(),
+  companyType: z.string().max(64).optional(),
   links: z.array(orgLinkSchema).max(20).optional(),
   industries: z.array(orgIndustrySchema).max(10).optional(),
   founded: orgFoundedSchema.optional(),

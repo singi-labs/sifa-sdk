@@ -73,6 +73,7 @@ export const OrgProfileUpdateRequestSchema = z.object({
    * contract; the lexicon documents the offered `knownValues`.
    */
   companySize: z.string().max(64).optional(),
+  companyType: z.string().max(64).optional(),
   /** Featured links surfaced on the org page (each url http(s)). */
   links: z.array(orgLinkSchema).max(20).optional(),
   /**
