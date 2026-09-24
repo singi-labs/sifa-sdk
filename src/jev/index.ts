@@ -141,13 +141,24 @@ export const INDUSTRY_TAXONOMY: Record<string, string> = {
   other: 'None of the above, or not enough information to decide',
 };
 
-/** Organisation type taxonomy; `other` is the no-match option. */
+/**
+ * Organisation type (the org's FORM, not its sector -- a hospital's type is
+ * healthcare_provider while its industry is healthcare). `other` is the no-match
+ * option. Prefer the registry `legalForm` where it already encodes the form.
+ */
 export const ORG_TYPE_TAXONOMY: Record<string, string> = {
   company: 'For-profit company or corporation',
-  nonprofit: 'Nonprofit, charity, NGO, or foundation',
-  government: 'Government body or public-sector entity',
-  educational: 'School, university, or research institution',
-  agency: 'Agency, consultancy, or professional-services firm',
+  cooperative: 'Member-owned co-operative (e.g. eG, SCOP, mutual, credit union)',
+  nonprofit: 'Nonprofit, charity, or NGO',
+  foundation: 'Grant-making or endowed foundation (e.g. Stiftung, fonds)',
+  government: 'Government body, agency, or public-sector authority',
+  educational: 'School, college, or university',
+  research_institute: 'Independent research institute or laboratory',
+  healthcare_provider: 'Hospital, clinic, or healthcare provider',
+  professional_association: 'Professional association, trade body, or trade union',
+  religious: 'Religious organisation',
+  political: 'Political party or organisation',
+  self_employed: 'Sole proprietor, freelancer, or self-employed individual',
   other: 'None of the above, or not enough information to decide',
 };
 
@@ -171,7 +182,7 @@ export const INDUSTRY_CHOICE_QUESTION = choiceQuestion(
 );
 
 export const ORG_TYPE_CHOICE_QUESTION = choiceQuestion(
-  'Based on the org state, which single type best describes this organisation?',
+  'Based on the org state, which single organisation type (its form, not its industry sector) best describes this organisation?',
   ORG_TYPE_TAXONOMY,
 );
 

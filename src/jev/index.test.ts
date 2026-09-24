@@ -95,6 +95,12 @@ describe('firmographic classification (Choice)', () => {
     expect(SIZE_BAND_TAXONOMY).toHaveProperty('unknown');
   });
 
+  it('org-type taxonomy covers cooperative and other real org forms', () => {
+    for (const key of ['cooperative', 'foundation', 'self_employed', 'professional_association']) {
+      expect(ORG_TYPE_TAXONOMY).toHaveProperty(key);
+    }
+  });
+
   it('choice questions carry their taxonomy as criteria', () => {
     expect(INDUSTRY_CHOICE_QUESTION.type).toBe('choice');
     expect(Object.keys(INDUSTRY_CHOICE_QUESTION.criteria)).toEqual(Object.keys(INDUSTRY_TAXONOMY));
