@@ -1,6 +1,15 @@
 export { CONTINENTS, getContinent, type ContinentCode } from './continents.js';
 export { COUNTRIES } from './countries.js';
 export {
+  EQF_LEVEL_LABELS,
+  EQF_LEVEL_OPTIONS,
+  getEqfLevelLabel,
+  readEqfLevel,
+  suggestEqfLevelFromDegree,
+  type EqfLevel,
+  type EqfLevelOption,
+} from './eqf-level.js';
+export {
   COMPANY_OPTIONAL_EMPLOYMENT_TYPES,
   EMPLOYMENT_TYPE_GROUPS,
   EMPLOYMENT_TYPE_LABELS,

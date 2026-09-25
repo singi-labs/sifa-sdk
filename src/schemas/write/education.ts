@@ -8,6 +8,7 @@ export const EducationWriteSchema = z.object({
   entityRef: entityRefSchema,
   degree: z.string().max(256).nullable().optional(),
   fieldOfStudy: z.string().max(256).nullable().optional(),
+  eqfLevel: z.number().int().min(1).max(8).nullable().optional(),
   description: z.string().max(50000).nullable().optional(),
   activities: z.string().max(1000).nullable().optional(),
   startedAt: z.string().nullable().optional(),

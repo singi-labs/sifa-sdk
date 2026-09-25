@@ -60,6 +60,8 @@ export interface EducationView {
   entityRef?: string;
   degree?: string;
   fieldOfStudy?: string;
+  /** European Qualifications Framework level, 1 to 8 (8 = doctoral). */
+  eqfLevel?: number;
   activities?: string;
   description?: string;
   startedAt?: string;

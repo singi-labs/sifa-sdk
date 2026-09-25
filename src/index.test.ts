@@ -17,6 +17,8 @@ import {
   splitCoursesByRole,
   getCourseRoleLabel,
   groupPublicationVersions,
+  EQF_LEVEL_OPTIONS,
+  suggestEqfLevelFromDegree,
   type ActorCard,
   type Endorsement,
   type ProjectMemberCard,
@@ -46,6 +48,13 @@ describe('course role main-entry exports', () => {
   it('are reachable from the main entry', () => {
     expect(typeof splitCoursesByRole).toBe('function');
     expect(getCourseRoleLabel('id.sifa.defs#courseTaught')).toBe('Instructor');
+  });
+});
+
+describe('EQF level main-entry exports', () => {
+  it('are reachable from the main entry', () => {
+    expect(EQF_LEVEL_OPTIONS).toHaveLength(8);
+    expect(suggestEqfLevelFromDegree('PhD')).toBe(8);
   });
 });
 

@@ -22,6 +22,8 @@ export const ProfileEducationRecordSchema = z.object({
     .optional(),
   degree: z.string().refine(maxGraphemes(100)).max(1000).optional(),
   fieldOfStudy: z.string().refine(maxGraphemes(100)).max(1000).optional(),
+  // European Qualifications Framework level, 1 to 8 (8 = doctoral) (#594).
+  eqfLevel: z.number().int().min(1).max(8).optional(),
   grade: z.string().refine(maxGraphemes(50)).max(500).optional(),
   activities: z.string().refine(maxGraphemes(1000)).max(10000).optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),

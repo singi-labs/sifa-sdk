@@ -101,6 +101,8 @@ export interface ProfileEducation {
   agentRef?: AgentRef;
   degree?: string;
   fieldOfStudy?: string;
+  /** European Qualifications Framework level, 1 to 8 (8 = doctoral). */
+  eqfLevel?: number;
   description?: string;
   activities?: string;
   startedAt?: string;
