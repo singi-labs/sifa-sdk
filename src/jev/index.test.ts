@@ -133,6 +133,28 @@ describe('firmographic classification (Choice)', () => {
     expect(state.enrichmentText).toContain('widgets');
   });
 
+  it('builds state from identity signal when there is no description', () => {
+    const state = buildFirmographicState({
+      name: 'Haryana Agricultural University',
+      domain: 'hau.ernet.in',
+      country: 'IN',
+      links: ['wikipedia'],
+    });
+    expect(state.name).toContain('Agricultural');
+    expect(state.domain).toBe('hau.ernet.in');
+    expect(state.country).toBe('IN');
+    expect(state.links).toEqual(['wikipedia']);
+    // No enrichmentText passed -> absent, not null/empty.
+    expect('enrichmentText' in state).toBe(false);
+  });
+
+  it('drops empty arrays and blank fields from the state', () => {
+    const state = buildFirmographicState({ name: 'Acme', links: [], country: '' });
+    expect('links' in state).toBe(false);
+    expect('country' in state).toBe(false);
+    expect(state).toEqual({ name: 'Acme' });
+  });
+
   it('returns the choice when confidence clears the floor', () => {
     const answer = {
       type: 'choice' as const,

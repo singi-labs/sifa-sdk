@@ -192,16 +192,32 @@ export const SIZE_BAND_CHOICE_QUESTION = choiceQuestion(
   SIZE_BAND_TAXONOMY,
 );
 
-/** Input for firmographic classification. Enrichment text is the primary evidence. */
+/**
+ * Input for firmographic classification. `enrichmentText` (the org's description)
+ * is the strongest evidence, but it is optional: many registry orgs have only a
+ * name, domain, country, or link set. Passing those lets Jev classify from the
+ * signal we hold rather than skipping the org for want of a description. A bare
+ * name alone rarely suffices; a name plus a domain or country often does.
+ */
 export interface FirmographicInput {
   name: string;
   domain?: string;
-  enrichmentText: string;
+  country?: string;
+  /** Featured/external link labels or hosts (e.g. 'linkedin', 'wikipedia'). */
+  links?: string[];
+  /** An already-known industry, when set (helps disambiguate type/size). */
+  industry?: string;
+  enrichmentText?: string;
 }
 
-/** State for the firmographic questions. */
+/**
+ * State for the firmographic questions. Drops absent/empty fields (including
+ * empty arrays) so Jev never sees a null or `[]` it would have to reason about.
+ */
 export function buildFirmographicState(org: FirmographicInput): Partial<FirmographicInput> {
-  return compact(org);
+  const compacted = compact(org);
+  if (compacted.links && compacted.links.length === 0) delete compacted.links;
+  return compacted;
 }
 
 /**
