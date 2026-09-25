@@ -172,6 +172,16 @@
         "default": "./dist/jev/index.cjs"
       }
     },
+    "./rpg": {
+      "import": {
+        "types": "./dist/rpg/index.d.ts",
+        "default": "./dist/rpg/index.js"
+      },
+      "require": {
+        "types": "./dist/rpg/index.d.cts",
+        "default": "./dist/rpg/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
