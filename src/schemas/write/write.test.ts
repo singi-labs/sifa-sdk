@@ -145,6 +145,16 @@ describe('PublicationWriteSchema relatedIdentifiers (#590)', () => {
   });
 });
 
+describe('ProjectWriteSchema role (#596)', () => {
+  it("accepts the user's own role, and null to clear it", () => {
+    expect(ProjectWriteSchema.safeParse({ name: 'MNE-BIDS', role: 'Maintainer' }).success).toBe(
+      true,
+    );
+    expect(ProjectWriteSchema.safeParse({ name: 'MNE-BIDS', role: null }).success).toBe(true);
+    expect(ProjectWriteSchema.safeParse({ name: 'X', role: 'x'.repeat(257) }).success).toBe(false);
+  });
+});
+
 describe('CourseWriteSchema teaching fields (#592)', () => {
   it('accepts a taught course with a role, a partial-date period and a position at-uri', () => {
     expect(

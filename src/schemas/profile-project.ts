@@ -30,6 +30,8 @@ export type ProjectMemberRef = z.infer<typeof projectMemberRefSchema>;
 /** Zod schema for `id.sifa.profile.project` records. */
 export const ProfileProjectRecordSchema = z.object({
   name: z.string().min(1).refine(maxGraphemes(256)).max(2560),
+  // The user's own role on the project (#596), e.g. Maintainer.
+  role: z.string().refine(maxGraphemes(256)).max(2560).optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   url: uriSchema.optional(),
   members: z.array(projectMemberRefSchema).max(50).optional(),
