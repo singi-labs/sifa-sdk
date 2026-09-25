@@ -202,3 +202,92 @@ export function getIndustryLabelKey(value: string): string {
   }
   return value;
 }
+
+/**
+ * Literal English labels for every industry and domain `labelKey`. Canonical for
+ * consumers without an i18n layer (the mobile app). Web can keep resolving the
+ * `labelKey` through next-intl; the `profileEdit.<labelKey>` English MUST match
+ * these strings so the two never drift.
+ */
+export const INDUSTRY_LABELS: Record<string, string> = {
+  industryTechnology: 'Technology',
+  domainSoftwareEngineering: 'Software Engineering',
+  domainDataScience: 'Data Science & ML',
+  domainCybersecurity: 'Cybersecurity',
+  domainDevops: 'DevOps & Infrastructure',
+  domainProductDesign: 'Product & UX Design',
+  domainGameDev: 'Game Development',
+  industryFinance: 'Finance & Banking',
+  domainBanking: 'Banking',
+  domainFintech: 'Fintech',
+  domainInsurance: 'Insurance',
+  domainInvestmentMgmt: 'Investment Management',
+  industryHealthcare: 'Healthcare & Life Sciences',
+  domainClinicalResearch: 'Clinical Research',
+  domainHealthtech: 'Health Technology',
+  domainPharma: 'Pharmaceuticals',
+  industryEducation: 'Education & Research',
+  domainHigherEd: 'Higher Education',
+  domainEdtech: 'Education Technology',
+  domainPrimarySecondary: 'Primary & Secondary Education',
+  industryMedia: 'Media & Entertainment',
+  domainJournalism: 'Journalism',
+  domainFilmVideo: 'Film & Video',
+  domainGaming: 'Gaming & Interactive Media',
+  domainAdvertising: 'Advertising & Marketing',
+  industryRetail: 'Retail & E-commerce',
+  domainEcommerce: 'E-commerce',
+  domainSupplyChain: 'Supply Chain & Fulfillment',
+  industryManufacturing: 'Manufacturing & Engineering',
+  domainAutomotive: 'Automotive',
+  domainAerospace: 'Aerospace & Defense',
+  domainHardware: 'Hardware & Electronics',
+  industryEnergy: 'Energy & Environment',
+  domainRenewables: 'Renewable Energy',
+  domainOilGas: 'Oil & Gas',
+  domainClimateTech: 'Climate Tech',
+  industryGovernment: 'Government & Public Sector',
+  domainPublicPolicy: 'Public Policy',
+  domainDefense: 'Defense & Intelligence',
+  industryLegal: 'Legal',
+  domainIpLaw: 'Intellectual Property',
+  domainCompliance: 'Compliance & Regulatory',
+  industryConsulting: 'Consulting & Professional Services',
+  domainManagementConsulting: 'Management Consulting',
+  domainDevrel: 'Developer Relations',
+  domainHrRecruitment: 'HR & Recruitment',
+  industryNonprofit: 'Non-profit & Social Impact',
+  domainHumanRights: 'Human Rights',
+  domainOpenSource: 'Open Source',
+  industryRealEstate: 'Real Estate & Construction',
+  domainProptech: 'Property Technology',
+  industryTransport: 'Transportation & Logistics',
+  domainAutonomousVehicles: 'Autonomous Vehicles',
+  domainLogistics: 'Logistics & Warehousing',
+  industryAgriculture: 'Agriculture & Food',
+  domainAgritech: 'Agricultural Technology',
+  domainFoodTech: 'Food Technology & Processing',
+  industryHospitality: 'Hospitality & Tourism',
+  domainHotels: 'Hotels & Accommodation',
+  domainTravelTourism: 'Travel & Tourism',
+  domainFoodBeverage: 'Food & Beverage',
+  industryTelecom: 'Telecommunications',
+  domainNetworkInfra: 'Network Infrastructure',
+  domainMobileServices: 'Mobile & Wireless Services',
+  industryMining: 'Mining & Resources',
+  domainExtraction: 'Extraction & Processing',
+  domainGeological: 'Geological Services',
+  industryFashion: 'Fashion & Textiles',
+  domainFashionDesign: 'Fashion Design',
+  domainTextileManufacturing: 'Textile Manufacturing',
+  industryMaritime: 'Maritime & Shipping',
+  domainShipping: 'Shipping & Freight',
+  domainPortOperations: 'Port & Terminal Operations',
+  domainNavalArchitecture: 'Naval Architecture & Marine Engineering',
+  industryOther: 'Other',
+};
+
+/** Resolve an industry or domain lex value to its literal English label (falls back to the raw value). */
+export function getIndustryLabel(value: string): string {
+  return INDUSTRY_LABELS[getIndustryLabelKey(value)] ?? value;
+}

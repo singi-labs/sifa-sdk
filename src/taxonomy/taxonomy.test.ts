@@ -13,9 +13,12 @@ import {
   getEmploymentTypeLabel,
   isCompanyRequired,
 } from './employment-type.js';
-import { INDUSTRY_OPTIONS } from './industry-taxonomy.js';
+import { INDUSTRY_LABELS, INDUSTRY_OPTIONS, getIndustryLabel } from './industry-taxonomy.js';
+import { SEARCH_FILTER_DEFS } from './search-filter-defs.js';
 import {
+  OPEN_TO_GROUP_LABELS,
   OPEN_TO_OPTIONS,
+  OPEN_TO_TOKEN_LABELS,
   OPEN_TO_TOKENS,
   OPEN_TO_TOKEN_TO_VALUE,
   OPEN_TO_VALUE_TO_TOKEN,
@@ -565,5 +568,44 @@ describe('groupSkillsByCategory', () => {
     const skills: ProfileSkill[] = [{ rkey: '1', name: 'Python', category: 'technical' }];
     const groups = groupSkillsByCategory(skills);
     expect(groups).toHaveLength(1);
+  });
+});
+
+describe('search filter metadata (drift guards)', () => {
+  it('SEARCH_FILTER_DEFS keys, orders, and dependencies are coherent', () => {
+    const keys = SEARCH_FILTER_DEFS.map((d) => d.key);
+    expect(new Set(keys).size).toBe(keys.length); // unique keys
+    const orders = SEARCH_FILTER_DEFS.map((d) => d.order);
+    expect(new Set(orders).size).toBe(orders.length); // unique orders
+    expect([...orders].sort((a, b) => a - b)).toEqual(orders); // already ascending
+
+    const byKey = Object.fromEntries(SEARCH_FILTER_DEFS.map((d) => [d.key, d]));
+    expect(byKey.domain?.dependsOn).toBe('industry');
+    expect(byKey.openTo?.control).toBe('multi-select');
+    expect(byKey.app?.hidden).toBe(true);
+    // Every def carries a non-empty label; selects carry an allLabel.
+    for (const d of SEARCH_FILTER_DEFS) {
+      expect(d.label.length).toBeGreaterThan(0);
+      if (d.control === 'select') expect(d.allLabel && d.allLabel.length > 0).toBe(true);
+    }
+  });
+
+  it('every open-to option has a literal label matching its token map', () => {
+    for (const o of OPEN_TO_OPTIONS) {
+      expect(o.label.length).toBeGreaterThan(0);
+      expect(OPEN_TO_TOKEN_LABELS[o.token]).toBe(o.label);
+    }
+    expect(Object.keys(OPEN_TO_GROUP_LABELS).sort()).toEqual(['mentorship', 'peer', 'work']);
+  });
+
+  it('every industry and domain labelKey has a literal INDUSTRY_LABELS entry', () => {
+    for (const industry of INDUSTRY_OPTIONS) {
+      expect(INDUSTRY_LABELS[industry.labelKey], industry.labelKey).toBeTruthy();
+      expect(getIndustryLabel(industry.value)).toBe(INDUSTRY_LABELS[industry.labelKey]);
+      for (const domain of industry.domains) {
+        expect(INDUSTRY_LABELS[domain.labelKey], domain.labelKey).toBeTruthy();
+        expect(getIndustryLabel(domain.value)).toBe(INDUSTRY_LABELS[domain.labelKey]);
+      }
+    }
   });
 });

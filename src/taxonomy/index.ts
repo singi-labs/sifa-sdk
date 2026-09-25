@@ -13,7 +13,9 @@ export {
 } from './employment-type.js';
 export {
   INDUSTRY_OPTIONS,
+  INDUSTRY_LABELS,
   findIndustry,
+  getIndustryLabel,
   getIndustryLabelKey,
   type IndustryOption,
 } from './industry-taxonomy.js';
@@ -22,6 +24,8 @@ export {
   OPEN_TO_TOKENS,
   OPEN_TO_TOKEN_TO_VALUE,
   OPEN_TO_VALUE_TO_TOKEN,
+  OPEN_TO_TOKEN_LABELS,
+  OPEN_TO_GROUP_LABELS,
   OPEN_TO_LEGACY_VALUE_ALIASES,
   getOpenToLabelKey,
   normalizeOpenTo,
@@ -30,6 +34,12 @@ export {
   type OpenToGroup,
   type OpenToOption,
 } from './open-to.js';
+export {
+  SEARCH_FILTER_DEFS,
+  type SearchFilterControl,
+  type SearchFilterDef,
+  type SearchFilterOptionSource,
+} from './search-filter-defs.js';
 export {
   WORKPLACE_TYPE_LABELS,
   WORKPLACE_TYPE_OPTIONS,
