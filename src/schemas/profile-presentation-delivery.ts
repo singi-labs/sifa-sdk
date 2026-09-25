@@ -30,10 +30,10 @@ export const ProfilePresentationDeliveryRecordSchema = z.object({
   title: z.string().refine(maxGraphemes(300)).max(3000).optional(),
   role: z.string().refine(maxGraphemes(64)).max(640).optional(),
   eventName: z.string().refine(maxGraphemes(300)).max(3000).optional(),
-  // Calendar date as YYYY-MM-DD (day only).
+  // Calendar date as YYYY-MM-DD, or YYYY-MM / YYYY when the exact day is unknown.
   date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD')
+    .regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'date must be YYYY, YYYY-MM or YYYY-MM-DD')
     .optional(),
   location: z.string().refine(maxGraphemes(256)).max(2560).optional(),
   // Structured community.lexicon.location.address for the occasion. The

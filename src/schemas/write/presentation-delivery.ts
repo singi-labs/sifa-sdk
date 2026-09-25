@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import {
   externalRecordRefSchema,
-  isValidDateOnly,
+  isValidPartialDate,
   presentationLinkSchema,
   writeLocationSchema,
 } from './shared.js';
@@ -25,7 +25,12 @@ export const PresentationDeliveryWriteSchema = z.object({
   title: z.string().max(3000).nullable().optional(),
   role: z.string().max(640).nullable().optional(),
   eventName: z.string().max(3000).nullable().optional(),
-  date: z.string().refine(isValidDateOnly, 'must be a valid YYYY-MM-DD date').nullable().optional(),
+  // YYYY-MM-DD, or YYYY-MM / YYYY when the exact day is unknown.
+  date: z
+    .string()
+    .refine(isValidPartialDate, 'must be a valid YYYY, YYYY-MM or YYYY-MM-DD date')
+    .nullable()
+    .optional(),
   location: z.string().max(2560).nullable().optional(),
   // Structured community.lexicon.location.address; `location` above stays as
   // the legacy free-text fallback. writeLocationSchema is already nullable+optional.

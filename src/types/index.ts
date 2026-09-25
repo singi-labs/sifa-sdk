@@ -607,7 +607,7 @@ export interface ProfilePresentationDelivery {
   title?: string | null;
   role?: string | null;
   eventName?: string | null;
-  /** Day-only date, YYYY-MM-DD. */
+  /** YYYY-MM-DD, or YYYY-MM / YYYY when the exact day is unknown. */
   date?: string | null;
   location?: string | null;
   locationCountry?: string | null;

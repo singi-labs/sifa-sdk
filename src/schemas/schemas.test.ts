@@ -737,14 +737,22 @@ describe('ProfilePresentationDeliveryRecordSchema', () => {
     ).toBe(true);
   });
 
-  it('rejects a date that is not YYYY-MM-DD', () => {
+  it('accepts a partial date (YYYY-MM or YYYY) when the exact day is unknown (#591)', () => {
     expect(
       ProfilePresentationDeliveryRecordSchema.safeParse({ date: '2025-09', createdAt: NOW })
         .success,
-    ).toBe(false);
+    ).toBe(true);
     expect(
       ProfilePresentationDeliveryRecordSchema.safeParse({ date: '2025', createdAt: NOW }).success,
-    ).toBe(false);
+    ).toBe(true);
+  });
+
+  it('rejects a date that is not YYYY, YYYY-MM or YYYY-MM-DD', () => {
+    for (const date of ['2025-9', '09-2025', '2025-09-15T10:00:00Z', 'soon']) {
+      expect(
+        ProfilePresentationDeliveryRecordSchema.safeParse({ date, createdAt: NOW }).success,
+      ).toBe(false);
+    }
   });
 
   it('accepts a structured community address and is omitted-safe when absent', () => {

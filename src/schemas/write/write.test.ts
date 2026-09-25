@@ -22,6 +22,7 @@ import {
   VolunteeringWriteSchema,
   httpUrlOrNull,
   isValidDateOnly,
+  isValidPartialDate,
   normalizeUrl,
   optionalUrl,
 } from './index.js';
@@ -391,6 +392,23 @@ describe('isValidDateOnly', () => {
   });
 });
 
+describe('isValidPartialDate', () => {
+  it('accepts a year, a month, or a real day', () => {
+    expect(isValidPartialDate('2024')).toBe(true);
+    expect(isValidPartialDate('2024-01')).toBe(true);
+    expect(isValidPartialDate('2024-12')).toBe(true);
+    expect(isValidPartialDate('2024-01-15')).toBe(true);
+  });
+  it('rejects impossible months and days and wrong shapes', () => {
+    expect(isValidPartialDate('2024-00')).toBe(false);
+    expect(isValidPartialDate('2024-13')).toBe(false);
+    expect(isValidPartialDate('2024-02-30')).toBe(false);
+    expect(isValidPartialDate('24')).toBe(false);
+    expect(isValidPartialDate('2024-1')).toBe(false);
+    expect(isValidPartialDate(2024)).toBe(false);
+  });
+});
+
 describe('PositionWriteSchema (entityRef added in this PR)', () => {
   it('accepts a valid https entityRef', () => {
     expect(
@@ -513,6 +531,12 @@ describe('PresentationDeliveryWriteSchema', () => {
   it('accepts a date in YYYY-MM-DD; rejects an impossible date', () => {
     expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-06-15' }).success).toBe(true);
     expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-02-30' }).success).toBe(false);
+  });
+  it('accepts a month or a year when the exact day is unknown (#591)', () => {
+    expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-06' }).success).toBe(true);
+    expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024' }).success).toBe(true);
+    expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-13' }).success).toBe(false);
+    expect(PresentationDeliveryWriteSchema.safeParse({ date: '2024-6' }).success).toBe(false);
   });
   it('accepts a structured address, an explicit null, and omission', () => {
     expect(

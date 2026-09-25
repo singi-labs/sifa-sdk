@@ -122,6 +122,18 @@ export function isValidDateOnly(input: unknown): boolean {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(input);
 }
 
+const PARTIAL_DATE_RE = /^\d{4}(-(0[1-9]|1[0-2]))?$/;
+
+/**
+ * Partial calendar-date validator. Returns `true` for a year (`YYYY`), a month
+ * (`YYYY-MM`, month 01-12), or a real day per {@link isValidDateOnly}. For
+ * dates where the exact day is often unknown, such as a past talk session.
+ */
+export function isValidPartialDate(input: unknown): boolean {
+  if (typeof input !== 'string') return false;
+  return PARTIAL_DATE_RE.test(input) || isValidDateOnly(input);
+}
+
 // ---- shared write-schema fragments used by multiple sections ----
 
 /**
