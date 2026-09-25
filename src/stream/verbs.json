@@ -1,9 +1,10 @@
 {
   "$schema": "https://sifa.id/schemas/activity-verbs/v1.json",
-  "version": "1.6.0",
-  "updated": "2026-09-20",
+  "version": "1.7.0",
+  "updated": "2026-09-26",
   "defaultVerb": "created",
   "verbs": {
+    "actor.rpg.sprite": "styledCharacter",
     "agency.portable.membership": "joined",
     "app.beaconbits.beacon": "wasAt",
     "app.atmobb.discussion.reply": "replied",
@@ -27,6 +28,7 @@
     "community.opensocial.membership": "joined",
     "computer.aetheros.page": "published",
     "dev.keytrace.claim": "verified",
+    "equipment.rpg.item": "received",
     "eu.atcommons.member": "joined",
     "fm.plyr.comment": "commented",
     "forum.barazo.post": "posted",

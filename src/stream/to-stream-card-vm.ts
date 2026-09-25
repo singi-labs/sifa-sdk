@@ -225,6 +225,8 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
   metWith: () => 'Met with',
   supported: () => 'Supported',
   verified: () => 'Verified',
+  received: () => 'Received',
+  styledCharacter: () => 'Styled a character',
 };
 
 function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {

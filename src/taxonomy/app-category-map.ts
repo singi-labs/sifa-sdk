@@ -127,7 +127,7 @@ export const APP_CATEGORY_MAP = {
   atmob: 'Pastes', // in.atmob.paste.{document,bundle} — authored text/code pastes on atmob.in
   tokono: 'Video', // ma.tokono.byov.video — authored videos hosted via the tokono.ma "bring your own video" feature
   portable: 'Social', // agency.portable.membership — joining a community (a commitment), attested by another actor
-  rpgactor: 'Art', // actor.rpg.sprite + equipment.rpg.item — a pixel-art RPG character and the equipment items it was given
+  rpgactor: 'Art', // actor.rpg.sprite + equipment.rpg.item: a pixel-art RPG character and the equipment items it was given
 
   // Web-only (rendered in pills/cards via sifa-web atproto-apps.ts;
   // no backend scan collection yet)

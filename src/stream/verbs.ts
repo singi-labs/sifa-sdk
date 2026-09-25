@@ -35,6 +35,10 @@ export const STREAM_VERBS = [
   'metWith',
   'supported',
   'verified',
+  // rpg.actor: accepting an equipment item, and (re)composing the character's
+  // pixel-art sprite.
+  'received',
+  'styledCharacter',
 ] as const;
 
 export type StreamVerb = (typeof STREAM_VERBS)[number];
