@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.38
+
+### Patch Changes
+
+- 3a24ef6: Add the `./rpg` subpath (rpg.actor item catalog and unlock evaluation) and the `fetchRpgStatus` fetcher.
+
 ## 0.19.37
 
 ### Patch Changes
