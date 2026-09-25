@@ -112,6 +112,35 @@ describe('HonorWriteSchema', () => {
   });
 });
 
+describe('CourseWriteSchema teaching fields (#592)', () => {
+  it('accepts a taught course with a role, a partial-date period and a position at-uri', () => {
+    expect(
+      CourseWriteSchema.safeParse({
+        name: 'Intro to Neuroscience',
+        role: 'id.sifa.defs#courseTaught',
+        startedAt: '2015-09',
+        endedAt: '2017',
+        position: 'at://did:plc:abc/id.sifa.profile.position/3k2',
+      }).success,
+    ).toBe(true);
+  });
+  it('rejects a malformed period date or position', () => {
+    expect(CourseWriteSchema.safeParse({ name: 'X', startedAt: 'fall 2015' }).success).toBe(false);
+    expect(CourseWriteSchema.safeParse({ name: 'X', position: 'not-a-uri' }).success).toBe(false);
+  });
+  it('accepts explicit nulls to clear the teaching fields', () => {
+    expect(
+      CourseWriteSchema.safeParse({
+        name: 'X',
+        role: null,
+        startedAt: null,
+        endedAt: null,
+        position: null,
+      }).success,
+    ).toBe(true);
+  });
+});
+
 describe('CourseWriteSchema', () => {
   it('no company field; name required, institution optional (per product intent)', () => {
     expect(CourseWriteSchema.safeParse({ name: 'Distributed Systems' }).success).toBe(true);

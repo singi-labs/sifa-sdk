@@ -14,6 +14,8 @@ import {
   getInvolvementKindHeading,
   PROJECT_ROLES,
   collapseContributors,
+  splitCoursesByRole,
+  getCourseRoleLabel,
   type ActorCard,
   type Endorsement,
   type ProjectMemberCard,
@@ -30,6 +32,13 @@ import {
 describe('collapseContributors main-entry export', () => {
   it('is reachable from the main entry', () => {
     expect(typeof collapseContributors).toBe('function');
+  });
+});
+
+describe('course role main-entry exports', () => {
+  it('are reachable from the main entry', () => {
+    expect(typeof splitCoursesByRole).toBe('function');
+    expect(getCourseRoleLabel('id.sifa.defs#courseTaught')).toBe('Instructor');
   });
 });
 
