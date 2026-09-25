@@ -73,6 +73,31 @@ describe('getAppIdForCollection', () => {
     ).toBeNull();
   });
 
+  it('links rpg.actor sprites and items to the player character page', () => {
+    expect(getAppIdForCollection('actor.rpg.sprite')).toBe('rpgactor');
+    expect(getAppIdForCollection('equipment.rpg.item')).toBe('rpgactor');
+    expect(
+      resolveCardUrl({
+        collection: 'equipment.rpg.item',
+        record: { item: 'magnifying_glass', title: 'Magnifying Glass' },
+        uri: 'at://did:plc:abc/equipment.rpg.item/spotem-6',
+        rkey: 'spotem-6',
+        authorDid: 'did:plc:abc',
+        authorHandle: 'alice.example.com',
+      }),
+    ).toBe('https://rpg.actor/alice.example.com');
+    expect(
+      resolveCardUrl({
+        collection: 'actor.rpg.sprite',
+        record: { frames: 12 },
+        uri: 'at://did:plc:abc/actor.rpg.sprite/self',
+        rkey: 'self',
+        authorDid: 'did:plc:abc',
+        authorHandle: 'alice.example.com',
+      }),
+    ).toBe('https://rpg.actor/alice.example.com');
+  });
+
   it('falls back to the first two NSID segments for unknown apps', () => {
     expect(getAppIdForCollection('org.hyperboards.board')).toBe('org.hyperboards');
     expect(getAppIdForCollection('io.kich.recipe.dish')).toBe('io.kich');

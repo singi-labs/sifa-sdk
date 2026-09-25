@@ -26,6 +26,9 @@ describe('getActivityTier', () => {
     expect(getActivityTier('in.atmob.paste.bundle')).toBe('creation');
     expect(getActivityTier('ma.tokono.byov.video')).toBe('creation');
     expect(getActivityTier('agency.portable.membership')).toBe('creation');
+    // rpg.actor: the player's character sprite and the items they accepted.
+    expect(getActivityTier('actor.rpg.sprite')).toBe('creation');
+    expect(getActivityTier('equipment.rpg.item')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {
