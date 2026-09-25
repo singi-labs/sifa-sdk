@@ -278,6 +278,13 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // agency.portable (handle portable.agency) has no resolving website, and a
     // membership record has no page of its own. Cards render non-clickable.
   },
+  rpgactor: {
+    // rpg.actor renders one character page per player, holding the sprite and
+    // every equipped item. Sprites (rkey self) and items (rkey = item id) have
+    // no page of their own, so both link to the player. Verified live:
+    // GET /{handle} returns 200 with og:url https://rpg.actor/{handle}.
+    profileUrlPattern: 'https://rpg.actor/{handle}',
+  },
 });
 
 /**
@@ -375,4 +382,6 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['in.atmob.paste.', 'atmob'],
   ['ma.tokono.byov.', 'tokono'],
   ['agency.portable.', 'portable'],
+  ['actor.rpg.', 'rpgactor'],
+  ['equipment.rpg.', 'rpgactor'],
 ];

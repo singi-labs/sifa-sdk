@@ -523,6 +523,40 @@ describe('toStreamCardVM — relational titles', () => {
   });
 });
 
+describe('toStreamCardVM: rpg.actor', () => {
+  it('reads an accepted item as "Received {title}", dated by the item record', () => {
+    const vm = toStreamCardVM(
+      item(
+        'equipment.rpg.item',
+        {
+          item: 'magnifying_glass',
+          title: 'Magnifying Glass',
+          kind: 'held',
+          context: "Unlocked by playing Spot 'Em! on rpg.actor",
+          acceptedAt: '2026-08-05T02:23:15.577Z',
+        },
+        { indexedAt: '2026-08-05T02:23:15.577Z' },
+      ),
+    );
+    expectValid(vm);
+    expect(vm.title).toBe('Received');
+    expect(vm.body).toMatchObject({ kind: 'text', text: 'Magnifying Glass' });
+    expect(vm.timestamp).toBe('2026-08-05T02:23:15.577Z');
+  });
+
+  it('titles a character sprite as "Styled a character"', () => {
+    const vm = toStreamCardVM(
+      item('actor.rpg.sprite', {
+        frames: 12,
+        spriteSheet: { $type: 'blob', ref: { $link: 'bafkreisprite' }, mimeType: 'image/png' },
+        createdAt: '2026-09-22T17:34:26.761Z',
+      }),
+    );
+    expectValid(vm);
+    expect(vm.title).toBe('Styled a character');
+  });
+});
+
 describe('toStreamCardVM — relational subject exposure', () => {
   it('exposes the event as the RSVP subject so the connector never dangles', () => {
     const vm = toStreamCardVM(

@@ -78,6 +78,8 @@ describe('per-app verb copy', () => {
     expect(verbForCollection('social.grain.gallery')).toBe('posted');
     expect(verbForCollection('fund.at.graph.endorse')).toBe('supported');
     expect(verbForCollection('dev.keytrace.claim')).toBe('verified');
+    expect(verbForCollection('equipment.rpg.item')).toBe('received');
+    expect(verbForCollection('actor.rpg.sprite')).toBe('styledCharacter');
   });
 });
 

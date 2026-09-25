@@ -78,6 +78,7 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('waow')).toBe('Photos');
     expect(categoryForApp('lichen')).toBe('Pages');
     expect(categoryForApp('badges')).toBe('Verification');
+    expect(categoryForApp('rpgactor')).toBe('Art');
     expect(categoryForApp('atvouch')).toBe('Endorsements');
     expect(categoryForApp('plonk')).toBe('Pastes');
     expect(categoryForApp('kich')).toBe('Recipes');

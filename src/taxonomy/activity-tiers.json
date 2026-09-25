@@ -20,6 +20,16 @@
     }
   },
   "lexicons": {
+    "actor.rpg.sprite": {
+      "tier": "creation",
+      "app": "rpgactor",
+      "notes": "The player's pixel-art RPG character sprite sheet (rkey self), portable across games."
+    },
+    "equipment.rpg.item": {
+      "tier": "creation",
+      "app": "rpgactor",
+      "notes": "An equipment item the player accepted from a provider, in the player's own repo. The provider-side equipment.rpg.give stays filtered."
+    },
     "agency.portable.membership": {
       "tier": "creation",
       "app": "portable",
