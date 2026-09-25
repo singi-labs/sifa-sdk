@@ -207,6 +207,7 @@ export interface CourseView {
   startedAt?: string;
   endedAt?: string;
   positionRkey?: string;
+  educationRkey?: string;
 }
 
 export interface DurationView {

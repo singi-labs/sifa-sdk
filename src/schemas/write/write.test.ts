@@ -161,6 +161,15 @@ describe('CourseWriteSchema teaching fields (#592)', () => {
     expect(CourseWriteSchema.safeParse({ name: 'X', startedAt: 'fall 2015' }).success).toBe(false);
     expect(CourseWriteSchema.safeParse({ name: 'X', position: 'not-a-uri' }).success).toBe(false);
   });
+  it('accepts an education at-uri on any course (#595)', () => {
+    expect(
+      CourseWriteSchema.safeParse({
+        name: 'Statistics 101',
+        education: 'at://did:plc:abc/id.sifa.profile.education/3edu',
+      }).success,
+    ).toBe(true);
+    expect(CourseWriteSchema.safeParse({ name: 'X', education: 'not-a-uri' }).success).toBe(false);
+  });
   it('accepts explicit nulls to clear the teaching fields', () => {
     expect(
       CourseWriteSchema.safeParse({
