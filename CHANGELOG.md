@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.32
+
+### Patch Changes
+
+- 88cde8e: Widen `FirmographicInput` / `buildFirmographicState`: `enrichmentText` is now optional and `country`, `links`, and `industry` can be passed, so Jev can classify orgs that have identity signal (name, domain, country, links) but no description. Empty arrays and blank fields are dropped from the state.
+
 ## 0.19.31
 
 ### Patch Changes
