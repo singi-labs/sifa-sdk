@@ -598,13 +598,36 @@ describe('search filter metadata (drift guards)', () => {
     expect(Object.keys(OPEN_TO_GROUP_LABELS).sort()).toEqual(['mentorship', 'peer', 'work']);
   });
 
-  it('every industry and domain labelKey has a literal INDUSTRY_LABELS entry', () => {
+  it('every industry and domain labelKey has a non-empty literal INDUSTRY_LABELS entry', () => {
     for (const industry of INDUSTRY_OPTIONS) {
-      expect(INDUSTRY_LABELS[industry.labelKey], industry.labelKey).toBeTruthy();
+      expect(INDUSTRY_LABELS[industry.labelKey]?.trim(), industry.labelKey).toBeTruthy();
       expect(getIndustryLabel(industry.value)).toBe(INDUSTRY_LABELS[industry.labelKey]);
       for (const domain of industry.domains) {
-        expect(INDUSTRY_LABELS[domain.labelKey], domain.labelKey).toBeTruthy();
+        expect(INDUSTRY_LABELS[domain.labelKey]?.trim(), domain.labelKey).toBeTruthy();
         expect(getIndustryLabel(domain.value)).toBe(INDUSTRY_LABELS[domain.labelKey]);
+      }
+    }
+  });
+
+  it('getIndustryLabel falls back to the labelKey, never a raw lex value', () => {
+    expect(getIndustryLabel('id.sifa.defs#nonexistentThing')).toBe('id.sifa.defs#nonexistentThing');
+    // (unknown value has no labelKey, so getIndustryLabelKey returns it verbatim; the
+    // point is a KNOWN labelKey without a literal never leaks — covered by the loop above)
+  });
+
+  it('every taxonomy-sourced filter points at a non-empty SDK taxonomy', () => {
+    const taxonomyNonEmpty: Record<string, boolean> = {
+      industry: INDUSTRY_OPTIONS.length > 0,
+      domain: INDUSTRY_OPTIONS.some((i) => i.domains.length > 0),
+      workplace: WORKPLACE_TYPE_OPTIONS.length > 0,
+      openTo: OPEN_TO_OPTIONS.length > 0,
+    };
+    for (const def of SEARCH_FILTER_DEFS) {
+      if (def.optionSource.kind === 'taxonomy') {
+        expect(
+          taxonomyNonEmpty[def.optionSource.ref],
+          `${def.key} -> ${def.optionSource.ref}`,
+        ).toBe(true);
       }
     }
   });

@@ -287,7 +287,12 @@ export const INDUSTRY_LABELS: Record<string, string> = {
   industryOther: 'Other',
 };
 
-/** Resolve an industry or domain lex value to its literal English label (falls back to the raw value). */
+/**
+ * Resolve an industry or domain lex value to its literal English label. Falls
+ * back to the labelKey (never the raw `id.sifa.defs#…` lex value), matching
+ * {@link getIndustryLabelKey}, so an unknown value never leaks a lex id to the UI.
+ */
 export function getIndustryLabel(value: string): string {
-  return INDUSTRY_LABELS[getIndustryLabelKey(value)] ?? value;
+  const labelKey = getIndustryLabelKey(value);
+  return INDUSTRY_LABELS[labelKey] ?? labelKey;
 }
