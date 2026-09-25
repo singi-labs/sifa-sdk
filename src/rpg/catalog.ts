@@ -11,12 +11,17 @@ export const RpgUnlockSchema = z.discriminatedUnion('kind', [
     ]),
   }),
   z.object({ kind: z.literal('hasExternalAccount'), platforms: z.array(z.string()).min(1) }),
-  z.object({ kind: z.literal('usesApp'), appId: z.string() }),
+  z.object({ kind: z.literal('usesApp'), appId: z.string().min(1) }),
   z.object({ kind: z.literal('hasDoctorate') }),
 ]);
 
 export const RpgItemSchema = z.object({
-  id: z.string().max(50),
+  /** Lowercase `[a-z0-9_]` only: the id is embedded in an AT Protocol record key. */
+  id: z
+    .string()
+    .min(1)
+    .max(50)
+    .regex(/^[a-z0-9_]+$/),
   title: z.string().max(100),
   description: z.string().max(500),
   kind: z.enum(['layer', 'held']),
@@ -27,7 +32,10 @@ export const RpgItemSchema = z.object({
 export type RpgItem = z.infer<typeof RpgItemSchema>;
 export type RpgUnlock = z.infer<typeof RpgUnlockSchema>;
 
-// PLACEHOLDER titles/categories until the item cores arrive from rpg.actor.
+/**
+ * The Sifa item catalog for rpg.actor. PLACEHOLDER titles/categories until
+ * rpg.actor transfers the real item cores.
+ */
 export const RPG_ITEMS: readonly RpgItem[] = [
   {
     id: 'sifa_power_suit',

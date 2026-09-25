@@ -1,5 +1,9 @@
 import { RPG_ITEMS, type RpgItem, type RpgUnlock } from './catalog.js';
 
+/**
+ * Profile signals the unlock rules are checked against. Callers must pass
+ * lowercase platform codes (e.g. 'github', 'orcid') and registry app ids (e.g. 'tangled').
+ */
 export interface RpgUnlockSignals {
   collections: readonly string[];
   externalPlatforms: readonly string[];
@@ -7,6 +11,7 @@ export interface RpgUnlockSignals {
   hasDoctorate: boolean;
 }
 
+/** One enabled catalog item and whether the signals earn it. */
 export interface RpgUnlockResult {
   item: RpgItem;
   earned: boolean;
@@ -25,6 +30,7 @@ function matches(u: RpgUnlock, s: RpgUnlockSignals): boolean {
   }
 }
 
+/** Evaluate every enabled item (ANY matching unlock earns it); disabled items are omitted. */
 export function evaluateRpgUnlocks(
   signals: RpgUnlockSignals,
   items: readonly RpgItem[] = RPG_ITEMS,
