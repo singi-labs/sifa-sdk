@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.30
+
+### Patch Changes
+
+- 8f2b6d8: Accept a partial date (`YYYY-MM` or `YYYY`) on a talk session (`presentationDelivery.date`), and add the `isValidPartialDate` validator to `/schemas/write`.
+
 ## 0.19.29
 
 ### Patch Changes
