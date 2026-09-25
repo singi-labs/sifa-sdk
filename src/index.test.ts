@@ -16,6 +16,7 @@ import {
   collapseContributors,
   splitCoursesByRole,
   getCourseRoleLabel,
+  groupPublicationVersions,
   type ActorCard,
   type Endorsement,
   type ProjectMemberCard,
@@ -32,6 +33,12 @@ import {
 describe('collapseContributors main-entry export', () => {
   it('is reachable from the main entry', () => {
     expect(typeof collapseContributors).toBe('function');
+  });
+});
+
+describe('groupPublicationVersions main-entry export', () => {
+  it('is reachable from the main entry', () => {
+    expect(typeof groupPublicationVersions).toBe('function');
   });
 });
 

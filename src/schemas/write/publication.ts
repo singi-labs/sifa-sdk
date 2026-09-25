@@ -23,6 +23,22 @@ export const publicationAuthorWriteSchema = z.object({
     .optional(),
 });
 
+/**
+ * A typed link to another version of the work (#590). A DOI identifier (the
+ * default type) is stored bare, like the record's own `doi`, so it matches.
+ */
+export const relatedIdentifierWriteSchema = z
+  .object({
+    identifier: z.string().min(1).max(2048),
+    identifierType: z.enum(['DOI', 'AT-URI', 'URL']).optional(),
+    relationType: z.string().min(1).max(64),
+  })
+  .transform((rel) =>
+    !rel.identifierType || rel.identifierType === 'DOI'
+      ? { ...rel, identifier: normalizeDoi(rel.identifier) }
+      : rel,
+  );
+
 /** Schema enforced by the generic-record write endpoint for `id.sifa.profile.publication`. */
 export const PublicationWriteSchema = z.object({
   title: z.string().min(1).max(200),
@@ -37,6 +53,7 @@ export const PublicationWriteSchema = z.object({
   // drops unknown keys silently, so the editor reported success and wrote
   // nothing.
   authors: z.array(publicationAuthorWriteSchema).max(50).optional(),
+  relatedIdentifiers: z.array(relatedIdentifierWriteSchema).max(20).optional(),
   doi: z
     .string()
     .max(256)

@@ -70,6 +70,7 @@ export { ProfileSelfWriteSchema, type ProfileSelfWriteInput } from './profile-se
 export { ProjectWriteSchema, type ProjectWriteInput } from './project.js';
 export {
   PublicationWriteSchema,
+  relatedIdentifierWriteSchema,
   publicationAuthorWriteSchema,
   type PublicationWriteInput,
 } from './publication.js';

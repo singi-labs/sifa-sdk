@@ -191,6 +191,7 @@ export interface PublicationView {
   publicationName?: string;
   image?: string;
   primary?: boolean;
+  relatedIdentifiers?: { identifier: string; identifierType?: string; relationType: string }[];
 }
 
 export interface CourseView {

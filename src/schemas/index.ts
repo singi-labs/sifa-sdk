@@ -99,6 +99,7 @@ export { ProfileProjectRecordSchema, type ProfileProjectRecord } from './profile
 export {
   ProfilePublicationRecordSchema,
   PublicationAuthorSchema,
+  RelatedIdentifierSchema,
   type ProfilePublicationRecord,
   type PublicationAuthor,
 } from './profile-publication.js';

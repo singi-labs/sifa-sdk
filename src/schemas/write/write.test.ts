@@ -112,6 +112,39 @@ describe('HonorWriteSchema', () => {
   });
 });
 
+describe('PublicationWriteSchema relatedIdentifiers (#590)', () => {
+  it('accepts a preprint link and stores a DOI identifier bare', () => {
+    const parsed = PublicationWriteSchema.parse({
+      title: 'Preprint',
+      relatedIdentifiers: [
+        { identifier: 'https://doi.org/10.1234/Published', relationType: 'IsPreprintOf' },
+      ],
+    });
+    expect(parsed.relatedIdentifiers).toEqual([
+      { identifier: '10.1234/Published', relationType: 'IsPreprintOf' },
+    ]);
+  });
+  it('keeps an AT-URI identifier as written and rejects an unknown identifier type', () => {
+    const uri = 'at://did:plc:me/id.sifa.profile.publication/3abc';
+    expect(
+      PublicationWriteSchema.parse({
+        title: 'X',
+        relatedIdentifiers: [
+          { identifier: uri, identifierType: 'AT-URI', relationType: 'IsVersionOf' },
+        ],
+      }).relatedIdentifiers?.[0]?.identifier,
+    ).toBe(uri);
+    expect(
+      PublicationWriteSchema.safeParse({
+        title: 'X',
+        relatedIdentifiers: [
+          { identifier: 'x', identifierType: 'ISBN', relationType: 'IsVersionOf' },
+        ],
+      }).success,
+    ).toBe(false);
+  });
+});
+
 describe('CourseWriteSchema teaching fields (#592)', () => {
   it('accepts a taught course with a role, a partial-date period and a position at-uri', () => {
     expect(
