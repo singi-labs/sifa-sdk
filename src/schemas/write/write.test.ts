@@ -70,6 +70,18 @@ describe('EducationWriteSchema', () => {
     expect(EducationWriteSchema.safeParse({ institution: '' }).success).toBe(false);
     expect(EducationWriteSchema.safeParse({ institution: 'MIT' }).success).toBe(true);
   });
+
+  it('accepts an EQF level 1 to 8 or null to clear it (#594)', () => {
+    expect(EducationWriteSchema.safeParse({ institution: 'MIT', eqfLevel: 8 }).success).toBe(true);
+    expect(EducationWriteSchema.safeParse({ institution: 'MIT', eqfLevel: null }).success).toBe(
+      true,
+    );
+    for (const bad of [0, 9, 6.5, '7']) {
+      expect(EducationWriteSchema.safeParse({ institution: 'MIT', eqfLevel: bad }).success).toBe(
+        false,
+      );
+    }
+  });
 });
 
 describe('SkillWriteSchema', () => {

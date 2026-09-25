@@ -248,6 +248,16 @@ describe('ProfileEducationRecordSchema', () => {
       ProfileEducationRecordSchema.safeParse({ institution: 'TU Delft', createdAt: NOW }).success,
     ).toBe(true);
   });
+
+  it('accepts an integer EQF level 1 to 8 only (#594)', () => {
+    const base = { institution: 'TU Delft', createdAt: NOW };
+    expect(ProfileEducationRecordSchema.safeParse({ ...base, eqfLevel: 8 }).success).toBe(true);
+    for (const bad of [0, 9, 7.5, '8']) {
+      expect(ProfileEducationRecordSchema.safeParse({ ...base, eqfLevel: bad }).success).toBe(
+        false,
+      );
+    }
+  });
 });
 
 describe('ProfileSelfRecordSchema', () => {
