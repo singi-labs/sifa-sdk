@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.29
+
+### Patch Changes
+
+- 85110e2: Add `collapseContributors`, which reduces a long author/contributor list to the first N names plus a hidden count and keeps the profile owner visible.
+
 ## 0.19.28
 
 ### Patch Changes
