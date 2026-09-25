@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.35
+
+### Patch Changes
+
+- 4c40fb6: `course.education` is an at-uri (was a strongRef) and `CourseWriteSchema` accepts it, so any course can link to the Education or Career entry it was part of. `ProfileCourse` and `CourseView` gain `educationRkey`.
+
 ## 0.19.34
 
 ### Patch Changes
