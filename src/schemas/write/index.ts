@@ -25,6 +25,7 @@ export {
   externalRecordRefSchema,
   httpUrlOrNull,
   isValidDateOnly,
+  isValidPartialDate,
   normalizeUrl,
   optionalUrl,
   presentationLinkSchema,
