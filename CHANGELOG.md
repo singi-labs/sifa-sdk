@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.31
+
+### Patch Changes
+
+- f7683e0: Support courses the user taught: `role`, `startedAt`, `endedAt` and `position` on the course record and write schemas and on `ProfileCourse` / `CourseView`, plus the course-role taxonomy (`COURSE_ROLE_OPTIONS`, `getCourseRoleLabel`, `isTeachingCourse`, `splitCoursesByRole`).
+
 ## 0.19.30
 
 ### Patch Changes
