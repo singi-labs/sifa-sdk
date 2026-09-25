@@ -13,7 +13,8 @@ export interface AdminReviewQueues {
   ideas: number;
   nameCorrections: number;
   pendingCompanies: number;
-  /** Sum of the three queues. */
+  duplicateOrgs: number;
+  /** Sum of the queues. */
   total: number;
   generatedAt: string;
 }
@@ -43,14 +44,16 @@ export async function getAdminReviewQueues(
   const ideas = res.ideas ?? 0;
   const nameCorrections = res.nameCorrections ?? 0;
   const pendingCompanies = res.pendingCompanies ?? 0;
+  const duplicateOrgs = res.duplicateOrgs ?? 0;
 
   return {
     ideas,
     nameCorrections,
     pendingCompanies,
+    duplicateOrgs,
     // Derived rather than trusted so an API that predates the field still
     // yields a usable pill count.
-    total: res.total ?? ideas + nameCorrections + pendingCompanies,
+    total: res.total ?? ideas + nameCorrections + pendingCompanies + duplicateOrgs,
     generatedAt: res.generatedAt ?? '',
   };
 }
