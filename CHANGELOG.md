@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.36
+
+### Patch Changes
+
+- 4d5ef8e: Add the user's own `role` to projects: on the project record and write schemas, `ProfileProject` and `ProjectView`.
+
 ## 0.19.35
 
 ### Patch Changes
