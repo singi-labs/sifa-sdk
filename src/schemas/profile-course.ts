@@ -1,12 +1,6 @@
 import { z } from 'zod';
 
-import {
-  atUriSchema,
-  datetimeSchema,
-  maxGraphemes,
-  partialDateSchema,
-  strongRefSchema,
-} from './shared.js';
+import { atUriSchema, datetimeSchema, maxGraphemes, partialDateSchema } from './shared.js';
 
 /** Zod schema for `id.sifa.profile.course` records. */
 export const ProfileCourseRecordSchema = z.object({
@@ -21,7 +15,9 @@ export const ProfileCourseRecordSchema = z.object({
     .refine((s) => /^https?:\/\//i.test(s), { message: 'entityRef must be an http(s) URL' })
     .max(2048)
     .optional(),
-  education: strongRefSchema.optional(),
+  // AT-URI of the id.sifa.profile.education the course was part of. Plain
+  // at-uri (not a strongRef) so the link tracks the live education record.
+  education: atUriSchema.optional(),
   // AT-URI of the associated id.sifa.profile.certification record. Plain
   // at-uri (not a strongRef) so the link tracks the live certification.
   credential: atUriSchema.optional(),
@@ -31,8 +27,9 @@ export const ProfileCourseRecordSchema = z.object({
   // Teaching period of a taught or assisted course.
   startedAt: partialDateSchema.optional(),
   endedAt: partialDateSchema.optional(),
-  // AT-URI of the id.sifa.profile.position the course was taught under. Plain
-  // at-uri (not a strongRef) so the link tracks the live position.
+  // AT-URI of the id.sifa.profile.position the course was part of (taught
+  // under it, or taken as part of the job). Plain at-uri (not a strongRef) so
+  // the link tracks the live position.
   position: atUriSchema.optional(),
   createdAt: datetimeSchema,
 });

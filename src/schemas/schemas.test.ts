@@ -441,6 +441,22 @@ describe('ProfileCourseRecordSchema teaching fields (#592)', () => {
       }).success,
     ).toBe(true);
   });
+  it('takes education as an at-uri, not a strongRef (#595)', () => {
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'X',
+        education: 'at://did:plc:abc/id.sifa.profile.education/3edu',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'X',
+        education: { uri: 'at://did:plc:abc/id.sifa.profile.education/3edu', cid: 'bafy' },
+        createdAt: NOW,
+      }).success,
+    ).toBe(false);
+  });
   it('rejects a position that is not an at-uri', () => {
     expect(
       ProfileCourseRecordSchema.safeParse({ name: 'X', position: 'https://x', createdAt: NOW })

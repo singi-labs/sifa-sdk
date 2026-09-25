@@ -32,8 +32,10 @@ export const CourseWriteSchema = z.object({
   /** Teaching period of a taught or assisted course (YYYY, YYYY-MM or YYYY-MM-DD). */
   startedAt: teachingDate,
   endedAt: teachingDate,
-  /** at-uri of the `id.sifa.profile.position` the course was taught under. */
+  /** at-uri of the `id.sifa.profile.position` the course was part of (taken or taught). */
   position: z.string().max(512).regex(AT_URI_RE, 'must be an at-uri').nullable().optional(),
+  /** at-uri of the `id.sifa.profile.education` the course was part of. */
+  education: z.string().max(512).regex(AT_URI_RE, 'must be an at-uri').nullable().optional(),
 });
 
 export type CourseWriteInput = z.infer<typeof CourseWriteSchema>;
