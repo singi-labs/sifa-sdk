@@ -16,6 +16,8 @@ export const projectMemberWriteSchema = z.object({
 /** Schema enforced by the generic-record write endpoint for `id.sifa.profile.project`. */
 export const ProjectWriteSchema = z.object({
   name: z.string().min(1).max(256),
+  /** The user's own role on the project (#596), e.g. Maintainer. */
+  role: z.string().max(256).nullable().optional(),
   description: z.string().max(50000).nullable().optional(),
   url: optionalUrl(),
   members: z.array(projectMemberWriteSchema).max(50).optional(),

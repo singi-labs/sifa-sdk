@@ -97,6 +97,7 @@ export interface CertificationView {
 export interface ProjectView {
   rkey: string;
   name: string;
+  role?: string;
   description?: string;
   url?: string;
   startDate?: string;

@@ -223,6 +223,8 @@ export interface ProfileCertification {
 export interface ProfileProject {
   rkey: string;
   name: string;
+  /** The user's own role on the project (#596), e.g. Maintainer. */
+  role?: string;
   description?: string;
   url?: string;
   startDate?: string;
