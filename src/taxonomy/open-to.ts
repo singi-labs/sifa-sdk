@@ -12,6 +12,12 @@ export type OpenToGroup = 'work' | 'mentorship' | 'peer';
 export interface OpenToOption {
   value: string;
   labelKey: string;
+  /**
+   * Literal English label. Canonical for consumers without an i18n layer (the
+   * mobile app). Web can keep resolving `labelKey`; the en.json English MUST
+   * match this string so the two never drift.
+   */
+  label: string;
   token: string;
   group: OpenToGroup;
 }
@@ -20,58 +26,79 @@ export const OPEN_TO_OPTIONS: OpenToOption[] = [
   {
     value: 'id.sifa.defs#fullTimeRoles',
     labelKey: 'fullTimeRoles',
+    label: 'Full-time roles',
     token: 'fullTime',
     group: 'work',
   },
   {
     value: 'id.sifa.defs#partTimeRoles',
     labelKey: 'partTimeRoles',
+    label: 'Part-time roles',
     token: 'partTime',
     group: 'work',
   },
   {
     value: 'id.sifa.defs#contractRoles',
     labelKey: 'contractRoles',
+    label: 'Contract roles',
     token: 'contract',
     group: 'work',
   },
   {
     value: 'id.sifa.defs#commissions',
     labelKey: 'commissions',
+    label: 'Commissioned work',
     token: 'commissions',
     group: 'work',
   },
   {
     value: 'id.sifa.defs#boardPositions',
     labelKey: 'boardPositions',
+    label: 'Board positions',
     token: 'board',
     group: 'work',
   },
   {
     value: 'id.sifa.defs#speakingEngagements',
     labelKey: 'speakingEngagements',
+    label: 'Speaking engagements',
     token: 'speaking',
     group: 'work',
   },
   {
     value: 'id.sifa.defs#mentoringOthers',
     labelKey: 'mentoringOthers',
+    label: 'Mentoring others',
     token: 'mentor',
     group: 'mentorship',
   },
   {
     value: 'id.sifa.defs#beingMentored',
     labelKey: 'beingMentored',
+    label: 'Being mentored',
     token: 'mentee',
     group: 'mentorship',
   },
   {
     value: 'id.sifa.defs#collaborations',
     labelKey: 'collaborations',
+    label: 'Collaborations',
     token: 'collab',
     group: 'peer',
   },
 ];
+
+/** Map short token -> literal English label (for consumers without i18n). */
+export const OPEN_TO_TOKEN_LABELS: Record<string, string> = Object.fromEntries(
+  OPEN_TO_OPTIONS.map((o) => [o.token, o.label]),
+);
+
+/** Open-to groups in canonical display order, with their literal headers. */
+export const OPEN_TO_GROUP_LABELS: Record<OpenToGroup, string> = {
+  work: 'Work',
+  mentorship: 'Mentorship',
+  peer: 'Peer',
+};
 
 /** Map short token (e.g. "fullTime") -> lex value (e.g. "id.sifa.defs#fullTimeRoles"). */
 export const OPEN_TO_TOKEN_TO_VALUE: Record<string, string> = Object.fromEntries(
