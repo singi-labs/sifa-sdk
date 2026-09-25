@@ -35,9 +35,10 @@ export function collapseContributors<T>(
 
   const visible: (T | null)[] = list.slice(0, max);
   const ownerIndex = options.isOwner ? list.findIndex(options.isOwner) : -1;
-  if (ownerIndex >= max) {
+  const owner = ownerIndex >= max ? list[ownerIndex] : undefined;
+  if (owner !== undefined) {
     if (ownerIndex > max) visible.push(null);
-    visible.push(list[ownerIndex] as T);
+    visible.push(owner);
   }
   const shown = visible.filter((c) => c !== null).length;
   return { visible, hiddenCount: list.length - shown };
