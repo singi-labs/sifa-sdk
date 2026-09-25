@@ -32,6 +32,13 @@ export {
 } from './involvement-grouping.js';
 
 export {
+  groupPublicationVersions,
+  type GroupPublicationVersionsOptions,
+  type PublicationVersionGroup,
+  type VersionablePublication,
+} from './publication-versions.js';
+
+export {
   buildProfileHighlights,
   shouldRenderHighlights,
   formatSpanDate,

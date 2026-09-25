@@ -10,6 +10,13 @@ export const PublicationAuthorSchema = z.object({
 
 export type PublicationAuthor = z.infer<typeof PublicationAuthorSchema>;
 
+/** `id.sifa.defs#relatedIdentifier`: a typed link to another version of the work (#590). */
+export const RelatedIdentifierSchema = z.object({
+  identifier: z.string().min(1).max(2048),
+  identifierType: z.string().max(32).optional(),
+  relationType: z.string().min(1).max(64),
+});
+
 /** Zod schema for `id.sifa.profile.publication` records. */
 export const ProfilePublicationRecordSchema = z.object({
   title: z.string().min(1).refine(maxGraphemes(200)).max(2000),
@@ -18,6 +25,7 @@ export const ProfilePublicationRecordSchema = z.object({
   url: uriSchema.optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   authors: z.array(PublicationAuthorSchema).max(50).optional(),
+  relatedIdentifiers: z.array(RelatedIdentifierSchema).max(20).optional(),
   publishedAt: partialDateSchema.optional(),
   isPrimary: z.boolean().optional(),
   createdAt: datetimeSchema,

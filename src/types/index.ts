@@ -268,6 +268,18 @@ export interface AuthorSuggestion {
   displayName?: string;
 }
 
+/**
+ * A typed link from a work to another version or form of it
+ * (`id.sifa.defs#relatedIdentifier`). `relationType` uses the DataCite
+ * vocabulary, e.g. `IsPreprintOf` on a preprint pointing at its published
+ * version. `identifierType` is `DOI` (the default when absent), `AT-URI` or `URL`.
+ */
+export interface RelatedIdentifier {
+  identifier: string;
+  identifierType?: string;
+  relationType: string;
+}
+
 export interface ProfilePublication {
   rkey: string;
   title: string;
@@ -306,6 +318,12 @@ export interface ProfilePublication {
    * for Sifa/ORCID publications, null when none could be resolved.
    */
   image?: string | null;
+  /**
+   * Other versions or forms of this work: relations declared on the record
+   * plus, for a DOI, those registered with DataCite or Crossref (#590). Feed
+   * to `groupPublicationVersions` to fold a preprint under its published version.
+   */
+  relatedIdentifiers?: RelatedIdentifier[];
 }
 
 export interface ProfileVolunteering {
