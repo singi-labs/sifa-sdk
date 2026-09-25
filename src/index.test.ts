@@ -13,6 +13,7 @@ import {
   isOnBehalfOfApplicable,
   getInvolvementKindHeading,
   PROJECT_ROLES,
+  collapseContributors,
   type ActorCard,
   type Endorsement,
   type ProjectMemberCard,
@@ -25,6 +26,12 @@ import {
   type ProfileInvestment,
   type ProfilePosition,
 } from './index.js';
+
+describe('collapseContributors main-entry export', () => {
+  it('is reachable from the main entry', () => {
+    expect(typeof collapseContributors).toBe('function');
+  });
+});
 
 describe('SIFA_SDK_VERSION', () => {
   it('exports a non-empty version string', () => {

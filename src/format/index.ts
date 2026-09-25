@@ -5,6 +5,11 @@ export { formatIsoTitle, formatRelativeTime } from './format-time.js';
 export { formatPresentationDuration } from './format-duration.js';
 export { formatDateRange, formatTimelineDate } from './timeline.js';
 export {
+  collapseContributors,
+  type CollapseContributorsOptions,
+  type CollapsedContributors,
+} from './collapse-contributors.js';
+export {
   summarizePresentationDeliveries,
   type PresentationDeliverySummary,
 } from './summarize-deliveries.js';
