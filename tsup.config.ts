@@ -20,6 +20,7 @@ export default defineConfig({
     'src/jsonld/index.ts',
     'src/resume/index.ts',
     'src/jev/index.ts',
+    'src/rpg/index.ts',
   ],
   loader: {
     '.json': 'json',

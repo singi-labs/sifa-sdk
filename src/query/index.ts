@@ -274,6 +274,14 @@ export {
   type MyGithubPullRequestsResponse,
   type FetchMyGithubPullRequestsOptions,
 } from './fetchers/github-prs.js';
+export {
+  fetchRpgStatus,
+  RpgItemStatusSchema,
+  RpgStatusResponseSchema,
+  type RpgItemStatus,
+  type RpgStatusResponse,
+  type FetchRpgStatusOptions,
+} from './fetchers/rpg.js';
 export { fetchEndorsementCount } from './fetchers/endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './fetchers/stream.js';
 export {
