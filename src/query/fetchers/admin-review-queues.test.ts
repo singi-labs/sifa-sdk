@@ -18,7 +18,8 @@ const payload = {
   ideas: 3,
   nameCorrections: 1,
   pendingCompanies: 7,
-  total: 11,
+  duplicateOrgs: 2,
+  total: 13,
   generatedAt: '2026-08-01T09:00:00.000Z',
 };
 
