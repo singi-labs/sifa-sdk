@@ -23,10 +23,14 @@ export const COURSE_ROLE_LABELS: Record<string, string> = Object.fromEntries(
   COURSE_ROLE_OPTIONS.map((o) => [o.value, o.label]),
 );
 
-/** Resolve the label for a course-role token. Falls back to the raw value. */
+/**
+ * Resolve the label for a course-role token. An unknown token resolves to
+ * `undefined` rather than the raw value, so a token a client has not learned
+ * never shows up as a raw `id.sifa.defs#...` string.
+ */
 export function getCourseRoleLabel(value: string | undefined | null): string | undefined {
   if (!value) return undefined;
-  return COURSE_ROLE_LABELS[value] ?? value;
+  return COURSE_ROLE_LABELS[value];
 }
 
 const TEACHING_ROLES = new Set([COURSE_ROLE_TAUGHT, COURSE_ROLE_TEACHING_ASSISTANT]);

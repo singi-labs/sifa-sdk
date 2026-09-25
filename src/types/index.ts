@@ -528,8 +528,8 @@ export interface ProfileCourse {
   /** Teaching period of a taught or assisted course (YYYY, YYYY-MM or YYYY-MM-DD). */
   startedAt?: string;
   endedAt?: string;
-  /** rkey of the position the course was taught under, resolved from the
-   * course's `position` at-uri. */
+  /** rkey of the position the course was taught under. The AppView resolves
+   * it from the record's `position` at-uri when building the profile view. */
   positionRkey?: string;
   hidden?: boolean;
 }

@@ -19,6 +19,7 @@ describe('course role taxonomy', () => {
     expect(getCourseRoleLabel('id.sifa.defs#courseTaught')).toBe('Instructor');
     expect(getCourseRoleLabel('id.sifa.defs#courseTeachingAssistant')).toBe('Teaching assistant');
     expect(getCourseRoleLabel(undefined)).toBeUndefined();
+    expect(getCourseRoleLabel('id.sifa.defs#courseSomethingNew')).toBeUndefined();
   });
 
   it('treats taught and assisted courses as teaching; absent or taken as taken', () => {

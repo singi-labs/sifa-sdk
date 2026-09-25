@@ -28,7 +28,7 @@ export const CourseWriteSchema = z.object({
    */
   completedAt: z.string().nullable().optional(),
   /** `id.sifa.defs#courseRole` token. Absent or null means the user took the course. */
-  role: z.string().max(640).nullable().optional(),
+  role: z.string().max(64).nullable().optional(),
   /** Teaching period of a taught or assisted course (YYYY, YYYY-MM or YYYY-MM-DD). */
   startedAt: teachingDate,
   endedAt: teachingDate,
