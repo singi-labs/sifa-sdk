@@ -428,6 +428,27 @@ describe('ProfilePublicationRecordSchema', () => {
   });
 });
 
+describe('ProfileCourseRecordSchema teaching fields (#592)', () => {
+  it('accepts role, a partial-date teaching period and a position at-uri', () => {
+    expect(
+      ProfileCourseRecordSchema.safeParse({
+        name: 'Intro to Neuroscience',
+        role: 'id.sifa.defs#courseTaught',
+        startedAt: '2015-09',
+        endedAt: '2017',
+        position: 'at://did:plc:abc/id.sifa.profile.position/3k2',
+        createdAt: NOW,
+      }).success,
+    ).toBe(true);
+  });
+  it('rejects a position that is not an at-uri', () => {
+    expect(
+      ProfileCourseRecordSchema.safeParse({ name: 'X', position: 'https://x', createdAt: NOW })
+        .success,
+    ).toBe(false);
+  });
+});
+
 describe('ProfileLanguageRecordSchema, ProfileVolunteeringRecordSchema, ProfileHonorRecordSchema, ProfileProjectRecordSchema, ProfileCourseRecordSchema', () => {
   it('language: requires name and createdAt', () => {
     expect(ProfileLanguageRecordSchema.safeParse({ name: 'English', createdAt: NOW }).success).toBe(

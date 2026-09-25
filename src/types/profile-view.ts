@@ -200,6 +200,12 @@ export interface CourseView {
   institution?: string;
   entityRef?: string;
   credentialRkey?: string;
+  /** `id.sifa.defs#courseRole` token; absent means taken. */
+  role?: string;
+  completedAt?: string;
+  startedAt?: string;
+  endedAt?: string;
+  positionRkey?: string;
 }
 
 export interface DurationView {

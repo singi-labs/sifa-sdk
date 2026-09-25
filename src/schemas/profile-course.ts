@@ -26,6 +26,14 @@ export const ProfileCourseRecordSchema = z.object({
   // at-uri (not a strongRef) so the link tracks the live certification.
   credential: atUriSchema.optional(),
   completedAt: partialDateSchema.optional(),
+  // id.sifa.defs#courseRole token; absent means the user took the course.
+  role: z.string().refine(maxGraphemes(64)).max(640).optional(),
+  // Teaching period of a taught or assisted course.
+  startedAt: partialDateSchema.optional(),
+  endedAt: partialDateSchema.optional(),
+  // AT-URI of the id.sifa.profile.position the course was taught under. Plain
+  // at-uri (not a strongRef) so the link tracks the live position.
+  position: atUriSchema.optional(),
   createdAt: datetimeSchema,
 });
 

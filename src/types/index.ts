@@ -523,6 +523,14 @@ export interface ProfileCourse {
   /** Date the course was completed, as an RFC 3339 datetime. Optional; the
    * editor collects month granularity (YYYY-MM). */
   completedAt?: string;
+  /** `id.sifa.defs#courseRole` token. Absent means the user took the course. */
+  role?: string;
+  /** Teaching period of a taught or assisted course (YYYY, YYYY-MM or YYYY-MM-DD). */
+  startedAt?: string;
+  endedAt?: string;
+  /** rkey of the position the course was taught under. The AppView resolves
+   * it from the record's `position` at-uri when building the profile view. */
+  positionRkey?: string;
   hidden?: boolean;
 }
 

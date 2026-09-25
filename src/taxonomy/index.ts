@@ -123,6 +123,17 @@ export {
   type InvolvementKindOption,
 } from './involvement-kind.js';
 export {
+  COURSE_ROLE_OPTIONS,
+  COURSE_ROLE_LABELS,
+  COURSE_ROLE_TAKEN,
+  COURSE_ROLE_TAUGHT,
+  COURSE_ROLE_TEACHING_ASSISTANT,
+  getCourseRoleLabel,
+  isTeachingCourse,
+  splitCoursesByRole,
+  type CourseRoleOption,
+} from './course-role.js';
+export {
   ARTIFACT_LINK_KIND_LABELS,
   ARTIFACT_LINK_KIND_OPTIONS,
   getArtifactLinkKindLabel,
