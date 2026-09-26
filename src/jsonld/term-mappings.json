@@ -61,6 +61,13 @@
     },
     {
       "lexicon": "id.sifa.profile.education",
+      "field": "eqfLevel",
+      "match": "closeMatch",
+      "terms": ["schema:educationalLevel"],
+      "note": "EQF is the value anchor."
+    },
+    {
+      "lexicon": "id.sifa.profile.education",
       "field": "fieldOfStudy",
       "match": "closeMatch",
       "terms": ["schema:educationalCredentialAwarded"],
@@ -303,6 +310,12 @@
       "field": "publisher",
       "match": "exactMatch",
       "terms": ["dcterms:publisher", "schema:publisher"]
+    },
+    {
+      "lexicon": "id.sifa.profile.publication",
+      "field": "relatedIdentifiers",
+      "match": "closeMatch",
+      "terms": ["dcterms:relation"]
     },
     {
       "lexicon": "id.sifa.profile.publication",
