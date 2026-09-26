@@ -11,6 +11,7 @@
 import { formatLocation } from '../format/location-utils.js';
 import { pickPrimaryPosition } from '../logic/primary-position.js';
 import { filterHidden } from '../profile/section-model.js';
+import { getEqfLevelLabel, readEqfLevel } from '../taxonomy/eqf-level.js';
 import type { LocationValue } from '../types/index.js';
 import { normaliseBaseUrl } from './url.js';
 
@@ -108,6 +109,23 @@ export interface JsonLdEducation extends Hideable {
   readonly institution?: string;
   readonly degree?: string;
   readonly fieldOfStudy?: string;
+  /** European Qualifications Framework level, 1 to 8 (#594). */
+  readonly eqfLevel?: number;
+}
+
+/** The European Qualifications Framework, the term set education levels come from. */
+export const EQF_TERM_SET =
+  'https://europass.europa.eu/en/europass-digital-tools/european-qualifications-framework';
+
+function educationalLevel(eqfLevel: number | undefined) {
+  const level = readEqfLevel(eqfLevel);
+  if (level === undefined) return undefined;
+  return {
+    '@type': 'DefinedTerm' as const,
+    name: getEqfLevelLabel(level)!,
+    termCode: String(level),
+    inDefinedTermSet: EQF_TERM_SET,
+  };
 }
 export interface JsonLdSkill extends Hideable {
   readonly name?: string;
@@ -219,11 +237,14 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
 
   const hasCredential = [
     ...visible(profile.education)
-      .filter((e) => e.degree)
-      .map((e) => ({
+      .map((e) => ({ e, level: educationalLevel(e.eqfLevel) }))
+      // A level alone is enough to state the credential; it then names it.
+      .filter(({ e, level }) => e.degree || level)
+      .map(({ e, level }) => ({
         '@type': 'EducationalOccupationalCredential' as const,
         credentialCategory: 'degree' as const,
-        name: [e.degree, e.fieldOfStudy].filter(Boolean).join(' '),
+        name: e.degree ? [e.degree, e.fieldOfStudy].filter(Boolean).join(' ') : level!.name,
+        ...(level && { educationalLevel: level }),
         ...(e.institution && {
           recognizedBy: { '@type': 'EducationalOrganization' as const, name: s(e.institution) },
         }),

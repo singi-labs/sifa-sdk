@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildBreadcrumbListJsonLd, buildPersonJsonLd, buildProfilePageJsonLd } from './profile.js';
+import {
+  EQF_TERM_SET,
+  buildBreadcrumbListJsonLd,
+  buildPersonJsonLd,
+  buildProfilePageJsonLd,
+} from './profile.js';
 
 const bsky = { id: 'bluesky' };
 
@@ -351,6 +356,54 @@ describe('owner-hidden items never reach structured data', () => {
     expect(serialized).not.toContain('HiddenCert');
     expect(serialized).not.toContain('HiddenAward');
     expect(serialized).not.toContain('Klingon');
+  });
+});
+
+describe('education level (#594)', () => {
+  const eqf8 = {
+    '@type': 'DefinedTerm',
+    name: 'Doctorate',
+    termCode: '8',
+    inDefinedTermSet: EQF_TERM_SET,
+  };
+
+  it('adds the EQF level to a degree credential as a DefinedTerm', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'gui.do',
+      education: [{ institution: 'TU Delft', degree: 'PhD', fieldOfStudy: 'Physics', eqfLevel: 8 }],
+    });
+    expect(ld.hasCredential).toEqual([
+      {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'degree',
+        name: 'PhD Physics',
+        educationalLevel: eqf8,
+        recognizedBy: { '@type': 'EducationalOrganization', name: 'TU Delft' },
+      },
+    ]);
+  });
+
+  it('emits a level-only entry named after the level', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'gui.do',
+      education: [{ institution: 'TU Delft', eqfLevel: 8 }],
+    });
+    expect(ld.hasCredential).toEqual([
+      expect.objectContaining({ name: 'Doctorate', educationalLevel: eqf8 }),
+    ]);
+  });
+
+  it('leaves the level out when it is absent or invalid', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'gui.do',
+      education: [
+        { institution: 'A', degree: 'BSc' },
+        { institution: 'B', degree: 'MSc', eqfLevel: 12 },
+        { institution: 'C', eqfLevel: 0 },
+      ],
+    });
+    expect(ld.hasCredential).toHaveLength(2);
+    expect(JSON.stringify(ld.hasCredential)).not.toContain('educationalLevel');
   });
 });
 
