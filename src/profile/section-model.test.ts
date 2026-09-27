@@ -115,6 +115,55 @@ describe('isSectionPopulated: presentations', () => {
   });
 });
 
+describe('isSectionPopulated: hidden items', () => {
+  it('is not populated when every item is hidden (visitor view)', () => {
+    expect(
+      isSectionPopulated(
+        profile({ education: [{ rkey: 'e1', hidden: true }] as never }),
+        'education',
+      ),
+    ).toBe(false);
+    expect(
+      isSectionPopulated(
+        profile({ publications: [{ rkey: 'p1', hidden: true }] as never }),
+        'publications',
+      ),
+    ).toBe(false);
+  });
+
+  it('is populated when at least one item is visible', () => {
+    expect(
+      isSectionPopulated(
+        profile({
+          positions: [
+            { rkey: 'a', hidden: true },
+            { rkey: 'b', hidden: false },
+          ] as never,
+        }),
+        'career',
+      ),
+    ).toBe(true);
+  });
+
+  it('ignores hidden presentations and deliveries', () => {
+    expect(
+      isSectionPopulated(
+        profile({
+          presentations: [{ rkey: 'p1', hidden: true }] as never,
+          presentationDeliveries: [{ rkey: 'd1', hidden: true }] as never,
+        }),
+        'presentations',
+      ),
+    ).toBe(false);
+  });
+
+  it('visitors do not see a section whose only entry is hidden', () => {
+    const p = profile({ education: [{ rkey: 'e1', hidden: true }] as never });
+    expect(getVisibleSectionIds(p, false)).not.toContain('education');
+    expect(getVisibleSectionIds(p, true)).toContain('education');
+  });
+});
+
 describe('getVisibleSectionIds', () => {
   it('owners see every section regardless of content', () => {
     const ids = getVisibleSectionIds(profile({}), true);
