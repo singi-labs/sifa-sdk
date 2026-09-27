@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.44
+
+### Patch Changes
+
+- b17ce90: Add `getEducationLevelDisplay`, the one rule for showing an education level next to the degree: it returns the plain-language level label, or undefined when there is no valid level or the degree itself already names it (whole words, degree only). With no degree, the label stands in for it.
+
 ## 0.19.43
 
 ### Patch Changes
