@@ -91,37 +91,40 @@ export type SectionId = (typeof ALL_SECTIONS)[number]['id'];
  * must not get a nav entry either.
  */
 export function isSectionPopulated(profile: Profile, id: string): boolean {
-  const has = <T extends { hidden?: boolean }>(items: T[] | undefined): boolean =>
+  const hasVisible = <T extends { hidden?: boolean }>(items: T[] | undefined): boolean =>
     filterHidden(items).length > 0;
   switch (id) {
     case 'about':
+      // Text fields, not hideable items. Without a headline the summary shows
+      // in the identity card instead, so the About section stays out of it.
       return Boolean(profile.about && profile.headline);
     case 'career':
-      return has(profile.positions);
+      return hasVisible(profile.positions);
     case 'education':
-      return has(profile.education);
+      return hasVisible(profile.education);
     case 'courses':
-      return has(profile.courses);
+      return hasVisible(profile.courses);
     case 'skills':
+      // Skills have no owner-hide flag (`ProfileSkill` carries no `hidden`).
       return Boolean(profile.skills?.length);
     case 'projects':
-      return has(profile.projects);
+      return hasVisible(profile.projects);
     case 'credentials':
-      return has(profile.certifications);
+      return hasVisible(profile.certifications);
     case 'publications':
-      return has(profile.publications);
+      return hasVisible(profile.publications);
     case 'presentations':
-      return has(profile.presentations) || has(profile.presentationDeliveries);
+      return hasVisible(profile.presentations) || hasVisible(profile.presentationDeliveries);
     case 'involvement':
-      return has(profile.involvement);
+      return hasVisible(profile.involvement);
     case 'investments':
-      return has(profile.investments);
+      return hasVisible(profile.investments);
     case 'awards':
-      return has(profile.honors);
+      return hasVisible(profile.honors);
     case 'languages':
-      return has(profile.languages);
+      return hasVisible(profile.languages);
     case 'other-profiles':
-      return has(profile.externalAccounts);
+      return hasVisible(profile.externalAccounts);
     default:
       return false;
   }

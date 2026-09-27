@@ -116,6 +116,33 @@ describe('isSectionPopulated: presentations', () => {
 });
 
 describe('isSectionPopulated: hidden items', () => {
+  // Every section whose items carry the owner-hide flag.
+  const hideable = [
+    ['career', 'positions'],
+    ['education', 'education'],
+    ['courses', 'courses'],
+    ['projects', 'projects'],
+    ['credentials', 'certifications'],
+    ['publications', 'publications'],
+    ['involvement', 'involvement'],
+    ['investments', 'investments'],
+    ['awards', 'honors'],
+    ['languages', 'languages'],
+    ['other-profiles', 'externalAccounts'],
+  ] as const;
+
+  it.each(hideable)('%s: hidden-only is empty, one visible item is populated', (id, key) => {
+    expect(isSectionPopulated(profile({ [key]: [{ rkey: 'a', hidden: true }] }), id)).toBe(false);
+    expect(
+      isSectionPopulated(
+        profile({
+          [key]: [{ rkey: 'a', hidden: true }, { rkey: 'b' }],
+        }),
+        id,
+      ),
+    ).toBe(true);
+  });
+
   it('is not populated when every item is hidden (visitor view)', () => {
     expect(
       isSectionPopulated(
