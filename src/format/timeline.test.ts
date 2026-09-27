@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatDateRange, formatTimelineDate } from './timeline.js';
+import { formatDateRange, formatPositionDateRange, formatTimelineDate } from './timeline.js';
 
 describe('formatTimelineDate', () => {
   it('formats YYYY-MM as "Mon YYYY"', () => {
@@ -39,5 +39,19 @@ describe('formatDateRange', () => {
 
   it('formats an end-only range', () => {
     expect(formatDateRange(undefined, '2021-03')).toBe('Mar 2021');
+  });
+});
+
+describe('formatPositionDateRange (#581)', () => {
+  const now = new Date(2026, 8, 15);
+
+  it('reads "Starts" for an open role that has not started', () => {
+    expect(formatPositionDateRange('2027-01', undefined, now)).toBe('Starts Jan 2027');
+    expect(formatPositionDateRange('2027', undefined, now)).toBe('Starts 2027');
+  });
+
+  it('keeps the usual range for a started or finished role', () => {
+    expect(formatPositionDateRange('2026-09', undefined, now)).toBe('Sep 2026 - Present');
+    expect(formatPositionDateRange('2020-01', '2022-03', now)).toBe('Jan 2020 - Mar 2022');
   });
 });
