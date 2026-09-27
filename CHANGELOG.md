@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.41
+
+### Patch Changes
+
+- 8bd7a4f: Skill and language name sorts (`groupSkillsByCategory`, `groupSkillsBySubCategory`, `sortLanguagesByProficiency`) now collate with a fixed locale. Before, they followed the runtime's default locale, so a server and a browser with different locales ordered mixed-script names differently and React discarded the server-rendered profile as a hydration mismatch.
+- 1195f95: `isSectionPopulated` no longer counts items the owner hid, so a section whose only entries are hidden drops out of the visitor view (nav, `getVisibleSectionIds`, exports). The involvement highlight tile without a role now shows the kind's readable heading (for example "Volunteering") instead of the raw lexicon token.
+
 ## 0.19.40
 
 ### Patch Changes
