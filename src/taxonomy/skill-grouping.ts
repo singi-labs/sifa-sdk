@@ -1,6 +1,7 @@
 import type { ProfileSkill } from '../types/index.js';
 
 import { CATEGORY_ORDER, normalizeSkillCategory } from './skill-categories.js';
+import { compareText } from '../format/compare-text.js';
 
 export type MergedProfileSkill = ProfileSkill & {
   mergedRkeys: string[];
@@ -71,7 +72,7 @@ export function groupSkillsByCategory<T extends ProfileSkill>(skills: T[]): [str
     groupSkills.sort((a, b) => {
       const countDiff = (b.endorsementCount ?? 0) - (a.endorsementCount ?? 0);
       if (countDiff !== 0) return countDiff;
-      return a.name.localeCompare(b.name);
+      return compareText(a.name, b.name);
     });
   }
 
@@ -115,11 +116,11 @@ export function groupSkillsBySubCategory<T extends ProfileSkill>(
     [...groupSkills].sort((a, b) => {
       const countDiff = (b.endorsementCount ?? 0) - (a.endorsementCount ?? 0);
       if (countDiff !== 0) return countDiff;
-      return a.name.localeCompare(b.name);
+      return compareText(a.name, b.name);
     });
 
   const ordered: [string | null, T[]][] = [];
-  for (const key of [...labels.keys()].sort((a, b) => a.localeCompare(b))) {
+  for (const key of [...labels.keys()].sort(compareText)) {
     const label = labels.get(key);
     const group = grouped.get(key);
     if (label && group?.length) ordered.push([label, sortByRank(group)]);
