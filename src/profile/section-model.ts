@@ -84,39 +84,47 @@ export const ALL_SECTIONS = [
 /** Every profile section id, in canonical render order. */
 export type SectionId = (typeof ALL_SECTIONS)[number]['id'];
 
-/** Whether a section has content for a given profile (used to hide empty nav entries for visitors). */
+/**
+ * Whether a section has content a visitor can see (used to hide empty nav
+ * entries and sections for visitors). Items the owner hid do not count: a
+ * section whose only entries are hidden renders nothing for a visitor, so it
+ * must not get a nav entry either.
+ */
 export function isSectionPopulated(profile: Profile, id: string): boolean {
+  const hasVisible = <T extends { hidden?: boolean }>(items: T[] | undefined): boolean =>
+    filterHidden(items).length > 0;
   switch (id) {
     case 'about':
+      // Text fields, not hideable items. Without a headline the summary shows
+      // in the identity card instead, so the About section stays out of it.
       return Boolean(profile.about && profile.headline);
     case 'career':
-      return Boolean(profile.positions?.length);
+      return hasVisible(profile.positions);
     case 'education':
-      return Boolean(profile.education?.length);
+      return hasVisible(profile.education);
     case 'courses':
-      return Boolean(profile.courses?.length);
+      return hasVisible(profile.courses);
     case 'skills':
+      // Skills have no owner-hide flag (`ProfileSkill` carries no `hidden`).
       return Boolean(profile.skills?.length);
     case 'projects':
-      return Boolean(profile.projects?.length);
+      return hasVisible(profile.projects);
     case 'credentials':
-      return Boolean(profile.certifications?.length);
+      return hasVisible(profile.certifications);
     case 'publications':
-      return Boolean(profile.publications?.length);
+      return hasVisible(profile.publications);
     case 'presentations':
-      return (
-        Boolean(profile.presentations?.length) || Boolean(profile.presentationDeliveries?.length)
-      );
+      return hasVisible(profile.presentations) || hasVisible(profile.presentationDeliveries);
     case 'involvement':
-      return Boolean(profile.involvement?.length);
+      return hasVisible(profile.involvement);
     case 'investments':
-      return Boolean(profile.investments?.length);
+      return hasVisible(profile.investments);
     case 'awards':
-      return Boolean(profile.honors?.length);
+      return hasVisible(profile.honors);
     case 'languages':
-      return Boolean(profile.languages?.length);
+      return hasVisible(profile.languages);
     case 'other-profiles':
-      return Boolean(profile.externalAccounts?.length);
+      return hasVisible(profile.externalAccounts);
     default:
       return false;
   }

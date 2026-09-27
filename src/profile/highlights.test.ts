@@ -173,6 +173,28 @@ describe('buildProfileHighlights - project & involvement (only when ongoing)', (
   });
 });
 
+describe('buildProfileHighlights - involvement title without a role', () => {
+  it('uses the readable kind heading, never the raw lexicon token', () => {
+    const { row2 } = buildProfileHighlights(
+      profile({
+        involvement: [{ rkey: 'i', kind: 'id.sifa.defs#involvementCharity', startedAt: '2024-01' }],
+      }),
+      { today: TODAY },
+    );
+    expect(row2.find((t) => t.section === 'involvement')?.title).toBe('Volunteering');
+  });
+
+  it('falls back to "Other" for an unknown kind token', () => {
+    const { row2 } = buildProfileHighlights(
+      profile({
+        involvement: [{ rkey: 'i', kind: 'id.sifa.defs#involvementFuture', startedAt: '2024-01' }],
+      }),
+      { today: TODAY },
+    );
+    expect(row2.find((t) => t.section === 'involvement')?.title).toBe('Other');
+  });
+});
+
 describe('buildProfileHighlights - talk & publication (row 1)', () => {
   it('marks a future talk upcoming and a past talk latest, with day-level date', () => {
     const upcoming = buildProfileHighlights(

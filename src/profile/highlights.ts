@@ -15,6 +15,7 @@
  */
 import { pickPrimaryPosition } from '../logic/primary-position.js';
 import { pickPrimaryFlagged } from '../logic/primary-item.js';
+import { getInvolvementKindHeading } from '../taxonomy/involvement-kind.js';
 import {
   sortByDateDesc,
   lexiconDateExtractor,
@@ -335,7 +336,9 @@ export function buildProfileHighlights(
     row2.push({
       section: 'involvement',
       href: '#involvement',
-      title: involvement.role || involvement.kind || 'Involvement',
+      // No role: the kind's readable heading ("Volunteering"), never the raw
+      // lexicon token (`id.sifa.defs#involvementCharity`).
+      title: involvement.role || getInvolvementKindHeading(involvement.kind),
       meta: metaLine([
         involvement.entityName ?? involvement.upstream,
         coPeopleLabel(involvement.collaborators, self),
