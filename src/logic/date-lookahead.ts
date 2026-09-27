@@ -20,6 +20,8 @@ export const DATE_LOOKAHEAD_MONTHS = {
   projectStart: 6,
   publication: 6,
   talk: 12,
+  /** Admitted to a programme that starts next year. */
+  educationStart: 12,
   educationEnd: 96,
 } as const;
 

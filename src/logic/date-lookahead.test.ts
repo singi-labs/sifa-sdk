@@ -55,6 +55,7 @@ describe('DATE_LOOKAHEAD_MONTHS', () => {
       projectStart: 6,
       publication: 6,
       talk: 12,
+      educationStart: 12,
       educationEnd: 96,
     });
   });
