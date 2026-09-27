@@ -79,14 +79,19 @@ describe('suggestEqfLevelFromDegree', () => {
 
 describe('getEducationLevelDisplay', () => {
   it('returns the label when the degree text does not name the level', () => {
-    expect(getEducationLevelDisplay({ degree: 'PhD', fieldOfStudy: 'Physics', eqfLevel: 8 })).toBe(
-      'Doctorate',
-    );
+    expect(getEducationLevelDisplay({ degree: 'PhD', eqfLevel: 8 })).toBe('Doctorate');
   });
 
   it('returns undefined when the degree text already names the level', () => {
     expect(getEducationLevelDisplay({ degree: 'Master of Arts', eqfLevel: 7 })).toBeUndefined();
     expect(getEducationLevelDisplay({ degree: "Bachelor's degree", eqfLevel: 6 })).toBeUndefined();
+  });
+
+  it('only looks at whole words in the degree, not at the field of study', () => {
+    expect(getEducationLevelDisplay({ degree: 'Mastering Materials', eqfLevel: 7 })).toBe('Master');
+    // A whole education entry is passed in practice; its field of study is ignored.
+    const entry = { degree: 'BSc', fieldOfStudy: 'Bachelor studies', eqfLevel: 6 };
+    expect(getEducationLevelDisplay(entry)).toBe('Bachelor');
   });
 
   it('returns the label when there is no degree text at all', () => {

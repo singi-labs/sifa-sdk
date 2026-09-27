@@ -48,13 +48,13 @@ export function getEqfLevelLabel(level: number | undefined | null): string | und
  */
 export function getEducationLevelDisplay(edu: {
   degree?: string;
-  fieldOfStudy?: string;
   eqfLevel?: number;
 }): string | undefined {
   const label = getEqfLevelLabel(edu.eqfLevel);
-  if (!label) return undefined;
-  const text = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' ').toLowerCase();
-  return text.includes(label.toLowerCase()) ? undefined : label;
+  if (!label || !edu.degree) return label;
+  // Whole words only, so "Mastering" or a field of study never hides it.
+  const named = new RegExp(`\\b${label}(?:['’]?s)?\\b`, 'i');
+  return named.test(edu.degree) ? undefined : label;
 }
 
 // First match wins. Order matters: the master-level "doctor" titles (Doctor of
