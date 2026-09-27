@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.42
+
+### Patch Changes
+
+- b3af55f: Add `DATE_LOOKAHEAD_MONTHS`, `isBeyondLookahead` and `isUpcomingStart` for per-kind profile date limits. `pickPrimaryPosition` no longer features a role whose start month has not arrived yet; `formatPositionDateRange` shows it as "Starts <month>".
+
 ## 0.19.41
 
 ### Patch Changes
