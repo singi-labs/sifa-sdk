@@ -16,10 +16,10 @@ export const DATE_LOOKAHEAD_MONTHS = {
   investmentStart: 0,
   /** The end date of any finished (not ongoing) range. */
   completedRangeEnd: 0,
-  careerStart: 12,
-  projectStart: 12,
-  publication: 12,
-  talk: 24,
+  careerStart: 6,
+  projectStart: 6,
+  publication: 6,
+  talk: 12,
   educationEnd: 96,
 } as const;
 

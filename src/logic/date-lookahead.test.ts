@@ -51,10 +51,10 @@ describe('DATE_LOOKAHEAD_MONTHS', () => {
       involvementStart: 0,
       investmentStart: 0,
       completedRangeEnd: 0,
-      careerStart: 12,
-      projectStart: 12,
-      publication: 12,
-      talk: 24,
+      careerStart: 6,
+      projectStart: 6,
+      publication: 6,
+      talk: 12,
       educationEnd: 96,
     });
   });
