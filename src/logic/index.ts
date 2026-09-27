@@ -19,6 +19,13 @@ export {
 
 export { pickPrimaryPosition, type PrimaryPositionCandidate } from './primary-position.js';
 
+export {
+  DATE_LOOKAHEAD_MONTHS,
+  isBeyondLookahead,
+  isUpcomingStart,
+  type DateLookaheadKind,
+} from './date-lookahead.js';
+
 export { pickPrimaryFlagged, type PrimaryFlagCandidate } from './primary-item.js';
 
 export {

@@ -97,3 +97,35 @@ describe('pickPrimaryPosition', () => {
     expect(positions.map((p) => p.rkey)).toEqual(snapshot);
   });
 });
+
+describe('pickPrimaryPosition with a role that has not started yet (#581)', () => {
+  const now = new Date(2026, 8, 15);
+  const current: TestPosition = {
+    rkey: 'cur',
+    company: 'NowCo',
+    title: 'Engineer',
+    startedAt: '2024-01',
+  };
+  const upcoming: TestPosition = {
+    rkey: 'next',
+    company: 'NextCo',
+    title: 'Lead',
+    startedAt: '2027-01',
+  };
+
+  it('skips an upcoming role in favour of the current one', () => {
+    expect(pickPrimaryPosition([current, upcoming], now)?.rkey).toBe('cur');
+  });
+
+  it('skips an upcoming role even when flagged primary', () => {
+    expect(pickPrimaryPosition([current, { ...upcoming, primary: true }], now)?.rkey).toBe('cur');
+  });
+
+  it('returns undefined when the only open role has not started', () => {
+    expect(pickPrimaryPosition([upcoming], now)).toBeUndefined();
+  });
+
+  it('features the role once its start month arrives', () => {
+    expect(pickPrimaryPosition([current, upcoming], new Date(2027, 0, 1))?.rkey).toBe('next');
+  });
+});
