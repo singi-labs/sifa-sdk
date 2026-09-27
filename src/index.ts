@@ -238,6 +238,7 @@ export {
   dateRangeExtractor,
   detectPdsProvider,
   formatCompanyName,
+  formatCredentialDateRange,
   formatDateRange,
   formatPositionDateRange,
   formatDisplayUrl,

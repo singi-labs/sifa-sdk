@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { formatDateRange, formatPositionDateRange, formatTimelineDate } from './timeline.js';
+import {
+  formatCredentialDateRange,
+  formatDateRange,
+  formatPositionDateRange,
+  formatTimelineDate,
+} from './timeline.js';
 
 describe('formatTimelineDate', () => {
   it('formats YYYY-MM as "Mon YYYY"', () => {
@@ -53,5 +58,20 @@ describe('formatPositionDateRange (#581)', () => {
   it('keeps the usual range for a started or finished role', () => {
     expect(formatPositionDateRange('2026-09', undefined, now)).toBe('Sep 2026 - Present');
     expect(formatPositionDateRange('2020-01', '2022-03', now)).toBe('Jan 2020 - Mar 2022');
+  });
+});
+
+describe('formatCredentialDateRange', () => {
+  it('shows issue to expiry', () => {
+    expect(formatCredentialDateRange('2025-01', '2029-01')).toBe('Jan 2025 - Jan 2029');
+  });
+
+  it('shows the issue date alone when there is no expiry', () => {
+    expect(formatCredentialDateRange('2025-01', null)).toBe('Jan 2025');
+    expect(formatCredentialDateRange('2025-01', undefined)).toBe('Jan 2025');
+  });
+
+  it('is empty with no dates', () => {
+    expect(formatCredentialDateRange(undefined, null)).toBe('');
   });
 });

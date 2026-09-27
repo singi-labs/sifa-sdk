@@ -42,3 +42,14 @@ export function formatPositionDateRange(
   if (start && !end && isUpcomingStart(start, now)) return `Starts ${formatTimelineDate(start)}`;
   return formatDateRange(start, end);
 }
+
+/**
+ * Format a credential's issue and expiry dates: "Jan 2025 - Jan 2029", or the
+ * issue date alone for one that doesn't expire (never "Present").
+ */
+export function formatCredentialDateRange(
+  issueDate?: string | null,
+  expiryDate?: string | null,
+): string {
+  return formatDateRange(issueDate ?? undefined, expiryDate ?? undefined, false);
+}
