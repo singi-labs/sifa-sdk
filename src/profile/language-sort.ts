@@ -1,3 +1,5 @@
+import { compareText } from '../format/compare-text.js';
+
 const PROFICIENCY_RANK: Record<string, number> = {
   native: 5,
   full_professional: 4,
@@ -18,6 +20,6 @@ export function sortLanguagesByProficiency<T extends { language?: string; profic
   return [...items].sort((a, b) => {
     const diff = rank(b.proficiency) - rank(a.proficiency);
     if (diff !== 0) return diff;
-    return (a.language ?? '').localeCompare(b.language ?? '');
+    return compareText(a.language ?? '', b.language ?? '');
   });
 }
