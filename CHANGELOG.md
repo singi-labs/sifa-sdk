@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.46
+
+### Patch Changes
+
+- 19977d3: Add an `educationStart` look-ahead of 12 months to `DATE_LOOKAHEAD_MONTHS`, and `formatCredentialDateRange` for a credential's issue and expiry dates.
+
 ## 0.19.45
 
 ### Patch Changes
