@@ -18,6 +18,7 @@ import {
   getCourseRoleLabel,
   groupPublicationVersions,
   EQF_LEVEL_OPTIONS,
+  getEducationLevelDisplay,
   suggestEqfLevelFromDegree,
   type ActorCard,
   type Endorsement,
@@ -55,6 +56,7 @@ describe('EQF level main-entry exports', () => {
   it('are reachable from the main entry', () => {
     expect(EQF_LEVEL_OPTIONS).toHaveLength(8);
     expect(suggestEqfLevelFromDegree('PhD')).toBe(8);
+    expect(getEducationLevelDisplay({ degree: 'PhD', eqfLevel: 8 })).toBe('Doctorate');
   });
 });
 

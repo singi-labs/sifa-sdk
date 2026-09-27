@@ -200,6 +200,7 @@ export {
   type CourseRoleOption,
   EQF_LEVEL_LABELS,
   EQF_LEVEL_OPTIONS,
+  getEducationLevelDisplay,
   getEqfLevelLabel,
   readEqfLevel,
   suggestEqfLevelFromDegree,

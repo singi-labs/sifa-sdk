@@ -40,6 +40,23 @@ export function getEqfLevelLabel(level: number | undefined | null): string | und
   return valid === undefined ? undefined : EQF_LEVEL_LABELS[valid];
 }
 
+/**
+ * The level label to show next to an education entry's degree text, or
+ * undefined when there is no valid level or the degree text already names it
+ * ("Master of Arts" needs no "Master"). With no degree text at all, the label
+ * stands in for it. One rule for every surface that shows education (#594).
+ */
+export function getEducationLevelDisplay(edu: {
+  degree?: string;
+  fieldOfStudy?: string;
+  eqfLevel?: number;
+}): string | undefined {
+  const label = getEqfLevelLabel(edu.eqfLevel);
+  if (!label) return undefined;
+  const text = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' ').toLowerCase();
+  return text.includes(label.toLowerCase()) ? undefined : label;
+}
+
 // First match wins. Order matters: the master-level "doctor" titles (Doctor of
 // Medicine, Juris Doctor, Dutch doctoraal / drs.) must be checked before the
 // generic doctorate rule, which would otherwise claim them.

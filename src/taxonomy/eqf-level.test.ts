@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   EQF_LEVEL_OPTIONS,
+  getEducationLevelDisplay,
   getEqfLevelLabel,
   readEqfLevel,
   suggestEqfLevelFromDegree,
@@ -73,5 +74,27 @@ describe('suggestEqfLevelFromDegree', () => {
     }
     expect(suggestEqfLevelFromDegree(undefined)).toBeUndefined();
     expect(suggestEqfLevelFromDegree(null)).toBeUndefined();
+  });
+});
+
+describe('getEducationLevelDisplay', () => {
+  it('returns the label when the degree text does not name the level', () => {
+    expect(getEducationLevelDisplay({ degree: 'PhD', fieldOfStudy: 'Physics', eqfLevel: 8 })).toBe(
+      'Doctorate',
+    );
+  });
+
+  it('returns undefined when the degree text already names the level', () => {
+    expect(getEducationLevelDisplay({ degree: 'Master of Arts', eqfLevel: 7 })).toBeUndefined();
+    expect(getEducationLevelDisplay({ degree: "Bachelor's degree", eqfLevel: 6 })).toBeUndefined();
+  });
+
+  it('returns the label when there is no degree text at all', () => {
+    expect(getEducationLevelDisplay({ eqfLevel: 6 })).toBe('Bachelor');
+  });
+
+  it('returns undefined without a valid level', () => {
+    expect(getEducationLevelDisplay({ degree: 'PhD' })).toBeUndefined();
+    expect(getEducationLevelDisplay({ degree: 'PhD', eqfLevel: 12 })).toBeUndefined();
   });
 });
