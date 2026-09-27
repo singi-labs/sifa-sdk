@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 // This SDK is the source of truth for the activity taxonomy.
 //
 // It used to be synced from sifa-lexicons, but the taxonomy is editorial
@@ -34,30 +32,14 @@ export interface ActivityTaxonomy {
   lexicons: Record<string, LexiconEntry>;
 }
 
-const tierMetaSchema = z.object({
-  label: z.string().nullable(),
-  description: z.string(),
-  shownOnPublicProfile: z.boolean(),
-});
-
-const lexiconEntrySchema = z.object({
-  tier: z.enum(['creation', 'action', 'filtered']),
-  app: z.string().optional(),
-  notes: z.string().optional(),
-});
-
-const taxonomySchema = z.object({
-  version: z.string(),
-  updated: z.string(),
-  tiers: z.object({
-    creation: tierMetaSchema,
-    action: tierMetaSchema,
-    filtered: tierMetaSchema,
-  }),
-  lexicons: z.record(z.string(), lexiconEntrySchema),
-});
-
-const parsed: ActivityTaxonomy = taxonomySchema.parse(rawTaxonomy);
+// activity-tiers.json is checked against this shape in activity-tiers.test.ts.
+// Only the taxonomy fields are copied, so the file's `$schema` key stays out.
+const parsed: ActivityTaxonomy = {
+  version: rawTaxonomy.version,
+  updated: rawTaxonomy.updated,
+  tiers: rawTaxonomy.tiers,
+  lexicons: rawTaxonomy.lexicons as Record<string, LexiconEntry>,
+};
 
 export const ACTIVITY_TIERS: Readonly<ActivityTaxonomy> = Object.freeze(parsed);
 

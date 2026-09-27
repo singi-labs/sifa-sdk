@@ -1,12 +1,45 @@
-import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 
+import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
+
+import { streamVerbSchema } from './verb-schema.js';
+import rawVerbs from './verbs.json' with { type: 'json' };
 import {
   ACTIVITY_VERBS,
   STREAM_VERBS,
   getActivityVerbsVersion,
-  streamVerbSchema,
   verbForCollection,
 } from './verbs.js';
+
+describe('verbs.json', () => {
+  it('matches the verb map shape', () => {
+    const verbMapSchema = z.object({
+      version: z.string(),
+      updated: z.string(),
+      defaultVerb: streamVerbSchema,
+      verbs: z.record(z.string(), streamVerbSchema),
+    });
+    expect(verbMapSchema.safeParse(rawVerbs).error).toBeUndefined();
+  });
+
+  it('exposes only the verb map fields (no $schema)', () => {
+    expect(Object.keys(ACTIVITY_VERBS).sort()).toEqual([
+      'defaultVerb',
+      'updated',
+      'verbs',
+      'version',
+    ]);
+  });
+});
+
+describe('verbs module', () => {
+  // verbs.ts is imported by client code; importing zod there ships all of zod.
+  it('does not import zod', () => {
+    const source = readFileSync(new URL('./verbs.ts', import.meta.url), 'utf-8');
+    expect(source).not.toMatch(/from 'zod'/);
+  });
+});
 
 describe('verbForCollection', () => {
   it('maps Bluesky posts to "posted"', () => {

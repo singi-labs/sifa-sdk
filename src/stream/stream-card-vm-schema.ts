@@ -13,7 +13,7 @@ import type {
   StreamSource,
   StreamTheme,
 } from './stream-card-vm.js';
-import { streamVerbSchema } from './verbs.js';
+import { streamVerbSchema } from './verb-schema.js';
 
 /** RGB channel: finite number in [0, 255] (mirrors `isValidRgbColor`). */
 const rgbChannelSchema = z.number().min(0).max(255);

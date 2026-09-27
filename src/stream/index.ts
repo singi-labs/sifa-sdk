@@ -3,11 +3,11 @@ export {
   ACTIVITY_VERBS,
   STREAM_VERBS,
   getActivityVerbsVersion,
-  streamVerbSchema,
   verbForCollection,
   type ActivityVerbMap,
   type StreamVerb,
 } from './verbs.js';
+export { streamVerbSchema } from './verb-schema.js';
 export type {
   StreamAddress,
   StreamAuthor,
