@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.48
+
+### Patch Changes
+
+- 59fb767: Add `followingFeedFallbackApp`: when the default following feed comes back empty, it returns the busiest app the network is active on, so web and app clients can show that app's activity instead of an empty state.
+
 ## 0.19.47
 
 ### Patch Changes
