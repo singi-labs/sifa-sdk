@@ -192,7 +192,7 @@
     "./dist/badge/index.cjs"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup",
     "dev": "tsup --watch",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -207,7 +207,8 @@
     "version-packages": "changeset version",
     "release": "pnpm run build && changeset publish",
     "build:flags": "node scripts/build-flags.mjs",
-    "sync:term-mappings": "node scripts/sync-term-mappings.mjs"
+    "sync:term-mappings": "node scripts/sync-term-mappings.mjs",
+    "check:dist": "node scripts/check-dist.mjs"
   },
   "engines": {
     "node": ">=22"

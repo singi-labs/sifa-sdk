@@ -59,6 +59,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Check build output
+        run: pnpm check:dist
+
       - name: Audit
         # npm retired the audit endpoints `pnpm audit` calls (HTTP 410, see
         # https://api-docs.npmjs.com/#tag/Audit), so this step now always
