@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.43
+
+### Patch Changes
+
+- bafaf1c: Tighten `DATE_LOOKAHEAD_MONTHS`: career start, project start and publication dates may lie up to 6 months ahead, talks up to 12 months.
+
 ## 0.19.42
 
 ### Patch Changes
