@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 import rawVerbs from './verbs.json' with { type: 'json' };
 
 /**
@@ -43,9 +41,6 @@ export const STREAM_VERBS = [
 
 export type StreamVerb = (typeof STREAM_VERBS)[number];
 
-/** Zod enum for a {@link StreamVerb}, shared with the view-model schema. */
-export const streamVerbSchema = z.enum(STREAM_VERBS);
-
 export interface ActivityVerbMap {
   version: string;
   updated: string;
@@ -55,14 +50,14 @@ export interface ActivityVerbMap {
   verbs: Record<string, StreamVerb>;
 }
 
-const verbMapSchema = z.object({
-  version: z.string(),
-  updated: z.string(),
-  defaultVerb: streamVerbSchema,
-  verbs: z.record(z.string(), streamVerbSchema),
-});
-
-const parsed: ActivityVerbMap = verbMapSchema.parse(rawVerbs);
+// verbs.json is checked against this shape in verbs.test.ts. Only the map
+// fields are copied, so the file's `$schema` key stays out.
+const parsed: ActivityVerbMap = {
+  version: rawVerbs.version,
+  updated: rawVerbs.updated,
+  defaultVerb: rawVerbs.defaultVerb as StreamVerb,
+  verbs: rawVerbs.verbs as Record<string, StreamVerb>,
+};
 
 /**
  * The verb map, keyed by lexicon NSID. Versioned independently from

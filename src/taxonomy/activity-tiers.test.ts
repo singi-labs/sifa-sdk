@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 
+import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
+
+import rawTaxonomy from './activity-tiers.json' with { type: 'json' };
 import {
   ACTIVITY_TIERS,
   getActivityTaxonomyVersion,
@@ -7,6 +11,44 @@ import {
   getLexiconEntry,
   getTierMeta,
 } from './activity-tiers.js';
+
+describe('activity-tiers.json', () => {
+  it('matches the taxonomy shape', () => {
+    const tierMetaSchema = z.object({
+      label: z.string().nullable(),
+      description: z.string(),
+      shownOnPublicProfile: z.boolean(),
+    });
+    const lexiconEntrySchema = z.object({
+      tier: z.enum(['creation', 'action', 'filtered']),
+      app: z.string().optional(),
+      notes: z.string().optional(),
+    });
+    const taxonomySchema = z.object({
+      version: z.string(),
+      updated: z.string(),
+      tiers: z.object({
+        creation: tierMetaSchema,
+        action: tierMetaSchema,
+        filtered: tierMetaSchema,
+      }),
+      lexicons: z.record(z.string(), lexiconEntrySchema),
+    });
+    expect(taxonomySchema.safeParse(rawTaxonomy).error).toBeUndefined();
+  });
+
+  it('exposes only the taxonomy fields (no $schema)', () => {
+    expect(Object.keys(ACTIVITY_TIERS).sort()).toEqual(['lexicons', 'tiers', 'updated', 'version']);
+  });
+});
+
+describe('activity-tiers module', () => {
+  // activity-tiers.ts is imported by client code; importing zod there ships all of zod.
+  it('does not import zod', () => {
+    const source = readFileSync(new URL('./activity-tiers.ts', import.meta.url), 'utf-8');
+    expect(source).not.toMatch(/from 'zod'/);
+  });
+});
 
 describe('getActivityTier', () => {
   it('returns "creation" for a known creation NSID', () => {
