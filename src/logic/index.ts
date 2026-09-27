@@ -64,5 +64,6 @@ export {
   type CompanyFirmographics,
 } from './company-page-indexable.js';
 export { countRecentActivity, type DailyActivityCount } from './recent-activity.js';
+export { followingFeedFallbackApp } from './following-feed-fallback.js';
 export { SELF_APP_ID, excludeSelfApp, type AppWithId } from './self-app.js';
 export { actorShowsIdentity } from './actor-identity.js';

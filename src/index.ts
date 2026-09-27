@@ -406,6 +406,7 @@ export {
   isCompanyPageIndexable,
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
   countRecentActivity,
+  followingFeedFallbackApp,
   SELF_APP_ID,
   excludeSelfApp,
   actorShowsIdentity,

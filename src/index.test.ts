@@ -20,6 +20,7 @@ import {
   EQF_LEVEL_OPTIONS,
   getEducationLevelDisplay,
   suggestEqfLevelFromDegree,
+  followingFeedFallbackApp,
   type ActorCard,
   type Endorsement,
   type ProjectMemberCard,
@@ -236,5 +237,13 @@ describe('investment public exports', () => {
   it('exposes the ProfileInvestment type from the package root', () => {
     expectTypeOf<ProfileInvestment>().toHaveProperty('company');
     expectTypeOf<ProfileInvestment>().toHaveProperty('status');
+  });
+});
+
+describe('main entry: following feed fallback', () => {
+  it('exports followingFeedFallbackApp', () => {
+    expect(followingFeedFallbackApp({ items: [], apps: [{ id: 'grain', count: 1 }] })).toBe(
+      'grain',
+    );
   });
 });
