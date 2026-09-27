@@ -238,6 +238,7 @@ export {
   detectPdsProvider,
   formatCompanyName,
   formatDateRange,
+  formatPositionDateRange,
   formatDisplayUrl,
   formatDistanceToNow,
   formatIsoTitle,
