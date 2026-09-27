@@ -3,6 +3,7 @@ export { COUNTRIES } from './countries.js';
 export {
   EQF_LEVEL_LABELS,
   EQF_LEVEL_OPTIONS,
+  getEducationLevelDisplay,
   getEqfLevelLabel,
   readEqfLevel,
   suggestEqfLevelFromDegree,
