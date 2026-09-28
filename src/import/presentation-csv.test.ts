@@ -17,6 +17,13 @@ import {
 const NOW = '2026-05-15T10:00:00.000Z';
 
 describe('parsePresentationDuration', () => {
+  it('parses a long run of digits quickly (no polynomial backtracking)', () => {
+    const started = performance.now();
+    parsePresentationDuration('0'.repeat(50_000));
+    parsePresentationDuration('1 '.repeat(25_000));
+    expect(performance.now() - started).toBeLessThan(200);
+  });
+
   it('parses a single value', () => {
     expect(parsePresentationDuration('30 min')).toEqual({ minMinutes: 30 });
     expect(parsePresentationDuration('30 minutes')).toEqual({ minMinutes: 30 });
