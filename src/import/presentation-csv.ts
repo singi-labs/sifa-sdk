@@ -21,16 +21,31 @@ function clean(value: string | undefined): string {
 }
 
 /**
+ * A number with an optional unit: "30", "30 min", "1.5 h", "3 hours". The
+ * lookahead stops a unit from matching the start of a word ("20 to 30").
+ */
+const DURATION_PART = /(\d+(?:[.,]\d+)?)\s*(h(?:ours?|rs?)?|m(?:in(?:ute)?s?)?)?(?![a-z])/gi;
+
+/**
  * Parse a free-text duration into minutes: a single value ("30 min", "30
- * minutes", "30") or a range ("20-30 min", "20 to 30 minutes", "20-30").
+ * minutes", "30", "3 hours") or a range ("20-30 min", "20 to 30 minutes",
+ * "40 minutes - 4 hours"). Hours convert to minutes. A number without a unit
+ * takes the unit of the next number ("2-3 hours" is 120 to 180), else minutes.
  * Returns undefined when no usable number is present. A second number is used
  * as the upper bound only when it is greater than or equal to the first.
  */
 export function parsePresentationDuration(
   input: string | undefined,
 ): PresentationDuration | undefined {
-  const numbers = (clean(input).match(/\d+/g) ?? [])
-    .map((n) => Number.parseInt(n, 10))
+  const parts = [...clean(input).matchAll(DURATION_PART)].map((m) => ({
+    value: Number.parseFloat((m[1] ?? '').replace(',', '.')),
+    unit: m[2]?.toLowerCase().startsWith('h') ? 'h' : m[2] ? 'm' : undefined,
+  }));
+  const numbers = parts
+    .map((part, i) => {
+      const unit = part.unit ?? parts.slice(i + 1).find((p) => p.unit)?.unit ?? 'm';
+      return Math.round(unit === 'h' ? part.value * 60 : part.value);
+    })
     .filter((n) => Number.isInteger(n) && n > 0);
   // `.at()` is typed `number | undefined`, which both tsc (under
   // noUncheckedIndexedAccess) and eslint agree on, so the guards are clean.

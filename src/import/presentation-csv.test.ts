@@ -29,6 +29,22 @@ describe('parsePresentationDuration', () => {
   it('ignores a second number lower than the first', () => {
     expect(parsePresentationDuration('60-30')).toEqual({ minMinutes: 60 });
   });
+  it('converts hours to minutes (sifa-workspace#217)', () => {
+    expect(parsePresentationDuration('3 hours')).toEqual({ minMinutes: 180 });
+    expect(parsePresentationDuration('1 hour')).toEqual({ minMinutes: 60 });
+    expect(parsePresentationDuration('1.5 h')).toEqual({ minMinutes: 90 });
+    expect(parsePresentationDuration('2-3 hrs')).toEqual({ minMinutes: 120, maxMinutes: 180 });
+  });
+  it('reads a unit per bound in a mixed range', () => {
+    expect(parsePresentationDuration('40 minutes - 4 hours')).toEqual({
+      minMinutes: 40,
+      maxMinutes: 240,
+    });
+    expect(parsePresentationDuration('90 min to 2 hours')).toEqual({
+      minMinutes: 90,
+      maxMinutes: 120,
+    });
+  });
   it('returns undefined for no usable number', () => {
     expect(parsePresentationDuration('')).toBeUndefined();
     expect(parsePresentationDuration('a while')).toBeUndefined();
