@@ -26,12 +26,31 @@ export interface ProfileSearchResult {
    * `blueskyVerified` pair for badge rendering. Absent on older API responses.
    */
   verificationBadges?: AccountVerification[];
+  /**
+   * The profile's Open To selections as lex values (e.g.
+   * `id.sifa.defs#mentoringOthers`), the same values the profile view
+   * exposes. Empty when none are set; absent on older API responses.
+   */
+  openTo?: string[];
+}
+
+/** "Did you mean" entry returned alongside a zero-result text search. */
+export interface ProfileSearchSuggestion {
+  did: string;
+  handle: string;
+  displayName: string | null;
+  avatar: string | null;
 }
 
 export interface SearchFilters {
   q?: string;
-  skill?: string;
-  country?: string;
+  /**
+   * Skill filter. An array is sent as repeated `skill` params; the API
+   * OR-combines values within the facet and ANDs across facets (max 10).
+   */
+  skill?: string | string[];
+  /** ISO 3166-1 alpha-2 country filter. An array is sent as repeated params. */
+  country?: string | string[];
   industry?: string;
   domain?: string;
   workplace?: string;
@@ -51,6 +70,11 @@ export interface SearchResponse {
   total: number;
   limit: number;
   offset: number;
+  /**
+   * Close name/handle matches, filled only when a text search finds nothing.
+   * Absent on older API responses.
+   */
+  suggestions?: ProfileSearchSuggestion[];
 }
 
 /** Skill typeahead suggestion. */
@@ -103,6 +127,13 @@ const EMPTY_SEARCH: SearchResponse = { profiles: [], total: 0, limit: 20, offset
 const EMPTY_FILTERS: FilterOptions = { countries: [], industries: [], apps: [], openTo: [] };
 const EMPTY_COMPANY_SEARCH: CompanySearchResponse = { results: [], hasMore: false };
 
+function appendAll(params: URLSearchParams, key: string, value: string | string[] | undefined) {
+  if (!value) return;
+  for (const v of Array.isArray(value) ? value : [value]) {
+    if (v) params.append(key, v);
+  }
+}
+
 /**
  * Search profiles by free-text query and optional filters. Returns an
  * empty result set when no filters are provided (matching sifa-web's
@@ -115,8 +146,8 @@ export async function fetchSearchProfiles(
 ): Promise<SearchResponse> {
   const params = new URLSearchParams();
   if (filters.q) params.set('q', filters.q);
-  if (filters.skill) params.set('skill', filters.skill);
-  if (filters.country) params.set('country', filters.country);
+  appendAll(params, 'skill', filters.skill);
+  appendAll(params, 'country', filters.country);
   if (filters.industry) params.set('industry', filters.industry);
   if (filters.domain) params.set('domain', filters.domain);
   if (filters.workplace) params.set('workplace', filters.workplace);
