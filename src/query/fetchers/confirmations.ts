@@ -7,6 +7,7 @@ import {
   type SifaApiConfig,
   type WriteResult,
 } from '../client.js';
+import type { PositionViewerConfirmation } from '../../types/index.js';
 
 /** A claim naming the signed-in user that they have neither confirmed nor dismissed. */
 export interface PendingConfirmation {
@@ -151,6 +152,37 @@ export async function fetchGivenConfirmations(
     return { confirmations: data?.confirmations ?? [] };
   } catch {
     return { confirmations: [] };
+  }
+}
+
+/**
+ * What the signed-in viewer can do with each of someone's positions, keyed by
+ * position rkey: `available` (they have a reason to know it and can confirm)
+ * or `confirmed` (they already did and can withdraw). Positions with neither
+ * are absent.
+ *
+ * The viewer-scoped half of `ProfilePosition.viewerConfirmation`, for a caller
+ * that fetches the profile itself viewer-neutral (for example to share a
+ * cache). Returns an empty map on failure, so the confirm action degrades to
+ * not being offered.
+ */
+export async function fetchViewerPositionConfirmations(
+  config: SifaApiConfig,
+  ownerDid: string,
+  options: FetchConfirmationsOptions = {},
+): Promise<Record<string, PositionViewerConfirmation>> {
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
+  try {
+    const data = await apiFetch<{ positions?: Record<string, PositionViewerConfirmation> }>(
+      config,
+      `/api/confirmations/positions/${encodeURIComponent(ownerDid)}`,
+      { cache: 'no-store', credentials: 'include', timeoutMs: 5000, ...rest, headers },
+    );
+    return data?.positions ?? {};
+  } catch {
+    return {};
   }
 }
 
