@@ -217,6 +217,25 @@ describe('fetchFollowingFeedVersion', () => {
     const fetchImpl = jsonFetch({ error: 'nope' }, 500);
     expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toBeNull();
   });
+
+  it('passes through "nothing cached" as nulls', async () => {
+    const fetchImpl = jsonFetch({ builtAt: null, contentHash: null });
+    expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toEqual({
+      builtAt: null,
+      contentHash: null,
+    });
+  });
+
+  it('treats a malformed response as unknown', async () => {
+    for (const body of [
+      { builtAt: 12, contentHash: 'a' },
+      { builtAt: 'not a date', contentHash: 'a' },
+      [],
+    ]) {
+      const fetchImpl = jsonFetch(body);
+      expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toBeNull();
+    }
+  });
 });
 
 describe('isNewerFollowingFeed', () => {

@@ -303,22 +303,35 @@ export async function fetchFollowingFeedVersion(
 ): Promise<FollowingFeedVersion | null> {
   const { query, headers } = await followingFeedRequest(config, opts);
   try {
-    return await apiFetch<FollowingFeedVersion>(config, `/api/following/feed/version${query}`, {
+    const body = await apiFetch<unknown>(config, `/api/following/feed/version${query}`, {
       credentials: 'include',
       cache: 'no-store',
       ...opts,
       headers,
     });
+    return isFollowingFeedVersion(body) ? body : null;
   } catch {
     return null;
   }
 }
 
-/** The parts of a feed build that {@link isNewerFollowingFeed} compares. */
-export interface FollowingFeedBuild {
-  builtAt?: string | null;
-  contentHash?: string | null;
+/**
+ * Shape check for the version response. Hand-written rather than a zod schema:
+ * this runs in the browser, and zod is kept out of client bundles.
+ */
+function isFollowingFeedVersion(value: unknown): value is FollowingFeedVersion {
+  if (typeof value !== 'object' || value === null) return false;
+  const { builtAt, contentHash } = value as Record<string, unknown>;
+  const stringOrNull = (v: unknown) => v === null || typeof v === 'string';
+  return (
+    stringOrNull(builtAt) &&
+    stringOrNull(contentHash) &&
+    (builtAt === null || !Number.isNaN(Date.parse(builtAt)))
+  );
 }
+
+/** The parts of a feed build that {@link isNewerFollowingFeed} compares. */
+export type FollowingFeedBuild = Partial<FollowingFeedVersion>;
 
 /**
  * True when `latest` is a newer build than the one shown AND shows different
@@ -330,7 +343,12 @@ export function isNewerFollowingFeed(
   shown: FollowingFeedBuild | null | undefined,
   latest: FollowingFeedBuild | null | undefined,
 ): boolean {
-  if (!shown?.builtAt || !latest?.builtAt || !shown.contentHash || !latest.contentHash) {
+  if (
+    shown?.builtAt == null ||
+    latest?.builtAt == null ||
+    shown.contentHash == null ||
+    latest.contentHash == null
+  ) {
     return false;
   }
   return (
