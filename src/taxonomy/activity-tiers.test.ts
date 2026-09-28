@@ -71,6 +71,10 @@ describe('getActivityTier', () => {
     // rpg.actor: the player's character sprite and the items they accepted.
     expect(getActivityTier('actor.rpg.sprite')).toBe('creation');
     expect(getActivityTier('equipment.rpg.item')).toBe('creation');
+    // 2026-09-28 profile-of-the-day queue onboards.
+    expect(getActivityTier('app.lexidraw.scene')).toBe('creation');
+    expect(getActivityTier('fm.leadsheet.sheet')).toBe('creation');
+    expect(getActivityTier('at.brickster.creation')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {

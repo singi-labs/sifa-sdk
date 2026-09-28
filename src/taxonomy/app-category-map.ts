@@ -134,6 +134,10 @@ export const APP_CATEGORY_MAP = {
   linkat: 'Links',
   kipclip: 'Links',
   statusphere: 'Social',
+  // 2026-09-28 profile-of-the-day queue onboards.
+  lexidraw: 'Art', // app.lexidraw.scene — named whiteboard drawings
+  leadsheet: 'Music', // fm.leadsheet.sheet — authored chord sheets and tabs
+  brickster: 'Art', // at.brickster.creation — 3D brick builds
 } as const satisfies Record<string, AppCategoryId>;
 
 export type KnownAppId = keyof typeof APP_CATEGORY_MAP;

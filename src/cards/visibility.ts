@@ -54,6 +54,16 @@ function marginAnnotationHasBody(record: Record<string, unknown>): boolean {
  * worth surfacing; a rejected one is not, and publishing someone's declined
  * badges would be a poor call. Anything other than "accepted" stays hidden.
  */
+/** Leadsheet marks unfinished sheets with `draft: true`. */
+function leadsheetNotDraft(record: Record<string, unknown>): boolean {
+  return record.draft !== true;
+}
+
+/** Brickster marks unfinished builds with `status: "draft"`. */
+function bricksterNotDraft(record: Record<string, unknown>): boolean {
+  return record.status !== 'draft';
+}
+
 function certifiedBadgeAccepted(record: Record<string, unknown>): boolean {
   return record.response === 'accepted';
 }
@@ -65,6 +75,8 @@ export const ACTIVITY_VISIBILITY_RULES: Readonly<Record<string, VisibilityPredic
     'at.margin.bookmark': marginBookmarkHasSource,
     'at.margin.annotation': marginAnnotationHasBody,
     'app.certified.badge.response': certifiedBadgeAccepted,
+    'fm.leadsheet.sheet': leadsheetNotDraft,
+    'at.brickster.creation': bricksterNotDraft,
   });
 
 /**
