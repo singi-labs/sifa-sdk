@@ -49,6 +49,54 @@ describe('buildProfileWorksJsonLd', () => {
     expect(ld?.['@graph'][0]).toMatchObject({ author: [{ '@id': 'https://alice.example/' }] });
   });
 
+  // #647: the graph used to overwrite the whole author/member array with the
+  // owner ref, dropping every co-author / co-member the per-work builder had
+  // emitted. It must now keep the others and reference ONLY the owner by @id.
+  it('keeps co-authors on a publication, referencing only the owner by @id (#647)', () => {
+    const ld = buildProfileWorksJsonLd(
+      {
+        handle: 'gui.do',
+        publications: [
+          {
+            rkey: 'p1',
+            title: 'Joint paper',
+            contributors: [
+              { name: 'Guido X Jansen', handle: 'gui.do' },
+              { name: 'Alice Example', handle: 'alice.bsky.social' },
+            ],
+          },
+        ],
+      },
+      author,
+    );
+    const authors = ld!['@graph'][0]!.author as unknown[];
+    expect(authors).toHaveLength(2);
+    expect(authors).toContainEqual({ '@id': PERSON_ID });
+    expect(authors).toContainEqual(
+      expect.objectContaining({ '@type': 'Person', name: 'Alice Example' }),
+    );
+  });
+
+  it('keeps confirmed co-members on a project, referencing the owner by @id (#647)', () => {
+    const ld = buildProfileWorksJsonLd(
+      {
+        handle: 'gui.do',
+        projects: [
+          {
+            rkey: 'j1',
+            name: 'Joint project',
+            members: [{ handle: 'bob.bsky.social', displayName: 'Bob', confirmed: true }],
+          },
+        ],
+      },
+      author,
+    );
+    const members = ld!['@graph'][0]!.member as unknown[];
+    expect(members).toHaveLength(2);
+    expect(members).toContainEqual({ '@id': PERSON_ID });
+    expect(members).toContainEqual(expect.objectContaining({ '@type': 'Person', name: 'Bob' }));
+  });
+
   it('excludes hidden works', () => {
     const ld = buildProfileWorksJsonLd(
       {
