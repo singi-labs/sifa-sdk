@@ -1,3 +1,14 @@
+/** Headquarters parts of a company profile. Structural, so any HQ view type fits. */
+export interface CompanyHqFacts {
+  address?: string | null;
+  city?: string | null;
+  region?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
+  lat?: number | null;
+  lon?: number | null;
+}
+
 /**
  * The subset of a company profile that decides whether its `/c/` page is worth
  * indexing. A minimal STRUCTURAL type on purpose -- it does not import
@@ -27,7 +38,7 @@ export interface CompanyFirmographics {
   /** Country code or name. */
   country?: string | null;
   /** Headquarters block; any non-empty part counts as a location. */
-  hq?: Record<string, unknown> | null;
+  hq?: CompanyHqFacts | null;
   /** External links keyed by type (website, linkedin, wikipedia, ...). */
   externalLinks?: Record<string, unknown> | null;
   /** Number of Sifa members who list this organization. */
@@ -59,7 +70,7 @@ function isPresentNumber(value: unknown): boolean {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
-function hasAnyValue(record: Record<string, unknown> | null | undefined): boolean {
+function hasAnyValue(record: object | null | undefined): boolean {
   if (!record) return false;
   return Object.values(record).some((v) => isNonEmptyString(v) || isPresentNumber(v));
 }

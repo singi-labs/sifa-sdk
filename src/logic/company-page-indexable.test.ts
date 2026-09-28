@@ -124,3 +124,27 @@ describe('isCompanyPageIndexable', () => {
     expect(companyPageRichness({ ...FOUR_FACTS, employeeCount: Number.NaN })).toBe(3);
   });
 });
+
+describe('CompanyFirmographics structural typing', () => {
+  it('accepts an interface-typed HQ view', () => {
+    interface HqView {
+      address: string | null;
+      city: string | null;
+      region: string | null;
+      postalCode: string | null;
+      country: string | null;
+      lat: number | null;
+      lon: number | null;
+    }
+    const hq: HqView = {
+      address: null,
+      city: 'Berlin',
+      region: null,
+      postalCode: null,
+      country: null,
+      lat: null,
+      lon: null,
+    };
+    expect(companyPageRichness({ ...FOUR_FACTS, hq })).toBe(5);
+  });
+});
