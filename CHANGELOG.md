@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.54
+
+### Patch Changes
+
+- 9461d59: Roadmap copy: the notifications item now says "links an organization" instead of "links a company".
+- a2a0b0b: Failed writes now report `status` on `WriteResult`, plus `retryAfterSeconds` on a rate-limited (429) write, read from the `Retry-After` header with `x-ratelimit-reset` as fallback. The error text falls back to `body.error` when the server sends no `message`, so a 429 no longer collapses to "Request failed (429)". `ExternalAccountWriteSchema` now trims `label` and drops a blank one instead of passing it through.
+
 ## 0.19.53
 
 ### Patch Changes
