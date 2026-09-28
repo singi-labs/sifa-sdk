@@ -226,6 +226,11 @@ export interface FollowingFeedResponse extends ActivityFeedResponse {
   /** When this feed was built (ISO 8601). Absent on a `building` answer. */
   builtAt?: string;
   /**
+   * Fingerprint of the items shown. Equal for a rebuild that found nothing
+   * new, so compare it (with {@link isNewerFollowingFeed}) rather than times.
+   */
+  contentHash?: string;
+  /**
    * True when this is an older build, served while a newer one is built in
    * the background. Poll {@link fetchFollowingFeedVersion} to learn when the
    * newer one is ready.
@@ -283,6 +288,8 @@ export async function fetchFollowingFeed(
 export interface FollowingFeedVersion {
   /** ISO 8601, or null when nothing is cached for this query. */
   builtAt: string | null;
+  /** Fingerprint of the cached feed's items, or null when unknown. */
+  contentHash: string | null;
 }
 
 /**
@@ -307,11 +314,27 @@ export async function fetchFollowingFeedVersion(
   }
 }
 
-/** True when `latestBuiltAt` is a newer build than the one shown (`shownBuiltAt`). */
+/** The parts of a feed build that {@link isNewerFollowingFeed} compares. */
+export interface FollowingFeedBuild {
+  builtAt?: string | null;
+  contentHash?: string | null;
+}
+
+/**
+ * True when `latest` is a newer build than the one shown AND shows different
+ * items. A rebuild that found nothing new has the same fingerprint, and
+ * offering it would show nothing new. Missing data on either side is false:
+ * better to miss an offer than to make an empty one.
+ */
 export function isNewerFollowingFeed(
-  shownBuiltAt: string | null | undefined,
-  latestBuiltAt: string | null | undefined,
+  shown: FollowingFeedBuild | null | undefined,
+  latest: FollowingFeedBuild | null | undefined,
 ): boolean {
-  if (!shownBuiltAt || !latestBuiltAt) return false;
-  return Date.parse(latestBuiltAt) > Date.parse(shownBuiltAt);
+  if (!shown?.builtAt || !latest?.builtAt || !shown.contentHash || !latest.contentHash) {
+    return false;
+  }
+  return (
+    Date.parse(latest.builtAt) > Date.parse(shown.builtAt) &&
+    latest.contentHash !== shown.contentHash
+  );
 }
