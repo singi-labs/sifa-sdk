@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.49
+
+### Patch Changes
+
+- 1659f1e: Add Lexidraw, Leadsheet and Brickster to the app category map, activity tiers and URL patterns, and hide Leadsheet and Brickster drafts from the activity feed.
+
 ## 0.19.48
 
 ### Patch Changes
