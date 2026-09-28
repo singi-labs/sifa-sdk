@@ -129,6 +129,7 @@ export {
   useFollowers,
   useFollowing,
   useFollowingFeed,
+  useFollowingFeedVersion,
   useFollowingList,
   useUnfollow,
   type FollowVariables,
