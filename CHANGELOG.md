@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.57
+
+### Patch Changes
+
+- bfa979c: Following feed: builds carry `contentHash`, a fingerprint of their items. `isNewerFollowingFeed(shown, latest)` now takes the builds (`builtAt` and `contentHash`) and is only true when the newer build shows different items, so clients stop offering a rebuild that found nothing new. `useFollowingFeedVersion` returns `{ builtAt, contentHash }`.
+- 5df894e: Search: `SearchResponse` gains optional `suggestions` (zero-result "did you mean" matches, typed as `ProfileSearchSuggestion`), `ProfileSearchResult` gains optional `openTo`, and `fetchSearchProfiles` accepts `skill` and `country` as a string or an array, sent as repeated query params.
+
 ## 0.19.56
 
 ### Patch Changes
