@@ -1,3 +1,4 @@
+import type { AccountVerification } from '../../taxonomy/verification-providers.js';
 import type { SkillSuggestion } from '../../types/index.js';
 import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
@@ -19,6 +20,12 @@ export interface ProfileSearchResult {
   claimed?: boolean;
   blueskyVerified?: boolean;
   blueskyVerifiedAt?: string | null;
+  /**
+   * Every verification the account holds, across all recognized providers
+   * (Bluesky and firehose-sourced ones like mu). Supersedes the Bluesky-only
+   * `blueskyVerified` pair for badge rendering. Absent on older API responses.
+   */
+  verificationBadges?: AccountVerification[];
 }
 
 export interface SearchFilters {

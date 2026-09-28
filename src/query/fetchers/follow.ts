@@ -6,6 +6,7 @@ import {
   type SifaApiConfig,
   type WriteResult,
 } from '../client.js';
+import type { AccountVerification } from '../../taxonomy/verification-providers.js';
 import type { ActivityFeedResponse } from './activity.js';
 
 export interface FollowProfile {
@@ -19,6 +20,12 @@ export interface FollowProfile {
   followedAt: string;
   blueskyVerified?: boolean;
   blueskyVerifiedAt?: string | null;
+  /**
+   * Every verification the account holds, across all recognized providers
+   * (Bluesky and firehose-sourced ones like mu). Supersedes the Bluesky-only
+   * `blueskyVerified` pair for badge rendering. Absent on older API responses.
+   */
+  verificationBadges?: AccountVerification[];
 }
 
 export interface FollowingResponse {

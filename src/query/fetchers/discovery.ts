@@ -1,3 +1,4 @@
+import type { AccountVerification } from '../../taxonomy/verification-providers.js';
 import { encodeIdentifier, apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
 /** Lightweight profile representation used by discovery endpoints. */
@@ -22,6 +23,12 @@ export interface SuggestionProfile {
   source: string;
   dismissed: boolean;
   blueskyVerified?: boolean;
+  /**
+   * Every verification the account holds, across all recognized providers
+   * (Bluesky and firehose-sourced ones like mu). Supersedes the Bluesky-only
+   * `blueskyVerified` pair for badge rendering. Absent on older API responses.
+   */
+  verificationBadges?: AccountVerification[];
 }
 
 export interface SuggestionsResponse {
