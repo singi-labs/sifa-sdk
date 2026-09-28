@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.52
+
+### Patch Changes
+
+- 0abad90: rpg: add `canCollect` to the status response (defaults to `false`) and enable the Doctoral Cap, now that education entries carry a structured EQF level.
+
 ## 0.19.51
 
 ### Patch Changes
