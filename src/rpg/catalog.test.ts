@@ -11,8 +11,8 @@ describe('RPG_ITEMS', () => {
     expect(new Set(ids).size).toBe(ids.length);
     for (const id of ids) expect(id.length).toBeLessThanOrEqual(50);
   });
-  it('doctoral cap is disabled until EQF level ships (#594)', () => {
-    expect(RPG_ITEMS.find((i) => i.id === 'sifa_doctoral_cap')?.enabled).toBe(false);
+  it('doctoral cap is enabled (structured EQF level shipped in #594)', () => {
+    expect(RPG_ITEMS.find((i) => i.id === 'sifa_doctoral_cap')?.enabled).toBe(true);
   });
   it('rejects ids that are not lowercase alphanumeric/underscore (used in a record key)', () => {
     const base = RPG_ITEMS[0]!;

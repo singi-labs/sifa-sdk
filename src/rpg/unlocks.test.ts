@@ -21,9 +21,17 @@ describe('evaluateRpgUnlocks', () => {
     expect(gh.find((x) => x.item.id === 'sifa_dev_hoodie')?.earned).toBe(true);
     expect(tg.find((x) => x.item.id === 'sifa_dev_hoodie')?.earned).toBe(true);
   });
-  it('never returns disabled items', () => {
+  it('unlocks the Doctoral Cap for a doctorate', () => {
     const r = evaluateRpgUnlocks({ ...none, hasDoctorate: true });
-    expect(RPG_ITEMS.some((i) => i.id === 'sifa_doctoral_cap')).toBe(true);
+    expect(r.find((x) => x.item.id === 'sifa_doctoral_cap')?.earned).toBe(true);
+  });
+  it('never returns disabled items', () => {
+    const cap = RPG_ITEMS.find((i) => i.id === 'sifa_doctoral_cap');
+    expect(cap).toBeDefined();
+    const items = RPG_ITEMS.map((i) =>
+      i.id === 'sifa_doctoral_cap' ? { ...i, enabled: false } : i,
+    );
+    const r = evaluateRpgUnlocks({ ...none, hasDoctorate: true }, items);
     expect(r.some((x) => x.item.id === 'sifa_doctoral_cap')).toBe(false);
   });
   it('nothing is earned for an empty profile', () => {
