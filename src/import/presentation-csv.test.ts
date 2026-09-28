@@ -17,6 +17,13 @@ import {
 const NOW = '2026-05-15T10:00:00.000Z';
 
 describe('parsePresentationDuration', () => {
+  it('parses a long run of digits quickly (no polynomial backtracking)', () => {
+    const started = performance.now();
+    parsePresentationDuration('0'.repeat(50_000));
+    parsePresentationDuration('1 '.repeat(25_000));
+    expect(performance.now() - started).toBeLessThan(200);
+  });
+
   it('parses a single value', () => {
     expect(parsePresentationDuration('30 min')).toEqual({ minMinutes: 30 });
     expect(parsePresentationDuration('30 minutes')).toEqual({ minMinutes: 30 });
@@ -28,6 +35,22 @@ describe('parsePresentationDuration', () => {
   });
   it('ignores a second number lower than the first', () => {
     expect(parsePresentationDuration('60-30')).toEqual({ minMinutes: 60 });
+  });
+  it('converts hours to minutes (sifa-workspace#217)', () => {
+    expect(parsePresentationDuration('3 hours')).toEqual({ minMinutes: 180 });
+    expect(parsePresentationDuration('1 hour')).toEqual({ minMinutes: 60 });
+    expect(parsePresentationDuration('1.5 h')).toEqual({ minMinutes: 90 });
+    expect(parsePresentationDuration('2-3 hrs')).toEqual({ minMinutes: 120, maxMinutes: 180 });
+  });
+  it('reads a unit per bound in a mixed range', () => {
+    expect(parsePresentationDuration('40 minutes - 4 hours')).toEqual({
+      minMinutes: 40,
+      maxMinutes: 240,
+    });
+    expect(parsePresentationDuration('90 min to 2 hours')).toEqual({
+      minMinutes: 90,
+      maxMinutes: 120,
+    });
   });
   it('returns undefined for no usable number', () => {
     expect(parsePresentationDuration('')).toBeUndefined();
