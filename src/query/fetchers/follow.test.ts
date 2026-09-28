@@ -193,12 +193,12 @@ describe('fetchFollowingFeed', () => {
 
 describe('fetchFollowingFeedVersion', () => {
   it('asks when the cached feed for the same query was built', async () => {
-    const fetchImpl = jsonFetch({ builtAt: '2026-09-28T09:00:00.000Z' });
+    const fetchImpl = jsonFetch({ builtAt: '2026-09-28T09:00:00.000Z', contentHash: 'aaaa' });
     const result = await fetchFollowingFeedVersion(
       { ...config, fetch: fetchImpl },
       { limit: 20, app: 'grain' },
     );
-    expect(result).toEqual({ builtAt: '2026-09-28T09:00:00.000Z' });
+    expect(result).toEqual({ builtAt: '2026-09-28T09:00:00.000Z', contentHash: 'aaaa' });
     const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/following/feed/version?limit=20&app=grain');
     expect(init.credentials).toBe('include');
@@ -217,22 +217,57 @@ describe('fetchFollowingFeedVersion', () => {
     const fetchImpl = jsonFetch({ error: 'nope' }, 500);
     expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toBeNull();
   });
+
+  it('passes through "nothing cached" as nulls', async () => {
+    const fetchImpl = jsonFetch({ builtAt: null, contentHash: null });
+    expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toEqual({
+      builtAt: null,
+      contentHash: null,
+    });
+  });
+
+  it('treats a malformed response as unknown', async () => {
+    for (const body of [
+      { builtAt: 12, contentHash: 'a' },
+      { builtAt: 'not a date', contentHash: 'a' },
+      [],
+    ]) {
+      const fetchImpl = jsonFetch(body);
+      expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toBeNull();
+    }
+  });
 });
 
 describe('isNewerFollowingFeed', () => {
-  it('is true when the latest build is newer than the one shown', () => {
-    expect(isNewerFollowingFeed('2026-09-28T09:00:00.000Z', '2026-09-28T09:05:00.000Z')).toBe(true);
+  const shown = { builtAt: '2026-09-28T09:00:00.000Z', contentHash: 'aaaa' };
+
+  it('is true for a newer build with different items', () => {
+    expect(
+      isNewerFollowingFeed(shown, { builtAt: '2026-09-28T09:05:00.000Z', contentHash: 'bbbb' }),
+    ).toBe(true);
   });
 
-  it('is false for the same or an older build, or when either is unknown', () => {
-    expect(isNewerFollowingFeed('2026-09-28T09:05:00.000Z', '2026-09-28T09:05:00.000Z')).toBe(
-      false,
-    );
-    expect(isNewerFollowingFeed('2026-09-28T09:05:00.000Z', '2026-09-28T09:00:00.000Z')).toBe(
-      false,
-    );
-    expect(isNewerFollowingFeed(undefined, '2026-09-28T09:05:00.000Z')).toBe(false);
-    expect(isNewerFollowingFeed('2026-09-28T09:05:00.000Z', null)).toBe(false);
+  // A rebuild usually finds the same items. Offering it would show nothing new.
+  it('is false for a newer build with the same items', () => {
+    expect(
+      isNewerFollowingFeed(shown, { builtAt: '2026-09-28T09:05:00.000Z', contentHash: 'aaaa' }),
+    ).toBe(false);
+  });
+
+  it('is false for the same or an older build', () => {
+    expect(isNewerFollowingFeed(shown, { ...shown, contentHash: 'bbbb' })).toBe(false);
+    expect(
+      isNewerFollowingFeed(shown, { builtAt: '2026-09-28T08:55:00.000Z', contentHash: 'bbbb' }),
+    ).toBe(false);
+  });
+
+  // Feeds cached before fingerprints existed: rather miss a notice than show a false one.
+  it('is false when either side is unknown or has no fingerprint', () => {
+    const newer = { builtAt: '2026-09-28T09:05:00.000Z', contentHash: 'bbbb' };
+    expect(isNewerFollowingFeed(undefined, newer)).toBe(false);
+    expect(isNewerFollowingFeed(shown, null)).toBe(false);
+    expect(isNewerFollowingFeed({ builtAt: shown.builtAt }, newer)).toBe(false);
+    expect(isNewerFollowingFeed(shown, { ...newer, contentHash: null })).toBe(false);
   });
 });
 

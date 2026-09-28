@@ -17,6 +17,7 @@ import {
   fetchFollowing,
   fetchFollowingFeed,
   fetchFollowingFeedVersion,
+  type FollowingFeedVersion,
   followUser,
   getFollowers,
   getFollowing,
@@ -225,17 +226,18 @@ export function useFollowingFeed(
 }
 
 /**
- * When the cached following feed for the same query was built (ISO 8601, or
- * null). Poll it while a `stale` feed is shown, e.g. with `refetchInterval`,
- * and offer the newer feed once {@link isNewerFollowingFeed} is true.
+ * When the cached following feed for the same query was built, and a
+ * fingerprint of its items (or null). Poll it while a `stale` feed is shown,
+ * e.g. with `refetchInterval`, and offer the newer feed once
+ * {@link isNewerFollowingFeed} is true.
  */
 export function useFollowingFeedVersion(
   opts: FetchFollowingFeedOptions = {},
   options?: Omit<
     UseQueryOptions<
-      string | null,
+      FollowingFeedVersion | null,
       Error,
-      string | null,
+      FollowingFeedVersion | null,
       ReturnType<typeof sifaQueryKeys.follow.feedVersion>
     >,
     'queryKey' | 'queryFn'
@@ -248,7 +250,7 @@ export function useFollowingFeedVersion(
       includeBluesky: opts.includeBluesky,
       app: opts.app,
     }),
-    queryFn: async () => (await fetchFollowingFeedVersion(config, opts))?.builtAt ?? null,
+    queryFn: () => fetchFollowingFeedVersion(config, opts),
     ...options,
   });
 }

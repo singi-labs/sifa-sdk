@@ -222,6 +222,7 @@ export {
   fetchFollowingFeedVersion,
   isNewerFollowingFeed,
   type FollowingFeedVersion,
+  type FollowingFeedBuild,
   unfollowUser,
   type FetchFollowListOptions,
   type FetchFollowingFeedOptions,

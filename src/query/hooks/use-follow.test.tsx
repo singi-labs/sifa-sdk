@@ -149,8 +149,8 @@ describe('useFollowingFeed', () => {
 });
 
 describe('useFollowingFeedVersion', () => {
-  it('reads when the cached feed was built', async () => {
-    const fetchImpl = jsonFetch({ builtAt: '2026-09-28T09:05:00.000Z' });
+  it('reads when the cached feed was built, and what it shows', async () => {
+    const fetchImpl = jsonFetch({ builtAt: '2026-09-28T09:05:00.000Z', contentHash: 'bbbb' });
     const { Wrapper } = makeWrapper(fetchImpl);
 
     const { result } = renderHook(() => useFollowingFeedVersion({ limit: 20 }), {
@@ -158,7 +158,10 @@ describe('useFollowingFeedVersion', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.data).toBe('2026-09-28T09:05:00.000Z');
+      expect(result.current.data).toEqual({
+        builtAt: '2026-09-28T09:05:00.000Z',
+        contentHash: 'bbbb',
+      });
     });
   });
 });
