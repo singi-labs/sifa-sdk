@@ -84,7 +84,7 @@ export function useUpdateSkillSubCategories(
   ownerHandleOrDid: string,
   options?: Omit<
     UseMutationOptions<
-      WriteResult & SubCategoryBulkResult,
+      WriteResult<SubCategoryBulkResult>,
       Error,
       UpdateSkillSubCategoriesVariables
     >,

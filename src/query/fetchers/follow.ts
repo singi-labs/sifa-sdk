@@ -54,11 +54,11 @@ export async function fetchFollowing(
  * handle surface as `success: false` with the server-provided message;
  * dup-follow is idempotent (sifa-api E7) and resolves as `success: true`.
  */
-export interface FollowUserResult extends WriteResult {
+export type FollowUserResult = WriteResult<{
   rkey?: string;
   /** DID of the followed subject (server-resolved from the handle). */
   subjectDid?: string;
-}
+}>;
 
 /**
  * Create an `id.sifa.graph.follow` record on the caller's PDS via the

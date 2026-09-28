@@ -12,9 +12,10 @@ import {
 } from '../fetchers/org.js';
 import type { OrgNotificationEmailRequestInput } from '../../schemas/write/org-settings.js';
 
-type OrgNotificationEmailAddMutationResult = WriteResult & Partial<OrgNotificationEmailAddResult>;
-type OrgNotificationEmailRemoveMutationResult = WriteResult &
-  Partial<OrgNotificationEmailRemoveResult>;
+type OrgNotificationEmailAddMutationResult = WriteResult<Partial<OrgNotificationEmailAddResult>>;
+type OrgNotificationEmailRemoveMutationResult = WriteResult<
+  Partial<OrgNotificationEmailRemoveResult>
+>;
 
 /**
  * Add an org notification email (`POST /api/org/notification-emails`). The

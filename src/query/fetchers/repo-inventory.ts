@@ -47,10 +47,12 @@ export function deleteRepoRecords(
   input: RepoDeleteInput,
   options: ApiFetchOptions = {},
 ): Promise<RepoDeleteResult & { success: boolean; error?: string }> {
+  // The declared shape predates the discriminated WriteResult; kept as is so
+  // callers reading `results` without narrowing on `success` still compile.
   return apiWrite<RepoDeleteResult>(config, '/api/me/repo-delete', 'POST', {
     body: input,
     ...options,
-  });
+  }) as Promise<RepoDeleteResult & { success: boolean; error?: string }>;
 }
 
 /**

@@ -54,7 +54,7 @@ export function updateSkillSubCategories(
   rkeys: string[],
   subCategory: string,
   options: ApiFetchOptions = {},
-): Promise<WriteResult & SubCategoryBulkResult> {
+): Promise<WriteResult<SubCategoryBulkResult>> {
   return apiWrite<SubCategoryBulkResult>(config, '/api/profile/skills/subcategory', 'POST', {
     body: { rkeys, subCategory },
     ...options,

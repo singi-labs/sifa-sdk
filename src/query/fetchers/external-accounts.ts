@@ -17,16 +17,16 @@ export interface ExternalAccountInput {
 }
 
 /** Extended create result for {@link createExternalAccount}. */
-export interface CreateExternalAccountResult extends WriteResult {
+export type CreateExternalAccountResult = WriteResult<{
   rkey?: string;
   feedUrl?: string | null;
-}
+}>;
 
 /** Extended write result for {@link verifyExternalAccount}. */
-export interface VerifyExternalAccountResult extends WriteResult {
+export type VerifyExternalAccountResult = WriteResult<{
   verified?: boolean;
   verifiedVia?: string;
-}
+}>;
 
 /** List external accounts attached to a profile. Returns `[]` on error. */
 export async function fetchExternalAccounts(
