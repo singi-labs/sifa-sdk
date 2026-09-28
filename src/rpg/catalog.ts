@@ -79,7 +79,7 @@ export const RPG_ITEMS: readonly RpgItem[] = [
     description: '',
     kind: 'layer',
     category: 'headwear',
-    enabled: false,
+    enabled: true,
     unlock: [{ kind: 'hasDoctorate' }],
   },
   {

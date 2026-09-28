@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { fetchRpgStatus } from './rpg.js';
+import { fetchRpgStatus, RpgStatusResponseSchema } from './rpg.js';
 import { type SifaApiConfig } from '../client.js';
 
 function jsonFetch(body: unknown, status = 200): typeof fetch {
@@ -39,7 +39,7 @@ describe('fetchRpgStatus', () => {
     const fetchImpl = jsonFetch(sample);
     const result = await fetchRpgStatus({ ...config, fetch: fetchImpl });
 
-    expect(result).toEqual(sample);
+    expect(result).toEqual({ ...sample, canCollect: false });
     const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/rpg/status');
     expect(init.credentials).toBe('include');
@@ -51,6 +51,11 @@ describe('fetchRpgStatus', () => {
     await fetchRpgStatus({ ...config, fetch: fetchImpl }, { cookieHeader: 'sid=abc' });
     const [, init] = getCall(fetchImpl);
     expect(new Headers(init.headers).get('cookie')).toBe('sid=abc');
+  });
+
+  it('defaults canCollect to false when an older API omits it', () => {
+    expect(RpgStatusResponseSchema.parse(sample).canCollect).toBe(false);
+    expect(RpgStatusResponseSchema.parse({ ...sample, canCollect: true }).canCollect).toBe(true);
   });
 
   it('rejects a malformed response body (Zod validation)', async () => {

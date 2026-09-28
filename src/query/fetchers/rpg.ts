@@ -18,6 +18,8 @@ export const RpgStatusResponseSchema = z.object({
   hasCharacter: z.boolean(),
   /** True when the user granted the `repo:equipment.rpg.item` OAuth scope. */
   canWriteItems: z.boolean(),
+  /** True when collecting (Sifa writing the gift) is switched on for this user. */
+  canCollect: z.boolean().default(false),
   items: z.array(RpgItemStatusSchema),
 });
 export type RpgStatusResponse = z.infer<typeof RpgStatusResponseSchema>;
