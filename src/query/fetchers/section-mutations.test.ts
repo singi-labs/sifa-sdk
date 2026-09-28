@@ -62,7 +62,7 @@ describe('positions: update/delete/primary toggle', () => {
   it('returns { success: false, error } on HTTP failure (never throws)', async () => {
     const fetchImpl = jsonFetch({ message: 'Forbidden' }, 403);
     const result = await deletePosition({ ...baseConfig, fetch: fetchImpl }, 'r1');
-    expect(result).toEqual({ success: false, error: 'Forbidden' });
+    expect(result).toEqual({ success: false, status: 403, error: 'Forbidden' });
   });
 });
 
@@ -255,6 +255,7 @@ describe('generic record CRUD escape hatch', () => {
     expect(result).toEqual({
       success: false,
       error: 'PDS down',
+      status: 503,
       pdsHost: 'eurosky.social',
     });
   });

@@ -120,7 +120,7 @@ describe('refreshOrcidPublications', () => {
   it('returns { success: false, error } on HTTP failure', async () => {
     const fetchImpl = jsonFetch({ message: 'Unauthorized' }, 401);
     const result = await refreshOrcidPublications({ ...baseConfig, fetch: fetchImpl });
-    expect(result).toEqual({ success: false, error: 'Unauthorized' });
+    expect(result).toEqual({ success: false, status: 401, error: 'Unauthorized' });
   });
 
   it('POSTs an empty body to /api/profile/orcid-publications/refresh', async () => {

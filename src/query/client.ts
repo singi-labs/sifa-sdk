@@ -54,18 +54,40 @@ export interface ApiFetchOptions {
 export class ApiError extends Error {
   readonly status: number;
   readonly body: unknown;
+  /** Seconds until a rate limit resets, read from the headers of a 429. */
+  readonly retryAfterSeconds?: number;
 
-  constructor(message: string, status: number, body?: unknown) {
+  constructor(message: string, status: number, body?: unknown, retryAfterSeconds?: number) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.body = body;
+    if (retryAfterSeconds !== undefined) this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const MAX_RATE_LIMIT_RETRIES = 3;
 const RATE_LIMIT_RETRY_CAP_SECONDS = 3;
+
+/**
+ * Headers sifa-api (`@fastify/rate-limit`) sets on a 429, in preference order.
+ * Both carry an integer count of seconds until the limit resets.
+ */
+const RATE_LIMIT_RESET_HEADERS = ['retry-after', 'x-ratelimit-reset'] as const;
+
+/**
+ * Seconds to wait before retrying a rate-limited response, or `undefined` when
+ * no header carries a positive integer (`Retry-After` may also be an HTTP
+ * date, which sifa-api never sends).
+ */
+function parseRetryAfterSeconds(headers: Headers): number | undefined {
+  for (const name of RATE_LIMIT_RESET_HEADERS) {
+    const seconds = Number.parseInt(headers.get(name) ?? '', 10);
+    if (Number.isFinite(seconds) && seconds > 0) return seconds;
+  }
+  return undefined;
+}
 
 /**
  * Encode a handle or DID for safe interpolation into a request path,
@@ -156,7 +178,12 @@ export async function apiFetch<T = unknown>(
           errBody = undefined;
         }
       }
-      throw new ApiError(`Sifa API ${res.status} on ${path}`, res.status, errBody);
+      throw new ApiError(
+        `Sifa API ${res.status} on ${path}`,
+        res.status,
+        errBody,
+        res.status === 429 ? parseRetryAfterSeconds(res.headers) : undefined,
+      );
     }
 
     // 204 and 205 are defined to carry no body, so res.json() throws on them.
@@ -208,6 +235,14 @@ export interface WriteResult {
    * generic "Request failed (500)".
    */
   pdsHost?: string;
+  /** HTTP status of a failed write. Absent on success and on network errors. */
+  status?: number;
+  /**
+   * Seconds until the rate limit resets, when a write was rejected with 429
+   * and the server said how long to wait (sifa-workspace#533). Lets the UI say
+   * "try again in N seconds" instead of a generic failure.
+   */
+  retryAfterSeconds?: number;
 }
 
 /** Result returned by create mutations. Includes the newly created `rkey`. */
@@ -217,13 +252,20 @@ export interface CreateResult extends WriteResult {
 
 interface ApiErrorBody {
   message?: string;
+  error?: string;
   pdsHost?: string;
 }
 
-function extractWriteError(data: unknown, status: number): { error: string; pdsHost?: string } {
-  const body = (data ?? {}) as ApiErrorBody;
+function extractWriteError(
+  e: ApiError,
+): Pick<WriteResult, 'error' | 'pdsHost' | 'status' | 'retryAfterSeconds'> {
+  const body = (e.body && typeof e.body === 'object' ? e.body : {}) as ApiErrorBody;
   return {
-    error: body.message ?? `Request failed (${status})`,
+    // Fastify puts the detail in `message` and the status phrase in `error`;
+    // sifa-api's own handlers (and the rate limiter) only set `error`.
+    error: body.message ?? body.error ?? `Request failed (${e.status})`,
+    status: e.status,
+    ...(e.retryAfterSeconds !== undefined ? { retryAfterSeconds: e.retryAfterSeconds } : {}),
     ...(body.pdsHost ? { pdsHost: body.pdsHost } : {}),
   };
 }
@@ -258,7 +300,7 @@ export async function apiWrite<TExtra extends object = Record<never, never>>(
     return { success: true, ...(data ?? ({} as TExtra)) };
   } catch (e) {
     if (e instanceof ApiError) {
-      return { success: false, ...extractWriteError(e.body, e.status) } as WriteResult & TExtra;
+      return { success: false, ...extractWriteError(e) } as WriteResult & TExtra;
     }
     return { success: false, error: 'Network error' } as WriteResult & TExtra;
   }

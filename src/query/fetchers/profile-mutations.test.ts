@@ -92,7 +92,7 @@ describe('updateProfileSelf', () => {
   it('returns { success: false, error } on HTTP failure', async () => {
     const fetchImpl = jsonFetch({ message: 'Unauthorized' }, 401);
     const result = await updateProfileSelf({ ...baseConfig, fetch: fetchImpl }, {});
-    expect(result).toEqual({ success: false, error: 'Unauthorized' });
+    expect(result).toEqual({ success: false, status: 401, error: 'Unauthorized' });
   });
 
   it('returns { success: false, error: "Network error" } when fetch throws', async () => {

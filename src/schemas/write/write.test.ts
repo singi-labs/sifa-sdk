@@ -419,6 +419,28 @@ describe('ExternalAccountWriteSchema', () => {
     expect(parsed.success).toBe(true);
     if (parsed.success) expect(parsed.data.url).toBe('https://github.com/gxjansen');
   });
+
+  it('trims the label', () => {
+    const parsed = ExternalAccountWriteSchema.parse({
+      platform: 'github',
+      url: 'https://github.com/gxjansen',
+      label: '  My code  ',
+    });
+    expect(parsed.label).toBe('My code');
+  });
+
+  it('drops a whitespace-only label so it is never stored blank', () => {
+    for (const label of ['', '   ', '\t\n']) {
+      const parsed = ExternalAccountWriteSchema.parse({
+        platform: 'github',
+        url: 'https://github.com/gxjansen',
+        label,
+      });
+      expect(parsed.label).toBeUndefined();
+      // What actually travels to the API and on to the PDS carries no label key.
+      expect(JSON.parse(JSON.stringify(parsed))).not.toHaveProperty('label');
+    }
+  });
 });
 
 describe('VALID_PLATFORMS', () => {

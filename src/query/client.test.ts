@@ -4,6 +4,7 @@ import {
   ApiError,
   apiFetch,
   apiFetchOrNull,
+  apiWrite,
   encodeIdentifier,
   type SifaApiConfig,
 } from './client.js';
@@ -157,5 +158,62 @@ describe('encodeIdentifier', () => {
     // Lone `%` makes decodeURIComponent throw; behaviour matches a bare
     // encodeURIComponent so nothing regresses for odd inputs.
     expect(encodeIdentifier('50%off')).toBe('50%25off');
+  });
+});
+
+describe('apiWrite failure shape', () => {
+  it('surfaces status and Retry-After seconds on a 429', async () => {
+    const fetchImpl = fixedFetch({
+      status: 429,
+      body: JSON.stringify({ error: 'Rate limit exceeded, retry in 48 minutes' }),
+      headers: { 'retry-after': '2880', 'x-ratelimit-reset': '10' },
+    });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/profile/reset', 'DELETE');
+    expect(result).toEqual({
+      success: false,
+      status: 429,
+      retryAfterSeconds: 2880,
+      error: 'Rate limit exceeded, retry in 48 minutes',
+    });
+  });
+
+  it('falls back to x-ratelimit-reset when Retry-After is missing or unusable', async () => {
+    const cases: Record<string, string>[] = [
+      { 'x-ratelimit-reset': '42' },
+      { 'retry-after': 'Wed, 21 Oct 2026 07:28:00 GMT', 'x-ratelimit-reset': '42' },
+    ];
+    for (const headers of cases) {
+      const fetchImpl = fixedFetch({ status: 429, body: '{}', headers });
+      const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+      expect(result.retryAfterSeconds).toBe(42);
+    }
+  });
+
+  it('omits retryAfterSeconds when no header carries a positive integer', async () => {
+    const fetchImpl = fixedFetch({ status: 429, body: '{}', headers: { 'retry-after': '0' } });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+    expect(result).toEqual({ success: false, status: 429, error: 'Request failed (429)' });
+  });
+
+  it('reads the error text from body.error when body.message is absent', async () => {
+    const fetchImpl = fixedFetch({ status: 403, body: JSON.stringify({ error: 'Forbidden' }) });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+    expect(result).toEqual({ success: false, status: 403, error: 'Forbidden' });
+  });
+
+  it('prefers the detailed body.message over the generic body.error label', async () => {
+    // Fastify's default error shape: `error` is the status phrase, `message` the detail.
+    const fetchImpl = fixedFetch({
+      status: 400,
+      body: JSON.stringify({ error: 'Bad Request', message: 'body/url must be a URL' }),
+    });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+    expect(result.error).toBe('body/url must be a URL');
+  });
+
+  it('does not set retryAfterSeconds on non-429 failures', async () => {
+    const fetchImpl = fixedFetch({ status: 500, body: '{}', headers: { 'retry-after': '5' } });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+    expect(result).toEqual({ success: false, status: 500, error: 'Request failed (500)' });
   });
 });
