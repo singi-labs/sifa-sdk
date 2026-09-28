@@ -26,7 +26,8 @@ export const ROADMAP_ITEM_META: Record<string, RoadmapItemMeta> = {
     issues: [3, 166],
   },
   notifications: {
-    description: 'Get told when someone endorses you, links a company, or acts on your profile.',
+    description:
+      'Get told when someone endorses you, links an organization, or acts on your profile.',
     issues: [158],
   },
   verifiedConnections: {
