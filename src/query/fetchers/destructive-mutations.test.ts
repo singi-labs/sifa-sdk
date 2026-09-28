@@ -75,7 +75,7 @@ describe('deleteReaction', () => {
   it('returns { success: false, error } on HTTP failure', async () => {
     const fetchImpl = jsonFetch({ message: 'Not found' }, 404);
     const result = await deleteReaction({ ...baseConfig, fetch: fetchImpl }, 'at://target', 'bsky');
-    expect(result).toEqual({ success: false, error: 'Not found' });
+    expect(result).toEqual({ success: false, status: 404, error: 'Not found' });
   });
 });
 
