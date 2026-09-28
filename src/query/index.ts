@@ -186,6 +186,7 @@ export {
   searchSkills,
   type FilterOptions,
   type ProfileSearchResult,
+  type ProfileSearchSuggestion,
   type SearchFilters,
   type SearchResponse,
   type SkillSearchResult,

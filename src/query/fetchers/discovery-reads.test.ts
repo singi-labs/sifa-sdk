@@ -87,6 +87,54 @@ describe('fetchSearchProfiles', () => {
     const matches = url.match(/openTo=/g) ?? [];
     expect(matches).toHaveLength(2);
   });
+
+  it('keeps a single string skill and country as one param each', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { skill: 'typescript', country: 'NL' },
+    );
+    const [url] = getCall(fetchImpl);
+    expect(url.match(/skill=/g)).toHaveLength(1);
+    expect(url.match(/country=/g)).toHaveLength(1);
+    expect(url).toContain('skill=typescript');
+    expect(url).toContain('country=NL');
+  });
+
+  it('repeats the skill and country params for each array value', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { skill: ['typescript', 'rust'], country: ['NL', 'BE', ''] },
+    );
+    const [url] = getCall(fetchImpl);
+    const params = new URL(url).searchParams;
+    expect(params.getAll('skill')).toEqual(['typescript', 'rust']);
+    expect(params.getAll('country')).toEqual(['NL', 'BE']);
+  });
+
+  it('treats empty skill and country arrays as no filter', async () => {
+    const fetchImpl = vi.fn();
+    const result = await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { skill: [], country: [] },
+    );
+    expect(result).toEqual({ profiles: [], total: 0, limit: 20, offset: 0 });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('passes through zero-result suggestions and per-result openTo', async () => {
+    const body = {
+      profiles: [{ handle: 'a.test', openTo: ['id.sifa.defs#mentoringOthers'] }],
+      total: 1,
+      limit: 20,
+      offset: 0,
+      suggestions: [{ did: 'did:plc:x', handle: 'x.test', displayName: null, avatar: null }],
+    };
+    const result = await fetchSearchProfiles({ ...baseConfig, fetch: jsonFetch(body) }, { q: 'x' });
+    expect(result.profiles[0]?.openTo).toEqual(['id.sifa.defs#mentoringOthers']);
+    expect(result.suggestions).toEqual(body.suggestions);
+  });
 });
 
 describe('fetchSkillSuggestions', () => {
