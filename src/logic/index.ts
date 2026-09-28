@@ -60,7 +60,10 @@ export {
 export type { PersonalFacetContent } from './org-floor.js';
 export {
   isCompanyPageIndexable,
+  companyPageRichness,
   COMPANY_PAGE_MIN_FIRMOGRAPHIC_FIELDS,
+  COMPANY_PAGE_MIN_DESCRIPTION_LENGTH,
+  COMPANY_PAGE_ROSTER_MIN_MEMBERS,
   type CompanyFirmographics,
 } from './company-page-indexable.js';
 export { countRecentActivity, type DailyActivityCount } from './recent-activity.js';
