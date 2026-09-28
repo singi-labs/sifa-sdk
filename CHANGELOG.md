@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.61
+
+### Patch Changes
+
+- a6907ff: `parsePresentationDuration` now converts hours to minutes ("3 hours" is 180, "40 minutes - 4 hours" is 40 to 240). Before, the unit was ignored, so "3 hours" read as 3 minutes.
+
 ## 0.19.60
 
 ### Patch Changes
