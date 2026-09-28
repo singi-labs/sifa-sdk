@@ -285,6 +285,22 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // GET /{handle} returns 200 with og:url https://rpg.actor/{handle}.
     profileUrlPattern: 'https://rpg.actor/{handle}',
   },
+  lexidraw: {
+    // Verified live: GET /s/{did}/{rkey} returns 200 with <title> set to the
+    // scene name and an og:image built from the record's thumb blob CID. Other
+    // paths return the generic editor shell, so no profile page is assumed.
+    urlPattern: 'https://lexidraw.app/s/{did}/{rkey}',
+  },
+  leadsheet: {
+    // Routes from the SPA router: /sheet/:actor/:rkey and /u/:actor.
+    urlPattern: 'https://leadsheet.fm/sheet/{did}/{rkey}',
+    profileUrlPattern: 'https://leadsheet.fm/u/{handle}',
+  },
+  brickster: {
+    // Verified live: GET /c/{did}/{rkey} server-renders <title>{record title}
+    // | Brickster</title>. No per-user profile route found.
+    urlPattern: 'https://brickster.at/c/{did}/{rkey}',
+  },
 });
 
 /**
@@ -384,4 +400,7 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['agency.portable.', 'portable'],
   ['actor.rpg.', 'rpgactor'],
   ['equipment.rpg.', 'rpgactor'],
+  ['app.lexidraw.', 'lexidraw'],
+  ['fm.leadsheet.', 'leadsheet'],
+  ['at.brickster.', 'brickster'],
 ];

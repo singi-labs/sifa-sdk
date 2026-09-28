@@ -99,4 +99,36 @@ describe('isVisibleActivityItem', () => {
       ).toBe(true);
     });
   });
+
+  describe('fm.leadsheet.sheet', () => {
+    const collection = 'fm.leadsheet.sheet';
+
+    it('hides sheets flagged as drafts', () => {
+      expect(isVisibleActivityItem(collection, { title: 'Closer To Fine', draft: true })).toBe(
+        false,
+      );
+    });
+
+    it('shows sheets without a draft flag or with draft: false', () => {
+      expect(isVisibleActivityItem(collection, { title: 'The Cave' })).toBe(true);
+      expect(isVisibleActivityItem(collection, { title: 'The Cave', draft: false })).toBe(true);
+    });
+  });
+
+  describe('at.brickster.creation', () => {
+    const collection = 'at.brickster.creation';
+
+    it('hides creations with status draft', () => {
+      expect(isVisibleActivityItem(collection, { title: 'Untitled build', status: 'draft' })).toBe(
+        false,
+      );
+    });
+
+    it('shows creations with any other status', () => {
+      expect(isVisibleActivityItem(collection, { title: 'Treehouse', status: 'published' })).toBe(
+        true,
+      );
+      expect(isVisibleActivityItem(collection, { title: 'Treehouse' })).toBe(true);
+    });
+  });
 });

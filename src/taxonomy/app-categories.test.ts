@@ -89,6 +89,9 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('fediverse')).toBe('Posts');
     expect(categoryForApp('locale')).toBe('Translations');
     expect(categoryForApp('pckt')).toBe('Posts');
+    expect(categoryForApp('lexidraw')).toBe('Art');
+    expect(categoryForApp('leadsheet')).toBe('Music');
+    expect(categoryForApp('brickster')).toBe('Art');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

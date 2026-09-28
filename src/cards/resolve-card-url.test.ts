@@ -25,6 +25,9 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('buzz.bookhive.book')).toBe('bookhive');
     expect(getAppIdForCollection('social.grain.gallery')).toBe('grain');
     expect(getAppIdForCollection('pics.pixl.image')).toBe('pixl');
+    expect(getAppIdForCollection('app.lexidraw.scene')).toBe('lexidraw');
+    expect(getAppIdForCollection('fm.leadsheet.sheet')).toBe('leadsheet');
+    expect(getAppIdForCollection('at.brickster.creation')).toBe('brickster');
     expect(getAppIdForCollection('link.pastesphere.snippet')).toBe('pastesphere');
     expect(getAppIdForCollection('site.standard.document')).toBe('standard');
     expect(getAppIdForCollection('place.stream.livestream')).toBe('streamplace');
@@ -276,6 +279,44 @@ describe('resolveCardUrl', () => {
           record: { name: 'Mountain Fog Lemonade', url: 'https://youtube.com/watch?v=x' },
         }),
       ).toBe('https://kich.io/recipes/3ml4zymkkx2do');
+    });
+  });
+
+  describe('profile-of-the-day queue onboards (2026-09-28)', () => {
+    it('links a Lexidraw scene to its shared viewer by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'app.lexidraw.scene',
+          uri: 'at://did:plc:abc/app.lexidraw.scene/3mscnd7uanq2x',
+          rkey: '3mscnd7uanq2x',
+          record: { name: 'The Data Model' },
+        }),
+      ).toBe('https://lexidraw.app/s/did%3Aplc%3Aabc/3mscnd7uanq2x');
+    });
+
+    it('links a Leadsheet sheet to its sheet page by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'fm.leadsheet.sheet',
+          uri: 'at://did:plc:abc/fm.leadsheet.sheet/3mwe53h3pf4bq',
+          rkey: '3mwe53h3pf4bq',
+          record: { title: 'You Are A Tourist' },
+        }),
+      ).toBe('https://leadsheet.fm/sheet/did%3Aplc%3Aabc/3mwe53h3pf4bq');
+    });
+
+    it('links a Brickster creation to its viewer by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'at.brickster.creation',
+          uri: 'at://did:plc:abc/at.brickster.creation/3msir75a37j2s',
+          rkey: '3msir75a37j2s',
+          record: { title: 'Treehouse', status: 'published' },
+        }),
+      ).toBe('https://brickster.at/c/did%3Aplc%3Aabc/3msir75a37j2s');
     });
   });
 

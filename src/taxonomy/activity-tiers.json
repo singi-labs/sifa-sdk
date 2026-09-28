@@ -899,6 +899,21 @@
       "tier": "filtered",
       "notes": "Statusphere emoji status \u2014 leisure signal.",
       "app": "statusphere"
+    },
+    "app.lexidraw.scene": {
+      "tier": "creation",
+      "app": "lexidraw",
+      "notes": "A named whiteboard drawing, stored as a gzipped scene blob with a thumbnail."
+    },
+    "fm.leadsheet.sheet": {
+      "tier": "creation",
+      "app": "leadsheet",
+      "notes": "An authored chord sheet or tab (ChordPro) for a song."
+    },
+    "at.brickster.creation": {
+      "tier": "creation",
+      "app": "brickster",
+      "notes": "A 3D brick build saved from the Brickster editor."
     }
   }
 }
