@@ -65,6 +65,7 @@ export {
   COMPANY_PAGE_MIN_DESCRIPTION_LENGTH,
   COMPANY_PAGE_ROSTER_MIN_MEMBERS,
   type CompanyFirmographics,
+  type CompanyHqFacts,
 } from './company-page-indexable.js';
 export { countRecentActivity, type DailyActivityCount } from './recent-activity.js';
 export { followingFeedFallbackApp } from './following-feed-fallback.js';

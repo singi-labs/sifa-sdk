@@ -430,6 +430,7 @@ export {
   type DisambiguationFields,
   type EntityRefAnchor,
   type CompanyFirmographics,
+  type CompanyHqFacts,
   type PersonalFacetContent,
   resolveAgentRef,
   type AgentRefFlat,
