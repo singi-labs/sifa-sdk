@@ -74,7 +74,32 @@ export interface ProfilePosition {
   linkedSkills?: ProfileSkill[];
   primary?: boolean;
   hidden?: boolean;
+  /**
+   * Colleagues who confirmed this position (`id.sifa.defs#colleague`), as
+   * resolved by the AppView. Descriptive only: who said so, never a score.
+   * Absent when nobody has confirmed it.
+   */
+  confirmations?: PositionConfirmations;
+  /**
+   * What the signed-in viewer can do with this position. `available` means
+   * they have a reason to know it (an overlapping position at the same
+   * organization, or they are the organization's account) and have not
+   * confirmed it yet; `confirmed` means they already did and can withdraw.
+   * Absent for anonymous viewers, the owner, and anyone without a reason to know.
+   */
+  viewerConfirmation?: PositionViewerConfirmation;
 }
+
+/** Confirmations of one position, as returned by the AppView. */
+export interface PositionConfirmations {
+  /** Number of visible confirmers. Equal to `confirmers.length`. */
+  count: number;
+  /** The confirmers, oldest first. Blocked and suppressed accounts are left out. */
+  confirmers: ActorCard[];
+}
+
+/** See {@link ProfilePosition.viewerConfirmation}. */
+export type PositionViewerConfirmation = 'available' | 'confirmed';
 
 export interface ProfileEducation {
   rkey: string;

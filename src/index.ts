@@ -40,6 +40,8 @@ export type {
   ProfileLocation,
   ProfileOverrideSource,
   ProfilePosition,
+  PositionConfirmations,
+  PositionViewerConfirmation,
   ProfilePresentation,
   CoSpeaker,
   ActorCard,
