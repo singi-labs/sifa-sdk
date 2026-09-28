@@ -8,7 +8,7 @@ import { updateOrgProfile, type OrgProfileUpdateResult } from '../fetchers/org.j
 import type { OrgProfileUpdateRequestInput } from '../../schemas/write/org-settings.js';
 import { sifaQueryKeys } from '../keys.js';
 
-type OrgProfileUpdateMutationResult = WriteResult & Partial<OrgProfileUpdateResult>;
+type OrgProfileUpdateMutationResult = WriteResult<Partial<OrgProfileUpdateResult>>;
 
 /**
  * Edit the org record (`PUT /api/org/profile`). Pass the org's handle/DID to

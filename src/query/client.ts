@@ -219,14 +219,14 @@ export async function apiFetchOrNull<T>(
 }
 
 /**
- * Result returned by record-write mutations (create / update / delete).
+ * Failed branch of a {@link WriteResult}.
  *
  * Never throws -- writes against the user's PDS can fail in many ways
  * (network, PDS unreachable, rate limit) and the UI needs structured
  * results to render appropriate messages.
  */
-export interface WriteResult {
-  success: boolean;
+export interface WriteFailure {
+  success: false;
   error?: string;
   /**
    * PDS hostname returned by sifa-api when a write failed at the user's
@@ -235,7 +235,7 @@ export interface WriteResult {
    * generic "Request failed (500)".
    */
   pdsHost?: string;
-  /** HTTP status of a failed write. Absent on success and on network errors. */
+  /** HTTP status of a failed write. Absent on network errors. */
   status?: number;
   /**
    * Seconds until the rate limit resets, when a write was rejected with 429
@@ -245,10 +245,29 @@ export interface WriteResult {
   retryAfterSeconds?: number;
 }
 
+/**
+ * Successful branch of a {@link WriteResult}: the response body fields
+ * (`TExtra`) plus the optional failure fields. A body field that shares a name
+ * with a failure field (e.g. a body `status`) keeps its body type here, so it
+ * never collides with the HTTP status on the failure branch.
+ */
+export type WriteSuccess<TExtra extends object = Record<never, never>> = { success: true } & Omit<
+  WriteFailure,
+  'success' | keyof TExtra
+> &
+  TExtra;
+
+/**
+ * Result returned by record-write mutations (create / update / delete),
+ * discriminated on `success`. Narrow on `success` to read a body `status`
+ * (success) or the HTTP `status` (failure). Other fields stay readable without
+ * narrowing.
+ */
+export type WriteResult<TExtra extends object = Record<never, never>> =
+  WriteSuccess<TExtra> | (WriteFailure & Partial<Omit<TExtra, keyof WriteFailure>>);
+
 /** Result returned by create mutations. Includes the newly created `rkey`. */
-export interface CreateResult extends WriteResult {
-  rkey?: string;
-}
+export type CreateResult = WriteResult<{ rkey?: string }>;
 
 interface ApiErrorBody {
   message?: string;
@@ -256,9 +275,7 @@ interface ApiErrorBody {
   pdsHost?: string;
 }
 
-function extractWriteError(
-  e: ApiError,
-): Pick<WriteResult, 'error' | 'pdsHost' | 'status' | 'retryAfterSeconds'> {
+function extractWriteError(e: ApiError): Omit<WriteFailure, 'success'> {
   const body = (e.body && typeof e.body === 'object' ? e.body : {}) as ApiErrorBody;
   return {
     // Fastify puts the detail in `message` and the status phrase in `error`;
@@ -290,7 +307,7 @@ export async function apiWrite<TExtra extends object = Record<never, never>>(
   path: string,
   method: 'POST' | 'PUT' | 'DELETE' | 'PATCH',
   options: Omit<ApiFetchOptions, 'method'> = {},
-): Promise<WriteResult & TExtra> {
+): Promise<WriteResult<TExtra>> {
   try {
     const data = await apiFetch<TExtra>(config, path, {
       method,
@@ -300,9 +317,9 @@ export async function apiWrite<TExtra extends object = Record<never, never>>(
     return { success: true, ...(data ?? ({} as TExtra)) };
   } catch (e) {
     if (e instanceof ApiError) {
-      return { success: false, ...extractWriteError(e) } as WriteResult & TExtra;
+      return { success: false, ...extractWriteError(e) };
     }
-    return { success: false, error: 'Network error' } as WriteResult & TExtra;
+    return { success: false, error: 'Network error' };
   }
 }
 
@@ -320,7 +337,7 @@ export function apiWriteCreate<TExtra extends object = Record<never, never>>(
   path: string,
   body: unknown,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<CreateResult & TExtra> {
+): Promise<WriteResult<{ rkey?: string } & TExtra>> {
   return apiWrite<{ rkey?: string } & TExtra>(config, path, 'POST', {
     body,
     ...options,

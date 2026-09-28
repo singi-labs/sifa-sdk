@@ -8,7 +8,7 @@ import { submitOrgClaim, type OrgClaimResult } from '../fetchers/org.js';
 import type { OrgClaimRequestInput } from '../../schemas/write/org-claim.js';
 import { sifaQueryKeys } from '../keys.js';
 
-type OrgClaimMutationResult = WriteResult & Partial<OrgClaimResult>;
+type OrgClaimMutationResult = WriteResult<Partial<OrgClaimResult>>;
 
 /**
  * Finalize an org profile claim (`POST /api/org/claim`). Pass the org's

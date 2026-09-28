@@ -65,18 +65,18 @@ export function fetchWipePreview(
 }
 
 /** Extended write result for {@link resetProfile}. */
-export interface ResetProfileResult extends WriteResult {
+export type ResetProfileResult = WriteResult<{
   /** Present when `deletePdsData: true`. See {@link PdsWipeOutcome}. */
   pds?: PdsWipeOutcome;
-}
+}>;
 
 /** Extended write result for {@link deleteAccount}. */
-export interface DeleteAccountResult extends WriteResult {
+export type DeleteAccountResult = WriteResult<{
   /** The deleted handle, returned by the server for confirmation UIs. */
   handle?: string;
   /** Present when `deletePdsData: true`. See {@link PdsWipeOutcome}. */
   pds?: PdsWipeOutcome;
-}
+}>;
 
 /**
  * Reset the authenticated user's Sifa profile.

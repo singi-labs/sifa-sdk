@@ -1,10 +1,10 @@
 import { apiWrite, type ApiFetchOptions, type SifaApiConfig, type WriteResult } from '../client.js';
 
 /** Extended result for {@link refreshOrcidPublications}. */
-export interface RefreshOrcidPublicationsResult extends WriteResult {
+export type RefreshOrcidPublicationsResult = WriteResult<{
   added?: number;
   removed?: number;
-}
+}>;
 
 /**
  * Hide an ORCID-imported publication from the user's profile. The

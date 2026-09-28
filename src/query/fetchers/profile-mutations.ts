@@ -70,10 +70,10 @@ export function updateProfileOverride(
 }
 
 /** Extended result for {@link refreshPds}. */
-export interface RefreshPdsResult extends WriteResult {
+export type RefreshPdsResult = WriteResult<{
   displayName?: string | null;
   avatar?: string | null;
-}
+}>;
 
 /**
  * Re-pull the authenticated user's `app.bsky.actor.profile` from their
@@ -93,10 +93,10 @@ export function refreshPds(
 }
 
 /** Extended result for {@link uploadAvatar}. */
-export interface UploadAvatarResult extends WriteResult {
+export type UploadAvatarResult = WriteResult<{
   /** Publicly accessible URL of the newly uploaded avatar. */
   url?: string;
-}
+}>;
 
 /**
  * Upload a new avatar via `multipart/form-data`. Pass either a `File`
@@ -148,10 +148,10 @@ export function deleteAvatarOverride(
 }
 
 /** Extended result for {@link uploadNamePronunciationAudio}. */
-export interface UploadPronunciationAudioResult extends WriteResult {
+export type UploadPronunciationAudioResult = WriteResult<{
   /** Publicly accessible URL of the newly uploaded audio clip. */
   url?: string;
-}
+}>;
 
 /**
  * Upload a name-pronunciation audio clip via `multipart/form-data`. Pass a

@@ -15,8 +15,8 @@ import type {
   OrgDomainVerifyRequestInput,
 } from '../../schemas/write/org-settings.js';
 
-type OrgDomainChallengeMutationResult = WriteResult & Partial<OrgDomainChallengeResult>;
-type OrgDomainVerifyMutationResult = WriteResult & Partial<OrgDomainVerifyResult>;
+type OrgDomainChallengeMutationResult = WriteResult<Partial<OrgDomainChallengeResult>>;
+type OrgDomainVerifyMutationResult = WriteResult<Partial<OrgDomainVerifyResult>>;
 
 /**
  * Issue a one-time DNS TXT domain challenge (`POST /api/org/domains/challenge`).

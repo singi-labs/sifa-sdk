@@ -54,7 +54,12 @@ export interface OrgDomainVerifyResult {
 /** Response body of `POST /api/org/notification-emails`. */
 export interface OrgNotificationEmailAddResult {
   ok: boolean;
-  status: string;
+  /**
+   * Outcome of the verification email: `verification_sent` (accepted by the
+   * mail provider), `sends_paused` (sending is off, nothing went out) or
+   * `send_failed` (rejected or unreachable).
+   */
+  status: 'verification_sent' | 'sends_paused' | 'send_failed';
 }
 
 /** Response body of `DELETE /api/org/notification-emails`. */
@@ -73,7 +78,7 @@ export function submitOrgClaim(
   config: SifaApiConfig,
   body: OrgClaimRequestInput,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<WriteResult & Partial<OrgClaimResult>> {
+): Promise<WriteResult<Partial<OrgClaimResult>>> {
   return apiWrite<Partial<OrgClaimResult>>(config, '/api/org/claim', 'POST', { body, ...options });
 }
 
@@ -85,7 +90,7 @@ export function updateOrgProfile(
   config: SifaApiConfig,
   body: OrgProfileUpdateRequestInput,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<WriteResult & Partial<OrgProfileUpdateResult>> {
+): Promise<WriteResult<Partial<OrgProfileUpdateResult>>> {
   return apiWrite<Partial<OrgProfileUpdateResult>>(config, '/api/org/profile', 'PUT', {
     body,
     ...options,
@@ -100,7 +105,7 @@ export function requestOrgDomainChallenge(
   config: SifaApiConfig,
   body: OrgDomainChallengeRequestInput,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<WriteResult & Partial<OrgDomainChallengeResult>> {
+): Promise<WriteResult<Partial<OrgDomainChallengeResult>>> {
   return apiWrite<Partial<OrgDomainChallengeResult>>(config, '/api/org/domains/challenge', 'POST', {
     body,
     ...options,
@@ -117,7 +122,7 @@ export function verifyOrgDomain(
   config: SifaApiConfig,
   body: OrgDomainVerifyRequestInput,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<WriteResult & Partial<OrgDomainVerifyResult>> {
+): Promise<WriteResult<Partial<OrgDomainVerifyResult>>> {
   return apiWrite<Partial<OrgDomainVerifyResult>>(config, '/api/org/domains/verify', 'POST', {
     body,
     ...options,
@@ -134,7 +139,7 @@ export function addOrgNotificationEmail(
   config: SifaApiConfig,
   body: OrgNotificationEmailRequestInput,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<WriteResult & Partial<OrgNotificationEmailAddResult>> {
+): Promise<WriteResult<Partial<OrgNotificationEmailAddResult>>> {
   return apiWrite<Partial<OrgNotificationEmailAddResult>>(
     config,
     '/api/org/notification-emails',
@@ -151,7 +156,7 @@ export function removeOrgNotificationEmail(
   config: SifaApiConfig,
   body: OrgNotificationEmailRequestInput,
   options: Omit<ApiFetchOptions, 'method' | 'body'> = {},
-): Promise<WriteResult & Partial<OrgNotificationEmailRemoveResult>> {
+): Promise<WriteResult<Partial<OrgNotificationEmailRemoveResult>>> {
   return apiWrite<Partial<OrgNotificationEmailRemoveResult>>(
     config,
     '/api/org/notification-emails',
