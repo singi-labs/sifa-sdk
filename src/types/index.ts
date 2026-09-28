@@ -1,4 +1,5 @@
 import type { AgentRef } from '../schemas/shared.js';
+import type { AccountVerification } from '../taxonomy/verification-providers.js';
 
 export interface LocationValue {
   city?: string;
@@ -975,6 +976,12 @@ export interface Profile {
   activeApps?: ActiveApp[];
   blueskyVerified?: boolean;
   blueskyVerifiedAt?: string | null;
+  /**
+   * Every verification the account holds, across all recognized providers
+   * (Bluesky and firehose-sourced ones like mu). Supersedes the Bluesky-only
+   * `blueskyVerified` pair for badge rendering. Absent on older API responses.
+   */
+  verificationBadges?: AccountVerification[];
   followersCount: number;
   followingCount: number;
   connectionsCount: number;

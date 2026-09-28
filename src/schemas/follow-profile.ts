@@ -1,6 +1,31 @@
 import { z } from 'zod';
 
+import {
+  VERIFICATION_PROVIDERS,
+  type AccountVerification,
+  type VerificationProviderId,
+} from '../taxonomy/verification-providers.js';
 import { datetimeSchema, didSchema } from './shared.js';
+
+const AccountVerificationSchema = z.object({
+  provider: z.custom<VerificationProviderId>(
+    (value) => typeof value === 'string' && Object.hasOwn(VERIFICATION_PROVIDERS, value),
+  ),
+  verifiedAt: datetimeSchema.nullable().optional(),
+  issuerDid: didSchema.nullable().optional(),
+});
+
+/**
+ * `verificationBadges[]` as emitted by the AppView. A badge from a provider this
+ * SDK version does not know (or a malformed entry) is dropped instead of failing
+ * the whole row, so a new server-side provider never breaks older clients.
+ */
+const VerificationBadgesSchema = z.array(z.unknown()).transform((items): AccountVerification[] =>
+  items.flatMap((item) => {
+    const result = AccountVerificationSchema.safeParse(item);
+    return result.success ? [result.data] : [];
+  }),
+);
 
 /**
  * Profile row shared across `/api/following`, `/api/profile/:handleOrDid/mutuals`,
@@ -22,6 +47,7 @@ export const FollowProfileSchema = z.object({
   followedAt: datetimeSchema,
   blueskyVerified: z.boolean().optional(),
   blueskyVerifiedAt: datetimeSchema.nullable().optional(),
+  verificationBadges: VerificationBadgesSchema.optional(),
 });
 
 export type FollowProfileItem = z.infer<typeof FollowProfileSchema>;

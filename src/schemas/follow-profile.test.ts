@@ -1,16 +1,60 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
+
+import type { AccountVerification } from '../taxonomy/verification-providers.js';
 
 import {
   FEATURE_FLAGS,
   FeatureAllowlistEntrySchema,
   FollowProfilePageSchema,
   FollowProfileSchema,
+  type FollowProfileItem,
 } from './follow-profile.js';
 
 const DID_A = 'did:plc:aaaaaaaaaaaaaaaaaaaaaaaa';
 const NOW = '2026-06-01T10:00:00.000Z';
 
 describe('FollowProfileSchema', () => {
+  const ROW = {
+    did: DID_A,
+    handle: 'alice.bsky.social',
+    source: 'sifa',
+    claimed: true,
+    followedAt: NOW,
+  };
+
+  it('keeps verificationBadges when present (sifa-workspace#260)', () => {
+    const badges = [
+      { provider: 'bluesky', verifiedAt: NOW },
+      { provider: 'mu', verifiedAt: null, issuerDid: 'did:plc:ooensn4mr5mhznzypvxelfa3' },
+    ];
+    const parsed = FollowProfileSchema.parse({ ...ROW, verificationBadges: badges });
+    expect(parsed.verificationBadges).toEqual(badges);
+  });
+
+  it('stays valid without verificationBadges', () => {
+    const parsed = FollowProfileSchema.parse(ROW);
+    expect(parsed.verificationBadges).toBeUndefined();
+  });
+
+  it('drops badges from providers this SDK version does not know, keeping the row', () => {
+    const parsed = FollowProfileSchema.parse({
+      ...ROW,
+      verificationBadges: [
+        { provider: 'future-provider', verifiedAt: NOW },
+        { provider: 'mu', verifiedAt: NOW, issuerDid: 'did:plc:ooensn4mr5mhznzypvxelfa3' },
+      ],
+    });
+    expect(parsed.verificationBadges).toEqual([
+      { provider: 'mu', verifiedAt: NOW, issuerDid: 'did:plc:ooensn4mr5mhznzypvxelfa3' },
+    ]);
+  });
+
+  it('types parsed verificationBadges as AccountVerification[]', () => {
+    expectTypeOf<FollowProfileItem['verificationBadges']>().toEqualTypeOf<
+      AccountVerification[] | undefined
+    >();
+  });
+
   it('accepts a minimal row (required fields only)', () => {
     expect(
       FollowProfileSchema.safeParse({
