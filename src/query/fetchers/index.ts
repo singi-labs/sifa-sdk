@@ -100,6 +100,7 @@ export {
 export {
   fetchPendingConfirmations,
   fetchGivenConfirmations,
+  fetchViewerPositionConfirmations,
   createConfirmation,
   dismissConfirmation,
   revokeConfirmation,

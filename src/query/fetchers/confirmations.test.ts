@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { type SifaApiConfig } from '../client.js';
-import { fetchGivenConfirmations, fetchPendingConfirmations } from './confirmations.js';
+import {
+  fetchGivenConfirmations,
+  fetchPendingConfirmations,
+  fetchViewerPositionConfirmations,
+} from './confirmations.js';
 
 const baseConfig: SifaApiConfig = { baseUrl: 'https://api.example' };
 
@@ -58,5 +62,33 @@ describe('fetchPendingConfirmations', () => {
     expect(await fetchPendingConfirmations({ ...baseConfig, fetch: fetchImpl })).toEqual({
       confirmations: [],
     });
+  });
+});
+
+describe('fetchViewerPositionConfirmations', () => {
+  it('returns the viewer state per position rkey', async () => {
+    const fetchImpl = jsonFetch({ positions: { p1: 'available', p2: 'confirmed' } });
+    const result = await fetchViewerPositionConfirmations(
+      { ...baseConfig, fetch: fetchImpl },
+      'did:plc:owner',
+    );
+    expect(result).toEqual({ p1: 'available', p2: 'confirmed' });
+    expect(getCall(fetchImpl)[0]).toContain('/api/confirmations/positions/did%3Aplc%3Aowner');
+  });
+
+  it('forwards the cookie header for RSC server-side calls', async () => {
+    const fetchImpl = jsonFetch({ positions: {} });
+    await fetchViewerPositionConfirmations({ ...baseConfig, fetch: fetchImpl }, 'did:plc:owner', {
+      cookieHeader: 'session=abc',
+    });
+    const headers = new Headers(getCall(fetchImpl)[1].headers);
+    expect(headers.get('cookie')).toBe('session=abc');
+  });
+
+  it('returns an empty map when the request fails', async () => {
+    const fetchImpl = jsonFetch({ error: 'unauth' }, 401);
+    expect(
+      await fetchViewerPositionConfirmations({ ...baseConfig, fetch: fetchImpl }, 'did:plc:owner'),
+    ).toEqual({});
   });
 });

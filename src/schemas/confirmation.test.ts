@@ -78,11 +78,26 @@ describe('ConfirmationRecordSchema', () => {
     expect(parsed.success).toBe(false);
   });
 
-  it('exports the two shipped relations', () => {
+  it('exports the shipped relations', () => {
     expect(CONFIRMATION_RELATIONS).toEqual([
       'id.sifa.defs#coSpeaker',
       'id.sifa.defs#projectMember',
+      'id.sifa.defs#colleague',
     ]);
+  });
+
+  it('accepts a colleague confirmation of a position', () => {
+    const parsed = ConfirmationRecordSchema.safeParse({
+      ...validRecord,
+      subject: {
+        uri: 'at://did:plc:owner/id.sifa.profile.position/3kabc',
+        cid: validRecord.subject.cid,
+      },
+      relation: 'id.sifa.defs#colleague',
+      subjectName: 'Engineer at Acme',
+    });
+    expect(parsed.success).toBe(true);
+    expect(parsed.data?.relation).toBe('id.sifa.defs#colleague');
   });
 });
 

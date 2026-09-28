@@ -10,6 +10,13 @@ import { datetimeSchema, maxGraphemes, strongRefSchema } from './shared.js';
 export const CONFIRMATION_RELATIONS = [
   'id.sifa.defs#coSpeaker',
   'id.sifa.defs#projectMember',
+  /**
+   * A colleague affirming someone's `id.sifa.profile.position`. Unlike the
+   * other relations the position does not name the confirmer: the AppView
+   * accepts it only from someone with a reason to know, such as an overlapping
+   * position at the same organization, or the organization's own account.
+   */
+  'id.sifa.defs#colleague',
 ] as const;
 
 export type ConfirmationRelation = (typeof CONFIRMATION_RELATIONS)[number];
