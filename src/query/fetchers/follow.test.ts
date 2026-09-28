@@ -5,6 +5,8 @@ import {
   getFollowers,
   getFollowing,
   fetchFollowingFeed,
+  fetchFollowingFeedVersion,
+  isNewerFollowingFeed,
   unfollowUser,
 } from './follow.js';
 import { type SifaApiConfig } from '../client.js';
@@ -186,5 +188,61 @@ describe('fetchFollowingFeed', () => {
     const fetchImpl = jsonFetch({ message: 'bad' }, 500);
     const result = await fetchFollowingFeed({ ...config, fetch: fetchImpl });
     expect(result).toBeNull();
+  });
+});
+
+describe('fetchFollowingFeedVersion', () => {
+  it('asks when the cached feed for the same query was built', async () => {
+    const fetchImpl = jsonFetch({ builtAt: '2026-09-28T09:00:00.000Z' });
+    const result = await fetchFollowingFeedVersion(
+      { ...config, fetch: fetchImpl },
+      { limit: 20, app: 'grain' },
+    );
+    expect(result).toEqual({ builtAt: '2026-09-28T09:00:00.000Z' });
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/following/feed/version?limit=20&app=grain');
+    expect(init.credentials).toBe('include');
+  });
+
+  it('sends the service-auth token the feed itself uses', async () => {
+    const fetchImpl = jsonFetch({ builtAt: null });
+    const getAuthToken = vi.fn(() => Promise.resolve('tok'));
+    await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl, getAuthToken });
+    expect(getAuthToken).toHaveBeenCalledWith('id.sifa.feed.getFollowingFeed');
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>).Authorization).toBe('Bearer tok');
+  });
+
+  it('returns null when the request fails', async () => {
+    const fetchImpl = jsonFetch({ error: 'nope' }, 500);
+    expect(await fetchFollowingFeedVersion({ ...config, fetch: fetchImpl })).toBeNull();
+  });
+});
+
+describe('isNewerFollowingFeed', () => {
+  it('is true when the latest build is newer than the one shown', () => {
+    expect(isNewerFollowingFeed('2026-09-28T09:00:00.000Z', '2026-09-28T09:05:00.000Z')).toBe(true);
+  });
+
+  it('is false for the same or an older build, or when either is unknown', () => {
+    expect(isNewerFollowingFeed('2026-09-28T09:05:00.000Z', '2026-09-28T09:05:00.000Z')).toBe(
+      false,
+    );
+    expect(isNewerFollowingFeed('2026-09-28T09:05:00.000Z', '2026-09-28T09:00:00.000Z')).toBe(
+      false,
+    );
+    expect(isNewerFollowingFeed(undefined, '2026-09-28T09:05:00.000Z')).toBe(false);
+    expect(isNewerFollowingFeed('2026-09-28T09:05:00.000Z', null)).toBe(false);
+  });
+});
+
+describe('following feed version exports', () => {
+  it('are reachable from the /query and /query/fetchers entry points', async () => {
+    const query = await import('../index.js');
+    const fetchers = await import('./index.js');
+    expect(typeof query.fetchFollowingFeedVersion).toBe('function');
+    expect(typeof query.isNewerFollowingFeed).toBe('function');
+    expect(typeof query.useFollowingFeedVersion).toBe('function');
+    expect(typeof fetchers.fetchFollowingFeedVersion).toBe('function');
   });
 });

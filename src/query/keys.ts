@@ -72,6 +72,8 @@ export const sifaQueryKeys = {
     followers: (handle: string) => ['sifa', 'follow', 'followers', handle] as const,
     followingOf: (handle: string) => ['sifa', 'follow', 'following-of', handle] as const,
     feed: (opts: Record<string, unknown>) => ['sifa', 'follow', 'feed', opts] as const,
+    feedVersion: (opts: Record<string, unknown>) =>
+      ['sifa', 'follow', 'feed-version', opts] as const,
     mutuals: (handle: string) => ['sifa', 'follow', 'mutuals', handle] as const,
     blueskySuggestions: () => ['sifa', 'follow', 'bluesky-suggestions'] as const,
   },

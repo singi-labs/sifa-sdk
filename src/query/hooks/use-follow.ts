@@ -16,6 +16,7 @@ import { useSifaConfig } from '../config.js';
 import {
   fetchFollowing,
   fetchFollowingFeed,
+  fetchFollowingFeedVersion,
   followUser,
   getFollowers,
   getFollowing,
@@ -195,9 +196,9 @@ export function useFollowingFeed(
   opts: FetchFollowingFeedOptions = {},
   options?: Omit<
     UseQueryOptions<
-      FollowingFeedResponse | null,
+      FollowingFeedResponse,
       Error,
-      FollowingFeedResponse | null,
+      FollowingFeedResponse,
       ReturnType<typeof sifaQueryKeys.follow.feed>
     >,
     'queryKey' | 'queryFn'
@@ -212,7 +213,42 @@ export function useFollowingFeed(
       includeBluesky: opts.includeBluesky,
       app: opts.app,
     }),
-    queryFn: () => fetchFollowingFeed(config, opts),
+    // A failed request is an error, not an empty feed: React Query retries it,
+    // and the client can tell "could not load" from "nothing yet".
+    queryFn: async () => {
+      const feed = await fetchFollowingFeed(config, opts);
+      if (!feed) throw new Error('Following feed unavailable');
+      return feed;
+    },
+    ...options,
+  });
+}
+
+/**
+ * When the cached following feed for the same query was built (ISO 8601, or
+ * null). Poll it while a `stale` feed is shown, e.g. with `refetchInterval`,
+ * and offer the newer feed once {@link isNewerFollowingFeed} is true.
+ */
+export function useFollowingFeedVersion(
+  opts: FetchFollowingFeedOptions = {},
+  options?: Omit<
+    UseQueryOptions<
+      string | null,
+      Error,
+      string | null,
+      ReturnType<typeof sifaQueryKeys.follow.feedVersion>
+    >,
+    'queryKey' | 'queryFn'
+  >,
+) {
+  const config = useSifaConfig();
+  return useQuery({
+    queryKey: sifaQueryKeys.follow.feedVersion({
+      limit: opts.limit,
+      includeBluesky: opts.includeBluesky,
+      app: opts.app,
+    }),
+    queryFn: async () => (await fetchFollowingFeedVersion(config, opts))?.builtAt ?? null,
     ...options,
   });
 }

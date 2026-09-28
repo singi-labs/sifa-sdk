@@ -183,7 +183,9 @@ export type FollowingFeedEmptyReason =
   | 'no_recent_records'
   | 'all_hidden'
   | 'nothing_renderable'
-  | 'hydration_failed';
+  | 'hydration_failed'
+  /** The feed is still being built. Nothing is wrong: ask again shortly. */
+  | 'building';
 
 /** Options for {@link fetchFollowingFeed}. */
 export interface FetchFollowingFeedOptions extends ApiFetchOptions {
@@ -214,6 +216,32 @@ export interface FollowingFeedResponse extends ActivityFeedResponse {
   apps?: FollowingFeedApp[];
   /** Set only when `items` is empty. */
   reason?: FollowingFeedEmptyReason;
+  /** When this feed was built (ISO 8601). Absent on a `building` answer. */
+  builtAt?: string;
+  /**
+   * True when this is an older build, served while a newer one is built in
+   * the background. Poll {@link fetchFollowingFeedVersion} to learn when the
+   * newer one is ready.
+   */
+  stale?: boolean;
+}
+
+/** Query string and auth headers shared by the feed and its version check. */
+async function followingFeedRequest(config: SifaApiConfig, opts: FetchFollowingFeedOptions) {
+  const params = new URLSearchParams();
+  if (opts.limit) params.set('limit', String(opts.limit));
+  // A selected tab decides Bluesky on its own, so the flag is not also sent.
+  if (opts.app) params.set('app', opts.app);
+  else if (opts.includeBluesky) params.set('includeBluesky', 'true');
+  const qs = params.toString();
+
+  const headers: Record<string, string> = { ...(opts.headers ?? {}) };
+  if (opts.cookieHeader) headers.cookie = opts.cookieHeader;
+  if (config.getAuthToken) {
+    const token = await config.getAuthToken(FOLLOWING_FEED_LXM);
+    if (token) headers.Authorization = `Bearer ${token}`;
+  }
+  return { query: qs ? `?${qs}` : '', headers };
 }
 
 /**
@@ -231,27 +259,52 @@ export async function fetchFollowingFeed(
   config: SifaApiConfig,
   opts: FetchFollowingFeedOptions = {},
 ): Promise<FollowingFeedResponse | null> {
-  const params = new URLSearchParams();
-  if (opts.limit) params.set('limit', String(opts.limit));
-  // A selected tab decides Bluesky on its own, so the flag is not also sent.
-  if (opts.app) params.set('app', opts.app);
-  else if (opts.includeBluesky) params.set('includeBluesky', 'true');
-  const qs = params.toString();
-
-  const headers: Record<string, string> = { ...(opts.headers ?? {}) };
-  if (opts.cookieHeader) headers.cookie = opts.cookieHeader;
-  if (config.getAuthToken) {
-    const token = await config.getAuthToken(FOLLOWING_FEED_LXM);
-    if (token) headers.Authorization = `Bearer ${token}`;
-  }
-
+  const { query, headers } = await followingFeedRequest(config, opts);
   try {
-    return await apiFetch<FollowingFeedResponse>(
-      config,
-      `/api/following/feed${qs ? `?${qs}` : ''}`,
-      { credentials: 'include', cache: 'no-store', ...opts, headers },
-    );
+    return await apiFetch<FollowingFeedResponse>(config, `/api/following/feed${query}`, {
+      credentials: 'include',
+      cache: 'no-store',
+      ...opts,
+      headers,
+    });
   } catch {
     return null;
   }
+}
+
+/** When the cached following feed for a query was built. */
+export interface FollowingFeedVersion {
+  /** ISO 8601, or null when nothing is cached for this query. */
+  builtAt: string | null;
+}
+
+/**
+ * When the cached following feed for the same query was built. Cheap: it never
+ * builds a feed. A client showing a `stale` feed polls this and offers the
+ * newer one once {@link isNewerFollowingFeed} says so. Returns `null` on error.
+ */
+export async function fetchFollowingFeedVersion(
+  config: SifaApiConfig,
+  opts: FetchFollowingFeedOptions = {},
+): Promise<FollowingFeedVersion | null> {
+  const { query, headers } = await followingFeedRequest(config, opts);
+  try {
+    return await apiFetch<FollowingFeedVersion>(config, `/api/following/feed/version${query}`, {
+      credentials: 'include',
+      cache: 'no-store',
+      ...opts,
+      headers,
+    });
+  } catch {
+    return null;
+  }
+}
+
+/** True when `latestBuiltAt` is a newer build than the one shown (`shownBuiltAt`). */
+export function isNewerFollowingFeed(
+  shownBuiltAt: string | null | undefined,
+  latestBuiltAt: string | null | undefined,
+): boolean {
+  if (!shownBuiltAt || !latestBuiltAt) return false;
+  return Date.parse(latestBuiltAt) > Date.parse(shownBuiltAt);
 }

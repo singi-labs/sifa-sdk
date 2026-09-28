@@ -7,7 +7,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type SifaApiConfig } from '../client.js';
 import { SifaProvider } from '../config.js';
 import { sifaQueryKeys } from '../keys.js';
-import { useFollow, useFollowers, useFollowingFeed, useUnfollow } from './use-follow.js';
+import {
+  useFollow,
+  useFollowers,
+  useFollowingFeed,
+  useFollowingFeedVersion,
+  useUnfollow,
+} from './use-follow.js';
 
 function makeWrapper(fetchImpl: typeof fetch) {
   const queryClient = new QueryClient({
@@ -125,5 +131,34 @@ describe('useFollowingFeed', () => {
     });
     expect(result.current.data?.items).toEqual([]);
     expect(result.current.data?.hasMore).toBe(false);
+  });
+
+  // A failed request used to come back as `data: null` with isSuccess, so a
+  // client showed "no activity" for an outage and React Query never retried.
+  it('reports a failed request as an error, not as an empty feed', async () => {
+    const fetchImpl = jsonFetch({ error: 'down' }, 503);
+    const { Wrapper } = makeWrapper(fetchImpl);
+
+    const { result } = renderHook(() => useFollowingFeed(), { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+    expect(result.current.data).toBeUndefined();
+  });
+});
+
+describe('useFollowingFeedVersion', () => {
+  it('reads when the cached feed was built', async () => {
+    const fetchImpl = jsonFetch({ builtAt: '2026-09-28T09:05:00.000Z' });
+    const { Wrapper } = makeWrapper(fetchImpl);
+
+    const { result } = renderHook(() => useFollowingFeedVersion({ limit: 20 }), {
+      wrapper: Wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toBe('2026-09-28T09:05:00.000Z');
+    });
   });
 });
