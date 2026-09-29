@@ -1,0 +1,111 @@
+name: rpg.actor catalog drift
+# src/rpg/catalog.ts (RPG_ITEMS) copies ids, titles, kinds, categories and
+# image CIDs from rpg.actor's item cores for the sifa.id provider. This job
+# compares that copy with what rpg.actor serves at /api/creator/items and
+# fails if an enabled item is gone or a compared field changed.
+#
+# Needs the RPG_ACTOR_API_KEY repository secret. Weekly is enough: rpg.actor
+# items change rarely, and a transient API error just fails one run.
+#
+# Not a required check. Like term-mappings-drift.yml, a failing scheduled run
+# opens a deduped issue (auto-closed on recovery), so a red run is not silent.
+on:
+  schedule:
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+
+      # Same pnpm install as ci.yml, pinned to the packageManager version.
+      - name: Install pnpm
+        run: npm install -g --ignore-scripts pnpm@10.30.1
+
+      # The script reads the catalog from the built SDK (dist/rpg).
+      - name: Install
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check for drift
+        env:
+          RPG_ACTOR_API_KEY: ${{ secrets.RPG_ACTOR_API_KEY }}
+        run: node scripts/check-rpg-catalog.mjs
+
+      - name: Open or update drift issue
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const label = 'ci:rpg-catalog-drift';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            try {
+              await github.rest.issues.getLabel({ ...context.repo, name: label });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  ...context.repo, name: label, color: 'b60205',
+                  description: 'RPG_ITEMS has drifted from rpg.actor',
+                });
+              } else { throw e; }
+            }
+            const existing = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: label,
+            });
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: existing.data[0].number,
+                body: `Still failing as of \`${context.sha.slice(0, 7)}\` — ${runUrl}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                ...context.repo,
+                title: 'rpg.actor item catalog check is failing',
+                labels: [label],
+                body: [
+                  'The weekly check of `src/rpg/catalog.ts` against rpg.actor failed.',
+                  'Either an item changed on rpg.actor, or the API call itself failed',
+                  '(see the run summary for which).',
+                  '',
+                  `- Run: ${runUrl}`,
+                  `- Commit: \`${context.sha.slice(0, 7)}\``,
+                  '',
+                  'This issue auto-closes when the check next passes on `main`.',
+                ].join('\n'),
+              });
+            }
+
+      - name: Close drift issue on recovery
+        if: success() && github.ref == 'refs/heads/main'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const label = 'ci:rpg-catalog-drift';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const open = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: label,
+            });
+            for (const issue of open.data) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: issue.number,
+                body: `Back in sync — closing. ${runUrl}`,
+              });
+              await github.rest.issues.update({
+                ...context.repo, issue_number: issue.number,
+                state: 'closed', state_reason: 'completed',
+              });
+            }
