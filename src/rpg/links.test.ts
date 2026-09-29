@@ -6,6 +6,10 @@ describe('rpg.actor links', () => {
   it('builds the give record key from item id and recipient DID', () => {
     expect(rpgGiveRkey('sifa_power_suit', 'did:plc:abc')).toBe('sifa-sifa_power_suit-did:plc:abc');
   });
+  it('only uses characters allowed in an AT Protocol record key', () => {
+    const rkey = rpgGiveRkey('sifa_dev_hoodie', 'did:web:example.com');
+    expect(rkey).toMatch(/^[A-Za-z0-9._:~-]{1,512}$/);
+  });
   it('links to the character page by handle, stripping a leading @', () => {
     expect(rpgActorCharacterUrl('@gui.do')).toBe('https://rpg.actor/gui.do');
   });
