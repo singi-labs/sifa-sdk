@@ -27,8 +27,8 @@ export interface RpgActorCatalog {
 }
 
 /**
- * Fields that must match. `description` is left out on purpose: ours differs
- * from rpg.actor's for `sifa_suit`.
+ * Fields that must match. `description` is left out on purpose: it is flavor
+ * text that may be reworded on either side without affecting gifts.
  */
 const COMPARED_FIELDS = ['title', 'kind', 'category', 'assetCid', 'iconCid'] as const;
 

@@ -14,8 +14,16 @@ describe('RPG_ITEMS', () => {
   it('doctoral cap is enabled (structured EQF level shipped in #594)', () => {
     expect(RPG_ITEMS.find((i) => i.id === 'doctoral_cap')?.enabled).toBe(true);
   });
+  it('sifa suit is held back for the confirmed tier; the briefcase covers a job', () => {
+    expect(RPG_ITEMS.find((i) => i.id === 'sifa_suit')?.enabled).toBe(false);
+    const briefcase = RPG_ITEMS.find((i) => i.id === 'leather_briefcase');
+    expect(briefcase?.enabled).toBe(true);
+    expect(briefcase?.assetCid).toBe('bafkreibjtgvetkpzwkliq4o4qnf7atbui6nxgyas3fyk6sjgd5zrl52swa');
+    expect(briefcase?.iconCid).toBe('bafkreifmyglopjtbkiuocmcjcbjhtr34vjumkzbnspbnlsezbdphbkfvu4');
+  });
   it('uses the rpg.actor item ids exactly', () => {
     expect(RPG_ITEMS.map((i) => i.id)).toEqual([
+      'leather_briefcase',
       'sifa_suit',
       'speaker_mic',
       'strapped_books',

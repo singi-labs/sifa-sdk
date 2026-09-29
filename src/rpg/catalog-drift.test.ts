@@ -37,17 +37,17 @@ describe('compareRpgCatalog', () => {
   it('fails on a changed CID, title, kind or category', () => {
     const remote = RPG_ITEMS.map(toRemote);
     remote[0] = { ...remote[0]!, assetCid: 'bafkreiother', title: 'Renamed' };
-    remote[1] = { ...remote[1]!, kind: 'layer', category: 'tops', iconCid: 'bafkreiicon' };
+    remote[2] = { ...remote[2]!, kind: 'layer', category: 'tops', iconCid: 'bafkreiicon' };
     const result = compareRpgCatalog(RPG_ITEMS, catalog(remote));
     expect(result.ok).toBe(false);
     expect(result.mismatches.map((m) => `${m.item}.${m.field}`)).toEqual([
-      'sifa_suit.title',
-      'sifa_suit.assetCid',
+      'leather_briefcase.title',
+      'leather_briefcase.assetCid',
       'speaker_mic.kind',
       'speaker_mic.category',
       'speaker_mic.iconCid',
     ]);
-    expect(result.mismatches[0]).toMatchObject({ ours: 'Sifa Suit', theirs: 'Renamed' });
+    expect(result.mismatches[0]).toMatchObject({ ours: 'Leather Briefcase', theirs: 'Renamed' });
   });
 
   it('fails when rpg.actor no longer lists an enabled item', () => {
@@ -92,7 +92,7 @@ describe('renderRpgCatalogDriftMarkdown', () => {
     const md = renderRpgCatalogDriftMarkdown(
       compareRpgCatalog(RPG_ITEMS, catalog([...remote, { ...remote[1]!, item: 'new_thing' }])),
     );
-    expect(md).toContain('| sifa_suit | title | Sifa Suit | Renamed |');
+    expect(md).toContain('| leather_briefcase | title | Leather Briefcase | Renamed |');
     expect(md).toContain('`new_thing`');
   });
 

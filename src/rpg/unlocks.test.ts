@@ -11,9 +11,13 @@ const none: RpgUnlockSignals = {
 };
 
 describe('evaluateRpgUnlocks', () => {
-  it('unlocks the Sifa Suit when the user has a position', () => {
+  it('unlocks the Leather Briefcase when the user has a position', () => {
     const r = evaluateRpgUnlocks({ ...none, collections: ['id.sifa.profile.position'] });
-    expect(r.find((x) => x.item.id === 'sifa_suit')?.earned).toBe(true);
+    expect(r.find((x) => x.item.id === 'leather_briefcase')?.earned).toBe(true);
+  });
+  it('never returns the held-back Sifa Suit, even with a position', () => {
+    const r = evaluateRpgUnlocks({ ...none, collections: ['id.sifa.profile.position'] });
+    expect(r.some((x) => x.item.id === 'sifa_suit')).toBe(false);
   });
   it('Dev Hoodie unlocks via GitHub OR Tangled', () => {
     const gh = evaluateRpgUnlocks({ ...none, externalPlatforms: ['github'] });
