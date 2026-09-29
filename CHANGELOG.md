@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.62
+
+### Patch Changes
+
+- 8310452: rpg: add `rpgGiveRkey`, `rpgActorCharacterUrl`, `rpgActorWearUrl` and `RPG_ACTOR_URL` for deep links into rpg.actor.
+
 ## 0.19.61
 
 ### Patch Changes
