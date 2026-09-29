@@ -7,7 +7,8 @@
 // asset or renames an item, our copy goes stale silently and gifts point at
 // the wrong thing. This fails loudly instead.
 //
-// Descriptions are NOT compared: ours intentionally differs for sifa_suit.
+// Descriptions and context are NOT compared: they are flavor text that may be
+// reworded on either side without affecting gifts.
 // Items rpg.actor lists that we do not have are reported as a notice only.
 //
 // Reads the built SDK (dist/rpg), so run `pnpm build` first. The comparison
