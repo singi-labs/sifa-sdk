@@ -26,10 +26,10 @@ export interface PendingEndorsement {
    */
   uri: string;
   /**
-   * CID of the endorsement record, when the AppView has it. Often absent:
-   * an endorsement written by another AT Protocol app can be indexed without
-   * its CID ever reaching us. Pass it through to confirm when present; the
-   * AppView resolves it from the endorser's PDS when it is not.
+   * CID of the endorsement record. The AppView fills it from the endorser's
+   * PDS when it indexed the endorsement without one, so a native client can
+   * confirm straight to its own PDS. Still absent when that PDS could not be
+   * read in time; the web confirm endpoint resolves it then.
    */
   cid?: string;
   /** Absent when this endorsement proposes a skill the subject does not have. */
