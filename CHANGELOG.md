@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.65
+
+### Patch Changes
+
+- 8202366: Document that `PendingEndorsement.cid` is now filled by the AppView for endorsements indexed without one, and is only absent when the endorser's PDS could not be read in time.
+
 ## 0.19.64
 
 ### Patch Changes
