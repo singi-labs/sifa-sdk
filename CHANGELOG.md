@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.64
+
+### Patch Changes
+
+- f78ba0d: rpg: Leather Briefcase is the item for listing a job; the Sifa Suit is held back for a later confirmed tier.
+
 ## 0.19.63
 
 ### Patch Changes
