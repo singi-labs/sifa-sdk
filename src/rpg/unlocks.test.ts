@@ -11,28 +11,26 @@ const none: RpgUnlockSignals = {
 };
 
 describe('evaluateRpgUnlocks', () => {
-  it('unlocks Power Suit when the user has a position', () => {
+  it('unlocks the Sifa Suit when the user has a position', () => {
     const r = evaluateRpgUnlocks({ ...none, collections: ['id.sifa.profile.position'] });
-    expect(r.find((x) => x.item.id === 'sifa_power_suit')?.earned).toBe(true);
+    expect(r.find((x) => x.item.id === 'sifa_suit')?.earned).toBe(true);
   });
   it('Dev Hoodie unlocks via GitHub OR Tangled', () => {
     const gh = evaluateRpgUnlocks({ ...none, externalPlatforms: ['github'] });
     const tg = evaluateRpgUnlocks({ ...none, activeAppIds: ['tangled'] });
-    expect(gh.find((x) => x.item.id === 'sifa_dev_hoodie')?.earned).toBe(true);
-    expect(tg.find((x) => x.item.id === 'sifa_dev_hoodie')?.earned).toBe(true);
+    expect(gh.find((x) => x.item.id === 'dev_hoodie')?.earned).toBe(true);
+    expect(tg.find((x) => x.item.id === 'dev_hoodie')?.earned).toBe(true);
   });
   it('unlocks the Doctoral Cap for a doctorate', () => {
     const r = evaluateRpgUnlocks({ ...none, hasDoctorate: true });
-    expect(r.find((x) => x.item.id === 'sifa_doctoral_cap')?.earned).toBe(true);
+    expect(r.find((x) => x.item.id === 'doctoral_cap')?.earned).toBe(true);
   });
   it('never returns disabled items', () => {
-    const cap = RPG_ITEMS.find((i) => i.id === 'sifa_doctoral_cap');
+    const cap = RPG_ITEMS.find((i) => i.id === 'doctoral_cap');
     expect(cap).toBeDefined();
-    const items = RPG_ITEMS.map((i) =>
-      i.id === 'sifa_doctoral_cap' ? { ...i, enabled: false } : i,
-    );
+    const items = RPG_ITEMS.map((i) => (i.id === 'doctoral_cap' ? { ...i, enabled: false } : i));
     const r = evaluateRpgUnlocks({ ...none, hasDoctorate: true }, items);
-    expect(r.some((x) => x.item.id === 'sifa_doctoral_cap')).toBe(false);
+    expect(r.some((x) => x.item.id === 'doctoral_cap')).toBe(false);
   });
   it('nothing is earned for an empty profile', () => {
     expect(evaluateRpgUnlocks(none).every((x) => !x.earned)).toBe(true);
@@ -45,6 +43,8 @@ describe('evaluateRpgUnlocks', () => {
         description: '',
         kind: 'held',
         category: 'righthand',
+        assetCid: 'bafkreibr4kgeijc5naecf7l4awfv3omph4ngjmjb36qkfnk2sdo6l45ck4',
+        iconCid: 'bafkreidnkirbw4nwiro3ocrn5nk66uxf3dhcoy5pojunisvs7so55u3j3q',
         enabled: true,
         unlock: [{ kind: 'usesApp', appId: 'smokesignal' }],
       },

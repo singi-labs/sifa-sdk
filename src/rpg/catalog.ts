@@ -15,6 +15,9 @@ export const RpgUnlockSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('hasDoctorate') }),
 ]);
 
+/** CIDv1 (raw codec, sha2-256, base32) as used for rpg.actor image blobs. */
+export const RPG_CID_REGEX = /^bafkrei[a-z2-7]{52}$/;
+
 export const RpgItemSchema = z.object({
   /** Lowercase `[a-z0-9_]` only: the id is embedded in an AT Protocol record key. */
   id: z
@@ -24,8 +27,14 @@ export const RpgItemSchema = z.object({
     .regex(/^[a-z0-9_]+$/),
   title: z.string().max(100),
   description: z.string().max(500),
-  kind: z.enum(['layer', 'held']),
+  kind: z.enum(['layer', 'held', 'overlay']),
   category: z.string().max(30),
+  /** rpg.actor channels the item is offered in (optional). */
+  channels: z.array(z.string().min(1)).optional(),
+  /** Full-size sprite asset (CIDv1, raw codec, base32). */
+  assetCid: z.string().regex(RPG_CID_REGEX),
+  /** Inventory icon (CIDv1, raw codec, base32). */
+  iconCid: z.string().regex(RPG_CID_REGEX),
   unlock: z.array(RpgUnlockSchema).min(1), // ANY of these unlocks the item
   enabled: z.boolean(),
 });
@@ -33,74 +42,95 @@ export type RpgItem = z.infer<typeof RpgItemSchema>;
 export type RpgUnlock = z.infer<typeof RpgUnlockSchema>;
 
 /**
- * The Sifa item catalog for rpg.actor. PLACEHOLDER titles/categories until
- * rpg.actor transfers the real item cores.
+ * The Sifa item catalog for rpg.actor. Ids, titles, descriptions, kinds,
+ * categories, channels and image CIDs come from rpg.actor's item cores.
  */
 export const RPG_ITEMS: readonly RpgItem[] = [
   {
-    id: 'sifa_power_suit',
-    title: 'Power Suit',
-    description: '',
-    kind: 'layer',
-    category: 'tops',
+    id: 'sifa_suit',
+    title: 'Sifa Suit',
+    description: 'Sharp power suit for anyone with a job on their profile',
+    kind: 'overlay',
+    category: 'costume',
+    channels: ['main'],
+    assetCid: 'bafkreibortlffvfzkdcuqdpoubczuno7ohnvfwqhefe4h4s36eooe4njgu',
+    iconCid: 'bafkreifo7vojbr4i6uvsthj2hbczoqwmrn3ovysrskvxlxw6fvkbswm2ae',
     enabled: true,
     unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.position' }],
   },
   {
-    id: 'sifa_weekend_shirt',
-    title: 'Weekend Shirt',
-    description: '',
-    kind: 'layer',
-    category: 'tops',
-    enabled: true,
-    unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.volunteering' }],
-  },
-  {
-    id: 'sifa_speaker_mic',
+    id: 'speaker_mic',
     title: 'Speaker Mic',
-    description: '',
+    description: "A presentation mic, so you can drop it on 'em",
     kind: 'held',
     category: 'righthand',
+    channels: ['main'],
+    assetCid: 'bafkreibr4kgeijc5naecf7l4awfv3omph4ngjmjb36qkfnk2sdo6l45ck4',
+    iconCid: 'bafkreidnkirbw4nwiro3ocrn5nk66uxf3dhcoy5pojunisvs7so55u3j3q',
     enabled: true,
     unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.presentation' }],
   },
   {
-    id: 'sifa_school_books',
-    title: 'School Books',
-    description: '',
+    id: 'strapped_books',
+    title: 'Strapped Books',
+    description: 'Knowledge is power, better come strapped',
     kind: 'held',
-    category: 'lefthand',
+    category: 'righthand',
+    channels: ['main'],
+    assetCid: 'bafkreieofltl6427jy3n6dfv63phublalv6nq2hcs36qnyxz33ta6u6yqi',
+    iconCid: 'bafkreiavywpv4sgw7gnkzq5gw3nq6yihaucdexpsvgko26q6jq6u6grjpi',
     enabled: true,
     unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.education' }],
   },
   {
-    id: 'sifa_doctoral_cap',
-    title: 'Doctoral Cap',
-    description: '',
-    kind: 'layer',
-    category: 'headwear',
-    enabled: true,
-    unlock: [{ kind: 'hasDoctorate' }],
-  },
-  {
-    id: 'sifa_lab_coat',
-    title: 'Lab Coat',
-    description: '',
-    kind: 'layer',
-    category: 'tops',
-    enabled: true,
-    unlock: [{ kind: 'hasExternalAccount', platforms: ['orcid'] }],
-  },
-  {
-    id: 'sifa_dev_hoodie',
+    id: 'dev_hoodie',
     title: 'Dev Hoodie',
-    description: '',
+    description: 'Snug hoodie for when you enter total code mode',
     kind: 'layer',
     category: 'tops',
+    channels: ['main', 'sub1'],
+    assetCid: 'bafkreigmrqp5kd6lytqcen2mypuv6dqonrdfbi2ngxhq3uqozk63yi7hoy',
+    iconCid: 'bafkreigjwti3w43ta6gy2c75qtdnuvovfohjtv2febbd6hdhpri4tupbem',
     enabled: true,
     unlock: [
       { kind: 'hasExternalAccount', platforms: ['github'] },
       { kind: 'usesApp', appId: 'tangled' },
     ],
+  },
+  {
+    id: 'doctoral_cap',
+    title: 'Doctoral Cap',
+    description: 'Took so many long years to earn this hat',
+    kind: 'layer',
+    category: 'headwear',
+    channels: ['main'],
+    assetCid: 'bafkreic7pvfpb7fjgooiaianrc27mh7fwj5vkicre63l6x5hrzb4w36tcq',
+    iconCid: 'bafkreigqt6lmx5crj3w7vc3bvuewarzdreg2doxyeerbxmhljhpeshjewm',
+    enabled: true,
+    unlock: [{ kind: 'hasDoctorate' }],
+  },
+  {
+    id: 'weekend_shirt',
+    title: 'Weekend Shirt',
+    description: 'Fun shirt to wear when work is all finished',
+    kind: 'layer',
+    category: 'tops',
+    channels: ['main', 'sub1', 'sub2'],
+    assetCid: 'bafkreigifgpwkxvftiuzbjc6c2xz4xf2iv4bznbhu364e7rhvfmhosbak4',
+    iconCid: 'bafkreieguco74wkabuyhs4sz6ec35nyywr7ikaw6et4coeezphnsnqqjui',
+    enabled: true,
+    unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.volunteering' }],
+  },
+  {
+    id: 'lab_coat',
+    title: 'Lab Coat',
+    description: 'Scientifically proven attire',
+    kind: 'layer',
+    category: 'tops',
+    channels: ['main'],
+    assetCid: 'bafkreiby4g6fgkmi65myv7tdblgb4jvqa3kgnrxvtkxlrtme55unuie4he',
+    iconCid: 'bafkreifoddxk5tobgwadib5rxwjn67iind6me3swpvw4t5rbcauc5r4syy',
+    enabled: true,
+    unlock: [{ kind: 'hasExternalAccount', platforms: ['orcid'] }],
   },
 ];
