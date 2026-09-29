@@ -47,15 +47,30 @@ export type RpgUnlock = z.infer<typeof RpgUnlockSchema>;
  */
 export const RPG_ITEMS: readonly RpgItem[] = [
   {
+    id: 'leather_briefcase',
+    title: 'Leather Briefcase',
+    description: 'A trusty briefcase, for your daily commute',
+    kind: 'held',
+    category: 'righthand',
+    channels: ['main'],
+    assetCid: 'bafkreibjtgvetkpzwkliq4o4qnf7atbui6nxgyas3fyk6sjgd5zrl52swa',
+    iconCid: 'bafkreifmyglopjtbkiuocmcjcbjhtr34vjumkzbnspbnlsezbdphbkfvu4',
+    enabled: true,
+    unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.position' }],
+  },
+  {
     id: 'sifa_suit',
     title: 'Sifa Suit',
-    description: 'Sharp power suit for anyone with a job on their profile',
+    description: 'Sharp power suit for confirmed professionals',
     kind: 'overlay',
     category: 'costume',
     channels: ['main'],
     assetCid: 'bafkreibortlffvfzkdcuqdpoubczuno7ohnvfwqhefe4h4s36eooe4njgu',
     iconCid: 'bafkreifo7vojbr4i6uvsthj2hbczoqwmrn3ovysrskvxlxw6fvkbswm2ae',
-    enabled: true,
+    enabled: false,
+    // Reserved for the confirmed tier (a colleague confirms the job and both
+    // have a confirmed work email). The unlock kind for that is added once work
+    // email confirmation exists; until then the item stays disabled.
     unlock: [{ kind: 'hasRecord', collection: 'id.sifa.profile.position' }],
   },
   {
