@@ -19,8 +19,8 @@ const sample = {
   canWriteItems: false,
   items: [
     {
-      id: 'sifa_power_suit',
-      title: 'Power Suit',
+      id: 'sifa_suit',
+      title: 'Sifa Suit',
       description: '',
       category: 'tops',
       earned: true,

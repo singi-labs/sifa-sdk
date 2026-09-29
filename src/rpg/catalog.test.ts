@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { RPG_ITEMS, RpgItemSchema } from './catalog.js';
+import { RPG_CID_REGEX, RPG_ITEMS, RpgItemSchema } from './catalog.js';
 
 describe('RPG_ITEMS', () => {
   it('every entry matches the schema', () => {
@@ -12,7 +12,30 @@ describe('RPG_ITEMS', () => {
     for (const id of ids) expect(id.length).toBeLessThanOrEqual(50);
   });
   it('doctoral cap is enabled (structured EQF level shipped in #594)', () => {
-    expect(RPG_ITEMS.find((i) => i.id === 'sifa_doctoral_cap')?.enabled).toBe(true);
+    expect(RPG_ITEMS.find((i) => i.id === 'doctoral_cap')?.enabled).toBe(true);
+  });
+  it('uses the rpg.actor item ids exactly', () => {
+    expect(RPG_ITEMS.map((i) => i.id)).toEqual([
+      'sifa_suit',
+      'speaker_mic',
+      'strapped_books',
+      'dev_hoodie',
+      'doctoral_cap',
+      'weekend_shirt',
+      'lab_coat',
+    ]);
+  });
+  it('every item carries CIDv1 base32 asset and icon CIDs', () => {
+    for (const item of RPG_ITEMS) {
+      expect(item.assetCid).toMatch(RPG_CID_REGEX);
+      expect(item.iconCid).toMatch(RPG_CID_REGEX);
+    }
+  });
+  it('accepts the overlay kind and rejects an invalid CID', () => {
+    const base = RPG_ITEMS[0]!;
+    expect(RpgItemSchema.safeParse({ ...base, kind: 'overlay' }).success).toBe(true);
+    expect(RpgItemSchema.safeParse({ ...base, assetCid: 'QmNotACidV1' }).success).toBe(false);
+    expect(RpgItemSchema.safeParse({ ...base, iconCid: undefined }).success).toBe(false);
   });
   it('rejects ids that are not lowercase alphanumeric/underscore (used in a record key)', () => {
     const base = RPG_ITEMS[0]!;
