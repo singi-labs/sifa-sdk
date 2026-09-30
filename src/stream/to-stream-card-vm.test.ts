@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { ActivityItem } from './activity-item.js';
+import { streamCardContent } from './stream-card-content.js';
 import { streamCardVMSchema } from './stream-card-vm-schema.js';
 import { toStreamCardVM, toStreamCardVMs } from './to-stream-card-vm.js';
 import { isVisibleActivityItem } from '../cards/visibility.js';
@@ -703,5 +704,31 @@ describe('certified badge response visibility', () => {
       false,
     );
     expect(isVisibleActivityItem('app.certified.badge.response', {})).toBe(false);
+  });
+});
+
+describe('at.marque.domain — the registered domain is the link', () => {
+  const marque = (domain: unknown): ActivityItem => ({
+    uri: `at://${DID}/at.marque.domain/3kdom`,
+    cid: 'bafyreidom',
+    collection: 'at.marque.domain',
+    rkey: '3kdom',
+    appId: 'marque',
+    appName: 'Marque',
+    category: 'Domains',
+    indexedAt: '2026-07-17T12:00:00.000Z',
+    record: { $type: 'at.marque.domain', domain, createdAt: '2026-07-17T11:00:00.000Z' },
+  });
+
+  it('links to https://<domain> and shows the domain as content', () => {
+    const vm = toStreamCardVM(marque('atmoco.at'));
+    expect(vm.title).toBe('Registered');
+    expect(vm.sourceUrl).toBe('https://atmoco.at');
+    expect(streamCardContent(vm)).toEqual({ text: 'atmoco.at', url: 'https://atmoco.at' });
+  });
+
+  it('does not fabricate a link from a non-domain value', () => {
+    expect(toStreamCardVM(marque('not a domain')).sourceUrl).toBeUndefined();
+    expect(toStreamCardVM(marque(undefined)).sourceUrl).toBeUndefined();
   });
 });
