@@ -37,7 +37,10 @@ export const OrgEmploymentAttestationRecordSchema = z.object({
   title: z.string().min(1).refine(maxGraphemes(256)).max(2560).optional(),
   startedAt: partialDateSchema.optional(),
   entityRef: uriSchema.optional(),
-  /** @deprecated The author DID is the organization; readers ignore this. */
+  /**
+   * @deprecated The author DID is the organization. Still parsed so a record
+   * that carries it validates; readers must not use it for anything.
+   */
   companyDid: didSchema.optional(),
   endedAt: partialDateSchema.optional(),
   comment: z.string().refine(maxGraphemes(300)).max(3000).optional(),

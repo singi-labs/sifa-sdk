@@ -34,6 +34,9 @@ export const EmploymentVerificationRecordSchema = z
     subject: didSchema,
     position: externalRecordRefSchema,
     status: z.enum(EMPLOYMENT_STATUS_TOKENS),
+    // Open on purpose, like the lexicon's knownValues: a method Sifa adds
+    // later must not make an older client reject the whole record. Compare
+    // against VERIFICATION_METHOD_TOKENS when you need a specific one.
     methods: z.array(z.string().min(1)).min(1).max(4),
     title: z.string().min(1).refine(maxGraphemes(256)).max(2560),
     startedAt: partialDateSchema,
@@ -73,6 +76,9 @@ export function resolveEmploymentVerification(
   if (options.repoDid !== options.issuerDid) return { ok: false, reason: 'not-issuer' };
   const parsed = EmploymentVerificationRecordSchema.safeParse(value);
   if (!parsed.success) return { ok: false, reason: 'malformed' };
+  // `expiresAt` is the first instant the record no longer counts (inclusive):
+  // Sifa sets it to the last verification plus the grace window, so at that
+  // moment the grace has passed.
   const now = options.now ?? new Date();
   if (parsed.data.expiresAt && new Date(parsed.data.expiresAt).getTime() <= now.getTime()) {
     return { ok: false, reason: 'lapsed' };
