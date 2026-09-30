@@ -42,6 +42,7 @@ export type {
   ProfilePosition,
   PositionConfirmations,
   PositionViewerConfirmation,
+  PositionOrgVerification,
   ProfilePresentation,
   CoSpeaker,
   ActorCard,
