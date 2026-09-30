@@ -267,6 +267,12 @@ function recordHasSubjectRef(record: Record<string, unknown> | null | undefined)
  * URLs are returned.
  */
 function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): string | undefined {
+  // A marque domain registration ("Registered atmoco.at") has no app permalink;
+  // the registered domain itself is the natural link, so point at it directly.
+  if (item.collection === 'at.marque.domain') {
+    const domain = asNonEmptyString(record.domain);
+    if (domain && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(domain)) return `https://${domain}`;
+  }
   // A did-less uri does NOT mean no link: record-derived URLs (a Standard
   // site's siteUrl + path, an ad-hoc record.url) resolve without any author
   // identity. The following feed can key an item by handle, so bailing on a
