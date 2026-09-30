@@ -10,7 +10,12 @@ function jsonFetch(body: unknown, status = 200): typeof fetch {
 }
 
 function getCall(fetchImpl: typeof fetch, index = 0): [string, RequestInit] {
-  return (fetchImpl as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls[index]!;
+  // `jsonFetch` always builds a vi.fn, so the mock property exists; the cast
+  // only tells TypeScript about the recorded (url, init) tuple shape.
+  const calls = (fetchImpl as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls;
+  const call = calls[index];
+  if (!call) throw new Error(`fetch was not called ${index + 1} time(s)`);
+  return call;
 }
 
 describe('fetchVerificationLog', () => {

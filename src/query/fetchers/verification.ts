@@ -18,8 +18,13 @@ export type VerificationEventKind =
 /**
  * One entry of a position's verification log, newest first, as the AppView
  * returns it. `emailAddress` is present only when the signed-in viewer owns
- * the profile; everyone else gets the domain at most. This is an AppView READ
- * shape, not a PDS record: the log lives in Sifa's database.
+ * the profile; everyone else gets the domain at most.
+ *
+ * This is an AppView READ shape, not a PDS record, so it is a hand-written
+ * interface like the confirmation DTOs in `./confirmations.ts`: the Zod
+ * schemas in `../../schemas` validate lexicon record writes, not read DTOs.
+ * The AppView owns the shape (`services/verification-log.ts` in sifa-api);
+ * fields are additive and passed through verbatim.
  */
 export interface VerificationLogEntry {
   id: number;
