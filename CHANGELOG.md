@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.67
+
+### Patch Changes
+
+- 1c537ff: Give a marque domain registration ("Registered atmoco.at") a link: `toStreamCardVM` now sets `sourceUrl` to `https://<domain>` for `at.marque.domain`, so the card and its content resolve to the registered site instead of rendering unlinked. Non-domain values are left unlinked.
+
 ## 0.19.66
 
 ### Patch Changes
