@@ -142,6 +142,13 @@ export const sifaQueryKeys = {
     given: () => ['sifa', 'confirmation', 'given'] as const,
   },
 
+  verification: {
+    all: () => ['sifa', 'verification'] as const,
+    /** The append-only verification log of one position. */
+    log: (did: string, positionRkey: string) =>
+      ['sifa', 'verification', 'log', did, positionRkey] as const,
+  },
+
   stream: {
     all: () => ['sifa', 'stream'] as const,
     networkCount: (did: string) => ['sifa', 'stream', 'network-count', did] as const,

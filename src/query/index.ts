@@ -111,6 +111,13 @@ export {
   type FetchConfirmationsOptions,
 } from './fetchers/confirmations.js';
 export {
+  fetchVerificationLog,
+  type FetchVerificationLogOptions,
+  type VerificationEventKind,
+  type VerificationLog,
+  type VerificationLogEntry,
+} from './fetchers/verification.js';
+export {
   fetchInboxCounts,
   type InboxCounts,
   type FetchInboxCountsOptions,
@@ -431,6 +438,7 @@ export {
   useRevokeConfirmation,
 } from './hooks/use-confirmations.js';
 export { useInboxCounts } from './hooks/use-inbox.js';
+export { useVerificationLog } from './hooks/use-verification.js';
 export {
   useUnlinkedPositions,
   useDismissUnlinkedPosition,

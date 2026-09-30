@@ -82,6 +82,7 @@ export {
   useRevokeConfirmation,
 } from './use-confirmations.js';
 export { useInboxCounts } from './use-inbox.js';
+export { useVerificationLog } from './use-verification.js';
 export { useUnlinkedPositions, useDismissUnlinkedPosition } from './use-unlinked-positions.js';
 export { useProfileCompleteness } from './use-profile-completeness.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './use-keytrace-claims.js';
