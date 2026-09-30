@@ -11,25 +11,36 @@ import {
 } from './shared.js';
 
 /**
- * Zod schema for `id.sifa.org.employmentAttestation` records -- an
- * organization's attestation that a person is or was employed in a specific
- * position. Lives in the org's PDS (the org is implicit: whoever owns the repo).
+ * Zod schema for `id.sifa.org.employmentAttestation` records (lexicon 0.13):
+ * an organization's attestation that a person is or was employed at its
+ * entity. Lives in the org's PDS (the org is whoever owns the repo).
  *
- * The position identity is pinned via a snapshot triple (`title`, `startedAt`,
- * and the entity identifier `entityRef` | `companyDid`) so editing those pinned
- * fields on the referenced position record voids the attestation. The free-text
- * company name is never pinned (a rebrand must not invalidate the attestation).
- *
- * `startedAt` / `endedAt` mirror the position lexicon's freeform `YYYY-MM` /
- * `YYYY-MM-DD` date shape, not strict `datetime`.
+ * `position`, `title` and `startedAt` are optional. The org attests
+ * employment at the entity, not a job title; the snapshots let a consumer
+ * notice a later edit of the position, which makes the attestation stale,
+ * never void. `status` and `source` take the `id.sifa.defs` tokens; the bare
+ * words are still accepted for records written before the tokens existed.
+ * `companyDid` is deprecated (the author is the org) and ignored by readers.
  */
 export const OrgEmploymentAttestationRecordSchema = z.object({
   subject: didSchema,
-  position: strongRefSchema,
-  status: z.enum(['current', 'past']),
-  title: z.string().min(1).refine(maxGraphemes(256)).max(2560),
-  startedAt: partialDateSchema,
+  position: strongRefSchema.optional(),
+  status: z.enum([
+    'id.sifa.defs#employmentCurrent',
+    'id.sifa.defs#employmentPast',
+    'current',
+    'past',
+  ]),
+  source: z
+    .enum(['id.sifa.defs#attestationManual', 'id.sifa.defs#attestationDirectory'])
+    .optional(),
+  title: z.string().min(1).refine(maxGraphemes(256)).max(2560).optional(),
+  startedAt: partialDateSchema.optional(),
   entityRef: uriSchema.optional(),
+  /**
+   * @deprecated The author DID is the organization. Still parsed so a record
+   * that carries it validates; readers must not use it for anything.
+   */
   companyDid: didSchema.optional(),
   endedAt: partialDateSchema.optional(),
   comment: z.string().refine(maxGraphemes(300)).max(3000).optional(),

@@ -34,6 +34,15 @@ export {
   type OrgEmploymentAttestationRecord,
 } from './org-employment-attestation.js';
 export {
+  EmploymentVerificationRecordSchema,
+  EMPLOYMENT_STATUS_TOKENS,
+  VERIFICATION_METHOD_TOKENS,
+  resolveEmploymentVerification,
+  type EmploymentVerificationRecord,
+  type EmploymentVerificationResolution,
+  type ResolveEmploymentVerificationOptions,
+} from './employment-verification.js';
+export {
   GraphFollowRecordSchema,
   makeGraphFollowRecordSchema,
   type GraphFollowRecord,
