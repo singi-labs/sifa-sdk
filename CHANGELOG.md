@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.70
+
+### Patch Changes
+
+- ee42367: Add `PositionOrgVerification` and the optional `orgVerification` field on `ProfilePosition`, the organization attestation the AppView returns per position.
+
 ## 0.19.69
 
 ### Patch Changes
