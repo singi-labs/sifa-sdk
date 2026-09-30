@@ -88,6 +88,31 @@ export interface ProfilePosition {
    * Absent for anonymous viewers, the owner, and anyone without a reason to know.
    */
   viewerConfirmation?: PositionViewerConfirmation;
+  /**
+   * The organization's own attestation of this position (sifa-workspace#622),
+   * as indexed by the AppView. The strongest tier: only the org's account can
+   * produce it. Absent when no attestation covers the position; absence is
+   * not a negative signal.
+   */
+  orgVerification?: PositionOrgVerification;
+}
+
+/** An organization attestation covering one position, as returned by the AppView. */
+export interface PositionOrgVerification {
+  /** DID of the attesting organization's account. */
+  orgDid: string;
+  status: 'current' | 'past';
+  /** How the attestation was written: by hand or by directory sync. */
+  source: 'manual' | 'directory';
+  /** When the organization attested it (the record's createdAt, ISO). */
+  verifiedAt: string;
+  /** The attested period, when the record carries one (YYYY-MM or YYYY-MM-DD). */
+  startedAt: string | null;
+  endedAt: string | null;
+  /** The record's title or start-month snapshot no longer matches the live position. */
+  stale: boolean;
+  /** AT-URI of the attestation record in the organization's repository. */
+  attestationUri: string;
 }
 
 /** Confirmations of one position, as returned by the AppView. */
