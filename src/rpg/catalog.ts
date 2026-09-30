@@ -129,7 +129,8 @@ export const RPG_ITEMS: readonly RpgItem[] = [
   {
     id: 'weekend_shirt',
     title: 'Weekend Shirt',
-    description: 'Fun shirt to wear when work is all finished',
+    description:
+      'Fun shirt to wear when work is all finished.... but you still have a side-project...',
     kind: 'layer',
     category: 'tops',
     channels: ['main', 'sub1', 'sub2'],
