@@ -1,8 +1,10 @@
 name: rpg.actor catalog drift
-# src/rpg/catalog.ts (RPG_ITEMS) copies ids, titles, kinds, categories and
-# image CIDs from rpg.actor's item cores for the sifa.id provider. This job
-# compares that copy with what rpg.actor serves at /api/creator/items and
-# fails if an enabled item is gone or a compared field changed.
+# src/rpg/catalog.ts (RPG_ITEMS) copies item data (title, description, kind,
+# category, channels, image CIDs) from rpg.actor's item cores for the sifa.id
+# provider. This job compares that copy with what rpg.actor serves at
+# /api/creator/items and fails if an enabled item is gone or any data field of
+# a listed item (disabled ones included) changed. The issue it opens carries a
+# before/after table; `pnpm rpg:sync-catalog` adopts the changes locally.
 #
 # Needs the RPG_ACTOR_API_KEY repository secret. Weekly is enough: rpg.actor
 # items change rarely, and a transient API error just fails one run.
@@ -44,15 +46,21 @@ jobs:
       - name: Check for drift
         env:
           RPG_ACTOR_API_KEY: ${{ secrets.RPG_ACTOR_API_KEY }}
+          RPG_DRIFT_REPORT: ${{ runner.temp }}/rpg-catalog-drift.md
         run: node scripts/check-rpg-catalog.mjs
 
       - name: Open or update drift issue
         if: failure() && github.event_name == 'schedule'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RPG_DRIFT_REPORT: ${{ runner.temp }}/rpg-catalog-drift.md
         with:
           script: |
+            const fs = require('node:fs');
             const label = 'ci:rpg-catalog-drift';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const reportPath = process.env.RPG_DRIFT_REPORT;
+            const report = fs.existsSync(reportPath) ? fs.readFileSync(reportPath, 'utf8') : '';
             try {
               await github.rest.issues.getLabel({ ...context.repo, name: label });
             } catch (e) {
@@ -69,7 +77,7 @@ jobs:
             if (existing.data.length > 0) {
               await github.rest.issues.createComment({
                 ...context.repo, issue_number: existing.data[0].number,
-                body: `Still failing as of \`${context.sha.slice(0, 7)}\` — ${runUrl}`,
+                body: [`Still failing as of \`${context.sha.slice(0, 7)}\` — ${runUrl}`, '', report].join('\n'),
               });
             } else {
               await github.rest.issues.create({
@@ -85,6 +93,8 @@ jobs:
                   `- Commit: \`${context.sha.slice(0, 7)}\``,
                   '',
                   'This issue auto-closes when the check next passes on `main`.',
+                  '',
+                  report,
                 ].join('\n'),
               });
             }

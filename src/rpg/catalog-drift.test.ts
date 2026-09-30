@@ -12,7 +12,7 @@ import {
 const toRemote = (item: RpgItem): RpgActorItem => ({
   item: item.id,
   title: item.title,
-  description: `${item.description} (theirs)`,
+  description: item.description,
   kind: item.kind,
   category: item.category,
   channels: item.channels,
@@ -27,11 +27,43 @@ const catalog = (items: RpgActorItem[]): RpgActorCatalog => ({
 });
 
 describe('compareRpgCatalog', () => {
-  it('reports no drift when every enabled item matches (description is ignored)', () => {
+  it('reports no drift when every item matches', () => {
     const result = compareRpgCatalog(RPG_ITEMS, catalog(RPG_ITEMS.map(toRemote)));
     expect(result.ok).toBe(true);
     expect(result.mismatches).toEqual([]);
     expect(result.extra).toEqual([]);
+    expect(result.missingDisabled).toEqual([]);
+  });
+
+  it('ignores fields the catalog does not store (context)', () => {
+    const remote = RPG_ITEMS.map((i) => ({ ...toRemote(i), context: 'something else' }));
+    expect(compareRpgCatalog(RPG_ITEMS, catalog(remote)).ok).toBe(true);
+  });
+
+  it('fails on a changed description, with before and after', () => {
+    const remote = RPG_ITEMS.map(toRemote);
+    remote[3] = { ...remote[3]!, description: 'Reworded' };
+    const result = compareRpgCatalog(RPG_ITEMS, catalog(remote));
+    expect(result.ok).toBe(false);
+    expect(result.mismatches).toEqual([
+      {
+        item: 'strapped_books',
+        field: 'description',
+        ours: 'Knowledge is power, better come strapped',
+        theirs: 'Reworded',
+      },
+    ]);
+  });
+
+  it('fails on changed or dropped channels', () => {
+    const remote = RPG_ITEMS.map(toRemote);
+    remote[4] = { ...remote[4]!, channels: ['main'] };
+    remote[6] = { ...remote[6]!, channels: undefined };
+    const result = compareRpgCatalog(RPG_ITEMS, catalog(remote));
+    expect(result.mismatches).toEqual([
+      { item: 'dev_hoodie', field: 'channels', ours: 'main, sub1', theirs: 'main' },
+      { item: 'weekend_shirt', field: 'channels', ours: 'main, sub1, sub2', theirs: '(absent)' },
+    ]);
   });
 
   it('fails on a changed CID, title, kind or category', () => {
@@ -59,10 +91,22 @@ describe('compareRpgCatalog', () => {
     ]);
   });
 
-  it('skips disabled items', () => {
-    const ours = RPG_ITEMS.map((i) => (i.id === 'lab_coat' ? { ...i, enabled: false } : i));
-    const remote = RPG_ITEMS.filter((i) => i.id !== 'lab_coat').map(toRemote);
-    expect(compareRpgCatalog(ours, catalog(remote)).ok).toBe(true);
+  it('compares disabled items too', () => {
+    expect(RPG_ITEMS.find((i) => i.id === 'sifa_suit')?.enabled).toBe(false);
+    const remote = RPG_ITEMS.map((i) =>
+      i.id === 'sifa_suit' ? { ...toRemote(i), description: 'New suit copy' } : toRemote(i),
+    );
+    const result = compareRpgCatalog(RPG_ITEMS, catalog(remote));
+    expect(result.ok).toBe(false);
+    expect(result.mismatches.map((m) => `${m.item}.${m.field}`)).toEqual(['sifa_suit.description']);
+  });
+
+  it('only notices a disabled item that rpg.actor does not list', () => {
+    const remote = RPG_ITEMS.filter((i) => i.id !== 'sifa_suit').map(toRemote);
+    const result = compareRpgCatalog(RPG_ITEMS, catalog(remote));
+    expect(result.ok).toBe(true);
+    expect(result.mismatches).toEqual([]);
+    expect(result.missingDisabled).toEqual(['sifa_suit']);
   });
 
   it('only notices items rpg.actor lists that we do not have', () => {
@@ -86,14 +130,22 @@ describe('compareRpgCatalog', () => {
 });
 
 describe('renderRpgCatalogDriftMarkdown', () => {
-  it('renders a mismatch table and the extra-item notice', () => {
+  it('renders a before/after table per item and the notices', () => {
     const remote = RPG_ITEMS.map(toRemote);
-    remote[0] = { ...remote[0]!, title: 'Renamed' };
+    remote[0] = { ...remote[0]!, title: 'Renamed', description: 'Now with a | pipe' };
+    const withoutSuit = remote.filter((r) => r.item !== 'sifa_suit');
     const md = renderRpgCatalogDriftMarkdown(
-      compareRpgCatalog(RPG_ITEMS, catalog([...remote, { ...remote[1]!, item: 'new_thing' }])),
+      compareRpgCatalog(RPG_ITEMS, catalog([...withoutSuit, { ...remote[1]!, item: 'new_thing' }])),
     );
-    expect(md).toContain('| leather_briefcase | title | Leather Briefcase | Renamed |');
+    expect(md).toContain('### `leather_briefcase`');
+    expect(md).toContain('| Field | Ours (catalog.ts) | rpg.actor |');
+    expect(md).toContain('| title | Leather Briefcase | Renamed |');
+    expect(md).toContain(
+      '| description | A trusty briefcase, for your daily commute | Now with a \\| pipe |',
+    );
+    expect(md).toContain('pnpm rpg:sync-catalog');
     expect(md).toContain('`new_thing`');
+    expect(md).toContain('does not list these disabled items: `sifa_suit`');
   });
 
   it('reports a clean run', () => {

@@ -208,7 +208,8 @@
     "release": "pnpm run build && changeset publish",
     "build:flags": "node scripts/build-flags.mjs",
     "sync:term-mappings": "node scripts/sync-term-mappings.mjs",
-    "check:dist": "node scripts/check-dist.mjs"
+    "check:dist": "node scripts/check-dist.mjs",
+    "rpg:sync-catalog": "pnpm build && node scripts/sync-rpg-catalog.mjs"
   },
   "engines": {
     "node": ">=22"

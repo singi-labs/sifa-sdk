@@ -43,7 +43,9 @@ export type RpgUnlock = z.infer<typeof RpgUnlockSchema>;
 
 /**
  * The Sifa item catalog for rpg.actor. Ids, titles, descriptions, kinds,
- * categories, channels and image CIDs come from rpg.actor's item cores.
+ * categories, channels and image CIDs come from rpg.actor's item cores; the
+ * weekly drift check compares them and `pnpm rpg:sync-catalog` adopts
+ * rpg.actor's changes. `unlock` and `enabled` are ours.
  */
 export const RPG_ITEMS: readonly RpgItem[] = [
   {
@@ -127,7 +129,8 @@ export const RPG_ITEMS: readonly RpgItem[] = [
   {
     id: 'weekend_shirt',
     title: 'Weekend Shirt',
-    description: 'Fun shirt to wear when work is all finished',
+    description:
+      'Fun shirt to wear when work is all finished.... but you still have a side-project...',
     kind: 'layer',
     category: 'tops',
     channels: ['main', 'sub1', 'sub2'],
