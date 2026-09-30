@@ -51,6 +51,7 @@ export type {
   ProjectRole,
   ProfilePresentationDelivery,
   ProfileProject,
+  ProjectEventView,
   ProfilePublication,
   ProfileSkill,
   ProfileVolunteering,

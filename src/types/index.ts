@@ -273,6 +273,26 @@ export interface ProfileCertification {
   hidden?: boolean;
 }
 
+/**
+ * A calendar event a project organized or hosted, with display fields the
+ * AppView resolved from the referenced community.lexicon.calendar.event.
+ */
+export interface ProjectEventView {
+  /** AT-URI of the community.lexicon.calendar.event. */
+  uri: string;
+  /** The user's role at this occurrence, when it differs from the project's role. */
+  role?: string;
+  name?: string;
+  /** ISO datetime. Use the date part for display; the time is not meaningful for past events. */
+  startsAt?: string;
+  /** community.lexicon.calendar.event mode token. */
+  mode?: string;
+  locality?: string;
+  /** ISO 3166-1 alpha-2. */
+  country?: string;
+  url?: string;
+}
+
 export interface ProfileProject {
   rkey: string;
   name: string;
@@ -291,6 +311,8 @@ export interface ProfileProject {
    */
   /** AT-URI of the same record on another person's profile, when they keep one. */
   sameAs?: string;
+  /** Calendar events this project organized or hosted, newest first. */
+  events?: ProjectEventView[];
   hidden?: boolean;
   /** User-flagged primary project, surfaced in the Highlights block. Ongoing only. */
   primary?: boolean;
