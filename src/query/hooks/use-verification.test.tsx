@@ -8,7 +8,7 @@ import { SifaProvider } from '../config.js';
 import { sifaQueryKeys } from '../keys.js';
 import { useVerificationLog } from './use-verification.js';
 
-function makeWrapper(fetchImpl: typeof fetch, config: SifaApiConfig) {
+function makeWrapper(fetchImpl: ReturnType<typeof jsonFetch>, config: SifaApiConfig) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
   });
@@ -22,8 +22,10 @@ function makeWrapper(fetchImpl: typeof fetch, config: SifaApiConfig) {
 
 const baseConfig: SifaApiConfig = { baseUrl: 'https://api.example' };
 
-function jsonFetch(body: unknown, status = 200): typeof fetch {
-  return vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status })));
+function jsonFetch(body: unknown, status = 200) {
+  return vi.fn((_input: RequestInfo | URL, _init?: RequestInit) =>
+    Promise.resolve(new Response(JSON.stringify(body), { status })),
+  );
 }
 
 afterEach(() => {

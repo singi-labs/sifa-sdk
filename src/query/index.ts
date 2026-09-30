@@ -112,6 +112,9 @@ export {
 } from './fetchers/confirmations.js';
 export {
   fetchVerificationLog,
+  VERIFICATION_EVENT_KINDS,
+  VerificationLogEntrySchema,
+  VerificationLogSchema,
   type FetchVerificationLogOptions,
   type VerificationEventKind,
   type VerificationLog,
