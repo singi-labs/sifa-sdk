@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.71
+
+### Patch Changes
+
+- 8dbe117: Add `EmploymentVerificationRecordSchema` and `resolveEmploymentVerification` for the `id.sifa.verification.employment` records Sifa's issuer writes, and bring `OrgEmploymentAttestationRecordSchema` to the lexicon 0.13 shape (optional position and snapshots, token status and source).
+
 ## 0.19.70
 
 ### Patch Changes
