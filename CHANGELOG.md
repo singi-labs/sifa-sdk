@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.69
+
+### Patch Changes
+
+- fa01eca: Add the organization employment-attestation query layer: `createOrgAttestation`, `offboardOrgAttestation`, `revokeOrgAttestation`, `fetchOrgAttestations`, `fetchAttestationRequests`, `rejectAttestationRequest`, `requestEmploymentConfirmation` and their hooks, with `sifaQueryKeys.org`.
+
 ## 0.19.68
 
 ### Patch Changes
