@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.68
+
+### Patch Changes
+
+- a84e8b6: Add `fetchVerificationLog` and `useVerificationLog` for the per-position employment-verification log served by `GET /api/verification/:did/:positionRkey`, with the `VerificationLogEntry` and `VerificationEventKind` types.
+
 ## 0.19.67
 
 ### Patch Changes
