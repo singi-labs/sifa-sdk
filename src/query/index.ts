@@ -121,6 +121,25 @@ export {
   type VerificationLogEntry,
 } from './fetchers/verification.js';
 export {
+  createOrgAttestation,
+  offboardOrgAttestation,
+  revokeOrgAttestation,
+  fetchOrgAttestations,
+  fetchAttestationRequests,
+  rejectAttestationRequest,
+  requestEmploymentConfirmation,
+  OrgAttestationSchema,
+  AttestationRequestSchema,
+  type AttestationStatus,
+  type AttestationRequest,
+  type CreateOrgAttestationInput,
+  type CreateOrgAttestationResult,
+  type FetchOrgAttestationOptions,
+  type OrgAttestation,
+  type RequestEmploymentConfirmationInput,
+  type RequestEmploymentConfirmationResult,
+} from './fetchers/org-attestations.js';
+export {
   fetchInboxCounts,
   type InboxCounts,
   type FetchInboxCountsOptions,
@@ -442,6 +461,15 @@ export {
 } from './hooks/use-confirmations.js';
 export { useInboxCounts } from './hooks/use-inbox.js';
 export { useVerificationLog } from './hooks/use-verification.js';
+export {
+  useOrgAttestations,
+  useAttestationRequests,
+  useCreateOrgAttestation,
+  useOffboardOrgAttestation,
+  useRevokeOrgAttestation,
+  useRejectAttestationRequest,
+  useRequestEmploymentConfirmation,
+} from './hooks/use-org-attestations.js';
 export {
   useUnlinkedPositions,
   useDismissUnlinkedPosition,

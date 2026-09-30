@@ -142,6 +142,14 @@ export const sifaQueryKeys = {
     given: () => ['sifa', 'confirmation', 'given'] as const,
   },
 
+  org: {
+    all: () => ['sifa', 'org'] as const,
+    /** Attestations the signed-in organization wrote. */
+    attestations: () => ['sifa', 'org', 'attestations'] as const,
+    /** Pending confirmation requests addressed to the signed-in organization. */
+    attestationRequests: () => ['sifa', 'org', 'attestation-requests'] as const,
+  },
+
   verification: {
     all: () => ['sifa', 'verification'] as const,
     /** The append-only verification log of one position. */
