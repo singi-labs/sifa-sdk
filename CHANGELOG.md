@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.66
+
+### Patch Changes
+
+- e7edc1f: rpg: Weekend Shirt description updated to rpg.actor's current text (adopted with the new `rpg:sync-catalog` script).
+
 ## 0.19.65
 
 ### Patch Changes
