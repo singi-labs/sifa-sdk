@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.76
+
+### Patch Changes
+
+- 997a639: Add opt-in OpenAlex citation counts: `citationCount` and `openAlexId` on `ProfilePublication` and `PublicationView`, the `openAlexWorkUrl` formatter, and `/api/settings` fetchers and hooks (`fetchUserSettings`, `updateUserSettings`, `useUserSettings`, `useUpdateUserSettings`, `UserSettingsSchema`) including the new `showCitationCounts` preference.
+
 ## 0.19.75
 
 ### Patch Changes
