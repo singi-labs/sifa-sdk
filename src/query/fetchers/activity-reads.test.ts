@@ -87,6 +87,30 @@ describe('fetchActivityFeed', () => {
     expect(url).toContain('cursor=abc');
   });
 
+  it('encodes the multi-category, tag and preset filters', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchActivityFeed({ ...baseConfig, fetch: fetchImpl }, 'alice', {
+      categories: ['Articles', 'Research'],
+      tags: ['ml', 'open science'],
+      preset: 'site',
+    });
+    const [url] = getCall(fetchImpl);
+    const params = new URL(url).searchParams;
+    expect(params.get('categories')).toBe('Articles,Research');
+    expect(params.get('tags')).toBe('ml,open science');
+    expect(params.get('preset')).toBe('site');
+  });
+
+  it('omits empty filter lists', async () => {
+    const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
+    await fetchActivityFeed({ ...baseConfig, fetch: fetchImpl }, 'alice', {
+      categories: [],
+      tags: [],
+    });
+    const [url] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/activity/alice');
+  });
+
   it('forwards cookie header when provided', async () => {
     const fetchImpl = jsonFetch({ items: [], cursor: null, hasMore: false });
     await fetchActivityFeed({ ...baseConfig, fetch: fetchImpl }, 'alice', {

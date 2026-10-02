@@ -118,6 +118,11 @@ export {
   useHideActivityItem,
   useUnhideActivityItem,
 } from './use-activity-items-hide.js';
+export {
+  useActivityPreferences,
+  useSiteActivityPreset,
+  useUpdateActivityPreferences,
+} from './use-activity-preferences.js';
 export { useStats } from './use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './use-apps.js';
 export { useAccounts } from './use-accounts.js';

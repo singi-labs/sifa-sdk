@@ -21,6 +21,8 @@ import {
   getEducationLevelDisplay,
   suggestEqfLevelFromDegree,
   followingFeedFallbackApp,
+  matchesSiteActivityPreset,
+  siteActivityPresetUpdateSchema,
   type ActorCard,
   type Endorsement,
   type ProjectMemberCard,
@@ -245,5 +247,16 @@ describe('main entry: following feed fallback', () => {
     expect(followingFeedFallbackApp({ items: [], apps: [{ id: 'grain', count: 1 }] })).toBe(
       'grain',
     );
+  });
+});
+
+describe('main entry: site activity preset', () => {
+  it('exports the preset predicate and update schema', () => {
+    expect(
+      matchesSiteActivityPreset({ category: 'Music', record: {} }, { categories: [], tags: [] }),
+    ).toBe(true);
+    expect(siteActivityPresetUpdateSchema.parse({ categories: [], tags: ['#ML'] }).tags).toEqual([
+      'ml',
+    ]);
   });
 });

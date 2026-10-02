@@ -71,3 +71,18 @@ export { countRecentActivity, type DailyActivityCount } from './recent-activity.
 export { followingFeedFallbackApp } from './following-feed-fallback.js';
 export { SELF_APP_ID, excludeSelfApp, type AppWithId } from './self-app.js';
 export { actorShowsIdentity } from './actor-identity.js';
+export {
+  EMPTY_SITE_ACTIVITY_PRESET,
+  SITE_PRESET_TAG_CATEGORY,
+  SITE_PRESET_MAX_TAGS,
+  SITE_PRESET_MAX_TAG_LENGTH,
+  normalizeSitePresetTag,
+  parseSitePresetTags,
+  isSiteActivityPresetActive,
+  recordTags,
+  matchesSitePresetTags,
+  matchesSiteActivityPreset,
+  siteActivityPresetSchema,
+  siteActivityPresetUpdateSchema,
+  type SiteActivityPreset,
+} from './site-activity-preset.js';

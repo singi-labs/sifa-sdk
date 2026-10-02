@@ -162,6 +162,15 @@ export {
   type HideActivityItemInput,
   type UnhideActivityItemInput,
 } from './activity-items-hide.js';
+export {
+  fetchActivityPreferences,
+  fetchSiteActivityPreset,
+  updateActivityPreferences,
+  type ActivityPreferences,
+  type FetchActivityPreferencesOptions,
+  type SiteActivityPresetResponse,
+  type UpdateActivityPreferencesInput,
+} from './activity-preferences.js';
 export { fetchStats, type StatsResponse } from './stats.js';
 export {
   fetchAppsRegistry,
