@@ -320,11 +320,15 @@ export {
 } from './fetchers/github-prs.js';
 export {
   fetchRpgStatus,
+  fetchRpgClaimable,
   RpgItemStatusSchema,
   RpgStatusResponseSchema,
+  RpgClaimableResponseSchema,
   type RpgItemStatus,
   type RpgStatusResponse,
   type FetchRpgStatusOptions,
+  type RpgClaimableResponse,
+  type FetchRpgClaimableOptions,
 } from './fetchers/rpg.js';
 export { fetchEndorsementCount } from './fetchers/endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './fetchers/stream.js';
@@ -484,6 +488,7 @@ export {
   useDismissUnlinkedPosition,
 } from './hooks/use-unlinked-positions.js';
 export { useProfileCompleteness } from './hooks/use-profile-completeness.js';
+export { useRpgClaimable } from './hooks/use-rpg-claimable.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';
 export {

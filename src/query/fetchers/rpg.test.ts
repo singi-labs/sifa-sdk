@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { fetchRpgStatus, RpgStatusResponseSchema } from './rpg.js';
+import { fetchRpgClaimable, fetchRpgStatus, RpgStatusResponseSchema } from './rpg.js';
 import { type SifaApiConfig } from '../client.js';
 
 function jsonFetch(body: unknown, status = 200): typeof fetch {
@@ -73,5 +73,35 @@ describe('fetchRpgStatus', () => {
     const bad = { ...sample, items: [{ ...sample.items[0], state: 'stolen' }] };
     const fetchImpl = jsonFetch(bad);
     await expect(fetchRpgStatus({ ...config, fetch: fetchImpl })).rejects.toThrow();
+  });
+});
+
+describe('fetchRpgClaimable', () => {
+  it('GETs /api/rpg/claimable with the session cookie and no caching', async () => {
+    const fetchImpl = jsonFetch({ count: 2 });
+    const result = await fetchRpgClaimable({ ...config, fetch: fetchImpl });
+
+    expect(result).toEqual({ count: 2 });
+    const [url, init] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/rpg/claimable');
+    expect(init.credentials).toBe('include');
+    expect(init.cache).toBe('no-store');
+  });
+
+  it('forwards cookieHeader as the cookie header', async () => {
+    const fetchImpl = jsonFetch({ count: 0 });
+    await fetchRpgClaimable({ ...config, fetch: fetchImpl }, { cookieHeader: 'sid=abc' });
+    const [, init] = getCall(fetchImpl);
+    expect(new Headers(init.headers).get('cookie')).toBe('sid=abc');
+  });
+
+  it('degrades to a zero count when the request fails', async () => {
+    const fetchImpl = jsonFetch({ error: 'Unauthorized' }, 401);
+    expect(await fetchRpgClaimable({ ...config, fetch: fetchImpl })).toEqual({ count: 0 });
+  });
+
+  it('degrades to a zero count on a malformed body', async () => {
+    const fetchImpl = jsonFetch({ count: -1 });
+    expect(await fetchRpgClaimable({ ...config, fetch: fetchImpl })).toEqual({ count: 0 });
   });
 });

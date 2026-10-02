@@ -39,6 +39,13 @@ export const sifaQueryKeys = {
     counts: () => ['sifa', 'inbox', 'counts'] as const,
   },
 
+  // Session-scoped: how many rpg.actor items the signed-in user can claim, for
+  // the Inbox item and the bell dropdown.
+  rpg: {
+    all: () => ['sifa', 'rpg'] as const,
+    claimable: () => ['sifa', 'rpg', 'claimable'] as const,
+  },
+
   search: {
     all: () => ['sifa', 'search'] as const,
     profiles: (filters: Record<string, unknown>) =>
@@ -208,6 +215,8 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.position.unlinked>
   | ReturnType<typeof sifaQueryKeys.inbox.all>
   | ReturnType<typeof sifaQueryKeys.inbox.counts>
+  | ReturnType<typeof sifaQueryKeys.rpg.all>
+  | ReturnType<typeof sifaQueryKeys.rpg.claimable>
   | ReturnType<typeof sifaQueryKeys.search.all>
   | ReturnType<typeof sifaQueryKeys.search.profiles>
   | ReturnType<typeof sifaQueryKeys.search.canonicalSkills>
