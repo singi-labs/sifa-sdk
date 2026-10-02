@@ -39,7 +39,11 @@ describe('fetchRpgStatus', () => {
     const fetchImpl = jsonFetch(sample);
     const result = await fetchRpgStatus({ ...config, fetch: fetchImpl });
 
-    expect(result).toEqual({ ...sample, canCollect: false });
+    expect(result).toEqual({
+      ...sample,
+      canCollect: false,
+      items: sample.items.map((i) => ({ ...i, worn: false })),
+    });
     const [url, init] = getCall(fetchImpl);
     expect(url).toBe('https://api.example/api/rpg/status');
     expect(init.credentials).toBe('include');
@@ -56,6 +60,13 @@ describe('fetchRpgStatus', () => {
   it('defaults canCollect to false when an older API omits it', () => {
     expect(RpgStatusResponseSchema.parse(sample).canCollect).toBe(false);
     expect(RpgStatusResponseSchema.parse({ ...sample, canCollect: true }).canCollect).toBe(true);
+  });
+
+  it('keeps worn for claimed items and defaults it to false when an older API omits it', () => {
+    const [item] = sample.items;
+    const worn = { ...sample, items: [{ ...item, state: 'claimed', worn: true }] };
+    expect(RpgStatusResponseSchema.parse(worn).items[0]?.worn).toBe(true);
+    expect(RpgStatusResponseSchema.parse(sample).items[0]?.worn).toBe(false);
   });
 
   it('rejects a malformed response body (Zod validation)', async () => {

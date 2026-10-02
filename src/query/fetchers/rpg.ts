@@ -10,6 +10,11 @@ export const RpgItemStatusSchema = z.object({
   category: z.string(),
   earned: z.boolean(),
   state: z.enum(['locked', 'earned', 'given', 'claimed']),
+  /**
+   * True when the viewer's rpg.actor character wears this (claimed) item.
+   * Defaults to false for an older API that does not send it.
+   */
+  worn: z.boolean().default(false),
   iconUrl: z.string().url().nullable(),
 });
 export type RpgItemStatus = z.infer<typeof RpgItemStatusSchema>;
