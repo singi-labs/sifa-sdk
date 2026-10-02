@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.78
+
+### Patch Changes
+
+- 3dc036f: Add `fetchRpgClaimable`, `RpgClaimableResponseSchema`, the `useRpgClaimable` hook and the `sifaQueryKeys.rpg.claimable()` key, for the Inbox item that shows how many rpg.actor items are ready to claim.
+
 ## 0.19.77
 
 ### Patch Changes
