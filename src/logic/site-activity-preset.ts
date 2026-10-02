@@ -2,6 +2,15 @@ import { z } from 'zod';
 
 import { isAppCategory } from '../taxonomy/app-categories.js';
 
+export const SITE_PRESET_MAX_TAGS = 20;
+export const SITE_PRESET_MAX_TAG_LENGTH = 64;
+
+/** A preset as the API returns it. */
+export const siteActivityPresetSchema = z.object({
+  categories: z.array(z.string().min(1).max(100)).max(100),
+  tags: z.array(z.string().min(1).max(SITE_PRESET_MAX_TAG_LENGTH)).max(SITE_PRESET_MAX_TAGS),
+});
+
 /**
  * Per-site activity filter ("show only") for a personal site (page.sifa.id and
  * third-party site builders that read Sifa data).
@@ -23,21 +32,12 @@ import { isAppCategory } from '../taxonomy/app-categories.js';
  * Both lists empty is "no preset": the site shows the same activity it does
  * without one.
  */
-export interface SiteActivityPreset {
-  categories: string[];
-  tags: string[];
-}
+export type SiteActivityPreset = z.infer<typeof siteActivityPresetSchema>;
 
 export const EMPTY_SITE_ACTIVITY_PRESET: SiteActivityPreset = { categories: [], tags: [] };
 
 /** The only category the tag filter applies to. */
 export const SITE_PRESET_TAG_CATEGORY = 'Articles';
-
-/** Registry app ids whose long-form records carry `tags`. */
-export const SITE_PRESET_TAGGED_APP_IDS = ['standard', 'crate'] as const;
-
-export const SITE_PRESET_MAX_TAGS = 20;
-export const SITE_PRESET_MAX_TAG_LENGTH = 64;
 
 /**
  * Canonical form of a tag: trimmed, without a leading `#`, lowercased, inner
@@ -71,7 +71,7 @@ export function isSiteActivityPresetActive(preset: SiteActivityPreset): boolean 
 /** Normalized string tags off a record's `tags` field, or `[]`. */
 export function recordTags(record: unknown): string[] {
   if (typeof record !== 'object' || record === null) return [];
-  const tags = (record as { tags?: unknown }).tags;
+  const tags = 'tags' in record ? record.tags : undefined;
   if (!Array.isArray(tags)) return [];
   const out: string[] = [];
   for (const t of tags) {
@@ -101,12 +101,6 @@ export function matchesSiteActivityPreset(item: PresetItem, preset: SiteActivity
   if (preset.categories.length > 0 && !preset.categories.includes(item.category)) return false;
   return matchesSitePresetTags(item, preset.tags);
 }
-
-/** A preset as the API returns it. */
-export const siteActivityPresetSchema = z.object({
-  categories: z.array(z.string().min(1).max(100)).max(100),
-  tags: z.array(z.string().min(1).max(SITE_PRESET_MAX_TAG_LENGTH)).max(SITE_PRESET_MAX_TAGS),
-});
 
 /**
  * A preset as a client sends it. Categories must be known app categories;
