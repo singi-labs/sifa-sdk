@@ -198,3 +198,4 @@ export {
   useUpdateInvestment,
   useDeleteInvestment,
 } from './use-investment-mutations.js';
+export { useUpdateUserSettings, useUserSettings } from './use-user-settings.js';

@@ -195,6 +195,10 @@ export interface PublicationView {
   image?: string;
   primary?: boolean;
   relatedIdentifiers?: { identifier: string; identifierType?: string; relationType: string }[];
+  /** OpenAlex citation count, present only when the owner opted in. */
+  citationCount?: number;
+  /** OpenAlex work id (`W…`) the count belongs to. */
+  openAlexId?: string;
 }
 
 export interface CourseView {

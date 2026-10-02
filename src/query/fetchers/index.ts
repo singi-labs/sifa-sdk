@@ -374,5 +374,14 @@ export {
 
 export { fetchProfileSummary } from './profile-summary.js';
 
+export {
+  fetchUserSettings,
+  updateUserSettings,
+  UserSettingsSchema,
+  type FetchUserSettingsOptions,
+  type UserSettings,
+  type UserSettingsPatch,
+} from './user-settings.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from '../keys.js';
 export { createInvestment, updateInvestment, deleteInvestment } from './investments.js';
