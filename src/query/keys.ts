@@ -179,6 +179,10 @@ export const sifaQueryKeys = {
     contentLabels: () => ['sifa', 'bsky-preferences', 'content-labels'] as const,
   },
 
+  userSettings: {
+    all: () => ['sifa', 'user-settings'] as const,
+  },
+
   repoInventory: {
     all: () => ['sifa', 'repo-inventory'] as const,
     list: () => ['sifa', 'repo-inventory', 'list'] as const,
@@ -251,6 +255,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.roadmap.myVotes>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.all>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.contentLabels>
+  | ReturnType<typeof sifaQueryKeys.userSettings.all>
   | ReturnType<typeof sifaQueryKeys.destructive.all>
   | ReturnType<typeof sifaQueryKeys.destructive.wipePreview>
   | ReturnType<typeof sifaQueryKeys.repoInventory.all>

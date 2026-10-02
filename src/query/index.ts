@@ -602,4 +602,14 @@ export {
   useRemoveOrgNotificationEmail,
 } from './hooks/use-org-notification-emails.js';
 
+export {
+  fetchUserSettings,
+  updateUserSettings,
+  UserSettingsSchema,
+  type FetchUserSettingsOptions,
+  type UserSettings,
+  type UserSettingsPatch,
+} from './fetchers/user-settings.js';
+export { useUpdateUserSettings, useUserSettings } from './hooks/use-user-settings.js';
+
 export { sifaQueryKeys, type SifaQueryKey } from './keys.js';

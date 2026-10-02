@@ -401,6 +401,14 @@ export interface ProfilePublication {
    * to `groupPublicationVersions` to fold a preprint under its published version.
    */
   relatedIdentifiers?: RelatedIdentifier[];
+  /**
+   * Times this work has been cited, as counted by OpenAlex for its DOI. Only
+   * sent when the profile owner turned citation counts on and OpenAlex knows
+   * the DOI. A display value, never a ranking signal.
+   */
+  citationCount?: number;
+  /** OpenAlex work id (`W…`) the count belongs to; see `openAlexWorkUrl`. */
+  openAlexId?: string;
 }
 
 export interface ProfileVolunteering {

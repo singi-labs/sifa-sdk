@@ -272,6 +272,7 @@ export {
   rgbToString,
   sanitizeDisplayText,
   normalizeDoi,
+  openAlexWorkUrl,
   formatRelationship,
   parseEndorsementComment,
   sanitizeHandleInput,

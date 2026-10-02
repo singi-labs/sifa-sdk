@@ -26,6 +26,7 @@ export {
   sortByDateDesc,
 } from './sort-by-date.js';
 export { normalizeDoi } from './doi.js';
+export { openAlexWorkUrl } from './openalex.js';
 export {
   formatRelationship,
   parseEndorsementComment,
