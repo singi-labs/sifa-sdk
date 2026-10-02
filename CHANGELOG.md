@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.74
+
+### Patch Changes
+
+- 9162181: Add `worn` to `RpgItemStatusSchema`: whether the viewer's rpg.actor character wears a claimed item. Defaults to `false` when the API does not send it.
+
 ## 0.19.73
 
 ### Patch Changes
