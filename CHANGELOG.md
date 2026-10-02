@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.73
+
+### Patch Changes
+
+- f59fe5d: `hasPersonalProfileContent` no longer counts the about text. It is seeded from the Bluesky bio at sign-in, so organization accounts carry one too and the org claim flow treated them as having a personal profile to keep.
+
 ## 0.19.72
 
 ### Patch Changes
