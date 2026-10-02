@@ -108,14 +108,17 @@ export interface PersonalFacetContent {
  * claiming.
  *
  * True when any profile section holds at least one record, or when the headline
- * or about text is non-blank. Whitespace-only text does not count.
+ * is non-blank. Whitespace-only text does not count. The about text is ignored:
+ * it is seeded from the Bluesky bio at sign-in, so a plain organization account
+ * carries one too, and counting it would make every such claim keep a personal
+ * profile the account never had.
  *
  * Pure: no network, no I/O.
  */
 export function hasPersonalProfileContent(profile: PersonalFacetContent): boolean {
   const filled = (text: string | null | undefined): boolean =>
     typeof text === 'string' && text.trim() !== '';
-  if (filled(profile.headline) || filled(profile.about)) return true;
+  if (filled(profile.headline)) return true;
   const sections = [
     profile.positions,
     profile.education,

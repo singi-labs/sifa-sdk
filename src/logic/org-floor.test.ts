@@ -71,9 +71,14 @@ describe('hasPersonalProfileContent', () => {
     expect(hasPersonalProfileContent({ courses: [{}] })).toBe(true);
   });
 
-  it('is true when the headline or about text is filled', () => {
+  it('is true when the headline is filled', () => {
     expect(hasPersonalProfileContent({ headline: 'Freelance developer' })).toBe(true);
-    expect(hasPersonalProfileContent({ about: 'I build things.' })).toBe(true);
+  });
+
+  it('ignores about text, which is seeded from the Bluesky bio at sign-in', () => {
+    // An organization account with only a Bluesky bio has no personal profile
+    // to keep; counting the bio made every such claim default to "Both".
+    expect(hasPersonalProfileContent({ about: 'We build things.' })).toBe(false);
   });
 
   it('ignores blank and whitespace-only text', () => {
