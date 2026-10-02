@@ -159,6 +159,21 @@ export async function fetchActivityTeaser(
 
 export interface FetchActivityFeedOptions extends ApiFetchOptions {
   category?: string;
+  /**
+   * Show only these app categories. Applies when `category` is unset (the
+   * "all" view).
+   */
+  categories?: string[];
+  /**
+   * Show only long-form posts carrying one of these tags. Other activity is
+   * not filtered on tags. See `SiteActivityPreset`.
+   */
+  tags?: string[];
+  /**
+   * Apply the profile owner's saved preset for this surface. Explicit
+   * `categories` / `tags` override the matching half of the preset.
+   */
+  preset?: 'site';
   limit?: number;
   cursor?: string;
   cookieHeader?: string;
@@ -175,6 +190,9 @@ export async function fetchActivityFeed(
 ): Promise<ActivityFeedResponse | null> {
   const params = new URLSearchParams();
   if (options.category) params.set('category', options.category);
+  if (options.categories?.length) params.set('categories', options.categories.join(','));
+  if (options.tags?.length) params.set('tags', options.tags.join(','));
+  if (options.preset) params.set('preset', options.preset);
   if (options.limit) params.set('limit', String(options.limit));
   if (options.cursor) params.set('cursor', options.cursor);
   const qs = params.toString();

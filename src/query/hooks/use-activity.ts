@@ -59,7 +59,10 @@ export function useActivityTeaser(
 
 export function useActivityFeed(
   handleOrDid: string | undefined | null,
-  opts: Pick<FetchActivityFeedOptions, 'category' | 'limit' | 'cursor'> = {},
+  opts: Pick<
+    FetchActivityFeedOptions,
+    'category' | 'categories' | 'tags' | 'preset' | 'limit' | 'cursor'
+  > = {},
   options?: Omit<
     UseQueryOptions<
       ActivityFeedResponse | null,

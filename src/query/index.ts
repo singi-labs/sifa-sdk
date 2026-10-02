@@ -195,6 +195,15 @@ export {
   type HideActivityItemInput,
   type UnhideActivityItemInput,
 } from './fetchers/activity-items-hide.js';
+export {
+  fetchActivityPreferences,
+  fetchSiteActivityPreset,
+  updateActivityPreferences,
+  type ActivityPreferences,
+  type FetchActivityPreferencesOptions,
+  type SiteActivityPresetResponse,
+  type UpdateActivityPreferencesInput,
+} from './fetchers/activity-preferences.js';
 export { fetchStats, type StatsResponse } from './fetchers/stats.js';
 export {
   fetchAppsRegistry,
@@ -499,6 +508,11 @@ export {
   useHideActivityItem,
   useUnhideActivityItem,
 } from './hooks/use-activity-items-hide.js';
+export {
+  useActivityPreferences,
+  useSiteActivityPreset,
+  useUpdateActivityPreferences,
+} from './hooks/use-activity-preferences.js';
 export { useStats } from './hooks/use-stats.js';
 export { useAppsRegistry, useHiddenApps } from './hooks/use-apps.js';
 export { useAccounts } from './hooks/use-accounts.js';

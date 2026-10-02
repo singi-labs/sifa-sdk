@@ -112,6 +112,9 @@ export const sifaQueryKeys = {
     // Session-scoped: the AppView reads the caller's own hides from their
     // cookie, so there is only ever one list per client.
     hiddenItems: () => ['sifa', 'activity', 'hidden-items'] as const,
+    // Session-scoped, like hiddenItems: the caller's own preferences.
+    preferences: () => ['sifa', 'activity', 'preferences'] as const,
+    sitePreset: (handleOrDid: string) => ['sifa', 'activity', 'site-preset', handleOrDid] as const,
   },
 
   github: {
@@ -233,6 +236,8 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.activity.teaser>
   | ReturnType<typeof sifaQueryKeys.activity.feed>
   | ReturnType<typeof sifaQueryKeys.activity.hiddenItems>
+  | ReturnType<typeof sifaQueryKeys.activity.preferences>
+  | ReturnType<typeof sifaQueryKeys.activity.sitePreset>
   | ReturnType<typeof sifaQueryKeys.endorsement.all>
   | ReturnType<typeof sifaQueryKeys.endorsement.count>
   | ReturnType<typeof sifaQueryKeys.endorsement.pending>
