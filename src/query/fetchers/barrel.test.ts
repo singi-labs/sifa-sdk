@@ -68,6 +68,8 @@ describe('investment fetchers', () => {
 describe('rpg status fetcher', () => {
   it('re-exports fetchRpgStatus and its response schemas', () => {
     expect(typeof Fetchers.fetchRpgStatus).toBe('function');
+    expect(typeof Fetchers.fetchRpgClaimable).toBe('function');
+    expect(typeof Fetchers.RpgClaimableResponseSchema.parse).toBe('function');
     expect(typeof Fetchers.RpgStatusResponseSchema.parse).toBe('function');
     expect(typeof Fetchers.RpgItemStatusSchema.parse).toBe('function');
   });

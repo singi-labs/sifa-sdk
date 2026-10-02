@@ -56,3 +56,47 @@ export async function fetchRpgStatus(
 
   return RpgStatusResponseSchema.parse(data);
 }
+
+/**
+ * How many rpg.actor items the signed-in user can claim right now, for the
+ * Inbox and the bell (`GET /api/rpg/claimable`). The AppView returns 0 unless
+ * the user has a character, collecting is open to them, and at least one item
+ * is earned or given but not yet claimed.
+ */
+export const RpgClaimableResponseSchema = z.object({
+  count: z.number().int().nonnegative(),
+});
+export type RpgClaimableResponse = z.infer<typeof RpgClaimableResponseSchema>;
+
+export interface FetchRpgClaimableOptions extends ApiFetchOptions {
+  /** Forwarded as the `cookie` header for server-side (SSR) calls. */
+  cookieHeader?: string;
+}
+
+/**
+ * Fetch the viewer's claimable rpg.actor item count. Auth-scoped: relies on the
+ * session cookie. Degrades to `{ count: 0 }` on any failure, so a broken call
+ * means "nothing to claim" rather than a phantom Inbox item.
+ */
+export async function fetchRpgClaimable(
+  config: SifaApiConfig,
+  options: FetchRpgClaimableOptions = {},
+): Promise<RpgClaimableResponse> {
+  const { cookieHeader, ...fetchOptions } = options;
+
+  const headers: Record<string, string> = { ...(options.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
+
+  try {
+    const data = await apiFetch<unknown>(config, '/api/rpg/claimable', {
+      credentials: 'include',
+      cache: 'no-store',
+      timeoutMs: 5000,
+      ...fetchOptions,
+      headers,
+    });
+    return RpgClaimableResponseSchema.parse(data);
+  } catch {
+    return { count: 0 };
+  }
+}

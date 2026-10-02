@@ -284,11 +284,15 @@ export {
 } from './github-prs.js';
 export {
   fetchRpgStatus,
+  fetchRpgClaimable,
   RpgItemStatusSchema,
   RpgStatusResponseSchema,
+  RpgClaimableResponseSchema,
   type RpgItemStatus,
   type RpgStatusResponse,
   type FetchRpgStatusOptions,
+  type RpgClaimableResponse,
+  type FetchRpgClaimableOptions,
 } from './rpg.js';
 export { fetchEndorsementCount } from './endorsement.js';
 export { fetchNetworkStreamCount, type FetchNetworkStreamCountOptions } from './stream.js';

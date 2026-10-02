@@ -53,6 +53,12 @@ describe('sifaQueryKeys', () => {
     expect(sifaQueryKeys.inbox.counts().slice(0, all.length)).toEqual(all);
   });
 
+  it('exposes the rpg claimable key under rpg.all() for hierarchical invalidation', () => {
+    expect(sifaQueryKeys.rpg.claimable()).toEqual(['sifa', 'rpg', 'claimable']);
+    const all = sifaQueryKeys.rpg.all();
+    expect(sifaQueryKeys.rpg.claimable().slice(0, all.length)).toEqual(all);
+  });
+
   it('exposes admin feature-allowlist key under admin.*', () => {
     expect(sifaQueryKeys.admin.featureAllowlist('FEED_V5_ENABLED')).toEqual([
       'sifa',

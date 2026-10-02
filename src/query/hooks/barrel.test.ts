@@ -35,6 +35,10 @@ describe('@singi-labs/sifa-sdk/query/hooks barrel', () => {
     expect(typeof Hooks.useRevokeConfirmation).toBe('function');
   });
 
+  it('re-exports the rpg claimable hook', () => {
+    expect(typeof Hooks.useRpgClaimable).toBe('function');
+  });
+
   it('re-exports the query-key factory', () => {
     expect(typeof Hooks.sifaQueryKeys.follow.all).toBe('function');
     expect(Hooks.sifaQueryKeys.follow.feed({})).toEqual(['sifa', 'follow', 'feed', {}]);
