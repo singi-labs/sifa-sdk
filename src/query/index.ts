@@ -489,6 +489,7 @@ export {
 } from './hooks/use-unlinked-positions.js';
 export { useProfileCompleteness } from './hooks/use-profile-completeness.js';
 export { useRpgClaimable } from './hooks/use-rpg-claimable.js';
+export { useRpgStatus } from './hooks/use-rpg-status.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
 export { useRevealMarqueDomain, useUnrevealMarqueDomain } from './hooks/use-marque-domains.js';
 export {

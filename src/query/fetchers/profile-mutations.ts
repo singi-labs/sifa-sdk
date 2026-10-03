@@ -38,6 +38,11 @@ export interface UpdateProfileSelfInput {
   preferredWorkplace?: string[];
   availableFromUtc?: number;
   availableToUtc?: number;
+  /**
+   * `'actor.rpg.sprite'` uses the user's rpg.actor character as their Sifa
+   * avatar; `null` turns it off. Omit to leave the current choice unchanged.
+   */
+  avatarSource?: 'actor.rpg.sprite' | null;
 }
 
 /** Update the authenticated user's `id.sifa.profile.self` record. */

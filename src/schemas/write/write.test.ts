@@ -375,6 +375,19 @@ describe('ProfileSelfWriteSchema', () => {
     expect(ProfileSelfWriteSchema.safeParse({ headline: 'x'.repeat(301) }).success).toBe(false);
   });
 
+  it('accepts avatarSource actor.rpg.sprite, and null to clear it', () => {
+    expect(ProfileSelfWriteSchema.safeParse({ avatarSource: 'actor.rpg.sprite' }).success).toBe(
+      true,
+    );
+    expect(ProfileSelfWriteSchema.safeParse({ avatarSource: null }).success).toBe(true);
+  });
+
+  it('rejects an avatarSource Sifa cannot render', () => {
+    expect(ProfileSelfWriteSchema.safeParse({ avatarSource: 'com.example.avatar' }).success).toBe(
+      false,
+    );
+  });
+
   it('accepts namePronunciation and caps it at 640 bytes', () => {
     expect(ProfileSelfWriteSchema.safeParse({ namePronunciation: 'Foo-kuh' }).success).toBe(true);
     expect(ProfileSelfWriteSchema.safeParse({ namePronunciation: 'x'.repeat(641) }).success).toBe(

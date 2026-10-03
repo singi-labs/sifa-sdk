@@ -11,4 +11,5 @@ export {
   type RpgUnlock,
 } from './catalog.js';
 export { evaluateRpgUnlocks, type RpgUnlockResult, type RpgUnlockSignals } from './unlocks.js';
+export { RPG_AVATAR_SOURCE } from './avatar.js';
 export { RPG_ACTOR_URL, rpgActorCharacterUrl, rpgActorWearUrl, rpgGiveRkey } from './links.js';

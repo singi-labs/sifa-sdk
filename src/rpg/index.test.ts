@@ -9,4 +9,8 @@ describe('@singi-labs/sifa-sdk/rpg barrel', () => {
     expect(typeof Rpg.RpgUnlockSchema.parse).toBe('function');
     expect(typeof Rpg.evaluateRpgUnlocks).toBe('function');
   });
+
+  it('names the profile.self avatarSource value for the rpg.actor character', () => {
+    expect(Rpg.RPG_AVATAR_SOURCE).toBe('actor.rpg.sprite');
+  });
 });

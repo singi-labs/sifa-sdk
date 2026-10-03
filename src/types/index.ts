@@ -999,6 +999,14 @@ export interface Profile {
    */
   namePronunciationAudioUrl?: string;
   avatar?: string;
+  /**
+   * `id.sifa.profile.self.avatarSource`, e.g. `actor.rpg.sprite` when the user
+   * shows their rpg.actor character as their avatar. `avatar` already holds
+   * the resolved picture; this only says where it comes from, so an editor
+   * can show the current choice. Absent when the uploaded or Bluesky avatar
+   * is used.
+   */
+  avatarSource?: string;
   pronouns?: string;
   headline?: string;
   about?: string;

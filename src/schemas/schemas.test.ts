@@ -301,6 +301,21 @@ describe('ProfileSelfRecordSchema', () => {
     );
   });
 
+  it('accepts avatarSource as an open string capped at 128', () => {
+    expect(
+      ProfileSelfRecordSchema.safeParse({ avatarSource: 'actor.rpg.sprite', createdAt: NOW })
+        .success,
+    ).toBe(true);
+    // knownValues are open: another app's value still validates.
+    expect(
+      ProfileSelfRecordSchema.safeParse({ avatarSource: 'com.example.avatar', createdAt: NOW })
+        .success,
+    ).toBe(true);
+    expect(
+      ProfileSelfRecordSchema.safeParse({ avatarSource: 'x'.repeat(129), createdAt: NOW }).success,
+    ).toBe(false);
+  });
+
   it('accepts givenName and familyName as optional strings', () => {
     expect(
       ProfileSelfRecordSchema.safeParse({

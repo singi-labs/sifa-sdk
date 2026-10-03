@@ -44,6 +44,7 @@ export const sifaQueryKeys = {
   rpg: {
     all: () => ['sifa', 'rpg'] as const,
     claimable: () => ['sifa', 'rpg', 'claimable'] as const,
+    status: () => ['sifa', 'rpg', 'status'] as const,
   },
 
   search: {
@@ -217,6 +218,7 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.inbox.counts>
   | ReturnType<typeof sifaQueryKeys.rpg.all>
   | ReturnType<typeof sifaQueryKeys.rpg.claimable>
+  | ReturnType<typeof sifaQueryKeys.rpg.status>
   | ReturnType<typeof sifaQueryKeys.search.all>
   | ReturnType<typeof sifaQueryKeys.search.profiles>
   | ReturnType<typeof sifaQueryKeys.search.canonicalSkills>
