@@ -274,6 +274,12 @@
       "terms": ["schema:Project", "foaf:Project"]
     },
     {
+      "lexicon": "id.sifa.profile.project",
+      "field": "events",
+      "match": "relatedMatch",
+      "terms": ["schema:organizer"]
+    },
+    {
       "lexicon": "id.sifa.profile.publication",
       "match": "broadMatch",
       "terms": ["bibo:Document", "schema:CreativeWork"],
@@ -411,6 +417,11 @@
       "lexicon": "id.sifa.profile.self",
       "field": "discoverable",
       "reason": "Sifa indexing control, not a fact about the person."
+    },
+    {
+      "lexicon": "id.sifa.profile.self",
+      "field": "avatarSource",
+      "reason": "Rendering instruction for apps, not a fact about the person."
     },
     {
       "lexicon": "id.sifa.profile.position",

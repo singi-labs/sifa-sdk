@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { RPG_AVATAR_SOURCE } from '../../rpg/avatar.js';
 import { writeLocationSchema } from './shared.js';
 
 /**
@@ -36,6 +37,13 @@ export const ProfileSelfWriteSchema = z
     availableToUtc: z.number().int().min(0).max(23).optional(),
     langs: z.array(z.string()).max(3).optional(),
     discoverable: z.boolean().optional(),
+    /**
+     * `actor.rpg.sprite` uses the user's rpg.actor character as their avatar;
+     * `null` turns it off (the uploaded avatar, or the Bluesky one, comes
+     * back). Omitted leaves the current choice unchanged. Only values Sifa can
+     * render are accepted.
+     */
+    avatarSource: z.enum([RPG_AVATAR_SOURCE]).nullable().optional(),
   })
   .passthrough();
 
