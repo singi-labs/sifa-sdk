@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.79
+
+### Patch Changes
+
+- 6dc415b: Use an rpg.actor character as the Sifa avatar. `ProfileSelfRecordSchema` gains the optional `avatarSource` string from `id.sifa.profile.self`, and `ProfileSelfWriteSchema` / `UpdateProfileSelfInput` accept `avatarSource: 'actor.rpg.sprite'` (or `null` to turn it off). `Profile.avatarSource` says where the resolved `avatar` comes from. New: `RPG_AVATAR_SOURCE` in `./rpg`, and the `useRpgStatus` hook with the `rpg.status()` query key. Also resyncs `src/jsonld/term-mappings.json` with sifa-lexicons.
+
 ## 0.19.78
 
 ### Patch Changes
