@@ -172,6 +172,16 @@
         "default": "./dist/jev/index.cjs"
       }
     },
+    "./jev/issue": {
+      "import": {
+        "types": "./dist/jev/issue.d.ts",
+        "default": "./dist/jev/issue.js"
+      },
+      "require": {
+        "types": "./dist/jev/issue.d.cts",
+        "default": "./dist/jev/issue.cjs"
+      }
+    },
     "./rpg": {
       "import": {
         "types": "./dist/rpg/index.d.ts",
