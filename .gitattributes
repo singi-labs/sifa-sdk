@@ -1,2 +1,4 @@
 * text=auto eol=lf
 pnpm-lock.yaml linguist-generated=true -diff
+
+.github/workflows/*.lock.yml linguist-generated=true
