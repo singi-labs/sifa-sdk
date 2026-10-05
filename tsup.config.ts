@@ -22,6 +22,7 @@ const publicEntries = [
   'src/resume/index.ts',
   'src/jev/index.ts',
   'src/jev/issue.ts',
+  'src/jev/error.ts',
   'src/rpg/index.ts',
 ];
 
