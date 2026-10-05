@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.81
+
+### Patch Changes
+
+- 29e295e: Add `@singi-labs/sifa-sdk/jev/error`: identifier scrubbing, error-vs-issue pair state, the same-bug Noul question and threshold used by the GlitchTip relay to decide whether an error event matches an open GitHub issue.
+
 ## 0.19.80
 
 ### Patch Changes
