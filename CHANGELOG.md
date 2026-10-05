@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.80
+
+### Patch Changes
+
+- 741dd05: Add `@singi-labs/sifa-sdk/jev/issue`: Jev question builders, label taxonomies, thresholds and the `issueLabelsFromAnswers` predicate for GitHub issue triage (type, stream, actionable, security, regression) used by the background-agent workflows.
+
 ## 0.19.79
 
 ### Patch Changes
