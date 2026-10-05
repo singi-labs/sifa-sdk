@@ -182,6 +182,16 @@
         "default": "./dist/jev/issue.cjs"
       }
     },
+    "./jev/error": {
+      "import": {
+        "types": "./dist/jev/error.d.ts",
+        "default": "./dist/jev/error.js"
+      },
+      "require": {
+        "types": "./dist/jev/error.d.cts",
+        "default": "./dist/jev/error.cjs"
+      }
+    },
     "./rpg": {
       "import": {
         "types": "./dist/rpg/index.d.ts",
