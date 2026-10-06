@@ -7,3 +7,6 @@ coverage/
 .env.local
 .vscode/
 .idea/
+
+# pnpm repo; a stray npm lockfile confuses Dependabot and tooling
+package-lock.json
