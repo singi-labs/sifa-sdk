@@ -28,6 +28,9 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('app.lexidraw.scene')).toBe('lexidraw');
     expect(getAppIdForCollection('fm.leadsheet.sheet')).toBe('leadsheet');
     expect(getAppIdForCollection('at.brickster.creation')).toBe('brickster');
+    expect(getAppIdForCollection('supply.skillz.skill')).toBe('skillz');
+    expect(getAppIdForCollection('place.birds.sighting')).toBe('birdsplace');
+    expect(getAppIdForCollection('blue.skymap.geo.map')).toBe('skymap');
     expect(getAppIdForCollection('link.pastesphere.snippet')).toBe('pastesphere');
     expect(getAppIdForCollection('site.standard.document')).toBe('standard');
     expect(getAppIdForCollection('place.stream.livestream')).toBe('streamplace');
@@ -317,6 +320,44 @@ describe('resolveCardUrl', () => {
           record: { title: 'Treehouse', status: 'published' },
         }),
       ).toBe('https://brickster.at/c/did%3Aplc%3Aabc/3msir75a37j2s');
+    });
+  });
+
+  describe('profile-of-the-day queue onboards (2026-10-06)', () => {
+    it('links a skillz.supply skill to its skill page by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'supply.skillz.skill',
+          uri: 'at://did:plc:abc/supply.skillz.skill/3musflzhjfy2g',
+          rkey: '3musflzhjfy2g',
+          record: { name: 'Bluesky Roast', slug: 'roast-my-bluesky' },
+        }),
+      ).toBe('https://skillz.supply/skills/did%3Aplc%3Aabc/3musflzhjfy2g');
+    });
+
+    it('links a birds.place sighting to its sighting page by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'place.birds.sighting',
+          uri: 'at://did:plc:abc/place.birds.sighting/3msyqklnv3j27',
+          rkey: '3msyqklnv3j27',
+          record: { species: 'Whooper Swan', count: 2 },
+        }),
+      ).toBe('https://birds.place/u/did%3Aplc%3Aabc/3msyqklnv3j27');
+    });
+
+    it('links a Skymap map to its map page by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'blue.skymap.geo.map',
+          uri: 'at://did:plc:abc/blue.skymap.geo.map/3lrgylhlfpt2o',
+          rkey: '3lrgylhlfpt2o',
+          record: { title: 'My gran Canaria', features: [] },
+        }),
+      ).toBe('https://skymap.blue/users/did%3Aplc%3Aabc/maps/3lrgylhlfpt2o');
     });
   });
 

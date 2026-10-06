@@ -75,6 +75,10 @@ describe('getActivityTier', () => {
     expect(getActivityTier('app.lexidraw.scene')).toBe('creation');
     expect(getActivityTier('fm.leadsheet.sheet')).toBe('creation');
     expect(getActivityTier('at.brickster.creation')).toBe('creation');
+    // 2026-10-06 profile-of-the-day queue onboards.
+    expect(getActivityTier('supply.skillz.skill')).toBe('creation');
+    expect(getActivityTier('place.birds.sighting')).toBe('creation');
+    expect(getActivityTier('blue.skymap.geo.map')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {
