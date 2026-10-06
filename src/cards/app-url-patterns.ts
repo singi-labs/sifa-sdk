@@ -301,6 +301,24 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // | Brickster</title>. No per-user profile route found.
     urlPattern: 'https://brickster.at/c/{did}/{rkey}',
   },
+  skillz: {
+    // Verified live: GET /skills/{did}/{rkey} server-renders
+    // <title>{slug} — skillz.supply</title>. No per-user profile route found.
+    urlPattern: 'https://skillz.supply/skills/{did}/{rkey}',
+  },
+  birdsplace: {
+    // Verified live: GET /u/{did}/{rkey} server-renders <title>{count} x
+    // {species}</title>; an unknown rkey 404s. /u/{did} is the profile page.
+    urlPattern: 'https://birds.place/u/{did}/{rkey}',
+    profileUrlPattern: 'https://birds.place/u/{did}',
+  },
+  skymap: {
+    // Nuxt SPA routes: /users/:username and /users/:username/maps/:mapId.
+    // The username segment accepts a DID (verified live against a real map);
+    // the shell returns 200 for any path, so the rkey itself is not checkable.
+    urlPattern: 'https://skymap.blue/users/{did}/maps/{rkey}',
+    profileUrlPattern: 'https://skymap.blue/users/{did}',
+  },
 });
 
 /**
@@ -403,4 +421,8 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['app.lexidraw.', 'lexidraw'],
   ['fm.leadsheet.', 'leadsheet'],
   ['at.brickster.', 'brickster'],
+  // Onboard from the 2026-10-06 profile-of-the-day queue audit.
+  ['supply.skillz.', 'skillz'],
+  ['place.birds.', 'birdsplace'],
+  ['blue.skymap.', 'skymap'],
 ];

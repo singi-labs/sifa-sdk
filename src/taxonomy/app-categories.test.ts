@@ -92,6 +92,9 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('lexidraw')).toBe('Art');
     expect(categoryForApp('leadsheet')).toBe('Music');
     expect(categoryForApp('brickster')).toBe('Art');
+    expect(categoryForApp('skillz')).toBe('Code');
+    expect(categoryForApp('birdsplace')).toBe('Places');
+    expect(categoryForApp('skymap')).toBe('Places');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

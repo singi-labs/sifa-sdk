@@ -138,6 +138,10 @@ export const APP_CATEGORY_MAP = {
   lexidraw: 'Art', // app.lexidraw.scene — named whiteboard drawings
   leadsheet: 'Music', // fm.leadsheet.sheet — authored chord sheets and tabs
   brickster: 'Art', // at.brickster.creation — 3D brick builds
+  // 2026-10-06 profile-of-the-day queue onboards.
+  skillz: 'Code', // supply.skillz.skill — authored agent skills (SKILL.md) on skillz.supply
+  birdsplace: 'Places', // place.birds.sighting — logged bird sightings with photo, notes, and location
+  skymap: 'Places', // blue.skymap.geo.map — authored maps of places (features inline)
 } as const satisfies Record<string, AppCategoryId>;
 
 export type KnownAppId = keyof typeof APP_CATEGORY_MAP;

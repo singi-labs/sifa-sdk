@@ -914,6 +914,21 @@
       "tier": "creation",
       "app": "brickster",
       "notes": "A 3D brick build saved from the Brickster editor."
+    },
+    "supply.skillz.skill": {
+      "tier": "creation",
+      "app": "skillz",
+      "notes": "An authored agent skill (SKILL.md body) published on skillz.supply."
+    },
+    "place.birds.sighting": {
+      "tier": "creation",
+      "app": "birdsplace",
+      "notes": "A logged bird sighting with species, count, photo, notes, and location."
+    },
+    "blue.skymap.geo.map": {
+      "tier": "creation",
+      "app": "skymap",
+      "notes": "An authored map with inline point features (title, description, tags)."
     }
   }
 }
