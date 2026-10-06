@@ -436,6 +436,41 @@ function withGeneric(vm: StreamCardVM): StreamCardVM {
  * generic `resolveSourceUrl` path -- which parses a DID out of the uri -- can't
  * set it; do it here.
  */
+/**
+ * birds.place sighting (`place.birds.sighting`): the species and count carry
+ * the meaning and the photo lives in `media[].blob`, none of which the generic
+ * field heuristics read. Text mirrors the birds.place page title ("2 x Whooper
+ * Swan"); the first photo becomes the media so the sighting earns a card.
+ */
+function applyBirdSighting(
+  vm: StreamCardVM,
+  item: ActivityItem,
+  record: Record<string, unknown>,
+): StreamCardVM {
+  const species = asNonEmptyString(record.species);
+  const count = typeof record.count === 'number' && record.count > 1 ? record.count : undefined;
+  const title = species ? (count ? `${count} × ${species}` : species) : undefined;
+  const notes = asNonEmptyString(record.notes);
+  const text = title && notes ? `${title}. ${notes}` : (title ?? notes);
+
+  const did = didFromUri(item.uri);
+  if (did && Array.isArray(record.media)) {
+    const media = record.media
+      .map((entry) => blobMedia(asRecord(entry)?.blob, did, title ?? 'Bird sighting'))
+      .filter((m): m is StreamMedia => m !== undefined);
+    if (media.length > 0) vm.media = media;
+  }
+
+  if (text) {
+    vm.body = { kind: 'text', text };
+  } else if (vm.media) {
+    vm.body = { kind: 'media' };
+  } else {
+    return withGeneric(vm);
+  }
+  return vm;
+}
+
 function applyFediversePost(vm: StreamCardVM, record: Record<string, unknown>): StreamCardVM {
   const url = httpUrl(record.url);
   if (url) vm.sourceUrl = url;
@@ -1145,6 +1180,8 @@ export function toStreamCardVM(
       return record ? applyAsqAnswer(vm, record) : withGeneric(vm);
     case 'fediverse.post':
       return record ? applyFediversePost(vm, record) : withGeneric(vm);
+    case 'place.birds.sighting':
+      return record ? applyBirdSighting(vm, item, record) : withGeneric(vm);
   }
 
   // social.popfeed.feed.{post,note,review} — registered by prefix in sifa-web.

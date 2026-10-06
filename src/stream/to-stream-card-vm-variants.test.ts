@@ -635,3 +635,49 @@ describe('toStreamCardVM — annotation target', () => {
     });
   });
 });
+
+describe('toStreamCardVM — birds.place sighting', () => {
+  const photo = {
+    blob: { $type: 'blob', ref: { $link: 'bafkphoto' }, mimeType: 'image/jpeg', size: 1 },
+  };
+
+  it('titles the line with count x species and lifts the photo out of media[].blob', () => {
+    const vm = toStreamCardVM(
+      item('place.birds.sighting', {
+        species: 'Whooper Swan',
+        count: 2,
+        notes: 'Mother and chick sunbathing.',
+        media: [photo],
+        createdAt: '2026-08-13T22:57:33.151Z',
+      }),
+    );
+    expect(vm.body).toEqual({
+      kind: 'text',
+      text: '2 × Whooper Swan. Mother and chick sunbathing.',
+    });
+    expect(vm.media).toEqual([
+      { did: DID, cid: 'bafkphoto', alt: '2 × Whooper Swan', mimeType: 'image/jpeg' },
+    ]);
+    expectValid(vm);
+  });
+
+  it('drops the count prefix for a single bird and tolerates a missing photo', () => {
+    const vm = toStreamCardVM(item('place.birds.sighting', { species: 'Robin', count: 1 }));
+    expect(vm.body).toEqual({ kind: 'text', text: 'Robin' });
+    expect(vm.media).toBeUndefined();
+    expectValid(vm);
+  });
+
+  it('falls back to a media body when only a photo is present', () => {
+    const vm = toStreamCardVM(item('place.birds.sighting', { media: [photo] }));
+    expect(vm.body).toEqual({ kind: 'media' });
+    expect(vm.media?.[0]?.alt).toBe('Bird sighting');
+    expectValid(vm);
+  });
+
+  it('falls back to generic when the record carries nothing renderable', () => {
+    const vm = toStreamCardVM(item('place.birds.sighting', { count: 3 }));
+    expect(vm.body).toEqual({ kind: 'generic' });
+    expectValid(vm);
+  });
+});
