@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.82
+
+### Patch Changes
+
+- c421e3d: Recognise skillz.supply skills, birds.place sightings, and Skymap maps. Adds the `supply.skillz.`, `place.birds.`, and `blue.skymap.` prefixes to `COLLECTION_TO_APP`, their URL patterns, category mappings, and activity tiers.
+
 ## 0.19.81
 
 ### Patch Changes
