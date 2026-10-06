@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.83
+
+### Patch Changes
+
+- 461b49c: Stream view-model: read species, count, notes, and the `media[].blob` photo from a birds.place sighting so it renders as a titled card instead of an empty line.
+
 ## 0.19.82
 
 ### Patch Changes
