@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.84
+
+### Patch Changes
+
+- 862adf0: `ProjectWriteSchema` accepts `events`: the calendar events a project organized or hosted, each an event ref with an optional per-occurrence role. An empty list clears them.
+
 ## 0.19.83
 
 ### Patch Changes
