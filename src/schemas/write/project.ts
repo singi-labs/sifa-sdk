@@ -13,6 +13,16 @@ export const projectMemberWriteSchema = z.object({
   title: z.string().max(1280).nullable().optional(),
 });
 
+/**
+ * One calendar event the project organized or hosted (lexicon `#projectEvent`).
+ * `role` is the user's role at this occurrence when it differs from the
+ * project's role.
+ */
+export const projectEventWriteSchema = z.object({
+  event: externalRecordRefSchema,
+  role: z.string().max(640).optional(),
+});
+
 /** Schema enforced by the generic-record write endpoint for `id.sifa.profile.project`. */
 export const ProjectWriteSchema = z.object({
   name: z.string().min(1).max(256),
@@ -25,6 +35,8 @@ export const ProjectWriteSchema = z.object({
   projectRef: externalRecordRefSchema.optional(),
   /** The same project as recorded on another person's profile. */
   sameAs: externalRecordRefSchema.optional(),
+  /** Calendar events this project organized or hosted. An empty list clears them. */
+  events: z.array(projectEventWriteSchema).max(200).optional(),
   startedAt: z.string().nullable().optional(),
   endedAt: z.string().nullable().optional(),
 });

@@ -167,6 +167,33 @@ describe('ProjectWriteSchema role (#596)', () => {
   });
 });
 
+describe('ProjectWriteSchema events (sifa-workspace#667)', () => {
+  const EVENT =
+    'at://did:plc:lehcqqkwzcwvjvw66uthu5oq/community.lexicon.calendar.event/3lte3c7x43l2e';
+
+  it('keeps linked events, with an optional per-occurrence role', () => {
+    const parsed = ProjectWriteSchema.safeParse({
+      name: 'ATmosphereConf',
+      events: [{ event: { uri: EVENT }, role: 'Organizer' }],
+    });
+    expect(parsed.success).toBe(true);
+    expect(parsed.data?.events).toEqual([{ event: { uri: EVENT }, role: 'Organizer' }]);
+  });
+
+  it('accepts an empty list, which clears the links', () => {
+    const parsed = ProjectWriteSchema.safeParse({ name: 'X', events: [] });
+    expect(parsed.data?.events).toEqual([]);
+  });
+
+  it('rejects a malformed event ref and more than 200 links', () => {
+    expect(
+      ProjectWriteSchema.safeParse({ name: 'X', events: [{ event: { uri: 'nope' } }] }).success,
+    ).toBe(false);
+    const many = Array.from({ length: 201 }, () => ({ event: { uri: EVENT } }));
+    expect(ProjectWriteSchema.safeParse({ name: 'X', events: many }).success).toBe(false);
+  });
+});
+
 describe('CourseWriteSchema teaching fields (#592)', () => {
   it('accepts a taught course with a role, a partial-date period and a position at-uri', () => {
     expect(
