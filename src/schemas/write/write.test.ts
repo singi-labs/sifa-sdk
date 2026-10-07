@@ -168,7 +168,8 @@ describe('ProjectWriteSchema role (#596)', () => {
 });
 
 describe('ProjectWriteSchema events (sifa-workspace#667)', () => {
-  const EVENT = 'at://did:plc:lehcqqkwzcwvjvw66uthu5oq/community.lexicon.calendar.event/3lte3c7x43l2e';
+  const EVENT =
+    'at://did:plc:lehcqqkwzcwvjvw66uthu5oq/community.lexicon.calendar.event/3lte3c7x43l2e';
 
   it('keeps linked events, with an optional per-occurrence role', () => {
     const parsed = ProjectWriteSchema.safeParse({
