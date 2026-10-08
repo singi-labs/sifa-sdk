@@ -42,6 +42,33 @@ describe('fetchSearchProfiles', () => {
     expect(url).toContain('limit=10');
   });
 
+  it('sends offset so callers can page past the first result set', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 20 });
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { skill: 'AT Protocol', limit: 20, offset: 20 },
+    );
+    const [url] = getCall(fetchImpl);
+    expect(url).toContain('offset=20');
+  });
+
+  it('omits offset when it is zero', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles({ ...baseConfig, fetch: fetchImpl }, { q: 'engineer', offset: 0 });
+    const [url] = getCall(fetchImpl);
+    expect(url).not.toContain('offset=');
+  });
+
+  it('does not treat limit or offset alone as a filter (no network call)', async () => {
+    const fetchImpl = vi.fn();
+    const result = await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { limit: 20, offset: 40 },
+    );
+    expect(result).toEqual({ profiles: [], total: 0, limit: 20, offset: 0 });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it('URL-encodes special characters in the query', async () => {
     const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
     await fetchSearchProfiles({ ...baseConfig, fetch: fetchImpl }, { q: 'C++ dev & ML' });
