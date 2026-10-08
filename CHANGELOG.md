@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.85
+
+### Patch Changes
+
+- 66b7bc6: `fetchSearchProfiles` accepts an `offset` filter so callers can page past the first result set. A bare `limit` or `offset` with no real filter no longer triggers a network call.
+
 ## 0.19.84
 
 ### Patch Changes
