@@ -63,6 +63,8 @@ export interface SearchFilters {
    */
   openTo?: string[];
   limit?: number;
+  /** Number of results to skip, for paging past the first `limit` results. */
+  offset?: number;
 }
 
 export interface SearchResponse {
@@ -157,9 +159,12 @@ export async function fetchSearchProfiles(
       if (token) params.append('openTo', token);
     }
   }
-  if (filters.limit !== undefined) params.set('limit', String(filters.limit));
-
+  // Paging params are not filters: checked before they are added so a bare
+  // limit/offset never triggers an unfiltered search.
   if (params.size === 0) return EMPTY_SEARCH;
+
+  if (filters.limit !== undefined) params.set('limit', String(filters.limit));
+  if (filters.offset) params.set('offset', String(filters.offset));
 
   return apiFetch<SearchResponse>(config, `/api/search/profiles?${params.toString()}`, {
     cache: 'no-store',
