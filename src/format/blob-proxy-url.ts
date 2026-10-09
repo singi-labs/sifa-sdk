@@ -1,3 +1,5 @@
+import { normaliseBaseUrl } from '../jsonld/url.js';
+
 /** Output variants served by the sifa-api blob proxy. */
 export type BlobProxyVariant = 'thumb' | 'avatar';
 
@@ -13,6 +15,5 @@ export function blobProxyUrl(
   cid: string,
   variant: BlobProxyVariant,
 ): string {
-  const base = baseUrl.replace(/\/+$/, '');
-  return `${base}/api/blob/${encodeURIComponent(did)}/${encodeURIComponent(cid)}?v=${variant}`;
+  return `${normaliseBaseUrl(baseUrl)}/api/blob/${encodeURIComponent(did)}/${encodeURIComponent(cid)}?v=${variant}`;
 }
