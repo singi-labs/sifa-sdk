@@ -305,6 +305,12 @@ export {
   type CsvRow,
   type ParsedPresentation,
   type ParsedDelivery,
+  validateTalksImport,
+  TALKS_IMPORT_ROLE_VALUES,
+  TALKS_IMPORT_MODE_VALUES,
+  type TalksImportIssue,
+  type TalksImportIssueCode,
+  type TalksImportValidation,
 } from './import/index.js';
 
 export {
