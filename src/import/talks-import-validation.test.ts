@@ -142,19 +142,34 @@ describe('validateTalksImport', () => {
     ]);
   });
 
-  it('treats a key that points at a skipped talk as unmatched', () => {
+  it('skips sessions whose linked talk was skipped, so they are not orphaned', () => {
     const result = validateTalksImport(
       {
-        presentationRows: [{ presentation_key: 'pg', title: '' }],
-        deliveryRows: [{ presentation_key: 'pg', date: '2025-02-10' }],
+        presentationRows: [{ presentation_key: 'pg', title: 'Talk', slides_url: 'nope' }],
+        deliveryRows: [
+          { presentation_key: 'pg', event_name: 'PGConf' },
+          { presentation_key: 'pg' },
+        ],
       },
       NOW,
     );
+    expect(result.presentations).toEqual([]);
     expect(result.deliveries).toEqual([]);
-    expect(result.issues.map((i) => [i.file, i.code])).toEqual([
-      ['presentations', 'missingTitle'],
-      ['deliveries', 'unknownPresentationKey'],
-      ['deliveries', 'missingTitleOrEvent'],
+    expect(result.issues.map((i) => [i.file, i.row, i.code])).toEqual([
+      ['presentations', 2, 'invalidUrl'],
+      ['deliveries', 2, 'linkedTalkSkipped'],
+      ['deliveries', 3, 'linkedTalkSkipped'],
+    ]);
+  });
+
+  it('names the column when only the write schema catches the problem', () => {
+    const result = validateTalksImport(
+      { presentationRows: [], deliveryRows: [{ title: 'A', location: 'x'.repeat(3000) }] },
+      NOW,
+    );
+    expect(result.deliveries).toEqual([]);
+    expect(result.issues).toEqual([
+      { file: 'deliveries', row: 2, column: 'location', code: 'invalidRecord', severity: 'error' },
     ]);
   });
 

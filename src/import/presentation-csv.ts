@@ -116,6 +116,9 @@ const ROLE_TOKENS: Record<string, string> = {
   host: 'id.sifa.defs#host',
 };
 
+/** Friendly role values the import maps to a token (keyword matches aside). */
+export const PRESENTATION_ROLE_VALUES = Object.keys(ROLE_TOKENS);
+
 /**
  * Map a friendly role value to its token. An existing token passes through.
  * Free-text or compound values (e.g. "Organizer & co-host/moderator") are
@@ -150,6 +153,9 @@ const MODE_FRAGMENTS: Record<string, string> = {
   remote: '#virtual',
   hybrid: '#hybrid',
 };
+
+/** Friendly mode values the import maps to a token. */
+export const PRESENTATION_MODE_VALUES = Object.keys(MODE_FRAGMENTS);
 
 /** Map a friendly mode value to the community calendar token; drops an unknown value. */
 export function normalizePresentationMode(value: string | undefined): string | undefined {

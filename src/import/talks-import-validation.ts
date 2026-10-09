@@ -6,8 +6,6 @@ import {
   PresentationWriteSchema,
 } from '../schemas/write/index.js';
 import {
-  normalizePresentationMode,
-  normalizePresentationRole,
   presentationCsvRowToRecord,
   presentationDeliveryCsvRowToRecord,
   type CsvRow,
@@ -30,7 +28,9 @@ export type TalksImportIssueCode =
   | 'dateTooFarAhead'
   /** error: a session has no title, no event name and no linked talk. */
   | 'missingTitleOrEvent'
-  /** error: the record fails the write schema for another reason. */
+  /** error: the session's presentation_key names a talk row that was skipped for an error. */
+  | 'linkedTalkSkipped'
+  /** error: the record fails the write schema for another reason (e.g. a value too long). */
   | 'invalidRecord'
   /** warning: presentation_key matches no talk in this upload; imported as a one-off session. */
   | 'unknownPresentationKey'
@@ -66,15 +66,20 @@ export interface TalksImportValidation {
 const PRESENTATION_URL_COLUMNS = ['slides_url', 'recording_url', 'writeup_url'] as const;
 const DELIVERY_URL_COLUMNS = ['event_url', 'recording_url'] as const;
 
-/** Allowed friendly values, for consumers that list them next to an unknown-value warning. */
-export const TALKS_IMPORT_ROLE_VALUES = [
-  'speaker',
-  'panelist',
-  'keynote',
-  'workshop',
-  'host',
-] as const;
-export const TALKS_IMPORT_MODE_VALUES = ['in person', 'virtual', 'hybrid'] as const;
+/** Record field to CSV column, to point a write-schema failure at a cell. */
+const RECORD_FIELD_COLUMNS: Record<string, string> = {
+  title: 'title',
+  description: 'description',
+  intendedAudiences: 'intended_audiences',
+  eventName: 'event_name',
+  location: 'location',
+};
+
+/** CSV column of the first write-schema problem, when it maps to one. */
+function schemaErrorColumn(error: { issues: { path: PropertyKey[] }[] }): string | undefined {
+  const field = error.issues[0]?.path[0];
+  return typeof field === 'string' ? RECORD_FIELD_COLUMNS[field] : undefined;
+}
 
 function cell(row: CsvRow, column: string): string {
   return (row[column] ?? '').trim();
@@ -109,6 +114,7 @@ export function validateTalksImport(
   const presentations: ParsedPresentation[] = [];
   const deliveries: ParsedDelivery[] = [];
   const validKeys = new Set<string>();
+  const skippedKeys = new Set<string>();
 
   input.presentationRows.forEach((row, index) => {
     const rowNumber = index + 2;
@@ -124,16 +130,22 @@ export function validateTalksImport(
       });
     }
     rowIssues.push(...urlIssues(row, rowNumber, 'presentations', PRESENTATION_URL_COLUMNS));
-    if (rowIssues.length === 0 && !PresentationWriteSchema.safeParse(parsed.record).success) {
+    const schema = rowIssues.length === 0 ? PresentationWriteSchema.safeParse(parsed.record) : null;
+    if (schema && !schema.success) {
+      const column = schemaErrorColumn(schema.error);
       rowIssues.push({
         file: 'presentations',
         row: rowNumber,
+        ...(column ? { column } : {}),
         code: 'invalidRecord',
         severity: 'error',
       });
     }
     issues.push(...rowIssues);
-    if (rowIssues.length > 0) return;
+    if (rowIssues.length > 0) {
+      if (parsed.key) skippedKeys.add(parsed.key);
+      return;
+    }
     presentations.push(parsed);
     if (parsed.key) validKeys.add(parsed.key);
   });
@@ -145,7 +157,17 @@ export function validateTalksImport(
     const { record, presentationKey } = parsed;
 
     const linked = presentationKey !== undefined && validKeys.has(presentationKey);
-    if (presentationKey !== undefined && !linked) {
+    if (presentationKey !== undefined && skippedKeys.has(presentationKey) && !linked) {
+      // Importing it as a one-off would cut it off from its talk for good.
+      rowIssues.push({
+        file: 'deliveries',
+        row: rowNumber,
+        column: 'presentation_key',
+        value: presentationKey,
+        code: 'linkedTalkSkipped',
+        severity: 'error',
+      });
+    } else if (presentationKey !== undefined && !linked) {
       rowIssues.push({
         file: 'deliveries',
         row: rowNumber,
@@ -155,7 +177,7 @@ export function validateTalksImport(
         severity: 'warning',
       });
     }
-    if (!record.title && !record.eventName && !linked) {
+    if (!record.title && !record.eventName && !linked && !skippedKeys.has(presentationKey ?? '')) {
       rowIssues.push({
         file: 'deliveries',
         row: rowNumber,
@@ -183,8 +205,10 @@ export function validateTalksImport(
       });
     }
     rowIssues.push(...urlIssues(row, rowNumber, 'deliveries', DELIVERY_URL_COLUMNS));
+    // The mapper drops a value it doesn't recognise, so a filled cell with no
+    // field on the record was unknown.
     const role = cell(row, 'role');
-    if (role && !normalizePresentationRole(role)) {
+    if (role && !record.role) {
       rowIssues.push({
         file: 'deliveries',
         row: rowNumber,
@@ -195,7 +219,7 @@ export function validateTalksImport(
       });
     }
     const mode = cell(row, 'mode');
-    if (mode && !normalizePresentationMode(mode)) {
+    if (mode && !record.mode) {
       rowIssues.push({
         file: 'deliveries',
         row: rowNumber,
@@ -207,10 +231,13 @@ export function validateTalksImport(
     }
 
     let hasError = rowIssues.some((i) => i.severity === 'error');
-    if (!hasError && !PresentationDeliveryWriteSchema.safeParse(record).success) {
+    const schema = hasError ? null : PresentationDeliveryWriteSchema.safeParse(record);
+    if (schema && !schema.success) {
+      const column = schemaErrorColumn(schema.error);
       rowIssues.push({
         file: 'deliveries',
         row: rowNumber,
+        ...(column ? { column } : {}),
         code: 'invalidRecord',
         severity: 'error',
       });
