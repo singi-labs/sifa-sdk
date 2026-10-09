@@ -302,9 +302,15 @@ export {
   normalizePresentationMode,
   presentationCsvRowToRecord,
   presentationDeliveryCsvRowToRecord,
+  PRESENTATION_ROLE_VALUES,
+  PRESENTATION_MODE_VALUES,
   type CsvRow,
   type ParsedPresentation,
   type ParsedDelivery,
+  validateTalksImport,
+  type TalksImportIssue,
+  type TalksImportIssueCode,
+  type TalksImportValidation,
 } from './import/index.js';
 
 export {
