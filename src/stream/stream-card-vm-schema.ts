@@ -60,6 +60,7 @@ const streamMediaBlobSchema = z.object({
   alt: z.string(),
   aspectRatio: aspectRatioSchema.optional(),
   mimeType: z.string().optional(),
+  size: z.number().int().nonnegative().optional(),
 });
 
 export const streamMediaSchema: z.ZodType<StreamMedia> = z.union([

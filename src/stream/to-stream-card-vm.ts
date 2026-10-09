@@ -75,6 +75,11 @@ function asFiniteNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
+/** A blob byte size: a non-negative integer, else undefined. */
+function asByteSize(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : undefined;
+}
+
 /**
  * Extract a blob CID tolerating both a proper blob (`ref.$link`) and the
  * denormalized `{ cid }` shape some apps (BookHive, Colibri) store.
@@ -95,6 +100,8 @@ function blobMedia(value: unknown, did: string, alt: string): StreamMedia | unde
   if (ratio) media.aspectRatio = ratio;
   const mimeType = asNonEmptyString(asRecord(value)?.mimeType);
   if (mimeType) media.mimeType = mimeType;
+  const size = asByteSize(asRecord(value)?.size);
+  if (size !== undefined) media.size = size;
   return media;
 }
 
@@ -337,6 +344,8 @@ function bskyImages(embed: Record<string, unknown>, did: string): StreamMedia[] 
     if (ratio) media.aspectRatio = ratio;
     const mimeType = asNonEmptyString(asRecord(img.image)?.mimeType);
     if (mimeType) media.mimeType = mimeType;
+    const size = asByteSize(asRecord(img.image)?.size);
+    if (size !== undefined) media.size = size;
     out.push(media);
   }
   return out;
@@ -885,9 +894,13 @@ function genericMedia(record: Record<string, unknown>, did: string, alt: string)
   if (single) return [single];
 
   // Grain galleries store the cover as a bare CID string, not a blob object.
-  const coverCid = asRecord(record.galleryMeta)?.coverPhotoCid;
+  const galleryMeta = asRecord(record.galleryMeta);
+  const coverCid = galleryMeta?.coverPhotoCid;
   if (typeof coverCid === 'string' && coverCid.length > 0) {
-    return [{ did, cid: coverCid, alt }];
+    const cover: StreamMedia = { did, cid: coverCid, alt };
+    const size = asByteSize(galleryMeta?.coverPhotoSize);
+    if (size !== undefined) cover.size = size;
+    return [cover];
   }
   return [];
 }

@@ -656,7 +656,7 @@ describe('toStreamCardVM — birds.place sighting', () => {
       text: '2 × Whooper Swan. Mother and chick sunbathing.',
     });
     expect(vm.media).toEqual([
-      { did: DID, cid: 'bafkphoto', alt: '2 × Whooper Swan', mimeType: 'image/jpeg' },
+      { did: DID, cid: 'bafkphoto', alt: '2 × Whooper Swan', mimeType: 'image/jpeg', size: 1 },
     ]);
     expectValid(vm);
   });

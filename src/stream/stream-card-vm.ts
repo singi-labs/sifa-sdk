@@ -62,6 +62,12 @@ export interface StreamMediaResolved extends StreamMediaBase {
 export interface StreamMediaBlob extends StreamMediaBase {
   did: string;
   cid: string;
+  /**
+   * Blob byte size, when the record carries it. Lets a host route very large
+   * blobs off the CDN. Record-supplied (Grain's cover size is copied from the
+   * photo record by sifa-api), so treat it as a routing hint, not a guarantee.
+   */
+  size?: number;
 }
 
 export type StreamMedia = StreamMediaResolved | StreamMediaBlob;
