@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.87
+
+### Patch Changes
+
+- 9ed6c43: Add `blobProxyUrl()` for the sifa-api blob proxy, and carry the blob byte `size` on stream blob media (including Grain's `galleryMeta.coverPhotoSize`).
+
 ## 0.19.86
 
 ### Patch Changes
