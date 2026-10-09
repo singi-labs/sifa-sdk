@@ -130,6 +130,36 @@ describe('applyGeneric — Grain gallery (social.grain.gallery)', () => {
     expect(vm.media).toEqual([{ did: DID, cid: 'bafcover', alt: 'Weekend trip' }]);
     expectValid(vm);
   });
+
+  it('carries galleryMeta.coverPhotoSize so hosts can route large covers off the CDN', () => {
+    const vm = toStreamCardVM(
+      item('social.grain.gallery', {
+        title: 'Weekend trip',
+        galleryMeta: { coverPhotoCid: 'bafcover', coverPhotoSize: 15_900_000, photoCount: 12 },
+        createdAt: '2026-07-17T11:00:00.000Z',
+      }),
+    );
+    expect(vm.media).toEqual([
+      { did: DID, cid: 'bafcover', alt: 'Weekend trip', size: 15_900_000 },
+    ]);
+    expectValid(vm);
+  });
+});
+
+describe('applyGeneric — blob size', () => {
+  it('carries the blob byte size on blob media', () => {
+    const vm = toStreamCardVM(
+      item('io.kich.recipe.recipe', {
+        name: 'Focaccia',
+        images: [
+          { $type: 'blob', ref: { $link: 'bafkphoto' }, mimeType: 'image/png', size: 15_900_000 },
+        ],
+        createdAt: '2026-07-17T11:00:00.000Z',
+      }),
+    );
+    expect(vm.media?.[0]).toMatchObject({ did: DID, cid: 'bafkphoto', size: 15_900_000 });
+    expectValid(vm);
+  });
 });
 
 describe('applyGeneric — asq question (fyi.asq.question)', () => {

@@ -95,6 +95,8 @@ function blobMedia(value: unknown, did: string, alt: string): StreamMedia | unde
   if (ratio) media.aspectRatio = ratio;
   const mimeType = asNonEmptyString(asRecord(value)?.mimeType);
   if (mimeType) media.mimeType = mimeType;
+  const size = asFiniteNumber(asRecord(value)?.size);
+  if (size !== undefined) media.size = size;
   return media;
 }
 
@@ -337,6 +339,8 @@ function bskyImages(embed: Record<string, unknown>, did: string): StreamMedia[] 
     if (ratio) media.aspectRatio = ratio;
     const mimeType = asNonEmptyString(asRecord(img.image)?.mimeType);
     if (mimeType) media.mimeType = mimeType;
+    const size = asFiniteNumber(asRecord(img.image)?.size);
+    if (size !== undefined) media.size = size;
     out.push(media);
   }
   return out;
@@ -885,9 +889,13 @@ function genericMedia(record: Record<string, unknown>, did: string, alt: string)
   if (single) return [single];
 
   // Grain galleries store the cover as a bare CID string, not a blob object.
-  const coverCid = asRecord(record.galleryMeta)?.coverPhotoCid;
+  const galleryMeta = asRecord(record.galleryMeta);
+  const coverCid = galleryMeta?.coverPhotoCid;
   if (typeof coverCid === 'string' && coverCid.length > 0) {
-    return [{ did, cid: coverCid, alt }];
+    const cover: StreamMedia = { did, cid: coverCid, alt };
+    const size = asFiniteNumber(galleryMeta?.coverPhotoSize);
+    if (size !== undefined) cover.size = size;
+    return [cover];
   }
   return [];
 }

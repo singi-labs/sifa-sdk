@@ -273,6 +273,8 @@ export {
   sanitizeDisplayText,
   normalizeDoi,
   openAlexWorkUrl,
+  blobProxyUrl,
+  type BlobProxyVariant,
   formatRelationship,
   parseEndorsementComment,
   sanitizeHandleInput,

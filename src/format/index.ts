@@ -27,6 +27,7 @@ export {
 } from './sort-by-date.js';
 export { normalizeDoi } from './doi.js';
 export { openAlexWorkUrl } from './openalex.js';
+export { blobProxyUrl, type BlobProxyVariant } from './blob-proxy-url.js';
 export {
   formatRelationship,
   parseEndorsementComment,
