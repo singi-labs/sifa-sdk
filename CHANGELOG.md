@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.89
+
+### Patch Changes
+
+- 2b44216: Verification badges: adds `verificationLabel` (verifier name, else provider label) and `resolveVerificationBadges` (API badges, else a Bluesky badge from the legacy flag), moved from sifa-web, plus `verificationColors` in `/tokens` (light and dark checkmark color per provider).
+
 ## 0.19.88
 
 ### Patch Changes
