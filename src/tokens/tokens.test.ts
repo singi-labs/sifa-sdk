@@ -38,7 +38,7 @@ describe('verificationColors', () => {
 
   it('uses the provider brand colors', () => {
     expect(verificationColors.bluesky).toEqual({ light: '#0F73FF', dark: '#0F73FF' });
-    expect(verificationColors.mu).toEqual({ light: '#db4aa6', dark: '#e98fd0' });
+    expect(verificationColors.mu).toEqual({ light: '#DB4AA6', dark: '#E98FD0' });
   });
 });
 

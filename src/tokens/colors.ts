@@ -1,3 +1,5 @@
+import type { VerificationProviderId } from '../taxonomy/verification-providers.js';
+
 /**
  * Sifa brand colors -- accent values from the Singi Labs design system.
  *
@@ -29,7 +31,7 @@ export type Colors = typeof colors;
  */
 export const verificationColors = {
   bluesky: { light: '#0F73FF', dark: '#0F73FF' },
-  mu: { light: '#db4aa6', dark: '#e98fd0' },
-} as const;
+  mu: { light: '#DB4AA6', dark: '#E98FD0' },
+} as const satisfies Record<VerificationProviderId, { light: string; dark: string }>;
 
 export type VerificationColors = typeof verificationColors;

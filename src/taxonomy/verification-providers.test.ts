@@ -212,6 +212,12 @@ describe('verificationLabel', () => {
     expect(verificationLabel({ provider: 'mu', issuerName: null })).toBe('mu (Eurosky)');
   });
 
+  it('shortens a very long verifier name', () => {
+    const label = verificationLabel({ provider: 'mu', issuerName: 'x'.repeat(200) });
+    expect(label.length).toBeLessThanOrEqual(64);
+    expect(label.endsWith('…')).toBe(true);
+  });
+
   it('falls back to the raw provider id for a provider this SDK does not know', () => {
     const unknown = { provider: 'future' } as unknown as AccountVerification;
     expect(verificationLabel(unknown)).toBe('future');
@@ -221,11 +227,19 @@ describe('verificationLabel', () => {
 describe('resolveVerificationBadges', () => {
   const mu: AccountVerification = { provider: 'mu', verifiedAt: '2026-07-01T00:00:00.000Z' };
 
-  it('returns the API badges when present', () => {
-    const badges = [mu];
-    expect(resolveVerificationBadges({ verificationBadges: badges, blueskyVerified: true })).toBe(
-      badges,
-    );
+  it('returns a copy of the API badges when present', () => {
+    const badges: readonly AccountVerification[] = [mu];
+    const result = resolveVerificationBadges({ verificationBadges: badges, blueskyVerified: true });
+    expect(result).toEqual([mu]);
+    expect(result).not.toBe(badges);
+  });
+
+  it('drops providers this SDK does not know, falling back to the legacy flag if none remain', () => {
+    const future = { provider: 'future', verifiedAt: null } as unknown as AccountVerification;
+    expect(resolveVerificationBadges({ verificationBadges: [future, mu] })).toEqual([mu]);
+    expect(
+      resolveVerificationBadges({ verificationBadges: [future], blueskyVerified: true }),
+    ).toEqual([{ provider: 'bluesky', verifiedAt: null }]);
   });
 
   it('returns no badges when the API sends an empty array, even with the legacy flag', () => {
