@@ -166,6 +166,8 @@ export {
   resolveVerifierProvider,
   buildVerifierListMembers,
   primaryVerification,
+  resolveVerificationBadges,
+  verificationLabel,
   type AccountVerification,
   type VerifierListItem,
   type VerificationProvider,

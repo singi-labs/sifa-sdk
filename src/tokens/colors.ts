@@ -1,3 +1,5 @@
+import type { VerificationProviderId } from '../taxonomy/verification-providers.js';
+
 /**
  * Sifa brand colors -- accent values from the Singi Labs design system.
  *
@@ -21,3 +23,15 @@ export const colors = {
 } as const;
 
 export type Colors = typeof colors;
+
+/**
+ * Verification checkmark colors per provider, for light and dark themes. Keys
+ * match the SDK's verification provider ids. Bluesky keeps its brand blue in
+ * both themes; mu's brand pink is lightened for dark backgrounds.
+ */
+export const verificationColors = {
+  bluesky: { light: '#0F73FF', dark: '#0F73FF' },
+  mu: { light: '#DB4AA6', dark: '#E98FD0' },
+} as const satisfies Record<VerificationProviderId, { light: string; dark: string }>;
+
+export type VerificationColors = typeof verificationColors;

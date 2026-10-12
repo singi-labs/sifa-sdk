@@ -10,9 +10,9 @@
  * score or a gate. This registry only decides which issuers Sifa displays and
  * with what provenance.
  *
- * Data-only: badge colors and icons are consumer concerns (React DOM on web,
- * React Native on mobile), same split as {@link PLATFORM_LABELS}. Consumers map
- * a provider id to a token/color.
+ * Data-only: badge colors live in the `/tokens` entry point
+ * (`verificationColors`, keyed by provider id); icons and components are
+ * consumer concerns (React DOM on web, React Native on mobile).
  */
 
 export type VerificationProviderId = 'bluesky' | 'mu';
@@ -200,4 +200,46 @@ export function primaryVerification(
     }
   }
   return best;
+}
+
+/** Longest verifier name a label shows (Bluesky's displayName limit in graphemes). */
+const MAX_LABEL_LENGTH = 64;
+
+/**
+ * Label for one verification: the verifier's own display name (`issuerName`,
+ * sent by the API for firehose providers such as mu, where each verifier is
+ * shown by name), otherwise the provider label. Long names are shortened with
+ * an ellipsis. A provider this SDK version does not know falls back to its raw
+ * id ({@link resolveVerificationBadges} already drops those).
+ */
+export function verificationLabel(v: Pick<AccountVerification, 'provider' | 'issuerName'>): string {
+  const name = v.issuerName?.trim();
+  if (name) {
+    const chars = [...name];
+    return chars.length > MAX_LABEL_LENGTH
+      ? `${chars.slice(0, MAX_LABEL_LENGTH - 1).join('')}…`
+      : name;
+  }
+  return getVerificationProvider(v.provider)?.label ?? v.provider;
+}
+
+/**
+ * The verifications a badge should render, as a new array. Keeps the API's
+ * `verificationBadges` from providers this SDK knows; an empty array means
+ * "none", even with the legacy flag. When the array is absent, or holds only
+ * unknown providers, builds a Bluesky entry from the legacy `blueskyVerified`
+ * flag (payloads that predate `verificationBadges`).
+ */
+export function resolveVerificationBadges(input: {
+  verificationBadges?: readonly AccountVerification[] | null;
+  blueskyVerified?: boolean;
+  blueskyVerifiedAt?: string | null;
+}): AccountVerification[] {
+  const badges = input.verificationBadges;
+  if (badges && badges.length === 0) return [];
+  const known = (badges ?? []).filter((b) => isKnownVerificationProvider(b.provider));
+  if (known.length > 0) return known;
+  return input.blueskyVerified
+    ? [{ provider: 'bluesky', verifiedAt: input.blueskyVerifiedAt ?? null }]
+    : [];
 }

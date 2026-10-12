@@ -10,6 +10,6 @@
  * their own format.
  */
 
-export { colors, type Colors } from './colors.js';
+export { colors, verificationColors, type Colors, type VerificationColors } from './colors.js';
 export { fonts, fontFallbackStacks, type Fonts, type FontFallbackStacks } from './typography.js';
 export { iconSet, iconWeights, type IconSet, type IconWeights } from './icons.js';
