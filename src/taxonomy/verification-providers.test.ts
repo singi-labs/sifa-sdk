@@ -4,6 +4,7 @@ import {
   getVerificationProvider,
   isKnownVerificationProvider,
   resolveVerifierProvider,
+  buildVerifierListMembers,
   primaryVerification,
   type AccountVerification,
 } from './verification-providers.js';
@@ -26,6 +27,24 @@ describe('VERIFICATION_PROVIDERS registry', () => {
     expect(mu.source).toBe('firehose');
     expect(mu.verifierDids.length).toBeGreaterThan(0);
     expect(mu.verifierDids.every((did) => did.startsWith('did:'))).toBe(true);
+  });
+
+  it("points mu at Eurosky's published trusted-verifier list, owned by a root DID", () => {
+    const mu = VERIFICATION_PROVIDERS.mu;
+    expect(mu.verifierListUri).toBe(
+      'at://did:plc:ooensn4mr5mhznzypvxelfa3/app.bsky.graph.list/3mogaw2g4an23',
+    );
+    // The list owner is the trust root: only its list confers verifier status.
+    const owner = mu.verifierListUri?.split('/')[2];
+    expect(mu.verifierDids).toContain(owner);
+  });
+
+  it('keeps only trust roots in the static mu DID list (members come from the list)', () => {
+    expect(VERIFICATION_PROVIDERS.mu.verifierDids).toEqual(['did:plc:ooensn4mr5mhznzypvxelfa3']);
+  });
+
+  it('gives Bluesky no verifier list', () => {
+    expect(VERIFICATION_PROVIDERS.bluesky.verifierListUri).toBeUndefined();
   });
 
   it('assigns a unique priority to each provider', () => {
@@ -73,10 +92,82 @@ describe('resolveVerifierProvider (firehose issuer gate)', () => {
     expect(resolveVerifierProvider('did:plc:somerandomstranger')).toBeNull();
   });
 
+  it('maps a DID from the dynamic list members to its provider', () => {
+    const members = new Map([['did:plc:listmember', 'mu' as const]]);
+    expect(resolveVerifierProvider('did:plc:listmember', members)).toBe('mu');
+    expect(resolveVerifierProvider('did:plc:listmember')).toBeNull();
+  });
+
+  it('still resolves trust roots when list members are supplied', () => {
+    const members = new Map([['did:plc:listmember', 'mu' as const]]);
+    expect(resolveVerifierProvider('did:plc:ooensn4mr5mhznzypvxelfa3', members)).toBe('mu');
+  });
+
+  it('falls back to the last confirmed verifiers when no list members are supplied', () => {
+    // Callers that have not loaded the list (or an older consumer on the
+    // one-argument form) keep recognizing the previously confirmed verifiers.
+    expect(resolveVerifierProvider('did:plc:durcipmx2rwgzzagbiumobs5')).toBe('mu');
+  });
+
+  it('drops the fallback once list members are supplied (the list is authoritative)', () => {
+    const members = new Map([['did:plc:listmember', 'mu' as const]]);
+    expect(resolveVerifierProvider('did:plc:durcipmx2rwgzzagbiumobs5', members)).toBeNull();
+  });
+
+  it('returns null instead of throwing for an unknown provider id in list members', () => {
+    const members = new Map([['did:plc:odd', 'eurosky']]) as unknown as ReadonlyMap<string, 'mu'>;
+    expect(resolveVerifierProvider('did:plc:odd', members)).toBeNull();
+  });
+
+  it('ignores list members mapped to an API-sourced provider', () => {
+    const members = new Map([['did:plc:sneaky', 'bluesky' as const]]);
+    expect(resolveVerifierProvider('did:plc:sneaky', members)).toBeNull();
+  });
+
   it('never matches an API-sourced provider (Bluesky is not firehose-gated)', () => {
     // Bluesky verifications arrive via its public API, not the firehose issuer
     // gate. A self-issued record must not resolve to the Bluesky provider.
     expect(resolveVerifierProvider('did:plc:anyone')).not.toBe('bluesky');
+  });
+});
+
+describe('buildVerifierListMembers (list-owner trust check)', () => {
+  const ROOT = 'did:plc:ooensn4mr5mhznzypvxelfa3';
+  const LIST = 'at://did:plc:ooensn4mr5mhznzypvxelfa3/app.bsky.graph.list/3mogaw2g4an23';
+
+  it("maps subjects of the provider's list, read from the root's repo, to the provider", () => {
+    const members = buildVerifierListMembers([
+      { repoDid: ROOT, list: LIST, subject: 'did:plc:philosophy' },
+      { repoDid: ROOT, list: LIST, subject: 'did:web:example.org' },
+    ]);
+    expect(members.get('did:plc:philosophy')).toBe('mu');
+    expect(members.get('did:web:example.org')).toBe('mu');
+  });
+
+  it('rejects items read from a repo other than the list owner', () => {
+    const members = buildVerifierListMembers([
+      { repoDid: 'did:plc:impostor', list: LIST, subject: 'did:plc:sneaky' },
+    ]);
+    expect(members.size).toBe(0);
+  });
+
+  it('rejects items that belong to another list', () => {
+    const members = buildVerifierListMembers([
+      {
+        repoDid: ROOT,
+        list: 'at://did:plc:ooensn4mr5mhznzypvxelfa3/app.bsky.graph.list/other',
+        subject: 'did:plc:sneaky',
+      },
+    ]);
+    expect(members.size).toBe(0);
+  });
+
+  it('rejects malformed subjects', () => {
+    const members = buildVerifierListMembers([
+      { repoDid: ROOT, list: LIST, subject: 'eurosky.social' },
+      { repoDid: ROOT, list: LIST, subject: 42 },
+    ]);
+    expect(members.size).toBe(0);
   });
 });
 

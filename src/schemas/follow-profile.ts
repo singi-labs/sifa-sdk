@@ -13,6 +13,8 @@ const AccountVerificationSchema = z.object({
   ),
   verifiedAt: datetimeSchema.nullable().optional(),
   issuerDid: didSchema.nullable().optional(),
+  // Bluesky caps displayName at 640 bytes; anything longer is not a real name.
+  issuerName: z.string().max(640).nullable().optional(),
 });
 
 /**
