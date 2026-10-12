@@ -31,6 +31,19 @@ describe('FollowProfileSchema', () => {
     expect(parsed.verificationBadges).toEqual(badges);
   });
 
+  it('keeps the issuer display name on a firehose badge', () => {
+    const badges = [
+      {
+        provider: 'mu',
+        verifiedAt: NOW,
+        issuerDid: 'did:plc:e4pttehx46z75wnajd3cuzjm',
+        issuerName: 'PhilosophySky Network',
+      },
+    ];
+    const parsed = FollowProfileSchema.parse({ ...ROW, verificationBadges: badges });
+    expect(parsed.verificationBadges).toEqual(badges);
+  });
+
   it('stays valid without verificationBadges', () => {
     const parsed = FollowProfileSchema.parse(ROW);
     expect(parsed.verificationBadges).toBeUndefined();

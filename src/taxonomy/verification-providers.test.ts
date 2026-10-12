@@ -28,6 +28,24 @@ describe('VERIFICATION_PROVIDERS registry', () => {
     expect(mu.verifierDids.every((did) => did.startsWith('did:'))).toBe(true);
   });
 
+  it("points mu at Eurosky's published trusted-verifier list, owned by a root DID", () => {
+    const mu = VERIFICATION_PROVIDERS.mu;
+    expect(mu.verifierListUri).toBe(
+      'at://did:plc:ooensn4mr5mhznzypvxelfa3/app.bsky.graph.list/3mogaw2g4an23',
+    );
+    // The list owner is the trust root: only its list confers verifier status.
+    const owner = mu.verifierListUri?.split('/')[2];
+    expect(mu.verifierDids).toContain(owner);
+  });
+
+  it('keeps only trust roots in the static mu DID list (members come from the list)', () => {
+    expect(VERIFICATION_PROVIDERS.mu.verifierDids).toEqual(['did:plc:ooensn4mr5mhznzypvxelfa3']);
+  });
+
+  it('gives Bluesky no verifier list', () => {
+    expect(VERIFICATION_PROVIDERS.bluesky.verifierListUri).toBeUndefined();
+  });
+
   it('assigns a unique priority to each provider', () => {
     const priorities = Object.values(VERIFICATION_PROVIDERS).map((p) => p.priority);
     expect(new Set(priorities).size).toBe(priorities.length);
@@ -71,6 +89,22 @@ describe('resolveVerifierProvider (firehose issuer gate)', () => {
 
   it('returns null for an unrecognized issuer DID', () => {
     expect(resolveVerifierProvider('did:plc:somerandomstranger')).toBeNull();
+  });
+
+  it('maps a DID from the dynamic list members to its provider', () => {
+    const members = new Map([['did:plc:listmember', 'mu' as const]]);
+    expect(resolveVerifierProvider('did:plc:listmember', members)).toBe('mu');
+    expect(resolveVerifierProvider('did:plc:listmember')).toBeNull();
+  });
+
+  it('still resolves trust roots when list members are supplied', () => {
+    const members = new Map([['did:plc:listmember', 'mu' as const]]);
+    expect(resolveVerifierProvider('did:plc:ooensn4mr5mhznzypvxelfa3', members)).toBe('mu');
+  });
+
+  it('ignores list members mapped to an API-sourced provider', () => {
+    const members = new Map([['did:plc:sneaky', 'bluesky' as const]]);
+    expect(resolveVerifierProvider('did:plc:sneaky', members)).toBeNull();
   });
 
   it('never matches an API-sourced provider (Bluesky is not firehose-gated)', () => {

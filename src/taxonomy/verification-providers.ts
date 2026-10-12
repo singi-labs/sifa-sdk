@@ -37,12 +37,19 @@ export interface VerificationProvider {
    */
   source: VerificationSource;
   /**
-   * Trusted verifier DIDs for firehose-sourced providers. A verification record
-   * counts only if its ISSUER DID is in this list. Empty for `bluesky-api`
-   * providers (Bluesky's AppView owns that decision). DIDs, not handles: a handle
-   * takeover must never confer verifier status.
+   * Trust-root DIDs for firehose-sourced providers. A verification record counts
+   * if its ISSUER DID is a root or a member of {@link verifierListUri}. Empty for
+   * `bluesky-api` providers (Bluesky's AppView owns that decision). DIDs, not
+   * handles: a handle takeover must never confer verifier status.
    */
   verifierDids: readonly string[];
+  /**
+   * AT-URI of the `app.bsky.graph.list` where the provider publishes its
+   * trusted verifiers. Consumers load its members at runtime and pass them to
+   * {@link resolveVerifierProvider}, so a verifier the provider adds counts on
+   * Sifa without a release. The list owner must be in {@link verifierDids}.
+   */
+  verifierListUri?: string;
 }
 
 /**
@@ -53,24 +60,20 @@ export interface AccountVerification {
   provider: VerificationProviderId;
   verifiedAt?: string | null;
   issuerDid?: string | null;
+  /** Display name of the issuer (firehose providers), when the API knows it. */
+  issuerName?: string | null;
 }
 
 /**
- * mu / Eurosky trusted verifiers (see https://hello.mu.social/verification).
- * Sifa-maintained allowlist -- this is the governance commitment. Add a DID here
- * only after confirming the organization is a mu trusted verifier. Handles are
- * comments for humans; the DID is what the firehose issuer gate matches.
+ * mu / Eurosky trust root (see https://hello.mu.social/verification).
+ * eurosky.social coordinates the trusted-verifier program and publishes the
+ * verifier set as {@link MU_VERIFIER_LIST_URI}; the individual verifiers are
+ * read from that list at runtime, not maintained here.
  */
-const MU_VERIFIER_DIDS = [
-  'did:plc:ooensn4mr5mhznzypvxelfa3', // eurosky.social -- coordinates the trusted-verifier program
-  'did:plc:durcipmx2rwgzzagbiumobs5', // france-atmosphe.re
-  'did:plc:zsf5p7rqilz2qvyd7ezmxrfj', // belgium-atmosphe.re
-  'did:plc:hd564mpf6bekrwzyhvujs54b', // medsky.network
-  'did:plc:u5zp7npt5kpueado77kuihyz', // npmx.dev
-  'did:plc:6tndl5lqrzjrx7ahjom2gjbq', // stewardshiplab.org
-  'did:plc:vnycpb2e4lh4tc7oyr3n2jvh', // newsmastfoundation.org
-  'did:plc:dsiqe4pszk5ldbjk66fyryjv', // cpesr.fr
-] as const;
+const MU_ROOT_DID = 'did:plc:ooensn4mr5mhznzypvxelfa3'; // eurosky.social
+
+/** "Trusted verifiers on mu", owned by {@link MU_ROOT_DID}. */
+const MU_VERIFIER_LIST_URI = `at://${MU_ROOT_DID}/app.bsky.graph.list/3mogaw2g4an23`;
 
 export const VERIFICATION_PROVIDERS: Record<VerificationProviderId, VerificationProvider> = {
   bluesky: {
@@ -85,7 +88,8 @@ export const VERIFICATION_PROVIDERS: Record<VerificationProviderId, Verification
     label: 'mu (Eurosky)',
     priority: 1,
     source: 'firehose',
-    verifierDids: MU_VERIFIER_DIDS,
+    verifierDids: [MU_ROOT_DID],
+    verifierListUri: MU_VERIFIER_LIST_URI,
   },
 };
 
@@ -103,15 +107,23 @@ export function getVerificationProvider(id: string): VerificationProvider | unde
 /**
  * The firehose issuer gate: given the DID that authored an
  * `app.bsky.graph.verification` record, return the provider it verifies for, or
- * `null` if the issuer is not a recognized firehose verifier. API-sourced
- * providers (Bluesky) are never matched here -- their verifications do not enter
- * through the firehose, so a self-issued record cannot resolve to them.
+ * `null` if the issuer is not a recognized firehose verifier. A DID counts if it
+ * is a provider's trust root, or if `listMembers` (loaded by the caller from
+ * each provider's {@link VerificationProvider.verifierListUri}) maps it to a
+ * firehose provider. API-sourced providers (Bluesky) are never matched here --
+ * their verifications do not enter through the firehose, so a self-issued record
+ * cannot resolve to them.
  */
-export function resolveVerifierProvider(issuerDid: string): VerificationProviderId | null {
+export function resolveVerifierProvider(
+  issuerDid: string,
+  listMembers?: ReadonlyMap<string, VerificationProviderId>,
+): VerificationProviderId | null {
   for (const provider of Object.values(VERIFICATION_PROVIDERS)) {
     if (provider.source !== 'firehose') continue;
     if (provider.verifierDids.includes(issuerDid)) return provider.id;
   }
+  const fromList = listMembers?.get(issuerDid);
+  if (fromList && VERIFICATION_PROVIDERS[fromList].source === 'firehose') return fromList;
   return null;
 }
 

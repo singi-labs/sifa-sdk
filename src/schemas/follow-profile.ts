@@ -13,6 +13,7 @@ const AccountVerificationSchema = z.object({
   ),
   verifiedAt: datetimeSchema.nullable().optional(),
   issuerDid: didSchema.nullable().optional(),
+  issuerName: z.string().nullable().optional(),
 });
 
 /**
