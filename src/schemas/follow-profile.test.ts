@@ -44,6 +44,14 @@ describe('FollowProfileSchema', () => {
     expect(parsed.verificationBadges).toEqual(badges);
   });
 
+  it('drops a badge whose issuer name is implausibly long', () => {
+    const parsed = FollowProfileSchema.parse({
+      ...ROW,
+      verificationBadges: [{ provider: 'mu', verifiedAt: NOW, issuerName: 'x'.repeat(1000) }],
+    });
+    expect(parsed.verificationBadges).toEqual([]);
+  });
+
   it('stays valid without verificationBadges', () => {
     const parsed = FollowProfileSchema.parse(ROW);
     expect(parsed.verificationBadges).toBeUndefined();
