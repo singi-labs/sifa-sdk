@@ -6,6 +6,8 @@ import {
   resolveVerifierProvider,
   buildVerifierListMembers,
   primaryVerification,
+  resolveVerificationBadges,
+  verificationLabel,
   type AccountVerification,
 } from './verification-providers.js';
 
@@ -194,5 +196,54 @@ describe('primaryVerification (D1: one badge, rest in popover)', () => {
     const unknown = { provider: 'twitter', verifiedAt: null } as unknown as AccountVerification;
     expect(primaryVerification([unknown, mu])).toEqual(mu);
     expect(primaryVerification([unknown])).toBeNull();
+  });
+});
+
+describe('verificationLabel', () => {
+  it("uses the verifier's own name when the API sends one", () => {
+    expect(verificationLabel({ provider: 'mu', issuerName: 'PhilosophySky Network' })).toBe(
+      'PhilosophySky Network',
+    );
+  });
+
+  it('falls back to the provider label when the name is missing or blank', () => {
+    expect(verificationLabel({ provider: 'bluesky' })).toBe('Bluesky');
+    expect(verificationLabel({ provider: 'mu', issuerName: '  ' })).toBe('mu (Eurosky)');
+    expect(verificationLabel({ provider: 'mu', issuerName: null })).toBe('mu (Eurosky)');
+  });
+
+  it('falls back to the raw provider id for a provider this SDK does not know', () => {
+    const unknown = { provider: 'future' } as unknown as AccountVerification;
+    expect(verificationLabel(unknown)).toBe('future');
+  });
+});
+
+describe('resolveVerificationBadges', () => {
+  const mu: AccountVerification = { provider: 'mu', verifiedAt: '2026-07-01T00:00:00.000Z' };
+
+  it('returns the API badges when present', () => {
+    const badges = [mu];
+    expect(resolveVerificationBadges({ verificationBadges: badges, blueskyVerified: true })).toBe(
+      badges,
+    );
+  });
+
+  it('returns no badges when the API sends an empty array, even with the legacy flag', () => {
+    expect(resolveVerificationBadges({ verificationBadges: [], blueskyVerified: true })).toEqual(
+      [],
+    );
+  });
+
+  it('builds a Bluesky badge from the legacy flag when the array is absent', () => {
+    expect(
+      resolveVerificationBadges({ blueskyVerified: true, blueskyVerifiedAt: '2026-01-01' }),
+    ).toEqual([{ provider: 'bluesky', verifiedAt: '2026-01-01' }]);
+    expect(resolveVerificationBadges({ verificationBadges: null, blueskyVerified: true })).toEqual([
+      { provider: 'bluesky', verifiedAt: null },
+    ]);
+  });
+
+  it('returns nothing without badges or the legacy flag', () => {
+    expect(resolveVerificationBadges({})).toEqual([]);
   });
 });

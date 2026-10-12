@@ -201,3 +201,30 @@ export function primaryVerification(
   }
   return best;
 }
+
+/**
+ * Label for one verification: the verifier's own display name (`issuerName`,
+ * sent by the API for firehose providers such as mu, where each verifier is
+ * shown by name), otherwise the provider label. A provider this SDK version
+ * does not know falls back to its raw id.
+ */
+export function verificationLabel(v: Pick<AccountVerification, 'provider' | 'issuerName'>): string {
+  return v.issuerName?.trim() || (getVerificationProvider(v.provider)?.label ?? v.provider);
+}
+
+/**
+ * The verifications a badge should render. Prefers the API's
+ * `verificationBadges` (an empty array means "none", even with the legacy
+ * flag). Without the array, builds a Bluesky entry from the legacy
+ * `blueskyVerified` flag, for payloads that predate `verificationBadges`.
+ */
+export function resolveVerificationBadges(input: {
+  verificationBadges?: AccountVerification[] | null;
+  blueskyVerified?: boolean;
+  blueskyVerifiedAt?: string | null;
+}): AccountVerification[] {
+  if (input.verificationBadges) return input.verificationBadges;
+  return input.blueskyVerified
+    ? [{ provider: 'bluesky', verifiedAt: input.blueskyVerifiedAt ?? null }]
+    : [];
+}

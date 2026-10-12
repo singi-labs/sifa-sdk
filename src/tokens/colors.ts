@@ -21,3 +21,15 @@ export const colors = {
 } as const;
 
 export type Colors = typeof colors;
+
+/**
+ * Verification checkmark colors per provider, for light and dark themes. Keys
+ * match the SDK's verification provider ids. Bluesky keeps its brand blue in
+ * both themes; mu's brand pink is lightened for dark backgrounds.
+ */
+export const verificationColors = {
+  bluesky: { light: '#0F73FF', dark: '#0F73FF' },
+  mu: { light: '#db4aa6', dark: '#e98fd0' },
+} as const;
+
+export type VerificationColors = typeof verificationColors;

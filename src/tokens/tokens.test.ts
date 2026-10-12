@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { colors, fontFallbackStacks, fonts, iconSet, iconWeights } from './index.js';
+import { VERIFICATION_PROVIDERS } from '../taxonomy/verification-providers.js';
+import {
+  colors,
+  fontFallbackStacks,
+  fonts,
+  iconSet,
+  iconWeights,
+  verificationColors,
+} from './index.js';
 
 describe('colors', () => {
   it('exposes Sifa-specific Flexoki accents from design-system.md', () => {
@@ -14,6 +22,23 @@ describe('colors', () => {
     const a = colors;
     const b = colors;
     expect(a).toBe(b);
+  });
+});
+
+describe('verificationColors', () => {
+  it('has a light and dark checkmark color for every verification provider', () => {
+    expect(Object.keys(verificationColors).sort()).toEqual(
+      Object.keys(VERIFICATION_PROVIDERS).sort(),
+    );
+    for (const color of Object.values(verificationColors)) {
+      expect(color.light).toMatch(/^#[0-9a-f]{6}$/i);
+      expect(color.dark).toMatch(/^#[0-9a-f]{6}$/i);
+    }
+  });
+
+  it('uses the provider brand colors', () => {
+    expect(verificationColors.bluesky).toEqual({ light: '#0F73FF', dark: '#0F73FF' });
+    expect(verificationColors.mu).toEqual({ light: '#db4aa6', dark: '#e98fd0' });
   });
 });
 
