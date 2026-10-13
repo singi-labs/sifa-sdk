@@ -61,13 +61,14 @@ export function pickExportContact(draft: ExportContactDraft): ExportContact {
 /**
  * Drops blank fields and tidies the rest. Email and phone become one line with
  * single spaces. An address keeps its line breaks but loses blank lines and the
- * spaces around each line. The emitters call this too, so a caller that skips
- * {@link pickExportContact} gets the same output.
+ * spaces around each line. Each field is cut at its {@link EXPORT_CONTACT_LIMITS}
+ * length. The emitters call this too, so a caller that skips
+ * {@link pickExportContact} and the schema gets the same bounded output.
  */
 export function normalizeExportContact(contact: ExportContact): ExportContact {
-  const email = oneLine(contact.email);
-  const phone = oneLine(contact.phone);
-  const address = lines(contact.address);
+  const email = cap(oneLine(contact.email), EXPORT_CONTACT_LIMITS.email);
+  const phone = cap(oneLine(contact.phone), EXPORT_CONTACT_LIMITS.phone);
+  const address = cap(lines(contact.address), EXPORT_CONTACT_LIMITS.address);
   return {
     ...(email ? { email } : {}),
     ...(phone ? { phone } : {}),
@@ -77,7 +78,17 @@ export function normalizeExportContact(contact: ExportContact): ExportContact {
 
 /** A loose shape check for a non-blocking "check this address" hint. */
 export function looksLikeEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  const trimmed = value.trim();
+  if (/\s/.test(trimmed)) return false;
+  const parts = trimmed.split('@');
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts as [string, string];
+  const dot = domain.lastIndexOf('.');
+  return local.length > 0 && dot > 0 && dot < domain.length - 1;
+}
+
+function cap(value: string | undefined, max: number): string | undefined {
+  return value === undefined ? undefined : value.slice(0, max).trimEnd();
 }
 
 function oneLine(value: string | undefined): string | undefined {

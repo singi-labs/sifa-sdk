@@ -96,6 +96,15 @@ describe('normalizeExportContact', () => {
   });
 });
 
+describe('normalizeExportContact limits', () => {
+  // The form and the API enforce the limits too; this holds them for any
+  // caller that skips both.
+  it.each(Object.entries(EXPORT_CONTACT_LIMITS))('caps %s at %i characters', (key, max) => {
+    const out = normalizeExportContact({ [key]: 'x'.repeat(max + 50) });
+    expect(out[key as keyof typeof out]).toHaveLength(max);
+  });
+});
+
 describe('exportContactSchema', () => {
   it('accepts a picked contact', () => {
     expect(exportContactSchema.safeParse(pickExportContact(draft)).success).toBe(true);
@@ -125,10 +134,25 @@ describe('looksLikeEmail', () => {
     expect(looksLikeEmail(value)).toBe(true);
   });
 
-  it.each(['', 'ada', 'ada@', '@example.com', 'ada@example', 'ada @example.com'])(
-    'rejects %j',
-    (value) => {
-      expect(looksLikeEmail(value)).toBe(false);
-    },
-  );
+  it.each([
+    '',
+    'ada',
+    'ada@',
+    '@example.com',
+    'ada@example',
+    'ada @example.com',
+    'a@b@example.com',
+    'ada@.com',
+    'ada@example.',
+  ])('rejects %j', (value) => {
+    expect(looksLikeEmail(value)).toBe(false);
+  });
+
+  // CodeQL js/polynomial-redos: a regex over this input backtracked on
+  // '!@!.' followed by many '!.' repetitions.
+  it('stays fast on a long adversarial input', () => {
+    const start = performance.now();
+    looksLikeEmail(`!@!.${'!.'.repeat(50_000)}`);
+    expect(performance.now() - start).toBeLessThan(250);
+  });
 });
