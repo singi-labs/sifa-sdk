@@ -34,6 +34,7 @@ import type {
   ProfileVolunteering,
 } from '../types/index.js';
 import { normaliseBaseUrl, profileUrl } from '../jsonld/url.js';
+import type { ExportContact } from './export-contact.js';
 
 export type Sanitizer = (input: string) => string;
 
@@ -48,6 +49,12 @@ export interface JsonResumeOptions {
    * not at that path.
    */
   readonly canonicalUrl?: string;
+  /**
+   * Email, phone and postal address to print. Sifa holds none of these; the
+   * owner types them on the export page. Without it the resume has no
+   * `email`, `phone` or `location.address`.
+   */
+  readonly contact?: ExportContact;
 }
 
 /**
@@ -78,6 +85,8 @@ export interface JsonResumeProfileInput {
 }
 
 export interface JsonResumeLocation {
+  /** Street address; lines are separated by `\n`, as the schema asks. */
+  readonly address?: string;
   readonly city?: string;
   readonly region?: string;
   readonly countryCode?: string;
@@ -95,6 +104,8 @@ export interface JsonResumeBasics {
   readonly label?: string;
   readonly image?: string;
   readonly url?: string;
+  readonly email?: string;
+  readonly phone?: string;
   readonly summary?: string;
   readonly location?: JsonResumeLocation;
   readonly profiles?: JsonResumeProfileLink[];
@@ -221,6 +232,13 @@ const FLUENCY_LABELS: Record<LanguageProficiency, string> = {
 const identity: Sanitizer = (input) => input;
 
 /** Drops keys whose value is undefined, so the document carries no empty slots. */
+function withAddress(
+  location: JsonResumeLocation | undefined,
+  address: string | undefined,
+): JsonResumeLocation | undefined {
+  return address ? { address, ...location } : location;
+}
+
 function compact<T extends object>(value: T): T {
   return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined)) as T;
 }
@@ -295,9 +313,11 @@ export function profileToJsonResume(
     name,
     label: text(profile.headline, s),
     image: text(profile.avatar, s),
+    email: text(options.contact?.email, s),
+    phone: text(options.contact?.phone, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
-    location: mapLocation(profile.location, s),
+    location: withAddress(mapLocation(profile.location, s), text(options.contact?.address, s)),
     ...section('profiles', profiles),
   });
 

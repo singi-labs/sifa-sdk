@@ -412,3 +412,29 @@ describe('profileToFunderCv: empty profile', () => {
     expect(doc.products.related).toEqual([]);
   });
 });
+
+describe('profileToFunderCv: contact details', () => {
+  const contact = { email: 'ada@example.com', phone: '+44 20 1', address: '12 St James Sq' };
+
+  it('puts contact details on the ERC person', () => {
+    const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'erc'), {
+      contact,
+    });
+    expect(doc.person).toMatchObject(contact);
+  });
+
+  // The NIH Biographical Sketch has no contact block.
+  it('ignores contact details for NIH', () => {
+    const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'nih'), {
+      contact,
+    });
+    expect('email' in doc.person).toBe(false);
+    expect('phone' in doc.person).toBe(false);
+    expect('address' in doc.person).toBe(false);
+  });
+
+  it('adds no contact keys when none are passed', () => {
+    const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'erc'));
+    expect('email' in doc.person).toBe(false);
+  });
+});

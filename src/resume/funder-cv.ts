@@ -30,6 +30,7 @@ import type {
   ProfilePublication,
   ProfileVolunteering,
 } from '../types/index.js';
+import type { ExportContact } from './export-contact.js';
 import { toResumeDate } from './json-resume.js';
 
 export const FUNDER_CV_FORMATS = ['nih', 'erc'] as const;
@@ -275,6 +276,19 @@ export interface FunderCvPerson {
   /** Bare ORCID iD, e.g. `0000-0002-1825-0097`. */
   readonly orcid?: string;
   readonly website?: string;
+  /** ERC only: the NIH Biographical Sketch has no contact block. */
+  readonly email?: string;
+  readonly phone?: string;
+  /** Lines are separated by `\n`. */
+  readonly address?: string;
+}
+
+export interface FunderCvOptions {
+  /**
+   * Contact details the owner typed for this export. Sifa stores none of
+   * them. Used for ERC only.
+   */
+  readonly contact?: ExportContact;
 }
 
 /** One product or research output, ready to cite. */
@@ -533,6 +547,7 @@ function honorsOf(ids: readonly string[], profile: FunderCvProfileInput): Funder
 export function profileToFunderCv(
   profile: FunderCvProfileInput,
   selection: FunderCvSelection,
+  options: FunderCvOptions = {},
 ): FunderCvDocument {
   const person = personOf(profile);
   const positions = filterHidden(profile.positions);
@@ -611,7 +626,12 @@ export function profileToFunderCv(
 
   return {
     format: 'erc',
-    person,
+    person: compact<FunderCvPerson>({
+      ...person,
+      email: text(options.contact?.email),
+      phone: text(options.contact?.phone),
+      address: text(options.contact?.address),
+    }),
     education: education.map((e) =>
       compact<ErcEducation>({
         date: monthYear(e.endedAt) ?? monthYear(e.startedAt),

@@ -105,10 +105,39 @@ describe('profileToJsonResume basics', () => {
 
   // Sifa never stores these; emitting empty strings would make a resume look
   // like it had been filled in and left blank.
-  it('never emits email or phone', () => {
+  it('never emits email or phone unless the caller passes them', () => {
     const r = profileToJsonResume(minimal);
     expect(r.basics && 'email' in r.basics).toBe(false);
     expect(r.basics && 'phone' in r.basics).toBe(false);
+    expect(r.basics?.location && 'address' in r.basics.location).toBeFalsy();
+  });
+
+  // The owner types these on the export page; they live in the browser only.
+  it('emits contact details passed in by the caller', () => {
+    const r = profileToJsonResume(
+      { ...minimal, location: { country: 'Netherlands', city: 'Amsterdam', countryCode: 'NL' } },
+      { contact: { email: 'a@b.co', phone: '+31 6 1', address: 'Main Street 1\n1234 AB' } },
+    );
+    expect(r.basics?.email).toBe('a@b.co');
+    expect(r.basics?.phone).toBe('+31 6 1');
+    expect(r.basics?.location).toEqual({
+      address: 'Main Street 1\n1234 AB',
+      city: 'Amsterdam',
+      countryCode: 'NL',
+    });
+  });
+
+  it('emits an address even when the profile has no location', () => {
+    const r = profileToJsonResume(minimal, { contact: { address: 'Main Street 1' } });
+    expect(r.basics?.location).toEqual({ address: 'Main Street 1' });
+  });
+
+  it('runs contact details through the sanitizer', () => {
+    const r = profileToJsonResume(minimal, {
+      contact: { email: 'a@b.co' },
+      sanitize: (v) => v.toUpperCase(),
+    });
+    expect(r.basics?.email).toBe('A@B.CO');
   });
 
   it('maps visible external accounts to basics.profiles', () => {
