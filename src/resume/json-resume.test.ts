@@ -141,6 +141,24 @@ describe('profileToJsonResume basics', () => {
     expect(r.basics?.location?.address).toBe('Street 1\nCity');
   });
 
+  it('emits personal details passed in by the caller', () => {
+    const r = profileToJsonResume(minimal, {
+      contact: { driversLicense: 'B', rightToWork: 'EU citizen', nationality: 'Dutch' },
+    });
+    expect(r.basics).toMatchObject({
+      driversLicense: 'B',
+      rightToWork: 'EU citizen',
+      nationality: 'Dutch',
+    });
+  });
+
+  it('emits no personal details by default', () => {
+    const r = profileToJsonResume(minimal);
+    expect(r.basics).not.toHaveProperty('nationality');
+    expect(r.basics).not.toHaveProperty('driversLicense');
+    expect(r.basics).not.toHaveProperty('rightToWork');
+  });
+
   it('runs contact details through the sanitizer', () => {
     const r = profileToJsonResume(minimal, {
       contact: { email: 'a@b.co' },

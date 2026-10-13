@@ -1,5 +1,6 @@
 /**
- * Private contact details for exports: email, phone and postal address.
+ * Private contact and personal details for exports: email, phone, postal
+ * address, driver's license, right to work and nationality.
  *
  * Sifa never stores these and never writes them to the owner's PDS, where they
  * would be public. The owner types them on the export page, the browser keeps
@@ -15,6 +16,9 @@ export const EXPORT_CONTACT_LIMITS = {
   email: 254,
   phone: 40,
   address: 500,
+  driversLicense: 60,
+  rightToWork: 200,
+  nationality: 100,
 } as const;
 
 /** The contact details that go into an export. Absent keys are left out. */
@@ -23,6 +27,11 @@ export interface ExportContact {
   readonly phone?: string;
   /** Free text; lines are separated by `\n`. */
   readonly address?: string;
+  /** License categories, e.g. "B, BE". */
+  readonly driversLicense?: string;
+  /** e.g. "EU citizen, no sponsorship needed". */
+  readonly rightToWork?: string;
+  readonly nationality?: string;
 }
 
 /** What the owner has typed, plus which fields they chose to include. */
@@ -30,9 +39,15 @@ export interface ExportContactDraft {
   readonly email?: string;
   readonly phone?: string;
   readonly address?: string;
+  readonly driversLicense?: string;
+  readonly rightToWork?: string;
+  readonly nationality?: string;
   readonly includeEmail?: boolean;
   readonly includePhone?: boolean;
   readonly includeAddress?: boolean;
+  readonly includeDriversLicense?: boolean;
+  readonly includeRightToWork?: boolean;
+  readonly includeNationality?: boolean;
 }
 
 /**
@@ -44,6 +59,9 @@ export const exportContactSchema = z.strictObject({
   email: z.string().max(EXPORT_CONTACT_LIMITS.email).optional(),
   phone: z.string().max(EXPORT_CONTACT_LIMITS.phone).optional(),
   address: z.string().max(EXPORT_CONTACT_LIMITS.address).optional(),
+  driversLicense: z.string().max(EXPORT_CONTACT_LIMITS.driversLicense).optional(),
+  rightToWork: z.string().max(EXPORT_CONTACT_LIMITS.rightToWork).optional(),
+  nationality: z.string().max(EXPORT_CONTACT_LIMITS.nationality).optional(),
 });
 
 /**
@@ -55,6 +73,9 @@ export function pickExportContact(draft: ExportContactDraft): ExportContact {
     email: draft.includeEmail ? draft.email : undefined,
     phone: draft.includePhone ? draft.phone : undefined,
     address: draft.includeAddress ? draft.address : undefined,
+    driversLicense: draft.includeDriversLicense ? draft.driversLicense : undefined,
+    rightToWork: draft.includeRightToWork ? draft.rightToWork : undefined,
+    nationality: draft.includeNationality ? draft.nationality : undefined,
   });
 }
 
@@ -69,10 +90,16 @@ export function normalizeExportContact(contact: ExportContact): ExportContact {
   const email = cap(oneLine(contact.email), EXPORT_CONTACT_LIMITS.email);
   const phone = cap(oneLine(contact.phone), EXPORT_CONTACT_LIMITS.phone);
   const address = cap(lines(contact.address), EXPORT_CONTACT_LIMITS.address);
+  const driversLicense = cap(oneLine(contact.driversLicense), EXPORT_CONTACT_LIMITS.driversLicense);
+  const rightToWork = cap(oneLine(contact.rightToWork), EXPORT_CONTACT_LIMITS.rightToWork);
+  const nationality = cap(oneLine(contact.nationality), EXPORT_CONTACT_LIMITS.nationality);
   return {
     ...(email ? { email } : {}),
     ...(phone ? { phone } : {}),
     ...(address ? { address } : {}),
+    ...(driversLicense ? { driversLicense } : {}),
+    ...(rightToWork ? { rightToWork } : {}),
+    ...(nationality ? { nationality } : {}),
   };
 }
 

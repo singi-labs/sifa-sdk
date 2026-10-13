@@ -279,14 +279,17 @@ export interface FunderCvPerson {
 }
 
 /**
- * The ERC person, with the contact details the owner typed for this export.
- * The NIH Biographical Sketch has no contact block, so only ERC carries them.
+ * The ERC person, with the contact and personal details the owner typed for
+ * this export. The NIH Biographical Sketch has no such block, so only ERC carries them.
  */
 export interface ErcFunderCvPerson extends FunderCvPerson {
   readonly email?: string;
   readonly phone?: string;
   /** Lines are separated by `\n`. */
   readonly address?: string;
+  readonly driversLicense?: string;
+  readonly rightToWork?: string;
+  readonly nationality?: string;
 }
 
 export interface FunderCvOptions {

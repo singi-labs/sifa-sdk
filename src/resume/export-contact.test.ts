@@ -156,3 +156,48 @@ describe('looksLikeEmail', () => {
     expect(performance.now() - start).toBeLessThan(250);
   });
 });
+
+describe('personal details', () => {
+  const personal = {
+    driversLicense: ' B, BE ',
+    rightToWork: 'EU citizen,\n no sponsorship needed',
+    nationality: 'Dutch',
+    includeDriversLicense: true,
+    includeRightToWork: true,
+    includeNationality: true,
+  };
+
+  it('picks the included personal details, tidied to one line', () => {
+    expect(pickExportContact(personal)).toEqual({
+      driversLicense: 'B, BE',
+      rightToWork: 'EU citizen, no sponsorship needed',
+      nationality: 'Dutch',
+    });
+  });
+
+  it('leaves out a personal detail whose include box is off', () => {
+    expect(pickExportContact({ ...personal, includeNationality: false })).not.toHaveProperty(
+      'nationality',
+    );
+  });
+
+  it('caps each personal detail at its limit', () => {
+    const out = normalizeExportContact({
+      driversLicense: 'x'.repeat(500),
+      rightToWork: 'x'.repeat(500),
+      nationality: 'x'.repeat(500),
+    });
+    expect(out.driversLicense).toHaveLength(EXPORT_CONTACT_LIMITS.driversLicense);
+    expect(out.rightToWork).toHaveLength(EXPORT_CONTACT_LIMITS.rightToWork);
+    expect(out.nationality).toHaveLength(EXPORT_CONTACT_LIMITS.nationality);
+  });
+
+  it('validates personal details in the schema', () => {
+    expect(exportContactSchema.safeParse({ nationality: 'Dutch' }).success).toBe(true);
+    expect(
+      exportContactSchema.safeParse({
+        nationality: 'x'.repeat(EXPORT_CONTACT_LIMITS.nationality + 1),
+      }).success,
+    ).toBe(false);
+  });
+});
