@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.90
+
+### Patch Changes
+
+- a07cca4: Add private contact details for exports. `@singi-labs/sifa-sdk/resume` exports `ExportContact`, `exportContactSchema`, `EXPORT_CONTACT_LIMITS`, `pickExportContact`, `normalizeExportContact` and `looksLikeEmail`. `profileToJsonResume` takes an optional `contact` and emits `basics.email`, `basics.phone` and `basics.location.address` from it. `profileToFunderCv` takes an optional `{ contact }` and puts it on the ERC person (new `ErcFunderCvPerson` type); NIH ignores it.
+
 ## 0.19.89
 
 ### Patch Changes
