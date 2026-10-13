@@ -106,6 +106,13 @@ export interface JsonResumeBasics {
   readonly url?: string;
   readonly email?: string;
   readonly phone?: string;
+  /**
+   * Not in the JSON Resume schema. Templates that do not know these keys
+   * ignore them; Sifa's own Typst CV prints them as personal details.
+   */
+  readonly driversLicense?: string;
+  readonly rightToWork?: string;
+  readonly nationality?: string;
   readonly summary?: string;
   readonly location?: JsonResumeLocation;
   readonly profiles?: JsonResumeProfileLink[];
@@ -317,6 +324,9 @@ export function profileToJsonResume(
     image: text(profile.avatar, s),
     email: text(contact.email, s),
     phone: text(contact.phone, s),
+    driversLicense: text(contact.driversLicense, s),
+    rightToWork: text(contact.rightToWork, s),
+    nationality: text(contact.nationality, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
     location: withAddress(mapLocation(profile.location, s), text(contact.address, s)),

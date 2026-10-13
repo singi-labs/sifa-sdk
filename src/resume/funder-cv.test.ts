@@ -423,6 +423,17 @@ describe('profileToFunderCv: contact details', () => {
     expect(doc.person).toMatchObject(contact);
   });
 
+  it('puts personal details on the ERC person', () => {
+    const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'erc'), {
+      contact: { nationality: 'British', rightToWork: 'UK citizen', driversLicense: 'B' },
+    });
+    expect(doc.person).toMatchObject({
+      nationality: 'British',
+      rightToWork: 'UK citizen',
+      driversLicense: 'B',
+    });
+  });
+
   // The NIH Biographical Sketch has no contact block.
   it('ignores contact details for NIH', () => {
     const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'nih'), {
