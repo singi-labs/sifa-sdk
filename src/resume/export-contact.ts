@@ -80,8 +80,8 @@ export function pickExportContact(draft: ExportContactDraft): ExportContact {
 }
 
 /**
- * Drops blank fields and tidies the rest. Email and phone become one line with
- * single spaces. An address keeps its line breaks but loses blank lines and the
+ * Drops blank fields and tidies the rest. Every field but the address becomes
+ * one line with single spaces. An address keeps its line breaks but loses blank lines and the
  * spaces around each line. Each field is cut at its {@link EXPORT_CONTACT_LIMITS}
  * length. The emitters call this too, so a caller that skips
  * {@link pickExportContact} and the schema gets the same bounded output.
@@ -115,7 +115,11 @@ export function looksLikeEmail(value: string): boolean {
 }
 
 function cap(value: string | undefined, max: number): string | undefined {
-  return value === undefined ? undefined : value.slice(0, max).trimEnd();
+  if (value === undefined) return undefined;
+  let cut = value.slice(0, max);
+  // Never leave half of a surrogate pair (an emoji, say) at the cut.
+  if (/[\uD800-\uDBFF]$/.test(cut)) cut = cut.slice(0, -1);
+  return cut.trimEnd();
 }
 
 function oneLine(value: string | undefined): string | undefined {

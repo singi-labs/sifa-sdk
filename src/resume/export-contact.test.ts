@@ -201,3 +201,12 @@ describe('personal details', () => {
     ).toBe(false);
   });
 });
+
+describe('normalizeExportContact cutting', () => {
+  // An emoji is two UTF-16 units; cutting between them leaves a broken char.
+  it('never cuts a character in half at the limit', () => {
+    const max = EXPORT_CONTACT_LIMITS.nationality;
+    const out = normalizeExportContact({ nationality: `${'x'.repeat(max - 1)}😀` });
+    expect(out.nationality).toBe('x'.repeat(max - 1));
+  });
+});
