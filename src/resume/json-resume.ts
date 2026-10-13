@@ -52,7 +52,10 @@ export interface JsonResumeOptions {
   /**
    * Email, phone and postal address to print. Sifa holds none of these; the
    * owner types them on the export page. Without it the resume has no
-   * `email`, `phone` or `location.address`.
+   * `email`, `phone` or `location.address`. Personal details in the same object
+   * (driver's license, right to work, nationality) are left out: JSON Resume
+   * has no field for them, and strict consumers such as altacv refuse a file
+   * with an unknown key.
    */
   readonly contact?: ExportContact;
 }
@@ -106,13 +109,6 @@ export interface JsonResumeBasics {
   readonly url?: string;
   readonly email?: string;
   readonly phone?: string;
-  /**
-   * Not in the JSON Resume schema. Templates that do not know these keys
-   * ignore them; Sifa's own Typst CV prints them as personal details.
-   */
-  readonly driversLicense?: string;
-  readonly rightToWork?: string;
-  readonly nationality?: string;
   readonly summary?: string;
   readonly location?: JsonResumeLocation;
   readonly profiles?: JsonResumeProfileLink[];
@@ -324,9 +320,6 @@ export function profileToJsonResume(
     image: text(profile.avatar, s),
     email: text(contact.email, s),
     phone: text(contact.phone, s),
-    driversLicense: text(contact.driversLicense, s),
-    rightToWork: text(contact.rightToWork, s),
-    nationality: text(contact.nationality, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
     location: withAddress(mapLocation(profile.location, s), text(contact.address, s)),
