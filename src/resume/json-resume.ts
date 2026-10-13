@@ -34,6 +34,7 @@ import type {
   ProfileVolunteering,
 } from '../types/index.js';
 import { normaliseBaseUrl, profileUrl } from '../jsonld/url.js';
+import { normalizeExportContact, type ExportContact } from './export-contact.js';
 
 export type Sanitizer = (input: string) => string;
 
@@ -48,6 +49,12 @@ export interface JsonResumeOptions {
    * not at that path.
    */
   readonly canonicalUrl?: string;
+  /**
+   * Email, phone and postal address to print. Sifa holds none of these; the
+   * owner types them on the export page. Without it the resume has no
+   * `email`, `phone` or `location.address`.
+   */
+  readonly contact?: ExportContact;
 }
 
 /**
@@ -78,6 +85,8 @@ export interface JsonResumeProfileInput {
 }
 
 export interface JsonResumeLocation {
+  /** Street address; lines are separated by `\n`, as the schema asks. */
+  readonly address?: string;
   readonly city?: string;
   readonly region?: string;
   readonly countryCode?: string;
@@ -95,6 +104,8 @@ export interface JsonResumeBasics {
   readonly label?: string;
   readonly image?: string;
   readonly url?: string;
+  readonly email?: string;
+  readonly phone?: string;
   readonly summary?: string;
   readonly location?: JsonResumeLocation;
   readonly profiles?: JsonResumeProfileLink[];
@@ -225,6 +236,14 @@ function compact<T extends object>(value: T): T {
   return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined)) as T;
 }
 
+/** Adds the owner's street address to the profile's location. */
+function withAddress(
+  location: JsonResumeLocation | undefined,
+  address: string | undefined,
+): JsonResumeLocation | undefined {
+  return address ? { address, ...location } : location;
+}
+
 /** Omits the key entirely when the mapped list came out empty. */
 function section<K extends string, T>(key: K, items: T[]): Record<K, T[]> | undefined {
   return items.length > 0 ? ({ [key]: items } as Record<K, T[]>) : undefined;
@@ -277,6 +296,7 @@ export function profileToJsonResume(
   const s = options.sanitize ?? identity;
   const baseUrl = normaliseBaseUrl(options.baseUrl);
   const canonical = options.canonicalUrl ?? profileUrl(baseUrl, profile.handle);
+  const contact = normalizeExportContact(options.contact ?? {});
 
   const name =
     formatStructuredName(profile.givenName, profile.familyName) ??
@@ -295,9 +315,11 @@ export function profileToJsonResume(
     name,
     label: text(profile.headline, s),
     image: text(profile.avatar, s),
+    email: text(contact.email, s),
+    phone: text(contact.phone, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
-    location: mapLocation(profile.location, s),
+    location: withAddress(mapLocation(profile.location, s), text(contact.address, s)),
     ...section('profiles', profiles),
   });
 

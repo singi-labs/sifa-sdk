@@ -1,3 +1,11 @@
+export {
+  EXPORT_CONTACT_LIMITS,
+  exportContactSchema,
+  looksLikeEmail,
+  normalizeExportContact,
+  pickExportContact,
+} from './export-contact.js';
+export type { ExportContact, ExportContactDraft } from './export-contact.js';
 export { profileToJsonResume, toResumeDate } from './json-resume.js';
 export type {
   JsonResume,
@@ -33,6 +41,7 @@ export type {
   ErcContribution,
   ErcEducation,
   ErcFunderCv,
+  ErcFunderCvPerson,
   ErcRecognition,
   FunderCvAppointment,
   FunderCvCandidate,
@@ -43,6 +52,7 @@ export type {
   FunderCvGroupSpec,
   FunderCvHonor,
   FunderCvItemKind,
+  FunderCvOptions,
   FunderCvPerson,
   FunderCvProfileInput,
   FunderCvSelection,

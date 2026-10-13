@@ -30,6 +30,7 @@ import type {
   ProfilePublication,
   ProfileVolunteering,
 } from '../types/index.js';
+import { normalizeExportContact, type ExportContact } from './export-contact.js';
 import { toResumeDate } from './json-resume.js';
 
 export const FUNDER_CV_FORMATS = ['nih', 'erc'] as const;
@@ -277,6 +278,25 @@ export interface FunderCvPerson {
   readonly website?: string;
 }
 
+/**
+ * The ERC person, with the contact details the owner typed for this export.
+ * The NIH Biographical Sketch has no contact block, so only ERC carries them.
+ */
+export interface ErcFunderCvPerson extends FunderCvPerson {
+  readonly email?: string;
+  readonly phone?: string;
+  /** Lines are separated by `\n`. */
+  readonly address?: string;
+}
+
+export interface FunderCvOptions {
+  /**
+   * Contact details the owner typed for this export. Sifa stores none of
+   * them. Used for ERC only.
+   */
+  readonly contact?: ExportContact;
+}
+
 /** One product or research output, ready to cite. */
 export interface FunderCvCitation {
   readonly kind: 'publication' | 'presentation';
@@ -363,7 +383,7 @@ export interface ErcContribution {
 /** ERC Part B1, section "Curriculum vitae and Track Record". */
 export interface ErcFunderCv {
   readonly format: 'erc';
-  readonly person: FunderCvPerson;
+  readonly person: ErcFunderCvPerson;
   readonly education: ErcEducation[];
   readonly currentPositions: FunderCvAppointment[];
   readonly previousPositions: FunderCvAppointment[];
@@ -533,6 +553,7 @@ function honorsOf(ids: readonly string[], profile: FunderCvProfileInput): Funder
 export function profileToFunderCv(
   profile: FunderCvProfileInput,
   selection: FunderCvSelection,
+  options: FunderCvOptions = {},
 ): FunderCvDocument {
   const person = personOf(profile);
   const positions = filterHidden(profile.positions);
@@ -611,7 +632,7 @@ export function profileToFunderCv(
 
   return {
     format: 'erc',
-    person,
+    person: { ...person, ...normalizeExportContact(options.contact ?? {}) },
     education: education.map((e) =>
       compact<ErcEducation>({
         date: monthYear(e.endedAt) ?? monthYear(e.startedAt),
