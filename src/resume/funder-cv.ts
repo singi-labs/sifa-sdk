@@ -30,7 +30,7 @@ import type {
   ProfilePublication,
   ProfileVolunteering,
 } from '../types/index.js';
-import type { ExportContact } from './export-contact.js';
+import { normalizeExportContact, type ExportContact } from './export-contact.js';
 import { toResumeDate } from './json-resume.js';
 
 export const FUNDER_CV_FORMATS = ['nih', 'erc'] as const;
@@ -276,7 +276,13 @@ export interface FunderCvPerson {
   /** Bare ORCID iD, e.g. `0000-0002-1825-0097`. */
   readonly orcid?: string;
   readonly website?: string;
-  /** ERC only: the NIH Biographical Sketch has no contact block. */
+}
+
+/**
+ * The ERC person, with the contact details the owner typed for this export.
+ * The NIH Biographical Sketch has no contact block, so only ERC carries them.
+ */
+export interface ErcFunderCvPerson extends FunderCvPerson {
   readonly email?: string;
   readonly phone?: string;
   /** Lines are separated by `\n`. */
@@ -377,7 +383,7 @@ export interface ErcContribution {
 /** ERC Part B1, section "Curriculum vitae and Track Record". */
 export interface ErcFunderCv {
   readonly format: 'erc';
-  readonly person: FunderCvPerson;
+  readonly person: ErcFunderCvPerson;
   readonly education: ErcEducation[];
   readonly currentPositions: FunderCvAppointment[];
   readonly previousPositions: FunderCvAppointment[];
@@ -626,12 +632,7 @@ export function profileToFunderCv(
 
   return {
     format: 'erc',
-    person: compact<FunderCvPerson>({
-      ...person,
-      email: text(options.contact?.email),
-      phone: text(options.contact?.phone),
-      address: text(options.contact?.address),
-    }),
+    person: { ...person, ...normalizeExportContact(options.contact ?? {}) },
     education: education.map((e) =>
       compact<ErcEducation>({
         date: monthYear(e.endedAt) ?? monthYear(e.startedAt),

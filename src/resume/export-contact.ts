@@ -47,14 +47,27 @@ export const exportContactSchema = z.strictObject({
 });
 
 /**
- * The fields to put in an export: the included ones that are not blank,
- * trimmed. An address keeps its line breaks but loses blank lines and the
- * spaces around each line.
+ * The fields to put in an export: the included ones that are not blank, run
+ * through {@link normalizeExportContact}.
  */
 export function pickExportContact(draft: ExportContactDraft): ExportContact {
-  const email = draft.includeEmail ? oneLine(draft.email) : undefined;
-  const phone = draft.includePhone ? oneLine(draft.phone) : undefined;
-  const address = draft.includeAddress ? lines(draft.address) : undefined;
+  return normalizeExportContact({
+    email: draft.includeEmail ? draft.email : undefined,
+    phone: draft.includePhone ? draft.phone : undefined,
+    address: draft.includeAddress ? draft.address : undefined,
+  });
+}
+
+/**
+ * Drops blank fields and tidies the rest. Email and phone become one line with
+ * single spaces. An address keeps its line breaks but loses blank lines and the
+ * spaces around each line. The emitters call this too, so a caller that skips
+ * {@link pickExportContact} gets the same output.
+ */
+export function normalizeExportContact(contact: ExportContact): ExportContact {
+  const email = oneLine(contact.email);
+  const phone = oneLine(contact.phone);
+  const address = lines(contact.address);
   return {
     ...(email ? { email } : {}),
     ...(phone ? { phone } : {}),
@@ -68,8 +81,8 @@ export function looksLikeEmail(value: string): boolean {
 }
 
 function oneLine(value: string | undefined): string | undefined {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : undefined;
+  const collapsed = value?.replace(/\s+/g, ' ').trim();
+  return collapsed ? collapsed : undefined;
 }
 
 function lines(value: string | undefined): string | undefined {

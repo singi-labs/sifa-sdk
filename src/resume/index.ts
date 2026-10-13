@@ -2,6 +2,7 @@ export {
   EXPORT_CONTACT_LIMITS,
   exportContactSchema,
   looksLikeEmail,
+  normalizeExportContact,
   pickExportContact,
 } from './export-contact.js';
 export type { ExportContact, ExportContactDraft } from './export-contact.js';
@@ -40,6 +41,7 @@ export type {
   ErcContribution,
   ErcEducation,
   ErcFunderCv,
+  ErcFunderCvPerson,
   ErcRecognition,
   FunderCvAppointment,
   FunderCvCandidate,

@@ -132,6 +132,15 @@ describe('profileToJsonResume basics', () => {
     expect(r.basics?.location).toEqual({ address: 'Main Street 1' });
   });
 
+  it('normalises contact details before use', () => {
+    const r = profileToJsonResume(minimal, {
+      contact: { email: ' a@b.co ', phone: ' ', address: 'Street 1\r\n\r\nCity' },
+    });
+    expect(r.basics?.email).toBe('a@b.co');
+    expect(r.basics && 'phone' in r.basics).toBe(false);
+    expect(r.basics?.location?.address).toBe('Street 1\nCity');
+  });
+
   it('runs contact details through the sanitizer', () => {
     const r = profileToJsonResume(minimal, {
       contact: { email: 'a@b.co' },

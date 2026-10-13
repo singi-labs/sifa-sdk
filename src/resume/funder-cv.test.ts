@@ -433,6 +433,14 @@ describe('profileToFunderCv: contact details', () => {
     expect('address' in doc.person).toBe(false);
   });
 
+  it('normalises contact details before use', () => {
+    const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'erc'), {
+      contact: { email: ' ada@example.com ', phone: '  ', address: 'Square 12\r\n\r\nLondon' },
+    });
+    expect(doc.person).toMatchObject({ email: 'ada@example.com', address: 'Square 12\nLondon' });
+    expect('phone' in doc.person).toBe(false);
+  });
+
   it('adds no contact keys when none are passed', () => {
     const doc = profileToFunderCv(PROFILE, defaultFunderCvSelection(PROFILE, 'erc'));
     expect('email' in doc.person).toBe(false);

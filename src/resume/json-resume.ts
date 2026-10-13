@@ -34,7 +34,7 @@ import type {
   ProfileVolunteering,
 } from '../types/index.js';
 import { normaliseBaseUrl, profileUrl } from '../jsonld/url.js';
-import type { ExportContact } from './export-contact.js';
+import { normalizeExportContact, type ExportContact } from './export-contact.js';
 
 export type Sanitizer = (input: string) => string;
 
@@ -232,15 +232,16 @@ const FLUENCY_LABELS: Record<LanguageProficiency, string> = {
 const identity: Sanitizer = (input) => input;
 
 /** Drops keys whose value is undefined, so the document carries no empty slots. */
+function compact<T extends object>(value: T): T {
+  return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined)) as T;
+}
+
+/** Adds the owner's street address to the profile's location. */
 function withAddress(
   location: JsonResumeLocation | undefined,
   address: string | undefined,
 ): JsonResumeLocation | undefined {
   return address ? { address, ...location } : location;
-}
-
-function compact<T extends object>(value: T): T {
-  return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined)) as T;
 }
 
 /** Omits the key entirely when the mapped list came out empty. */
@@ -295,6 +296,7 @@ export function profileToJsonResume(
   const s = options.sanitize ?? identity;
   const baseUrl = normaliseBaseUrl(options.baseUrl);
   const canonical = options.canonicalUrl ?? profileUrl(baseUrl, profile.handle);
+  const contact = normalizeExportContact(options.contact ?? {});
 
   const name =
     formatStructuredName(profile.givenName, profile.familyName) ??
@@ -313,11 +315,11 @@ export function profileToJsonResume(
     name,
     label: text(profile.headline, s),
     image: text(profile.avatar, s),
-    email: text(options.contact?.email, s),
-    phone: text(options.contact?.phone, s),
+    email: text(contact.email, s),
+    phone: text(contact.phone, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
-    location: withAddress(mapLocation(profile.location, s), text(options.contact?.address, s)),
+    location: withAddress(mapLocation(profile.location, s), text(contact.address, s)),
     ...section('profiles', profiles),
   });
 
