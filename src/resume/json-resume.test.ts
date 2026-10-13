@@ -141,15 +141,22 @@ describe('profileToJsonResume basics', () => {
     expect(r.basics?.location?.address).toBe('Street 1\nCity');
   });
 
-  it('emits personal details passed in by the caller', () => {
+  // JSON Resume has no field for these, and strict consumers (altacv, the
+  // docs.sifa.id Typst starter) refuse the whole file on an unknown key.
+  it('never emits personal details, which JSON Resume has no field for', () => {
     const r = profileToJsonResume(minimal, {
-      contact: { driversLicense: 'B', rightToWork: 'EU citizen', nationality: 'Dutch' },
+      contact: {
+        email: 'a@b.co',
+        driversLicense: 'B',
+        rightToWork: 'EU citizen',
+        nationality: 'Dutch',
+      },
     });
-    expect(r.basics).toMatchObject({
-      driversLicense: 'B',
-      rightToWork: 'EU citizen',
-      nationality: 'Dutch',
-    });
+    expect(r.basics?.email).toBe('a@b.co');
+    expect(r.basics).not.toHaveProperty('driversLicense');
+    expect(r.basics).not.toHaveProperty('rightToWork');
+    expect(r.basics).not.toHaveProperty('nationality');
+    expect(JSON.stringify(r)).not.toContain('Dutch');
   });
 
   it('emits no personal details by default', () => {
