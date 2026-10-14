@@ -17,6 +17,8 @@ const FIXTURES = join(import.meta.dirname, '..', '__fixtures__');
 const WIRE = join(FIXTURES, 'wire');
 const profiles = readdirSync(WIRE)
   .filter((f) => f.endsWith('.json'))
+  // The fixtures are recorded API responses; the SDK has no Zod schema for the
+  // full profile view, so they are typed as the `Profile` the web app receives.
   .map((f) => [f, JSON.parse(readFileSync(join(WIRE, f), 'utf8')) as Profile] as const);
 
 interface SchemaNode {
