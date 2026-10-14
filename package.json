@@ -229,6 +229,7 @@
     "build:flags": "node scripts/build-flags.mjs",
     "sync:term-mappings": "node scripts/sync-term-mappings.mjs",
     "check:dist": "node scripts/check-dist.mjs",
+    "fixtures:wire": "node scripts/refresh-wire-fixtures.mjs && prettier --write src/__fixtures__/wire",
     "rpg:sync-catalog": "pnpm build && node scripts/sync-rpg-catalog.mjs"
   },
   "engines": {
