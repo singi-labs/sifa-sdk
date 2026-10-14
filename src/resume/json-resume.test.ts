@@ -685,6 +685,18 @@ describe('profileToJsonResume links', () => {
     expect(r.publications?.[0]?.url).toBe('https://doi.org/10.1/x');
   });
 
+  // A real ORCID link had a pasted space ("https://orcid.org/ 0000-..."); the
+  // URL parser accepts that, but altacv's URI check does not.
+  it('removes whitespace inside a link', () => {
+    const withSpace = profileToJsonResume({
+      handle: 'x.example',
+      externalAccounts: [
+        { rkey: '1', platform: 'orcid', url: 'https://orcid.org/ 0000-0002-1825-0097' },
+      ],
+    } as never);
+    expect(withSpace.basics?.profiles?.[0]?.url).toBe('https://orcid.org/0000-0002-1825-0097');
+  });
+
   it('leaves out a value that is not a link', () => {
     expect(r.basics?.profiles?.[1]).not.toHaveProperty('url');
   });

@@ -310,7 +310,9 @@ function mapLocation(
  * URIs, and strict consumers such as altacv refuse the whole file otherwise.
  */
 function link(value: string | undefined, s: Sanitizer): string | undefined {
-  const t = value?.trim();
+  // No whitespace belongs in a link; a pasted space made altacv refuse a real
+  // ORCID URL that the URL parser itself accepts.
+  const t = value?.replace(/\s+/g, '');
   if (!t) return undefined;
   // Checked before sanitizing, so the sanitizer still sees every value.
   if (/^[a-z][a-z0-9+.-]*:\/\//i.test(t)) return URL.canParse(t) ? s(t) : undefined;

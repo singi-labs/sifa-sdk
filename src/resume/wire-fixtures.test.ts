@@ -76,7 +76,8 @@ describe.each(profiles)('wire fixture %s', (_name, profile) => {
       else if (typeof v === 'string' && /^(url|canonical|image)$/.test(k)) links.push(v);
     };
     collect(resume);
-    expect(links.filter((l) => !URL.canParse(l))).toEqual([]);
+    // URL.canParse accepts inner spaces (it encodes them); altacv does not.
+    expect(links.filter((l) => !URL.canParse(l) || /\s/.test(l))).toEqual([]);
   });
 
   it('maps the location the API sends', () => {
