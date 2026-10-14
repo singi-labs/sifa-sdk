@@ -65,13 +65,14 @@ function anonymize(value, key, parent) {
     return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, anonymize(v, k, value)]));
   }
   if (typeof value !== 'string' || value === '') return value;
-  // Identities and links first, so none survives under a kept key.
-  if (key === 'did' || key.endsWith('Did') || value.includes('did:')) return 'did:plc:wirefixture';
+  // Links first (a link can hold a DID, as tangled.org ones do), then
+  // identities, so neither survives under a kept key.
   if (/url$/i.test(key) || key === 'avatar' || key === 'website' || /^https?:\/\//.test(value)) {
     if (parent && !Array.isArray(parent) && parent.platform === 'orcid') return ORCID_EXAMPLE;
     counter += 1;
     return `https://example.com/${key}/${counter}`;
   }
+  if (key === 'did' || key.endsWith('Did') || value.includes('did:')) return 'did:plc:wirefixture';
   if (key === 'handle') return 'wire.example';
   if (Object.hasOwn(FAKE_LOCATION, key)) return FAKE_LOCATION[key];
   // A kept key keeps its value only when it looks like a token (an enum, a

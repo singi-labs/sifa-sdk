@@ -67,6 +67,18 @@ describe.each(profiles)('wire fixture %s', (_name, profile) => {
     expect(undeclaredKeys(resume, schema, '$')).toEqual([]);
   });
 
+  // altacv checks the `uri` format; one bad link fails the whole PDF.
+  it('emits only valid URIs in link fields', () => {
+    const links: string[] = [];
+    const collect = (v: unknown, k = ''): void => {
+      if (Array.isArray(v)) v.forEach((x) => collect(x, k));
+      else if (v && typeof v === 'object') Object.entries(v).forEach(([kk, x]) => collect(x, kk));
+      else if (typeof v === 'string' && /^(url|canonical|image)$/.test(k)) links.push(v);
+    };
+    collect(resume);
+    expect(links.filter((l) => !URL.canParse(l))).toEqual([]);
+  });
+
   it('maps the location the API sends', () => {
     expect(resume.basics?.location?.city).toBeTruthy();
   });

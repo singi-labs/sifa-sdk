@@ -304,6 +304,20 @@ function mapLocation(
   return candidates.find((c) => Object.keys(c).length > 0);
 }
 
+/**
+ * A link field as a valid URI. A bare domain ("example.com") gets `https://`;
+ * anything else that does not parse is left out. JSON Resume declares these as
+ * URIs, and strict consumers such as altacv refuse the whole file otherwise.
+ */
+function link(value: string | undefined, s: Sanitizer): string | undefined {
+  const t = value?.trim();
+  if (!t) return undefined;
+  // Checked before sanitizing, so the sanitizer still sees every value.
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(t)) return URL.canParse(t) ? s(t) : undefined;
+  const withScheme = `https://${t}`;
+  return /^[^\s/]+\.[^\s/]+/.test(t) && URL.canParse(withScheme) ? s(withScheme) : undefined;
+}
+
 /** Trimmed, sanitised, and undefined when there is nothing left. */
 function text(value: string | undefined, s: Sanitizer): string | undefined {
   const trimmed = value?.trim();
@@ -348,7 +362,7 @@ export function profileToJsonResume(
     compact<JsonResumeProfileLink>({
       network: s(account.platform),
       username: text(account.label, s),
-      url: text(account.url, s),
+      url: link(account.url, s),
     }),
   );
 
@@ -358,7 +372,7 @@ export function profileToJsonResume(
     image: text(profile.avatar, s),
     email: text(contact.email, s),
     phone: text(contact.phone, s),
-    url: text(profile.website, s) ?? canonical,
+    url: link(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
     location: withAddress(mapLocation(profile, s), text(contact.address, s)),
     ...section('profiles', profiles),
@@ -411,7 +425,7 @@ export function profileToJsonResume(
       // `issuingOrg` is the deprecated read-view alias for `authority`; records
       // indexed before the rename carry only the alias.
       issuer: orgName(cert.entityName, cert.authority ?? cert.issuingOrg, s),
-      url: text(cert.credentialUrl, s),
+      url: link(cert.credentialUrl, s),
     }),
   );
 
@@ -420,7 +434,7 @@ export function profileToJsonResume(
       name: s(publication.title),
       publisher: text(publication.publisher, s),
       releaseDate: toResumeDate(publication.date),
-      url: text(publication.url, s),
+      url: link(publication.url, s),
       summary: text(publication.description, s),
     }),
   );
@@ -443,7 +457,7 @@ export function profileToJsonResume(
     compact<JsonResumeProject>({
       name: s(project.name),
       description: text(project.description, s),
-      url: text(project.url, s),
+      url: link(project.url, s),
       startDate: toResumeDate(project.startDate),
       endDate: toResumeDate(project.endDate),
     }),

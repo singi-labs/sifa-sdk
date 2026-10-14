@@ -662,3 +662,30 @@ describe('profileToJsonResume volunteering order', () => {
     expect(r.volunteer?.map((v) => v.organization)).toEqual(['Current', 'Middle', 'Old']);
   });
 });
+
+// altacv refuses a resume whose link fields are not URIs, so a website typed
+// as "example.com" used to fail the whole typeset PDF.
+describe('profileToJsonResume links', () => {
+  const r = profileToJsonResume({
+    handle: 'x.example',
+    website: 'example.com',
+    externalAccounts: [
+      { rkey: '1', platform: 'github', url: 'github.com/x' },
+      { rkey: '2', platform: 'other', url: 'not a link' },
+    ],
+    publications: [{ rkey: 'p', title: 'T', url: 'https://doi.org/10.1/x' }],
+  } as never);
+
+  it('adds https:// to a bare domain', () => {
+    expect(r.basics?.url).toBe('https://example.com');
+    expect(r.basics?.profiles?.[0]?.url).toBe('https://github.com/x');
+  });
+
+  it('keeps a full URL as it is', () => {
+    expect(r.publications?.[0]?.url).toBe('https://doi.org/10.1/x');
+  });
+
+  it('leaves out a value that is not a link', () => {
+    expect(r.basics?.profiles?.[1]).not.toHaveProperty('url');
+  });
+});
