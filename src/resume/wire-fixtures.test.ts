@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import type { Profile } from '../types/index.js';
+import { sortPositions } from '../profile/section-sorts.js';
 import { defaultFunderCvSelection, profileToFunderCv } from './funder-cv.js';
 import { profileToJsonResume } from './json-resume.js';
 
@@ -42,10 +43,9 @@ function undeclaredKeys(value: unknown, node: SchemaNode | undefined, path: stri
     return value.flatMap((v, i) => undeclaredKeys(v, node.items, `${path}[${i}]`));
   }
   if (value && typeof value === 'object' && node.properties) {
+    const props = node.properties;
     return Object.entries(value).flatMap(([k, v]) =>
-      k in node.properties!
-        ? undeclaredKeys(v, node.properties![k], `${path}.${k}`)
-        : [`${path}.${k}`],
+      Object.hasOwn(props, k) ? undeclaredKeys(v, props[k], `${path}.${k}`) : [`${path}.${k}`],
     );
   }
   return [];
@@ -73,14 +73,15 @@ describe.each(profiles)('wire fixture %s', (_name, profile) => {
 
   // The profile page's order: current roles first, then by end date, newest
   // first. Storage order would put a 2006 role above a 1995 to 2004 one.
-  it('lists work in the profile page order, by end date', () => {
-    const toEnd = (v: string | undefined | null) => (v ? v.slice(0, 10) : '9999');
-    const expected = (profile.positions ?? [])
-      .filter((p) => !p.hidden)
-      .map((p) => toEnd(p.endedAt))
-      .sort()
-      .reverse();
-    expect((resume.work ?? []).map((w) => toEnd(w.endDate))).toEqual(expected);
+  // The profile page's order (current first, then by end date), from the same
+  // shared sort; storage order would put a 2006 role above a 1995 to 2004 one.
+  it('lists work in the profile page order', () => {
+    const expected = sortPositions((profile.positions ?? []).filter((p) => !p.hidden)).map(
+      (p) => p.startedAt,
+    );
+    expect((resume.work ?? []).map((w) => w.startDate)).toEqual(expected);
+    const ends = (resume.work ?? []).map((w) => w.endDate ?? '9999');
+    expect(ends).toEqual([...ends].sort().reverse());
   });
 
   it('leaves hidden records out', () => {

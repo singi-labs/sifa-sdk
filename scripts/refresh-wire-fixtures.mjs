@@ -46,6 +46,7 @@ const KEEP = new Set([
   'langs',
 ]);
 const DATE_KEY = /(At|Date|date|Utc)$/;
+const TOKEN = /^[\w#.:+-]+( [\w#.:+-]+)?$/;
 const FAKE_LOCATION = {
   location: 'Utrecht, Utrecht, Netherlands',
   locationCity: 'Utrecht',
@@ -73,7 +74,9 @@ function anonymize(value, key, parent) {
   }
   if (key === 'handle') return 'wire.example';
   if (Object.hasOwn(FAKE_LOCATION, key)) return FAKE_LOCATION[key];
-  if (KEEP.has(key) || DATE_KEY.test(key)) return value;
+  // A kept key keeps its value only when it looks like a token (an enum, a
+  // date, a code), so no free text survives under a kept key.
+  if ((KEEP.has(key) || DATE_KEY.test(key)) && TOKEN.test(value)) return value;
   counter += 1;
   return `${key} ${counter}`;
 }
