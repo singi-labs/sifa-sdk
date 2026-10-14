@@ -606,3 +606,59 @@ describe('profileToJsonResume ordering', () => {
     expect(r.publications?.map((p) => p.name)).toEqual(['Newer', 'Older']);
   });
 });
+
+describe('profileToJsonResume location fallbacks', () => {
+  it('uses the first entry when none is marked primary', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      locations: [
+        {
+          rkey: 'y',
+          type: 'p',
+          isPrimary: false,
+          locationLocality: 'Amsterdam',
+          countryCode: 'NL',
+        },
+      ],
+    });
+    expect(r.basics?.location).toEqual({ city: 'Amsterdam', countryCode: 'NL' });
+  });
+
+  it('parses a display-string location when there is no locations array', () => {
+    const r = profileToJsonResume({ handle: 'gui.do', location: 'Utrecht, Utrecht, Netherlands' });
+    expect(r.basics?.location).toEqual({ city: 'Utrecht', region: 'Utrecht' });
+  });
+
+  it('falls through an empty structured location to locations', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      location: { country: '' },
+      locations: [{ rkey: 'y', type: 'p', isPrimary: true, locationLocality: 'Amsterdam' }],
+    });
+    expect(r.basics?.location).toEqual({ city: 'Amsterdam' });
+  });
+
+  it('reads the legacy city when the locality is blank', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      locations: [
+        { rkey: 'y', type: 'p', isPrimary: true, locationLocality: '', locationCity: 'Amsterdam' },
+      ],
+    });
+    expect(r.basics?.location).toEqual({ city: 'Amsterdam' });
+  });
+});
+
+describe('profileToJsonResume volunteering order', () => {
+  it('lists volunteering current first, then newest', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      volunteering: [
+        { rkey: '1', organization: 'Old', role: 'A', startDate: '2010-01', endDate: '2012-01' },
+        { rkey: '2', organization: 'Current', role: 'B', startDate: '2022-01' },
+        { rkey: '3', organization: 'Middle', role: 'C', startDate: '2015-01', endDate: '2016-01' },
+      ],
+    });
+    expect(r.volunteer?.map((v) => v.organization)).toEqual(['Current', 'Middle', 'Old']);
+  });
+});

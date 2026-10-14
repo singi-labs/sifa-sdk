@@ -4,5 +4,7 @@
 
 `profileToJsonResume` fixes:
 
-- **Location:** when the profile has no structured `location` object, it reads the primary entry of `locations`. The profile API sends `location` as a display string, so resumes built from it had no city, region or country.
-- **Order:** work, education, awards, certificates, publications, projects and languages use the same sorts as the profile page and the other exports (newest first, current primary role on top), instead of record order. `JsonResumeProfileInput.location` now also accepts a string, and the input gains `locations`.
+- **Location:** when there is no usable structured `location` object, it uses the primary entry of `locations` (or the first entry), and otherwise splits a display-string `location` into city and region. The profile API sends `location` as a display string, so resumes built from it had no city, region or country code.
+- **Order:** list sections use the same sorts as the profile page and the other exports. Work, education, awards, certificates, publications and projects come newest first (current primary role on top), volunteering current first, and languages by proficiency. Before, they kept record order.
+
+`JsonResumeProfileInput.location` also accepts a string, and the input gains `locations`.

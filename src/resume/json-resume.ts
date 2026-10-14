@@ -17,6 +17,7 @@
  * the user at the point of download.
  */
 
+import { parseLocationString } from '../format/location-utils.js';
 import { formatStructuredName } from '../format/pds-utils.js';
 import { filterHidden } from '../profile/section-model.js';
 import {
@@ -28,6 +29,7 @@ import {
   sortProjects,
   sortPublications,
 } from '../profile/section-sorts.js';
+import { sortByActiveDateRange } from '../profile/range-sort.js';
 import type {
   ExternalAccount,
   LanguageProficiency,
@@ -268,29 +270,38 @@ function section<K extends string, T>(key: K, items: T[]): Record<K, T[]> | unde
 }
 
 /**
- * The structured `location` when the profile has one; otherwise the primary
- * entry of `locations`, which is what the profile API sends (its `location` is
- * a display string).
+ * The first of these that yields anything: the structured `location` object;
+ * the primary entry of `locations` (or the first entry when none is marked
+ * primary), which is what the profile API sends; a display-string `location`,
+ * split into city and region. JSON Resume has no field for a country name, so a
+ * country-only location maps to nothing.
  */
 function mapLocation(
   profile: Pick<JsonResumeProfileInput, 'location' | 'locations'>,
   s: Sanitizer,
 ): JsonResumeLocation | undefined {
-  const structured = typeof profile.location === 'object' ? profile.location : null;
-  const primary = profile.locations?.find((l) => l.isPrimary);
-  const mapped = structured
-    ? compact({
-        city: text(structured.locality ?? structured.city, s),
-        region: text(structured.region, s),
-        countryCode: text(structured.countryCode, s),
-        postalCode: text(structured.postalCode, s),
-      })
-    : compact({
-        city: text(primary?.locationLocality ?? primary?.locationCity ?? undefined, s),
-        region: text(primary?.locationRegion ?? undefined, s),
-        countryCode: text(primary?.countryCode ?? undefined, s),
-      });
-  return Object.keys(mapped).length > 0 ? mapped : undefined;
+  const fromValue = (location: LocationValue | null | undefined) =>
+    location
+      ? compact<JsonResumeLocation>({
+          city: text(location.locality || location.city, s),
+          region: text(location.region, s),
+          countryCode: text(location.countryCode, s),
+          postalCode: text(location.postalCode, s),
+        })
+      : {};
+  const entry = profile.locations?.find((l) => l.isPrimary) ?? profile.locations?.[0];
+  const candidates: JsonResumeLocation[] = [
+    typeof profile.location === 'object' ? fromValue(profile.location) : {},
+    entry
+      ? compact<JsonResumeLocation>({
+          city: text((entry.locationLocality || entry.locationCity) ?? undefined, s),
+          region: text(entry.locationRegion ?? undefined, s),
+          countryCode: text(entry.countryCode ?? undefined, s),
+        })
+      : {},
+    typeof profile.location === 'string' ? fromValue(parseLocationString(profile.location)) : {},
+  ];
+  return candidates.find((c) => Object.keys(c).length > 0);
 }
 
 /** Trimmed, sanitised, and undefined when there is nothing left. */
@@ -364,7 +375,7 @@ export function profileToJsonResume(
     }),
   );
 
-  const volunteer = filterHidden(profile.volunteering).map((entry) =>
+  const volunteer = sortByActiveDateRange(filterHidden(profile.volunteering)).map((entry) =>
     compact<JsonResumeVolunteer>({
       organization: orgName(entry.entityName, entry.organization, s),
       position: text(entry.role, s),
