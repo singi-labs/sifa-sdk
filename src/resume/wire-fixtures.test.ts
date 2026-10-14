@@ -29,8 +29,10 @@ const schema = JSON.parse(
 ) as SchemaNode;
 
 /**
- * Keys the schema does not declare, at any depth. altacv's importer rejects
- * these even where the schema itself allows extra properties.
+ * Keys the schema does not declare, at any depth. Deliberately stricter than
+ * the schema: it ignores `additionalProperties`, because altacv's importer
+ * rejects undeclared keys even where the schema allows extra properties
+ * (it refused `basics.nationality`, which the schema permits).
  */
 function undeclaredKeys(value: unknown, node: SchemaNode | undefined, path: string): string[] {
   if (!node) return [];
@@ -70,8 +72,13 @@ describe.each(profiles)('wire fixture %s', (_name, profile) => {
   // The profile page's order: current roles first, then by end date, newest
   // first. Storage order would put a 2006 role above a 1995 to 2004 one.
   it('lists work in the profile page order, by end date', () => {
-    const ends = (resume.work ?? []).map((w) => w.endDate ?? '9999');
-    expect(ends).toEqual([...ends].sort().reverse());
+    const toEnd = (v: string | undefined | null) => (v ? v.slice(0, 10) : '9999');
+    const expected = (profile.positions ?? [])
+      .filter((p) => !p.hidden)
+      .map((p) => toEnd(p.endedAt))
+      .sort()
+      .reverse();
+    expect((resume.work ?? []).map((w) => toEnd(w.endDate))).toEqual(expected);
   });
 
   it('leaves hidden records out', () => {
@@ -87,7 +94,7 @@ describe.each(profiles)('wire fixture %s', (_name, profile) => {
   it('builds both funder CVs, contact details on ERC only', () => {
     const erc = profileToFunderCv(profile, defaultFunderCvSelection(profile, 'erc'), { contact });
     const nih = profileToFunderCv(profile, defaultFunderCvSelection(profile, 'nih'), { contact });
-    expect(erc.person).toMatchObject({ email: contact.email, nationality: contact.nationality });
-    expect(nih.person).not.toHaveProperty('email');
+    expect(erc.person).toMatchObject({ ...contact, address: 'Street 1\nCity' });
+    for (const key of Object.keys(contact)) expect(nih.person).not.toHaveProperty(key);
   });
 });

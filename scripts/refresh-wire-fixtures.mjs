@@ -10,16 +10,20 @@
  * every other string (replaced with a placeholder), and identities, URLs and
  * locations (replaced with fixed fake values).
  *
- *   node scripts/refresh-wire-fixtures.mjs
+ *   pnpm fixtures:wire   (runs this script, then Prettier on the output)
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const API = process.env.SIFA_API_URL ?? 'https://sifa.id/api';
+const API = new URL(process.env.SIFA_API_URL ?? 'https://sifa.id/api').href.replace(/\/$/, '');
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', '__fixtures__', 'wire');
 
-/** Public profiles to sample, by fixture name. Add handles with varied data. */
+/**
+ * Public profiles to sample, by fixture name. The API sends the same shape for
+ * every profile; add handles for different data (other platforms, sparse or
+ * academic profiles), not for a different shape.
+ */
 const PROFILES = {
   // Linked accounts on activitypub and tangled, a long career, a string location.
   'profile-a': 'gui.do',
@@ -39,6 +43,7 @@ const KEEP = new Set([
   'language',
   'rkey',
   'industry',
+  'langs',
 ]);
 const DATE_KEY = /(At|Date|date|Utc)$/;
 const FAKE_LOCATION = {
@@ -59,19 +64,42 @@ function anonymize(value, key, parent) {
     return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, anonymize(v, k, value)]));
   }
   if (typeof value !== 'string' || value === '') return value;
-  if (KEEP.has(key) || DATE_KEY.test(key)) return value;
-  if (key in FAKE_LOCATION) return FAKE_LOCATION[key];
-  if (key === 'did' || key.endsWith('Did') || value.startsWith('did:'))
-    return 'did:plc:wirefixture';
-  if (key === 'handle') return 'wire.example';
-  if (key === 'langs') return value;
+  // Identities and links first, so none survives under a kept key.
+  if (key === 'did' || key.endsWith('Did') || value.includes('did:')) return 'did:plc:wirefixture';
   if (/url$/i.test(key) || key === 'avatar' || key === 'website' || /^https?:\/\//.test(value)) {
     if (parent && !Array.isArray(parent) && parent.platform === 'orcid') return ORCID_EXAMPLE;
     counter += 1;
     return `https://example.com/${key}/${counter}`;
   }
+  if (key === 'handle') return 'wire.example';
+  if (Object.hasOwn(FAKE_LOCATION, key)) return FAKE_LOCATION[key];
+  if (KEEP.has(key) || DATE_KEY.test(key)) return value;
   counter += 1;
   return `${key} ${counter}`;
+}
+
+/**
+ * Refuse to write a fixture that still holds the original identity or any real
+ * link. The repository is public.
+ */
+function assertNoLeaks(original, profile, name) {
+  const text = JSON.stringify(profile);
+  const identity = [
+    original.handle,
+    original.did,
+    original.displayName,
+    original.givenName,
+    original.familyName,
+  ].filter((v) => typeof v === 'string' && v.length > 2);
+  for (const value of identity) {
+    if (text.includes(value))
+      throw new Error(`${name}: anonymized fixture still contains "${value}"`);
+  }
+  const links = text.match(/https?:\/\/[^"\s]+/g) ?? [];
+  const real = links.filter((l) => !l.startsWith('https://example.com/') && l !== ORCID_EXAMPLE);
+  if (real.length > 0) throw new Error(`${name}: anonymized fixture still contains ${real[0]}`);
+  if (/did:(?!plc:wirefixture)/.test(text))
+    throw new Error(`${name}: anonymized fixture still contains a DID`);
 }
 
 await mkdir(OUT, { recursive: true });
@@ -79,7 +107,9 @@ for (const [name, handle] of Object.entries(PROFILES)) {
   counter = 0;
   const res = await fetch(`${API}/profile/${encodeURIComponent(handle)}`);
   if (!res.ok) throw new Error(`${handle}: HTTP ${res.status}`);
-  const profile = anonymize(await res.json(), '', null);
+  const original = await res.json();
+  const profile = anonymize(original, '', null);
+  assertNoLeaks(original, profile, name);
   await writeFile(join(OUT, `${name}.json`), `${JSON.stringify(profile, null, 2)}\n`);
   console.log(`wrote ${name}.json`);
 }
