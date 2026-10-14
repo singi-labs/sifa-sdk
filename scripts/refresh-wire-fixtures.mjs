@@ -74,8 +74,14 @@ function collectRkeys(value) {
   }
 }
 
+/**
+ * Longest list kept per field. Enough for ordering and variety; keeps the
+ * fixture small enough for a reviewer (and the AI review's diff cap) to read.
+ */
+const MAX_LIST = 10;
+
 function anonymize(value, key, parent) {
-  if (Array.isArray(value)) return value.map((v) => anonymize(v, key, value));
+  if (Array.isArray(value)) return value.slice(0, MAX_LIST).map((v) => anonymize(v, key, value));
   if (value && typeof value === 'object') {
     return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, anonymize(v, k, value)]));
   }
