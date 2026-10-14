@@ -40,7 +40,6 @@ const KEEP = new Set([
   'source',
   'verifiedVia',
   'language',
-  'rkey',
   'industry',
   'langs',
 ]);
@@ -60,6 +59,20 @@ const FAKE_LOCATION = {
 const ORCID_EXAMPLE = 'https://orcid.org/0000-0002-1825-0097';
 
 let counter = 0;
+/** Record keys, mapped to short stable fakes so cross-references still match. */
+let rkeys = new Map();
+
+function collectRkeys(value) {
+  if (Array.isArray(value)) value.forEach(collectRkeys);
+  else if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) {
+      if (k === 'rkey' && typeof v === 'string' && !rkeys.has(v)) {
+        rkeys.set(v, `r${String(rkeys.size + 1).padStart(4, '0')}`);
+      }
+      collectRkeys(v);
+    }
+  }
+}
 
 function anonymize(value, key, parent) {
   if (Array.isArray(value)) return value.map((v) => anonymize(v, key, value));
@@ -67,6 +80,9 @@ function anonymize(value, key, parent) {
     return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, anonymize(v, k, value)]));
   }
   if (typeof value !== 'string' || value === '') return value;
+  // Record keys can be full links holding a DID and a post slug, and look like
+  // secrets to secret scanners; every occurrence maps to the same fake.
+  if (rkeys.has(value)) return rkeys.get(value);
   // Links first (a link can hold a DID, as tangled.org ones do), then
   // identities, so neither survives under a kept key.
   if (/url$/i.test(key) || key === 'avatar' || key === 'website' || /^https?:\/\//.test(value)) {
@@ -111,9 +127,13 @@ function assertNoLeaks(original, profile, name) {
 await mkdir(OUT, { recursive: true });
 for (const [name, handle] of Object.entries(PROFILES)) {
   counter = 0;
-  const res = await fetch(`${API}/profile/${encodeURIComponent(handle)}`);
+  rkeys = new Map();
+  const res = await fetch(`${API}/profile/${encodeURIComponent(handle)}`, {
+    signal: AbortSignal.timeout(30_000),
+  });
   if (!res.ok) throw new Error(`${handle}: HTTP ${res.status}`);
   const original = await res.json();
+  collectRkeys(original);
   const profile = anonymize(original, '', null);
   assertNoLeaks(original, profile, name);
   await writeFile(join(OUT, `${name}.json`), `${JSON.stringify(profile, null, 2)}\n`);
