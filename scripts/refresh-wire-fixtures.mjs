@@ -35,7 +35,6 @@ const KEEP = new Set([
   'type',
   'kind',
   'proficiency',
-  'countryCode',
   'category',
   'id',
   'source',
@@ -53,6 +52,9 @@ const FAKE_LOCATION = {
   locationLocality: 'Utrecht',
   locationRegion: 'Utrecht',
   locationCountry: 'Netherlands',
+  // Talk and position countries together with the dates would narrow down who
+  // the profile belongs to.
+  countryCode: 'NL',
 };
 // ORCID's documented example iD, so ORCID parsing still has something real.
 const ORCID_EXAMPLE = 'https://orcid.org/0000-0002-1825-0097';
