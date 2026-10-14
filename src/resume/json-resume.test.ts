@@ -502,3 +502,107 @@ describe('profileToJsonResume meta and shape', () => {
     expect(JSON.parse(JSON.stringify(r))).toEqual(r);
   });
 });
+
+// The profile API sends the primary location in `locations[]` (and a display
+// string in `location`), not the structured object, so the resume had none.
+describe('profileToJsonResume location from locations[]', () => {
+  it('maps the primary location entry', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      location: 'Amsterdam, North Holland, Netherlands',
+      locations: [
+        {
+          rkey: 'x',
+          type: 'id.sifa.defs#locationSecondary',
+          isPrimary: false,
+          locationLocality: 'Berlin',
+          countryCode: 'DE',
+        },
+        {
+          rkey: 'y',
+          type: 'id.sifa.defs#locationPrimary',
+          isPrimary: true,
+          locationCountry: 'Netherlands',
+          locationRegion: 'North Holland',
+          locationLocality: 'Amsterdam',
+          countryCode: 'NL',
+        },
+      ],
+    });
+    expect(r.basics?.location).toEqual({
+      city: 'Amsterdam',
+      region: 'North Holland',
+      countryCode: 'NL',
+    });
+  });
+
+  it('keeps the address next to the primary location', () => {
+    const r = profileToJsonResume(
+      {
+        handle: 'gui.do',
+        locations: [
+          {
+            rkey: 'y',
+            type: 'p',
+            isPrimary: true,
+            locationLocality: 'Amsterdam',
+            countryCode: 'NL',
+          },
+        ],
+      },
+      { contact: { address: 'Keizersgracht 1' } },
+    );
+    expect(r.basics?.location).toEqual({
+      address: 'Keizersgracht 1',
+      city: 'Amsterdam',
+      countryCode: 'NL',
+    });
+  });
+
+  it('prefers a structured location object when there is one', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      location: { country: 'Netherlands', city: 'Utrecht', countryCode: 'NL' },
+      locations: [{ rkey: 'y', type: 'p', isPrimary: true, locationLocality: 'Amsterdam' }],
+    });
+    expect(r.basics?.location?.city).toBe('Utrecht');
+  });
+});
+
+// The profile page, Markdown, DOCX and print sort these lists newest first;
+// the JSON Resume (and the typeset PDF built from it) kept record order.
+describe('profileToJsonResume ordering', () => {
+  it('lists work newest first', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      positions: [
+        { rkey: '1', company: 'A', title: 'Old', startedAt: '1995-01', endedAt: '2000-01' },
+        { rkey: '2', company: 'B', title: 'Newest', startedAt: '2020-01' },
+        { rkey: '3', company: 'C', title: 'Middle', startedAt: '2006-09', endedAt: '2007-09' },
+      ],
+    });
+    expect(r.work?.map((w) => w.position)).toEqual(['Newest', 'Middle', 'Old']);
+  });
+
+  it('lists education newest first', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      education: [
+        { rkey: '1', institution: 'School', startedAt: '1995', endedAt: '2001' },
+        { rkey: '2', institution: 'University', startedAt: '2001', endedAt: '2007' },
+      ],
+    });
+    expect(r.education?.map((e) => e.institution)).toEqual(['University', 'School']);
+  });
+
+  it('lists publications newest first', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      publications: [
+        { rkey: '1', title: 'Older', date: '2010' },
+        { rkey: '2', title: 'Newer', date: '2020' },
+      ],
+    });
+    expect(r.publications?.map((p) => p.name)).toEqual(['Newer', 'Older']);
+  });
+});

@@ -19,6 +19,15 @@
 
 import { formatStructuredName } from '../format/pds-utils.js';
 import { filterHidden } from '../profile/section-model.js';
+import {
+  sortCertifications,
+  sortEducation,
+  sortHonors,
+  sortLanguages,
+  sortPositions,
+  sortProjects,
+  sortPublications,
+} from '../profile/section-sorts.js';
 import type {
   ExternalAccount,
   LanguageProficiency,
@@ -27,6 +36,7 @@ import type {
   ProfileEducation,
   ProfileHonor,
   ProfileLanguage,
+  ProfileLocation,
   ProfilePosition,
   ProfileProject,
   ProfilePublication,
@@ -74,7 +84,12 @@ export interface JsonResumeProfileInput {
   readonly headline?: string;
   readonly about?: string;
   readonly website?: string;
-  readonly location?: LocationValue | null;
+  /**
+   * The structured location. The profile API sends a display string here
+   * instead; the emitter then reads the primary entry of `locations`.
+   */
+  readonly location?: LocationValue | string | null;
+  readonly locations?: ProfileLocation[];
   readonly positions?: ProfilePosition[];
   readonly education?: ProfileEducation[];
   readonly skills?: ProfileSkill[];
@@ -252,17 +267,29 @@ function section<K extends string, T>(key: K, items: T[]): Record<K, T[]> | unde
   return items.length > 0 ? ({ [key]: items } as Record<K, T[]>) : undefined;
 }
 
+/**
+ * The structured `location` when the profile has one; otherwise the primary
+ * entry of `locations`, which is what the profile API sends (its `location` is
+ * a display string).
+ */
 function mapLocation(
-  location: LocationValue | null | undefined,
+  profile: Pick<JsonResumeProfileInput, 'location' | 'locations'>,
   s: Sanitizer,
 ): JsonResumeLocation | undefined {
-  if (!location) return undefined;
-  const mapped = compact({
-    city: text(location.locality ?? location.city, s),
-    region: text(location.region, s),
-    countryCode: text(location.countryCode, s),
-    postalCode: text(location.postalCode, s),
-  });
+  const structured = typeof profile.location === 'object' ? profile.location : null;
+  const primary = profile.locations?.find((l) => l.isPrimary);
+  const mapped = structured
+    ? compact({
+        city: text(structured.locality ?? structured.city, s),
+        region: text(structured.region, s),
+        countryCode: text(structured.countryCode, s),
+        postalCode: text(structured.postalCode, s),
+      })
+    : compact({
+        city: text(primary?.locationLocality ?? primary?.locationCity ?? undefined, s),
+        region: text(primary?.locationRegion ?? undefined, s),
+        countryCode: text(primary?.countryCode ?? undefined, s),
+      });
   return Object.keys(mapped).length > 0 ? mapped : undefined;
 }
 
@@ -322,11 +349,12 @@ export function profileToJsonResume(
     phone: text(contact.phone, s),
     url: text(profile.website, s) ?? canonical,
     summary: text(profile.about, s),
-    location: withAddress(mapLocation(profile.location, s), text(contact.address, s)),
+    location: withAddress(mapLocation(profile, s), text(contact.address, s)),
     ...section('profiles', profiles),
   });
 
-  const work = filterHidden(profile.positions).map((position) =>
+  // Same order as the profile page and the other exports: newest first.
+  const work = sortPositions(filterHidden(profile.positions)).map((position) =>
     compact<JsonResumeWork>({
       name: orgName(position.entityName, position.company, s),
       position: s(position.title),
@@ -346,7 +374,7 @@ export function profileToJsonResume(
     }),
   );
 
-  const education = filterHidden(profile.education).map((entry) =>
+  const education = sortEducation(filterHidden(profile.education)).map((entry) =>
     compact<JsonResumeEducation>({
       institution: orgName(entry.entityName, entry.institution, s),
       area: text(entry.fieldOfStudy, s),
@@ -356,7 +384,7 @@ export function profileToJsonResume(
     }),
   );
 
-  const awards = filterHidden(profile.honors).map((honor) =>
+  const awards = sortHonors(filterHidden(profile.honors)).map((honor) =>
     compact<JsonResumeAward>({
       title: s(honor.title),
       date: toResumeDate(honor.date),
@@ -365,7 +393,7 @@ export function profileToJsonResume(
     }),
   );
 
-  const certificates = filterHidden(profile.certifications).map((cert) =>
+  const certificates = sortCertifications(filterHidden(profile.certifications)).map((cert) =>
     compact<JsonResumeCertificate>({
       name: s(cert.name),
       date: toResumeDate(cert.issueDate),
@@ -376,7 +404,7 @@ export function profileToJsonResume(
     }),
   );
 
-  const publications = filterHidden(profile.publications).map((publication) =>
+  const publications = sortPublications(filterHidden(profile.publications)).map((publication) =>
     compact<JsonResumePublication>({
       name: s(publication.title),
       publisher: text(publication.publisher, s),
@@ -393,14 +421,14 @@ export function profileToJsonResume(
   // there is nothing to filter here.
   const skills = (profile.skills ?? []).map((skill) => ({ name: s(skill.name) }));
 
-  const languages = filterHidden(profile.languages).map((language) =>
+  const languages = sortLanguages(filterHidden(profile.languages)).map((language) =>
     compact<JsonResumeLanguage>({
       language: s(language.language),
       fluency: language.proficiency ? FLUENCY_LABELS[language.proficiency] : undefined,
     }),
   );
 
-  const projects = filterHidden(profile.projects).map((project) =>
+  const projects = sortProjects(filterHidden(profile.projects)).map((project) =>
     compact<JsonResumeProject>({
       name: s(project.name),
       description: text(project.description, s),
