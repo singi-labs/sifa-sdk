@@ -1,26 +1,21 @@
 /**
  * The resume emitters run against anonymized real API responses
- * (`src/__fixtures__/wire`), not hand-written objects. Hand-written fixtures
+ * (`src/testing/wire`, exported as `WIRE_PROFILES`), not hand-written objects. Hand-written fixtures
  * hid three bugs that only real data showed: an empty JSON Resume location
  * (the API sends a string plus `locations[]`), lists in storage order, and
  * linked-account networks the Typst template could not draw.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import type { Profile } from '../types/index.js';
 import { sortPositions } from '../profile/section-sorts.js';
+import { SAMPLE_EXPORT_CONTACT as contact, WIRE_PROFILES } from '../testing/index.js';
 import { defaultFunderCvSelection, profileToFunderCv } from './funder-cv.js';
 import { profileToJsonResume } from './json-resume.js';
 
 const FIXTURES = join(import.meta.dirname, '..', '__fixtures__');
-const WIRE = join(FIXTURES, 'wire');
-const profiles = readdirSync(WIRE)
-  .filter((f) => f.endsWith('.json'))
-  // The fixtures are recorded API responses; the SDK has no Zod schema for the
-  // full profile view, so they are typed as the `Profile` the web app receives.
-  .map((f) => [f, JSON.parse(readFileSync(join(WIRE, f), 'utf8')) as Profile] as const);
+const profiles = WIRE_PROFILES.map((w) => [w.name, w.profile] as const);
 
 interface SchemaNode {
   type?: string | string[];
@@ -50,15 +45,6 @@ function undeclaredKeys(value: unknown, node: SchemaNode | undefined, path: stri
   }
   return [];
 }
-
-const contact = {
-  email: 'a@example.com',
-  phone: '+31 6 0000 0000',
-  address: 'Street 1\nCity',
-  driversLicense: 'B',
-  rightToWork: 'EU citizen',
-  nationality: 'Dutch',
-};
 
 describe.each(profiles)('wire fixture %s', (_name, profile) => {
   const resume = profileToJsonResume(profile, { contact });

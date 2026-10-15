@@ -17,7 +17,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const API = new URL(process.env.SIFA_API_URL ?? 'https://sifa.id/api').href.replace(/\/$/, '');
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', '__fixtures__', 'wire');
+const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'testing', 'wire');
 
 /**
  * Public profiles to sample, by fixture name. The API sends the same shape for
