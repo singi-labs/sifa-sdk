@@ -27,16 +27,17 @@ Published publicly so third-party developers can build their own AT Protocol cli
 
 ## What this package contains
 
-| Area        | What it provides                                                                      |
-| ----------- | ------------------------------------------------------------------------------------- |
-| Types       | TypeScript types for Sifa data structures, generated from `sifa-lexicons`             |
-| Schemas     | Zod schemas mirroring lexicon constraints for runtime validation                      |
-| Query layer | TanStack Query keys, fetchers, and React hooks for calling `sifa-api`                 |
-| ATproto     | Wrapper around `@atproto/api` that accepts an authenticated agent                     |
-| Format      | Pure formatters for dates, locations, profile completeness                            |
-| Logic       | Business-logic predicates (display-only; server-side trust logic lives in `sifa-api`) |
-| Taxonomy    | Constants and enums (continents, industries, skill categories, activity tiers)        |
-| Tokens      | Sifa-brand design tokens, exported via `@singi-labs/sifa-sdk/tokens` (optional)       |
+| Area        | What it provides                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------- |
+| Types       | TypeScript types for Sifa data structures, generated from `sifa-lexicons`                               |
+| Schemas     | Zod schemas mirroring lexicon constraints for runtime validation                                        |
+| Query layer | TanStack Query keys, fetchers, and React hooks for calling `sifa-api`                                   |
+| ATproto     | Wrapper around `@atproto/api` that accepts an authenticated agent                                       |
+| Format      | Pure formatters for dates, locations, profile completeness                                              |
+| Logic       | Business-logic predicates (display-only; server-side trust logic lives in `sifa-api`)                   |
+| Taxonomy    | Constants and enums (continents, industries, skill categories, activity tiers)                          |
+| Tokens      | Sifa-brand design tokens, exported via `@singi-labs/sifa-sdk/tokens` (optional)                         |
+| Testing     | Anonymized profile responses and sample export details, via `@singi-labs/sifa-sdk/testing` (tests only) |
 
 ---
 

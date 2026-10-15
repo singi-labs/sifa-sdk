@@ -20,6 +20,7 @@ const publicEntries = [
   'src/badge/index.ts',
   'src/jsonld/index.ts',
   'src/resume/index.ts',
+  'src/testing/index.ts',
   'src/jev/index.ts',
   'src/jev/issue.ts',
   'src/jev/error.ts',

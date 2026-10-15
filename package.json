@@ -162,6 +162,16 @@
         "default": "./dist/resume/index.cjs"
       }
     },
+    "./testing": {
+      "import": {
+        "types": "./dist/testing/index.d.ts",
+        "default": "./dist/testing/index.js"
+      },
+      "require": {
+        "types": "./dist/testing/index.d.cts",
+        "default": "./dist/testing/index.cjs"
+      }
+    },
     "./jev": {
       "import": {
         "types": "./dist/jev/index.d.ts",
@@ -229,7 +239,7 @@
     "build:flags": "node scripts/build-flags.mjs",
     "sync:term-mappings": "node scripts/sync-term-mappings.mjs",
     "check:dist": "node scripts/check-dist.mjs",
-    "fixtures:wire": "node scripts/refresh-wire-fixtures.mjs && prettier --write src/__fixtures__/wire",
+    "fixtures:wire": "node scripts/refresh-wire-fixtures.mjs && prettier --write src/testing/wire",
     "rpg:sync-catalog": "pnpm build && node scripts/sync-rpg-catalog.mjs"
   },
   "engines": {
