@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.96
+
+### Patch Changes
+
+- 52d2b8f: Export `OPTIONAL_COMPLETENESS_SIGNALS` and `isOptionalCompletenessSignal` so the AppView and clients share one list of completeness signals that are never asked for.
+
 ## 0.19.95
 
 ### Patch Changes
