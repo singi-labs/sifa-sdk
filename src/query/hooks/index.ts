@@ -84,6 +84,12 @@ export {
 export { useInboxCounts } from './use-inbox.js';
 export { useVerificationLog } from './use-verification.js';
 export {
+  useProfileEmails,
+  useAddProfileEmail,
+  useResendProfileEmailVerification,
+  useRemoveProfileEmail,
+} from './use-profile-emails.js';
+export {
   useOrgAttestations,
   useAttestationRequests,
   useCreateOrgAttestation,

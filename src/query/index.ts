@@ -121,6 +121,17 @@ export {
   type VerificationLogEntry,
 } from './fetchers/verification.js';
 export {
+  fetchProfileEmails,
+  addProfileEmail,
+  resendProfileEmailVerification,
+  removeProfileEmail,
+  ProfileEmailSchema,
+  type FetchProfileEmailsOptions,
+  type ProfileEmail,
+  type ProfileEmails,
+  type ProfileEmailSendStatus,
+} from './fetchers/profile-emails.js';
+export {
   createOrgAttestation,
   offboardOrgAttestation,
   revokeOrgAttestation,
@@ -477,6 +488,12 @@ export {
 } from './hooks/use-confirmations.js';
 export { useInboxCounts } from './hooks/use-inbox.js';
 export { useVerificationLog } from './hooks/use-verification.js';
+export {
+  useProfileEmails,
+  useAddProfileEmail,
+  useResendProfileEmailVerification,
+  useRemoveProfileEmail,
+} from './hooks/use-profile-emails.js';
 export {
   useOrgAttestations,
   useAttestationRequests,

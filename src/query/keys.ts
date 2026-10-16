@@ -161,6 +161,12 @@ export const sifaQueryKeys = {
     attestationRequests: () => ['sifa', 'org', 'attestation-requests'] as const,
   },
 
+  profileEmails: {
+    all: () => ['sifa', 'profile-emails'] as const,
+    /** The signed-in account's email addresses (#158). */
+    list: () => ['sifa', 'profile-emails', 'list'] as const,
+  },
+
   verification: {
     all: () => ['sifa', 'verification'] as const,
     /** The append-only verification log of one position. */
