@@ -2,6 +2,8 @@ export {
   COMPLETENESS_MAX_SCORE,
   completenessPercent,
   completenessScore,
+  isOptionalCompletenessSignal,
+  OPTIONAL_COMPLETENESS_SIGNALS,
   type ProfileCompletion,
 } from './profile-completeness.js';
 
