@@ -14,6 +14,8 @@ export interface AdminReviewQueues {
   nameCorrections: number;
   pendingCompanies: number;
   duplicateOrgs: number;
+  /** Pending reports of wrong Jev-inferred company facts (one per org + field). */
+  inferredFactReports: number;
   /** Sum of the queues. */
   total: number;
   generatedAt: string;
@@ -45,15 +47,18 @@ export async function getAdminReviewQueues(
   const nameCorrections = res.nameCorrections ?? 0;
   const pendingCompanies = res.pendingCompanies ?? 0;
   const duplicateOrgs = res.duplicateOrgs ?? 0;
+  const inferredFactReports = res.inferredFactReports ?? 0;
 
   return {
     ideas,
     nameCorrections,
     pendingCompanies,
     duplicateOrgs,
+    inferredFactReports,
     // Derived rather than trusted so an API that predates the field still
     // yields a usable pill count.
-    total: res.total ?? ideas + nameCorrections + pendingCompanies + duplicateOrgs,
+    total:
+      res.total ?? ideas + nameCorrections + pendingCompanies + duplicateOrgs + inferredFactReports,
     generatedAt: res.generatedAt ?? '',
   };
 }

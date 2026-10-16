@@ -19,7 +19,8 @@ const payload = {
   nameCorrections: 1,
   pendingCompanies: 7,
   duplicateOrgs: 2,
-  total: 13,
+  inferredFactReports: 4,
+  total: 17,
   generatedAt: '2026-08-01T09:00:00.000Z',
 };
 
@@ -65,5 +66,13 @@ describe('getAdminReviewQueues', () => {
     const fetchImpl = jsonFetch({ message: 'Forbidden' }, 403);
 
     await expect(getAdminReviewQueues({ ...config, fetch: fetchImpl })).rejects.toThrow();
+  });
+
+  it('defaults the inferred-fact count to 0 and counts it in a derived total', async () => {
+    const older = jsonFetch({ ideas: 2, nameCorrections: 1, pendingCompanies: 4 });
+    expect((await getAdminReviewQueues({ ...config, fetch: older })).inferredFactReports).toBe(0);
+
+    const noTotal = jsonFetch({ ideas: 1, inferredFactReports: 3 });
+    expect((await getAdminReviewQueues({ ...config, fetch: noTotal })).total).toBe(4);
   });
 });
