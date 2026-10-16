@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.97
+
+### Patch Changes
+
+- fefe318: Add server-side completeness dismissals: `dismissCompletenessSignal` and `clearCompletenessDismissals` fetchers, `useDismissCompletenessSignal` and `useClearCompletenessDismissals` hooks, and an optional `dismissed` list on `ProfileCompleteness`.
+- df986aa: Add `isInferredOrgTypePlausible` and `SECTOR_ORG_TYPE_INDUSTRY_HINTS` to `/jev`: sector-bound inferred org types (healthcare provider, educational, government, research institute, religious, political) now require an org description and a matching industry. Also adds `INFERRED_FACT_FIELDS` (the Jev-inferred company facts a visitor can report) and an `inferredFactReports` count on `AdminReviewQueues`.
+
 ## 0.19.96
 
 ### Patch Changes
