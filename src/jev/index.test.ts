@@ -16,6 +16,9 @@ import {
   pickChoiceAboveFloor,
   noulAnswerSchema,
   choiceAnswerSchema,
+  SECTOR_ORG_TYPE_INDUSTRY_HINTS,
+  INFERRED_FACT_FIELDS,
+  isInferredOrgTypePlausible,
 } from './index.js';
 
 describe('jev result schemas', () => {
@@ -183,5 +186,78 @@ describe('firmographic classification (Choice)', () => {
       probabilities: { other: 0.95, technology: 0.05 },
     };
     expect(pickChoiceAboveFloor(answer, { noMatch: 'other' })).toBeNull();
+  });
+});
+
+describe('isInferredOrgTypePlausible', () => {
+  const described = { hasDescription: true };
+
+  it('rejects a sector-bound type that contradicts the industry (scrive.com, gwi.com)', () => {
+    expect(
+      isInferredOrgTypePlausible('healthcare_provider', {
+        ...described,
+        industry: 'computer software',
+      }),
+    ).toBe(false);
+    expect(
+      isInferredOrgTypePlausible('healthcare_provider', {
+        hasDescription: false,
+        industry: 'market research',
+      }),
+    ).toBe(false);
+  });
+
+  it('accepts a sector-bound type whose industry matches', () => {
+    expect(
+      isInferredOrgTypePlausible('healthcare_provider', { ...described, industry: 'healthcare' }),
+    ).toBe(true);
+    expect(
+      isInferredOrgTypePlausible('healthcare_provider', {
+        ...described,
+        industry: 'Hospital & Health Care',
+      }),
+    ).toBe(true);
+    expect(
+      isInferredOrgTypePlausible('educational', { ...described, industry: 'higher education' }),
+    ).toBe(true);
+    expect(
+      isInferredOrgTypePlausible('government', { ...described, industry: 'public_sector' }),
+    ).toBe(true);
+  });
+
+  it('rejects a sector-bound type when the org has no description', () => {
+    expect(
+      isInferredOrgTypePlausible('healthcare_provider', {
+        hasDescription: false,
+        industry: 'healthcare',
+      }),
+    ).toBe(false);
+  });
+
+  it('rejects a sector-bound type when the industry is unknown', () => {
+    expect(isInferredOrgTypePlausible('educational', { ...described, industry: null })).toBe(false);
+  });
+
+  it('accepts form types regardless of industry or description', () => {
+    for (const t of ['company', 'nonprofit', 'cooperative', 'foundation', 'agency']) {
+      expect(isInferredOrgTypePlausible(t, { hasDescription: false, industry: null })).toBe(true);
+    }
+  });
+
+  it('rejects the no-match option and unknown tokens', () => {
+    expect(isInferredOrgTypePlausible('other', described)).toBe(false);
+    expect(isInferredOrgTypePlausible('spaceship', described)).toBe(false);
+  });
+
+  it('only lists taxonomy keys as sector-bound types', () => {
+    for (const key of Object.keys(SECTOR_ORG_TYPE_INDUSTRY_HINTS)) {
+      expect(ORG_TYPE_TAXONOMY).toHaveProperty(key);
+    }
+  });
+});
+
+describe('INFERRED_FACT_FIELDS', () => {
+  it('lists the disputable inferred company facts', () => {
+    expect([...INFERRED_FACT_FIELDS]).toEqual(['industry', 'sizeBand', 'orgType']);
   });
 });
