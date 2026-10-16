@@ -163,6 +163,44 @@ export const ORG_TYPE_TAXONOMY: Record<string, string> = {
   other: 'None of the above, or not enough information to decide',
 };
 
+/**
+ * Org types that also imply a sector. Jev can pick one that contradicts the
+ * org's industry (a software company typed `healthcare_provider`), especially
+ * from thin, description-less input. Each maps to lowercase substrings, one of
+ * which the org's industry must contain for the inferred type to be shown.
+ * Industry values are free text (Jev tokens like `public_sector`, or registry
+ * labels like "Hospital & Health Care"), hence substring hints. Types not listed
+ * here describe a legal or organisational form only and need no sector match.
+ */
+export const SECTOR_ORG_TYPE_INDUSTRY_HINTS: Record<string, readonly string[]> = {
+  healthcare_provider: ['health', 'hospital', 'medical', 'clinic', 'nursing', 'dental'],
+  educational: ['educat', 'school', 'universit', 'college', 'academ'],
+  government: ['government', 'public_sector', 'public sector', 'public administration', 'defen'],
+  research_institute: ['research', 'scien', 'laborator', 'educat'],
+  religious: ['relig', 'church', 'faith', 'nonprofit'],
+  political: ['politic', 'nonprofit'],
+};
+
+/**
+ * Whether a Jev-inferred org type is plausible enough to store or show.
+ *
+ * - The no-match option and unknown tokens are never plausible.
+ * - Form types (company, nonprofit, ...) are always plausible.
+ * - Sector-bound types need an org description (thin input is where Jev
+ *   guesses wrong) AND an industry that matches the type's sector.
+ */
+export function isInferredOrgTypePlausible(
+  orgType: string,
+  ctx: { industry?: string | null; hasDescription: boolean },
+): boolean {
+  if (orgType === 'other' || !Object.hasOwn(ORG_TYPE_TAXONOMY, orgType)) return false;
+  const hints = SECTOR_ORG_TYPE_INDUSTRY_HINTS[orgType];
+  if (!hints) return true;
+  if (!ctx.hasDescription || !ctx.industry) return false;
+  const industry = ctx.industry.toLowerCase();
+  return hints.some((hint) => industry.includes(hint));
+}
+
 /** Ordered employee-size bands; `unknown` is the no-match option. */
 export const SIZE_BAND_TAXONOMY: Record<string, string> = {
   solo: '1 person',
