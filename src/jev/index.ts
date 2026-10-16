@@ -201,6 +201,13 @@ export function isInferredOrgTypePlausible(
   return hints.some((hint) => industry.includes(hint));
 }
 
+/**
+ * Jev-inferred company facts a signed-in visitor can dispute (mark as wrong).
+ * A dispute hides the inferred value; it never touches registry or owner data.
+ */
+export const INFERRED_FACT_FIELDS = ['industry', 'sizeBand', 'orgType'] as const;
+export type InferredFactField = (typeof INFERRED_FACT_FIELDS)[number];
+
 /** Ordered employee-size bands; `unknown` is the no-match option. */
 export const SIZE_BAND_TAXONOMY: Record<string, string> = {
   solo: '1 person',

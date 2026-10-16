@@ -17,6 +17,7 @@ import {
   noulAnswerSchema,
   choiceAnswerSchema,
   SECTOR_ORG_TYPE_INDUSTRY_HINTS,
+  INFERRED_FACT_FIELDS,
   isInferredOrgTypePlausible,
 } from './index.js';
 
@@ -252,5 +253,11 @@ describe('isInferredOrgTypePlausible', () => {
     for (const key of Object.keys(SECTOR_ORG_TYPE_INDUSTRY_HINTS)) {
       expect(ORG_TYPE_TAXONOMY).toHaveProperty(key);
     }
+  });
+});
+
+describe('INFERRED_FACT_FIELDS', () => {
+  it('lists the disputable inferred company facts', () => {
+    expect([...INFERRED_FACT_FIELDS]).toEqual(['industry', 'sizeBand', 'orgType']);
   });
 });
