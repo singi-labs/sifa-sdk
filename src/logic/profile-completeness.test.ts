@@ -4,6 +4,8 @@ import {
   COMPLETENESS_MAX_SCORE,
   completenessPercent,
   completenessScore,
+  isOptionalCompletenessSignal,
+  OPTIONAL_COMPLETENESS_SIGNALS,
   type ProfileCompletion,
 } from './profile-completeness.js';
 
@@ -97,5 +99,21 @@ describe('completenessPercent', () => {
         certificationCount: 1,
       }),
     ).toBe(100);
+  });
+});
+
+describe('OPTIONAL_COMPLETENESS_SIGNALS', () => {
+  it('lists certification as optional', () => {
+    expect(OPTIONAL_COMPLETENESS_SIGNALS).toEqual(['certification']);
+  });
+});
+
+describe('isOptionalCompletenessSignal', () => {
+  it('is true for certification', () => {
+    expect(isOptionalCompletenessSignal('certification')).toBe(true);
+  });
+
+  it.each(['headline', 'about', 'position', 'education', 'skill'])('is false for %s', (signal) => {
+    expect(isOptionalCompletenessSignal(signal)).toBe(false);
   });
 });

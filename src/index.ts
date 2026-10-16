@@ -397,6 +397,8 @@ export {
   COMPLETENESS_MAX_SCORE,
   completenessPercent,
   completenessScore,
+  isOptionalCompletenessSignal,
+  OPTIONAL_COMPLETENESS_SIGNALS,
   DIMENSIONS_MAX_SCORE,
   MIN_SKILLS,
   countFilledDimensions,
