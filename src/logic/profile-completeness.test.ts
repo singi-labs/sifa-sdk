@@ -113,7 +113,10 @@ describe('isOptionalCompletenessSignal', () => {
     expect(isOptionalCompletenessSignal('certification')).toBe(true);
   });
 
-  it.each(['headline', 'about', 'position', 'education', 'skill'])('is false for %s', (signal) => {
-    expect(isOptionalCompletenessSignal(signal)).toBe(false);
-  });
+  it.each(['headline', 'about', 'position', 'education', 'skill', '', 'certifications'])(
+    'is false for %s',
+    (signal) => {
+      expect(isOptionalCompletenessSignal(signal)).toBe(false);
+    },
+  );
 });

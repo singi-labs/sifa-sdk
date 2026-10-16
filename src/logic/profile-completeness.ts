@@ -45,12 +45,12 @@ export function completenessPercent(c: ProfileCompletion): number {
  * Completeness signals that are not a goal for every user, so clients never ask
  * for them: plenty of people never earn a certification, and asking for one
  * makes the "complete your profile" task impossible to finish. They still count
- * toward {@link completenessScore}. The AppView uses this list for the inbox
+ * toward {@link completenessScore} (`certificationCount`). The AppView uses this list for the inbox
  * task count and sifa-web for the checklist, so the two stay in step.
  */
 export const OPTIONAL_COMPLETENESS_SIGNALS = ['certification'] as const;
 
 /** True when `signal` is in {@link OPTIONAL_COMPLETENESS_SIGNALS}. */
 export function isOptionalCompletenessSignal(signal: string): boolean {
-  return (OPTIONAL_COMPLETENESS_SIGNALS as readonly string[]).includes(signal);
+  return OPTIONAL_COMPLETENESS_SIGNALS.some((optional) => optional === signal);
 }
