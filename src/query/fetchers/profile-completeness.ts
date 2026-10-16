@@ -1,4 +1,10 @@
-import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
+import {
+  apiFetch,
+  apiWrite,
+  type ApiFetchOptions,
+  type SifaApiConfig,
+  type WriteResult,
+} from '../client.js';
 
 /**
  * The binary profile-completeness signals the AppView tracks. Each maps to a
@@ -15,6 +21,10 @@ export const PROFILE_COMPLETENESS_SIGNALS = [
 
 export type ProfileCompletenessSignal = (typeof PROFILE_COMPLETENESS_SIGNALS)[number];
 
+function isProfileCompletenessSignal(value: unknown): value is ProfileCompletenessSignal {
+  return PROFILE_COMPLETENESS_SIGNALS.some((signal) => signal === value);
+}
+
 /**
  * Completeness of the signed-in user's own profile: which of the tracked signals
  * are still missing. `missing.length === 0` means complete.
@@ -28,6 +38,12 @@ export interface ProfileCompleteness {
   total: number;
   /** The signals still missing, for the checklist. */
   missing: ProfileCompletenessSignal[];
+  /**
+   * Signals the user hid from the checklist. They stay in `missing` (the score
+   * is unchanged); clients hide them. Absent from an AppView that predates
+   * server-side dismissals.
+   */
+  dismissed?: ProfileCompletenessSignal[];
 }
 
 export interface FetchProfileCompletenessOptions extends ApiFetchOptions {
@@ -71,13 +87,47 @@ export async function fetchProfileCompleteness(
     });
     if (!data) return empty;
     const missing = Array.isArray(data.missing) ? data.missing : [];
+    const dismissed = Array.isArray(data.dismissed)
+      ? data.dismissed.filter(isProfileCompletenessSignal)
+      : undefined;
     return {
       complete: data.complete ?? missing.length === 0,
       score: data.score ?? PROFILE_COMPLETENESS_SIGNALS.length - missing.length,
       total: data.total ?? PROFILE_COMPLETENESS_SIGNALS.length,
       missing,
+      ...(dismissed ? { dismissed } : {}),
     };
   } catch {
     return empty;
   }
+}
+
+/** Body accepted by {@link dismissCompletenessSignal}. */
+export interface DismissCompletenessSignalInput {
+  signal: ProfileCompletenessSignal;
+}
+
+/**
+ * Hide one "complete your profile" item for the signed-in user, on every
+ * device. Writes nothing to any PDS and leaves the score unchanged.
+ */
+export function dismissCompletenessSignal(
+  config: SifaApiConfig,
+  data: DismissCompletenessSignalInput,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  return apiWrite(config, '/api/profile/completeness/dismiss', 'POST', { body: data, ...options });
+}
+
+/** Show every hidden "complete your profile" item again. */
+export function clearCompletenessDismissals(
+  config: SifaApiConfig,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  // An empty JSON object, not no body: the AppView rejects an empty body sent
+  // with a JSON content type.
+  return apiWrite(config, '/api/profile/completeness/dismissals/clear', 'POST', {
+    body: {},
+    ...options,
+  });
 }

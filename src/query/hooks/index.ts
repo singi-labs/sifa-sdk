@@ -93,7 +93,11 @@ export {
   useRequestEmploymentConfirmation,
 } from './use-org-attestations.js';
 export { useUnlinkedPositions, useDismissUnlinkedPosition } from './use-unlinked-positions.js';
-export { useProfileCompleteness } from './use-profile-completeness.js';
+export {
+  useProfileCompleteness,
+  useDismissCompletenessSignal,
+  useClearCompletenessDismissals,
+} from './use-profile-completeness.js';
 export { useRpgClaimable } from './use-rpg-claimable.js';
 export { useRpgStatus } from './use-rpg-status.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './use-keytrace-claims.js';

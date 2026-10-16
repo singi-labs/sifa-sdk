@@ -122,10 +122,13 @@ export {
 } from './unlinked-positions.js';
 export {
   fetchProfileCompleteness,
+  dismissCompletenessSignal,
+  clearCompletenessDismissals,
   PROFILE_COMPLETENESS_SIGNALS,
   type ProfileCompleteness,
   type ProfileCompletenessSignal,
   type FetchProfileCompletenessOptions,
+  type DismissCompletenessSignalInput,
 } from './profile-completeness.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './marque-domains.js';
