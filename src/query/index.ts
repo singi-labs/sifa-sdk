@@ -154,10 +154,13 @@ export {
 } from './fetchers/unlinked-positions.js';
 export {
   fetchProfileCompleteness,
+  dismissCompletenessSignal,
+  clearCompletenessDismissals,
   PROFILE_COMPLETENESS_SIGNALS,
   type ProfileCompleteness,
   type ProfileCompletenessSignal,
   type FetchProfileCompletenessOptions,
+  type DismissCompletenessSignalInput,
 } from './fetchers/profile-completeness.js';
 export { fetchResolveActor, fetchTypeaheadActors } from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
@@ -487,7 +490,11 @@ export {
   useUnlinkedPositions,
   useDismissUnlinkedPosition,
 } from './hooks/use-unlinked-positions.js';
-export { useProfileCompleteness } from './hooks/use-profile-completeness.js';
+export {
+  useProfileCompleteness,
+  useDismissCompletenessSignal,
+  useClearCompletenessDismissals,
+} from './hooks/use-profile-completeness.js';
 export { useRpgClaimable } from './hooks/use-rpg-claimable.js';
 export { useRpgStatus } from './hooks/use-rpg-status.js';
 export { useHideKeytraceClaim, useUnhideKeytraceClaim } from './hooks/use-keytrace-claims.js';
