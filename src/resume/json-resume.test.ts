@@ -321,6 +321,18 @@ describe('profileToJsonResume education, awards, certificates', () => {
     ]);
   });
 
+  it('carries a certification expiry date as endDate', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      certifications: [
+        { rkey: '1', name: 'Cert', issueDate: '2025-01', expiryDate: '2027-02' },
+        { rkey: '2', name: 'No expiry', issueDate: '2024-03' },
+      ],
+    });
+    expect(r.certificates).toContainEqual({ name: 'Cert', date: '2025-01', endDate: '2027-02' });
+    expect(r.certificates?.find((c) => c.name === 'No expiry')).not.toHaveProperty('endDate');
+  });
+
   // `issuingOrg` is the deprecated read-view alias for `authority`. Records
   // indexed before the rename still carry only the alias.
   it('falls back to the deprecated issuingOrg alias', () => {

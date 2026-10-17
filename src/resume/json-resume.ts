@@ -170,6 +170,8 @@ export interface JsonResumeAward {
 export interface JsonResumeCertificate {
   readonly name: string;
   readonly date?: string;
+  /** Expiry date. Not in the JSON Resume schema, which allows extra fields. */
+  readonly endDate?: string;
   readonly issuer?: string;
   readonly url?: string;
 }
@@ -424,6 +426,7 @@ export function profileToJsonResume(
     compact<JsonResumeCertificate>({
       name: s(cert.name),
       date: toResumeDate(cert.issueDate),
+      endDate: toResumeDate(cert.expiryDate),
       // `issuingOrg` is the deprecated read-view alias for `authority`; records
       // indexed before the rename carry only the alias.
       issuer: orgName(cert.entityName, cert.authority ?? cert.issuingOrg, s),
