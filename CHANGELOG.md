@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.101
+
+### Patch Changes
+
+- 46abdd8: `isInferredOrgTypePlausible`: treat `government` and `research_institute` as cross-sector form types that need no matching industry or description.
+
 ## 0.19.100
 
 ### Patch Changes
