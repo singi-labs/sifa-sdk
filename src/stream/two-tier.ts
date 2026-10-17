@@ -23,17 +23,20 @@ const RICH_BODY_KINDS: ReadonlySet<StreamCardBody['kind']> = new Set([
 
 /**
  * Whether a view-model carries rich content worth a card (as opposed to a
- * compact line): resolved media, an external-link card, or a structured rich
- * body. Independent of who authored it — {@link isSelfAuthoredRich} adds the
- * authorship gate.
+ * compact line): resolved media, an external-link card, a structured rich
+ * body, or a published document with a title and a cover image (not every
+ * document: one without a cover stays a line, which is why `standard-site` is
+ * not in {@link RICH_BODY_KINDS}). Independent of who authored it —
+ * {@link isSelfAuthoredRich} adds the authorship gate.
  */
 function isRich(vm: StreamCardVM): boolean {
   if (vm.media && vm.media.length > 0) return true;
   if (vm.externalLink) return true;
   if (vm.body && RICH_BODY_KINDS.has(vm.body.kind)) return true;
-  // A published document is rich when it has a cover image to show (its own
-  // cover or the article's og:image); without one it stays a compact line.
-  if (vm.body?.kind === 'standard-site' && vm.body.coverImageUrl) return true;
+  // A published document is rich when it has a title and a cover image to show
+  // (its own cover or the article's og:image). Without either it stays a
+  // compact line: an image with no headline says nothing on its own.
+  if (vm.body?.kind === 'standard-site' && vm.body.coverImageUrl && vm.body.title) return true;
   return false;
 }
 
