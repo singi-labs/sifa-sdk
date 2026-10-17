@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.104
+
+### Patch Changes
+
+- 3f2ed6d: Export `isTimelineWorthy` from the package root.
+
 ## 0.19.103
 
 ### Patch Changes
