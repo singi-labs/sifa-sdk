@@ -220,9 +220,9 @@ describe('isInferredOrgTypePlausible', () => {
     expect(
       isInferredOrgTypePlausible('educational', { ...described, industry: 'higher education' }),
     ).toBe(true);
-    expect(
-      isInferredOrgTypePlausible('government', { ...described, industry: 'public_sector' }),
-    ).toBe(true);
+    expect(isInferredOrgTypePlausible('religious', { ...described, industry: 'nonprofit' })).toBe(
+      true,
+    );
   });
 
   it('rejects a sector-bound type when the org has no description', () => {
@@ -236,6 +236,19 @@ describe('isInferredOrgTypePlausible', () => {
 
   it('rejects a sector-bound type when the industry is unknown', () => {
     expect(isInferredOrgTypePlausible('educational', { ...described, industry: null })).toBe(false);
+  });
+
+  it('treats government and research institutes as cross-sector form types', () => {
+    // Public bodies and research institutes exist in every sector (an energy
+    // utility, a rail operator, a heart research institute).
+    for (const [t, industry] of [
+      ['government', 'energy'],
+      ['government', null],
+      ['research_institute', 'technology'],
+      ['research_institute', 'healthcare'],
+    ] as const) {
+      expect(isInferredOrgTypePlausible(t, { hasDescription: false, industry })).toBe(true);
+    }
   });
 
   it('accepts form types regardless of industry or description', () => {
