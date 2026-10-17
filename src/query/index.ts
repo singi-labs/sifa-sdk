@@ -132,6 +132,17 @@ export {
   type ProfileEmailSendStatus,
 } from './fetchers/profile-emails.js';
 export {
+  fetchEmailVerificationLinks,
+  linkEmailToPosition,
+  unlinkEmailFromPosition,
+  requestEmailReverification,
+  EmailVerificationLinkSchema,
+  type EmailBadgeRefusal,
+  type EmailVerificationLink,
+  type FetchEmailVerificationLinksOptions,
+  type LinkEmailResult,
+} from './fetchers/email-verification.js';
+export {
   createOrgAttestation,
   offboardOrgAttestation,
   revokeOrgAttestation,
