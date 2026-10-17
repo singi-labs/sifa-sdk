@@ -96,4 +96,14 @@ describe('isTimelineWorthy', () => {
       false,
     );
   });
+
+  it('accepts a bare membership: the app is what was joined', () => {
+    expect(
+      isTimelineWorthy(vm({ verb: 'joined', title: 'Joined', sourceUrl: 'https://atproto.eu' })),
+    ).toBe(true);
+  });
+
+  it('rejects a bare membership with no link', () => {
+    expect(isTimelineWorthy(vm({ verb: 'joined', title: 'Joined' }))).toBe(false);
+  });
 });
