@@ -468,6 +468,10 @@ export {
   type PersonalFacetContent,
   resolveAgentRef,
   type AgentRefFlat,
+  WIKIDATA_ORG_TYPE_CLASSES,
+  WIKIDATA_ORG_TYPE_CLASS_QIDS,
+  orgTypeFromRorTypes,
+  orgTypeFromWikidataClasses,
 } from './logic/index.js';
 
 // Profile section model: which sections render, in what order, their nav
