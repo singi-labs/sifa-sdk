@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.102
+
+### Patch Changes
+
+- 8f7f997: Add `orgTypeFromRorTypes`, `orgTypeFromWikidataClasses` and `WIKIDATA_ORG_TYPE_CLASSES` / `WIKIDATA_ORG_TYPE_CLASS_QIDS`: map registry data (ROR types, Wikidata P31 classes) to org-type tokens.
+
 ## 0.19.101
 
 ### Patch Changes
