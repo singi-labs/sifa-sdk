@@ -171,12 +171,14 @@ export const ORG_TYPE_TAXONOMY: Record<string, string> = {
  * Industry values are free text (Jev tokens like `public_sector`, or registry
  * labels like "Hospital & Health Care"), hence substring hints. Types not listed
  * here describe a legal or organisational form only and need no sector match.
+ * `government` and `research_institute` are deliberately absent: public bodies
+ * and research institutes exist in every sector (an energy utility, a rail
+ * operator, a heart research institute), so an industry check rejects true
+ * labels.
  */
 export const SECTOR_ORG_TYPE_INDUSTRY_HINTS: Record<string, readonly string[]> = {
   healthcare_provider: ['health', 'hospital', 'medical', 'clinic', 'nursing', 'dental'],
   educational: ['educat', 'school', 'universit', 'college', 'academ'],
-  government: ['government', 'public_sector', 'public sector', 'public administration', 'defen'],
-  research_institute: ['research', 'scien', 'laborator', 'educat'],
   religious: ['relig', 'church', 'faith', 'nonprofit'],
   political: ['politic', 'nonprofit'],
 };
