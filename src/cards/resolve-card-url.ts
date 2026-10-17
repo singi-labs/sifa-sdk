@@ -63,7 +63,7 @@ export interface CardHealth {
    * because the record has no page of its own. Such a link does not point at
    * what the person did, so the timeline does not count it as one.
    */
-  isProfileFallback?: true;
+  isProfileFallback?: boolean;
 }
 
 /** Build a `url`-strategy result (foreign/derived/profile target). */

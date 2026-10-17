@@ -15,6 +15,12 @@
 export interface AppUrlPatterns {
   urlPattern?: string;
   profileUrlPattern?: string;
+  /**
+   * False when the app has no page for a single item, so nothing it records
+   * can link to what the person did (the timeline never shows it). Omitted
+   * means items can link, through a pattern, a resolver, or the record itself.
+   */
+  itemLinks?: false;
 }
 
 export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object.freeze({
@@ -80,7 +86,9 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
   beaconbits: { profileUrlPattern: 'https://beaconbits.app' },
   bookhive: { profileUrlPattern: 'https://bookhive.buzz/profile/{handle}' },
   colibri: { profileUrlPattern: 'https://colibri.social' },
-  collectivesocial: { profileUrlPattern: 'https://app.collectivesocial.app' },
+  collectivesocial: { profileUrlPattern: 'https://app.collectivesocial.app', itemLinks: false },
+  // No public per-image page and no profile URL.
+  pixl: { itemLinks: false },
   github: {},
   asq: {
     // Questions live at /q/{did}/{rkey}. Answer cards build their own URL
@@ -93,6 +101,7 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     // Per-record URLs don't exist on passports.social — its SvelteKit routes
     // stop at /profile/{handle}/{passport_slug}. Profile-level fallback only.
     profileUrlPattern: 'https://passports.social/profile/{handle}',
+    itemLinks: false,
   },
   leaflet: {
     // Per-document URLs are short and rkey-only: https://leaflet.pub/{rkey}.

@@ -24,7 +24,7 @@ describe('resolveCardHealth profile fallback', () => {
       collection: 'app.collectivesocial.feed.list',
       record: {},
     });
-    expect(h.url === null || h.isProfileFallback === true).toBe(true);
+    expect(h.url).toBeNull();
   });
 
   it('does not mark a per-item link', () => {
@@ -55,6 +55,12 @@ describe('appLinksItems', () => {
     expect(appLinksItems('passports')).toBe(false);
     expect(appLinksItems('collectivesocial')).toBe(false);
     expect(appLinksItems('pixl')).toBe(false);
+  });
+
+  it('is true for apps that link items another way (record URL, own transform)', () => {
+    expect(appLinksItems('fediverse')).toBe(true);
+    expect(appLinksItems('github')).toBe(true);
+    expect(appLinksItems('hyperboards')).toBe(true);
   });
 
   it('is true for apps with a per-item pattern or their own item resolver', () => {
