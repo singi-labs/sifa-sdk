@@ -243,8 +243,10 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
  */
 function resolveVerb(collection: string, record: Record<string, unknown> | null): StreamVerb {
   if (collection === 'blog.pckt.mini.post') {
-    const parent = asRecord(asRecord(record?.reply)?.parent);
-    if (nonBlankString(parent?.uri)?.startsWith('at://')) return 'replied';
+    const reply = asRecord(record?.reply);
+    for (const ref of [reply?.parent, reply?.root]) {
+      if (nonBlankString(asRecord(ref)?.uri)?.startsWith('at://')) return 'replied';
+    }
   }
   return verbForCollection(collection);
 }

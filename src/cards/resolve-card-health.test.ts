@@ -105,6 +105,25 @@ describe('resolveCardHealth', () => {
       expect(h.url).toBe('https://tangled.sh/alice.test/my-repo');
     });
 
+    it('tangled pull / issue / star link to a different record -> url', () => {
+      // The link is the target repo, not the user's own record, so the record
+      // existing says nothing about the page being alive.
+      for (const [collection, record] of [
+        ['sh.tangled.repo.pull', { target: { repoDid: 'did:plc:repo' } }],
+        ['sh.tangled.repo.issue', { repoDid: 'did:plc:repo' }],
+        ['sh.tangled.feed.star', { subjectDid: 'did:plc:repo' }],
+      ] as const) {
+        const h = resolveCardHealth({
+          ...base,
+          uri: `at://did:plc:abc/${collection}/3k`,
+          rkey: '3k',
+          collection,
+          record,
+        });
+        expect(h.strategy).toBe('url');
+      }
+    });
+
     it('kich / recipe.exchange recipe pages (first-party permalink) -> record', () => {
       const kich = resolveCardHealth({
         ...base,

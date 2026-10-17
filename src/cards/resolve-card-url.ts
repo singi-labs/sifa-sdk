@@ -159,30 +159,39 @@ function tangledRepoBase(ref: unknown): string | null {
   return null;
 }
 
-/** The per-item tangled.sh URL for a Tangled record, or null when none can be built. */
+/**
+ * The per-item tangled.sh URL for a Tangled record, or null when none can be
+ * built. `ownRecord` is true when the URL is the record's own page (a repo).
+ */
 function resolveTangledUrl(
   collection: string,
   record: Record<string, unknown>,
   rkey: string,
   owner: string,
-): string | null {
+): { url: string; ownRecord: boolean } | null {
   if (collection === 'sh.tangled.repo.pull' || collection === 'sh.tangled.repo.issue') {
     const target =
-      collection === 'sh.tangled.repo.pull' && record.target && typeof record.target === 'object'
+      record.target && typeof record.target === 'object'
         ? (record.target as Record<string, unknown>)
-        : record;
-    const base = tangledRepoBase(target.repoDid) ?? tangledRepoBase(target.repo);
+        : {};
+    const base =
+      tangledRepoBase(target.repoDid) ??
+      tangledRepoBase(target.repo) ??
+      tangledRepoBase(record.repoDid) ??
+      tangledRepoBase(record.repo);
     if (!base) return null;
-    return `${base}/${collection === 'sh.tangled.repo.pull' ? 'pulls' : 'issues'}`;
+    const list = collection === 'sh.tangled.repo.pull' ? 'pulls' : 'issues';
+    return { url: `${base}/${list}`, ownRecord: false };
   }
   if (collection === 'sh.tangled.feed.star') {
-    return tangledRepoBase(record.subjectDid) ?? tangledRepoBase(record.subject);
+    const starred = tangledRepoBase(record.subjectDid) ?? tangledRepoBase(record.subject);
+    return starred ? { url: starred, ownRecord: false } : null;
   }
   const repoDid = tangledRepoBase(record.repoDid);
-  if (repoDid) return repoDid;
+  if (repoDid) return { url: repoDid, ownRecord: true };
   const repoName = stringOrNull(record.name) ?? (collection === 'sh.tangled.repo' ? rkey : null);
   if (repoName && owner && TANGLED_REPO_SLUG.test(repoName)) {
-    return `${TANGLED}/${owner}/${repoName}`;
+    return { url: `${TANGLED}/${owner}/${repoName}`, ownRecord: true };
   }
   return null;
 }
@@ -221,8 +230,10 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
   // - a star: the starred repo.
   // Anything else falls back to the owner's profile.
   if (collection.startsWith('sh.tangled.')) {
-    const tangledUrl = resolveTangledUrl(collection, record, rkey, authorHandle ?? authorDid);
-    if (tangledUrl) return recordHealth(tangledUrl);
+    const tangled = resolveTangledUrl(collection, record, rkey, authorHandle ?? authorDid);
+    // A repo link is this record's own page; a pull / issue / star links to a
+    // different record (the target repo), so probe that page itself.
+    if (tangled) return tangled.ownRecord ? recordHealth(tangled.url) : urlHealth(tangled.url);
     if (!authorHandle && authorDid) return urlHealth(`${TANGLED}/${authorDid}`);
     return patternHealth('tangled', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
@@ -238,7 +249,9 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
       subject != null && typeof subject === 'object'
         ? stringOrNull((subject as Record<string, unknown>).uri)
         : null;
-    const parsed = subjectUri ? parseAtUri(subjectUri) : null;
+    const parsed = subjectUri?.includes('/app.userinput.discussion/')
+      ? parseAtUri(subjectUri)
+      : null;
     if (parsed) return urlHealth(`https://userinput.app/d/${parsed.did}/${parsed.rkey}`);
     return { url: null, strategy: 'none' };
   }

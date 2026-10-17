@@ -223,6 +223,18 @@ describe('resolveCardUrl', () => {
       ).toBe('https://tangled.sh/did:plc:owner/3kslug/issues');
     });
 
+    it('links a pull whose repo reference sits at the top level', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo.pull/3k3',
+          rkey: '3k3',
+          collection: 'sh.tangled.repo.pull',
+          record: { title: 't', target: { branch: 'main' }, repoDid: 'did:plc:repo4' },
+        }),
+      ).toBe('https://tangled.sh/did:plc:repo4/pulls');
+    });
+
     it('links a star to the starred repo', () => {
       expect(
         resolveCardUrl({
@@ -295,6 +307,20 @@ describe('resolveCardUrl', () => {
           },
         }),
       ).toBe('https://userinput.app/d/did:plc:owner/3mxrfi');
+    });
+  });
+
+  describe('userinput reply subject', () => {
+    it('does not build a discussion link from a non-discussion subject', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/app.userinput.reply/3k',
+          rkey: '3k',
+          collection: 'app.userinput.reply',
+          record: { subject: { uri: 'at://did:plc:owner/app.userinput.reply/3kparent' } },
+        }),
+      ).toBeNull();
     });
   });
 

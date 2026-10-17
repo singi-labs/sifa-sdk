@@ -104,6 +104,13 @@ describe('toStreamCardVM — pckt mini posts', () => {
     });
   });
 
+  it('treats a reply that only carries reply.root as a reply', () => {
+    const vm = toStreamCardVM(
+      pckt({ text: 'hi', reply: { root: { uri: 'at://did:plc:o/site.standard.document/3d' } } }),
+    );
+    expect(vm.verb).toBe('replied');
+  });
+
   it('keeps "Wrote" for a standalone mini post', () => {
     const vm = toStreamCardVM(pckt({ text: 'hello' }));
     expect(vm.verb).toBe('wrote');
