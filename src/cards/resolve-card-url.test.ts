@@ -143,7 +143,9 @@ describe('resolveCardUrl', () => {
       ).toBe('https://tangled.sh/alice.test');
     });
 
-    it('returns null when neither per-item nor profile URL can be built', () => {
+    it('falls back to the profile by DID when the handle is unknown', () => {
+      // tangled.sh resolves a DID path to the owner's profile, so a missing
+      // handle no longer leaves the item without a link.
       expect(
         resolveCardUrl({
           ...baseItem,
@@ -151,7 +153,94 @@ describe('resolveCardUrl', () => {
           record: {},
           authorHandle: undefined,
         }),
-      ).toBeNull();
+      ).toBe('https://tangled.sh/did:plc:abc');
+    });
+
+    it('links a repo by its repo DID when the record carries one', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo/aip-lite',
+          rkey: 'aip-lite',
+          collection: 'sh.tangled.repo',
+          record: { knot: 'knot.example', repoDid: 'did:plc:repo1' },
+          authorHandle: undefined,
+        }),
+      ).toBe('https://tangled.sh/did:plc:repo1');
+    });
+
+    it('links a repo by owner DID + slug when the handle is unknown', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo/aip-lite',
+          rkey: 'aip-lite',
+          collection: 'sh.tangled.repo',
+          record: { knot: 'knot.example' },
+          authorHandle: undefined,
+        }),
+      ).toBe('https://tangled.sh/did:plc:abc/aip-lite');
+    });
+
+    it("links a pull to its target repo's pulls page", () => {
+      // A pull record carries no PR number, so the single PR is not
+      // addressable; the target repo's pulls list is the closest real page.
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo.pull/3mxat5u2vzo22',
+          rkey: '3mxat5u2vzo22',
+          collection: 'sh.tangled.repo.pull',
+          record: {
+            title: 'a WebAuthn verifier',
+            target: { repo: 'did:plc:repo2', branch: 'main', repoDid: 'did:plc:repo2' },
+          },
+        }),
+      ).toBe('https://tangled.sh/did:plc:repo2/pulls');
+    });
+
+    it('links a pull whose target repo is an at-uri', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo.pull/3k1',
+          rkey: '3k1',
+          collection: 'sh.tangled.repo.pull',
+          record: { title: 't', target: { repo: 'at://did:plc:owner/sh.tangled.repo/3kslug' } },
+        }),
+      ).toBe('https://tangled.sh/did:plc:owner/3kslug/pulls');
+    });
+
+    it("links an issue to its repo's issues page", () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/sh.tangled.repo.issue/3k2',
+          rkey: '3k2',
+          collection: 'sh.tangled.repo.issue',
+          record: { title: 'bug', repo: 'at://did:plc:owner/sh.tangled.repo/3kslug' },
+        }),
+      ).toBe('https://tangled.sh/did:plc:owner/3kslug/issues');
+    });
+
+    it('links a star to the starred repo', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'sh.tangled.feed.star',
+          record: {
+            subject: 'at://did:plc:owner/sh.tangled.repo/3mgsngvjugg22',
+            subjectDid: 'did:plc:repo3',
+          },
+        }),
+      ).toBe('https://tangled.sh/did:plc:repo3');
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'sh.tangled.feed.star',
+          record: { subject: 'at://did:plc:owner/sh.tangled.repo/3mgsngvjugg22' },
+        }),
+      ).toBe('https://tangled.sh/did:plc:owner/3mgsngvjugg22');
     });
 
     it('uses the rkey as the repo slug for sh.tangled.repo when record.name is missing (new format)', () => {
@@ -177,6 +266,35 @@ describe('resolveCardUrl', () => {
           record: {},
         }),
       ).toBe('https://tangled.sh/alice.test');
+    });
+  });
+
+  describe('userinput', () => {
+    it('links a discussion to its page', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/app.userinput.discussion/3mxri3pzjal24',
+          rkey: '3mxri3pzjal24',
+          collection: 'app.userinput.discussion',
+          record: { body: 'Let users pick a CDN' },
+        }),
+      ).toBe('https://userinput.app/d/did:plc:abc/3mxri3pzjal24');
+    });
+
+    it('links a reply to the discussion it belongs to', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/app.userinput.reply/3mxutb6fsg324',
+          rkey: '3mxutb6fsg324',
+          collection: 'app.userinput.reply',
+          record: {
+            body: 'no other examples',
+            subject: { uri: 'at://did:plc:owner/app.userinput.discussion/3mxrfi', cid: 'c' },
+          },
+        }),
+      ).toBe('https://userinput.app/d/did:plc:owner/3mxrfi');
     });
   });
 

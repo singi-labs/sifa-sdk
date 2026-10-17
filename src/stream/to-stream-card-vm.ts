@@ -236,6 +236,19 @@ const TITLE_BY_VERB: Record<StreamVerb, (label: string, hasSubject: boolean) => 
   styledCharacter: () => 'Styled a character',
 };
 
+/**
+ * The verb for a record. A pckt mini post that replies to another record reads
+ * "Replied to {subject}", not "Wrote {subject}": the referenced title is someone
+ * else's article, and "Wrote" made it look as if the replier had written it.
+ */
+function resolveVerb(collection: string, record: Record<string, unknown> | null): StreamVerb {
+  if (collection === 'blog.pckt.mini.post') {
+    const parent = asRecord(asRecord(record?.reply)?.parent);
+    if (nonBlankString(parent?.uri)?.startsWith('at://')) return 'replied';
+  }
+  return verbForCollection(collection);
+}
+
 function buildTitle(verb: StreamVerb, label: string, hasSubject: boolean): string {
   return TITLE_BY_VERB[verb](label, hasSubject);
 }
@@ -1126,9 +1139,9 @@ export function toStreamCardVM(
   item: ActivityItem,
   options: ToStreamCardVMOptions = {},
 ): StreamCardVM {
-  const verb = verbForCollection(item.collection);
-  const source = buildSource(item, options);
   const record = asRecord(item.record);
+  const verb = resolveVerb(item.collection, record);
+  const source = buildSource(item, options);
   const timestamp = (record ? asNonEmptyString(record.createdAt) : undefined) ?? item.indexedAt;
 
   const vm: StreamCardVM = {
