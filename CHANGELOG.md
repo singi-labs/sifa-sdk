@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.98
+
+### Patch Changes
+
+- 8856203: Add the personal email address query layer: `fetchProfileEmails`, `addProfileEmail`, `resendProfileEmailVerification`, `removeProfileEmail` and their hooks under `sifaQueryKeys.profileEmails`.
+
 ## 0.19.97
 
 ### Patch Changes
