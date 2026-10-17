@@ -325,9 +325,14 @@ function resolveSourceUrl(
 function readTheme(record: Record<string, unknown> | null): StreamTheme | undefined {
   const theme = asRecord(record?.publicationTheme ?? record?.theme);
   if (!theme) return undefined;
-  const { background, foreground, accent } = theme;
+  const { background, foreground, accent, accentForeground } = theme;
   if (isValidRgbColor(background) && isValidRgbColor(foreground) && isValidRgbColor(accent)) {
-    return { background, foreground, accent };
+    return {
+      background,
+      foreground,
+      accent,
+      ...(isValidRgbColor(accentForeground) ? { accentForeground } : {}),
+    };
   }
   return undefined;
 }

@@ -182,6 +182,33 @@ describe('toStreamCardVM — generic / unknown', () => {
     expect(themed.theme?.accent).toEqual({ r: 67, g: 133, b: 190 });
   });
 
+  // The CTA text color: without it a themed card cannot keep its publisher's
+  // colors and readable contrast.
+  it('carries a valid accentForeground, and drops an invalid one', () => {
+    const base = {
+      background: { r: 10, g: 20, b: 30 },
+      foreground: { r: 240, g: 240, b: 240 },
+      accent: { r: 67, g: 133, b: 190 },
+    };
+    const themed = toStreamCardVM({
+      ...item,
+      record: {
+        name: 't',
+        publicationTheme: { ...base, accentForeground: { r: 255, g: 255, b: 255 } },
+      },
+    });
+    expect(themed.theme?.accentForeground).toEqual({ r: 255, g: 255, b: 255 });
+    const invalid = toStreamCardVM({
+      ...item,
+      record: {
+        name: 't',
+        publicationTheme: { ...base, accentForeground: { r: 999, g: 0, b: 0 } },
+      },
+    });
+    expect(invalid.theme?.accent).toEqual(base.accent);
+    expect(invalid.theme?.accentForeground).toBeUndefined();
+  });
+
   it('ignores an invalid publicationTheme', () => {
     const vm = toStreamCardVM({
       ...item,

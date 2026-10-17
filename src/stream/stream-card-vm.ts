@@ -39,6 +39,8 @@ export interface StreamTheme {
   background: RgbColor;
   foreground: RgbColor;
   accent: RgbColor;
+  /** Text color on the accent (a themed call-to-action), when the publication sets one. */
+  accentForeground?: RgbColor;
 }
 
 /** Fields shared by every media variant. */
