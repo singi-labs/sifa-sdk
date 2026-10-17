@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.100
+
+### Patch Changes
+
+- 8ceb6b6: Add `ProfilePosition.peerVerification` (`PositionPeerVerification`): verified colleagues vouched for the position.
+
 ## 0.19.99
 
 ### Patch Changes
