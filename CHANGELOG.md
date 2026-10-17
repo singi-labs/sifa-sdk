@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.99
+
+### Patch Changes
+
+- 1f4bade: Add the email verification of employment calls (`fetchEmailVerificationLinks`, `linkEmailToPosition`, `unlinkEmailFromPosition`, `requestEmailReverification`) and the optional `emailVerification` on `ProfilePosition`.
+
 ## 0.19.98
 
 ### Patch Changes
