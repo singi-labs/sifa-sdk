@@ -31,6 +31,9 @@ function isRich(vm: StreamCardVM): boolean {
   if (vm.media && vm.media.length > 0) return true;
   if (vm.externalLink) return true;
   if (vm.body && RICH_BODY_KINDS.has(vm.body.kind)) return true;
+  // A published document is rich when it has a cover image to show (its own
+  // cover or the article's og:image); without one it stays a compact line.
+  if (vm.body?.kind === 'standard-site' && vm.body.coverImageUrl) return true;
   return false;
 }
 

@@ -15,6 +15,28 @@ function vm(overrides: Partial<StreamCardVM>): StreamCardVM {
   };
 }
 
+describe('isSelfAuthoredRich: documents', () => {
+  const doc = (coverImageUrl?: string): StreamCardVM =>
+    vm({
+      uri: 'at://did:plc:actor/site.standard.document/1',
+      verb: 'published',
+      body: {
+        kind: 'standard-site',
+        title: 'An article',
+        ...(coverImageUrl ? { coverImageUrl } : {}),
+      },
+    });
+
+  // A published article with a cover image shows as a card with that image.
+  it('is true for a document with a cover image', () => {
+    expect(isSelfAuthoredRich(doc('https://cdn.example/cover.jpg'))).toBe(true);
+  });
+
+  it('is false for a document without a cover image (stays a line)', () => {
+    expect(isSelfAuthoredRich(doc())).toBe(false);
+  });
+});
+
 describe('isSelfAuthoredRich', () => {
   it('is true for a creation with media (their own photo)', () => {
     expect(isSelfAuthoredRich(vm({ media: [{ alt: '', url: 'https://cdn.example/p.jpg' }] }))).toBe(
