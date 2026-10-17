@@ -43,6 +43,7 @@ export {
   type ToStreamCardVMOptions,
 } from './to-stream-card-vm.js';
 export { isSelfAuthoredRich, renderAsLine } from './two-tier.js';
+export { isTimelineWorthy } from './timeline-worthy.js';
 export {
   streamCardBodyContent,
   streamCardContent,

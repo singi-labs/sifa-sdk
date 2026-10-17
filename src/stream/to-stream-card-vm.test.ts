@@ -71,6 +71,53 @@ describe('toStreamCardVM — verb titles', () => {
   });
 });
 
+describe('toStreamCardVM — pckt mini posts', () => {
+  const pckt = (record: Record<string, unknown>): ActivityItem =>
+    bskyPost({
+      uri: `at://${DID}/blog.pckt.mini.post/3k`,
+      collection: 'blog.pckt.mini.post',
+      rkey: '3k',
+      appId: 'pckt',
+      appName: 'Pckt',
+      record: { $type: 'blog.pckt.mini.post', createdAt: '2026-10-13T00:00:00Z', ...record },
+    });
+
+  // A reply names what it answered, not "Wrote {their title}", which read as if
+  // the replier had written the referenced article.
+  it('titles a reply "Replied to" its subject', () => {
+    const vm = toStreamCardVM({
+      ...pckt({
+        text: 'great read',
+        reply: {
+          parent: { uri: 'at://did:plc:other/site.standard.document/3d', cid: 'c' },
+          root: { uri: 'at://did:plc:other/site.standard.document/3d', cid: 'c' },
+        },
+      }),
+      subjectTitle: 'thoughts on attie',
+      subjectUrl: 'https://other.example/thoughts-on-attie',
+    });
+    expect(vm.verb).toBe('replied');
+    expect(vm.title).toBe('Replied to');
+    expect(streamCardContent(vm)).toEqual({
+      text: 'thoughts on attie',
+      url: 'https://other.example/thoughts-on-attie',
+    });
+  });
+
+  it('treats a reply that only carries reply.root as a reply', () => {
+    const vm = toStreamCardVM(
+      pckt({ text: 'hi', reply: { root: { uri: 'at://did:plc:o/site.standard.document/3d' } } }),
+    );
+    expect(vm.verb).toBe('replied');
+  });
+
+  it('keeps "Wrote" for a standalone mini post', () => {
+    const vm = toStreamCardVM(pckt({ text: 'hello' }));
+    expect(vm.verb).toBe('wrote');
+    expect(vm.title).toBe('Wrote');
+  });
+});
+
 describe('toStreamCardVM — generic / unknown', () => {
   const item: ActivityItem = {
     uri: `at://${DID}/com.example.widget/1`,

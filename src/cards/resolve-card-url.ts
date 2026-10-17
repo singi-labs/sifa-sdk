@@ -146,6 +146,56 @@ function parseAtUri(atUri: string): { did: string; rkey: string } | null {
   return { did: match[1], rkey: match[2] };
 }
 
+const TANGLED = 'https://tangled.sh';
+
+/** A Tangled repo reference (a repo DID, or an `at://` repo record uri) as its tangled.sh base URL. */
+function tangledRepoBase(ref: unknown): string | null {
+  const value = stringOrNull(ref);
+  if (!value) return null;
+  if (value.startsWith('did:')) return `${TANGLED}/${value}`;
+  const parsed = parseAtUri(value);
+  if (parsed && TANGLED_REPO_SLUG.test(parsed.rkey))
+    return `${TANGLED}/${parsed.did}/${parsed.rkey}`;
+  return null;
+}
+
+/**
+ * The per-item tangled.sh URL for a Tangled record, or null when none can be
+ * built. `ownRecord` is true when the URL is the record's own page (a repo).
+ */
+function resolveTangledUrl(
+  collection: string,
+  record: Record<string, unknown>,
+  rkey: string,
+  owner: string,
+): { url: string; ownRecord: boolean } | null {
+  if (collection === 'sh.tangled.repo.pull' || collection === 'sh.tangled.repo.issue') {
+    const target =
+      record.target && typeof record.target === 'object'
+        ? (record.target as Record<string, unknown>)
+        : {};
+    const base =
+      tangledRepoBase(target.repoDid) ??
+      tangledRepoBase(target.repo) ??
+      tangledRepoBase(record.repoDid) ??
+      tangledRepoBase(record.repo);
+    if (!base) return null;
+    const list = collection === 'sh.tangled.repo.pull' ? 'pulls' : 'issues';
+    return { url: `${base}/${list}`, ownRecord: false };
+  }
+  if (collection === 'sh.tangled.feed.star') {
+    const starred = tangledRepoBase(record.subjectDid) ?? tangledRepoBase(record.subject);
+    return starred ? { url: starred, ownRecord: false } : null;
+  }
+  const repoDid = tangledRepoBase(record.repoDid);
+  if (repoDid) return { url: repoDid, ownRecord: true };
+  const repoName = stringOrNull(record.name) ?? (collection === 'sh.tangled.repo' ? rkey : null);
+  if (repoName && owner && TANGLED_REPO_SLUG.test(repoName)) {
+    return { url: `${TANGLED}/${owner}/${repoName}`, ownRecord: true };
+  }
+  return null;
+}
+
 /**
  * Resolve the canonical clickable URL for an activity item **and** how its
  * liveness should be checked — the single source of truth shared by:
@@ -169,20 +219,41 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
 
   // --- Per-collection bespoke logic (mirrors the card components) ---
 
-  // Tangled: prefer per-repo URL `https://tangled.sh/{handle}/{slug}`. The slug
-  // is `record.name` (legacy format) or — when `name` is absent — the record's
-  // rkey (newer repos use the slug as the rkey). The rkey fallback is scoped to
-  // `sh.tangled.repo`; other tangled collections (e.g. feed.star) use TID rkeys
-  // that are not repo slugs. Only when the slug is valid — multi-segment
-  // aggregate names (whitespace, slashes, special chars) would 404. See
-  // sifa-web#1071. The repo record itself is the card's subject, so it is
-  // verified by the record's existence.
+  // Tangled. tangled.sh resolves both DIDs and handles in the path, so a link
+  // never depends on the author handle being known:
+  // - a repo: by its repo DID when the record carries one, else owner + slug
+  //   (`record.name`, or the rkey for `sh.tangled.repo`, whose newer records
+  //   use the slug as the rkey). Only valid slugs: multi-segment aggregate
+  //   names would 404 (sifa-web#1071).
+  // - a pull / issue: the target repo's pulls / issues list. The record carries
+  //   no PR or issue number, so the single item is not addressable.
+  // - a star: the starred repo.
+  // Anything else falls back to the owner's profile.
   if (collection.startsWith('sh.tangled.')) {
-    const repoName = stringOrNull(record.name) ?? (collection === 'sh.tangled.repo' ? rkey : null);
-    if (repoName && authorHandle && TANGLED_REPO_SLUG.test(repoName)) {
-      return recordHealth(`https://tangled.sh/${authorHandle}/${repoName}`);
-    }
+    const tangled = resolveTangledUrl(collection, record, rkey, authorHandle ?? authorDid);
+    // A repo link is this record's own page; a pull / issue / star links to a
+    // different record (the target repo), so probe that page itself.
+    if (tangled) return tangled.ownRecord ? recordHealth(tangled.url) : urlHealth(tangled.url);
+    if (!authorHandle && authorDid) return urlHealth(`${TANGLED}/${authorDid}`);
     return patternHealth('tangled', { handle: authorHandle, did: authorDid, rkey }, collection);
+  }
+
+  // User Input: a discussion has its own page; a reply links to the discussion
+  // it belongs to (its `subject`).
+  if (collection === 'app.userinput.discussion' && authorDid) {
+    return recordHealth(`https://userinput.app/d/${authorDid}/${rkey}`);
+  }
+  if (collection === 'app.userinput.reply') {
+    const subject = record.subject;
+    const subjectUri =
+      subject != null && typeof subject === 'object'
+        ? stringOrNull((subject as Record<string, unknown>).uri)
+        : null;
+    const parsed = subjectUri?.includes('/app.userinput.discussion/')
+      ? parseAtUri(subjectUri)
+      : null;
+    if (parsed) return urlHealth(`https://userinput.app/d/${parsed.did}/${parsed.rkey}`);
+    return { url: null, strategy: 'none' };
   }
 
   // Kipclip / community.lexicon.bookmarks: the bookmark subject IS the URL —
