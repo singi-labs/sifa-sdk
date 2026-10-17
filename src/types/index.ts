@@ -95,6 +95,20 @@ export interface ProfilePosition {
    * not a negative signal.
    */
   orgVerification?: PositionOrgVerification;
+  /**
+   * A badged email verification of this position (sifa-workspace#162): the
+   * person controls a mailbox at a domain recognized for the employer.
+   * Domain only, never the address. Absent otherwise.
+   */
+  emailVerification?: PositionEmailVerification;
+}
+
+/** An email verification backing one position, as returned by the AppView. */
+export interface PositionEmailVerification {
+  /** Registrable domain of the verified mailbox. */
+  emailDomain: string;
+  /** When the mailbox was last verified (ISO). */
+  verifiedAt: string;
 }
 
 /** An organization attestation covering one position, as returned by the AppView. */
