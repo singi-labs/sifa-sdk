@@ -88,3 +88,9 @@ export {
   siteActivityPresetUpdateSchema,
   type SiteActivityPreset,
 } from './site-activity-preset.js';
+export {
+  WIKIDATA_ORG_TYPE_CLASSES,
+  WIKIDATA_ORG_TYPE_CLASS_QIDS,
+  orgTypeFromRorTypes,
+  orgTypeFromWikidataClasses,
+} from './registry-org-type.js';
