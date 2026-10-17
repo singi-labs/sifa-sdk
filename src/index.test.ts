@@ -21,6 +21,7 @@ import {
   getEducationLevelDisplay,
   suggestEqfLevelFromDegree,
   followingFeedFallbackApp,
+  isTimelineWorthy,
   matchesSiteActivityPreset,
   siteActivityPresetUpdateSchema,
   type ActorCard,
@@ -258,5 +259,12 @@ describe('main entry: site activity preset', () => {
     expect(siteActivityPresetUpdateSchema.parse({ categories: [], tags: ['#ML'] }).tags).toEqual([
       'ml',
     ]);
+  });
+});
+
+describe('stream exports', () => {
+  // The timeline filter is consumed from the package root by sifa-web.
+  it('exports isTimelineWorthy from the package root', () => {
+    expect(typeof isTimelineWorthy).toBe('function');
   });
 });

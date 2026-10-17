@@ -368,6 +368,7 @@ export {
   streamSourceSchema,
   streamThemeSchema,
   isSelfAuthoredRich,
+  isTimelineWorthy,
   renderAsLine,
   streamCardBodyContent,
   streamCardContent,
