@@ -9,10 +9,17 @@ import { isSelfAuthoredRich } from './two-tier.js';
  */
 function destination(vm: StreamCardVM): string | null {
   const subject = vm.subject;
+  // A profile or app homepage is not where the item lives.
+  // A membership is the exception: the app or community it joined is its
+  // object, so its members page or homepage is the right place to land.
+  const own = vm.sourceUrlIsProfile && vm.verb !== 'joined' ? undefined : vm.sourceUrl;
   if (subject?.kind === 'person') return subject.handle ? `/p/${subject.handle}` : null;
-  if (subject?.kind === 'record') return subject.url ?? vm.sourceUrl ?? null;
-  if (subject?.kind === 'post') return subject.post.sourceUrl ?? vm.sourceUrl ?? null;
-  return vm.sourceUrl ?? vm.externalLink?.url ?? null;
+  if (subject?.kind === 'record') return subject.url ?? own ?? null;
+  if (subject?.kind === 'post') {
+    const nested = subject.post.sourceUrlIsProfile ? undefined : subject.post.sourceUrl;
+    return nested ?? own ?? null;
+  }
+  return own ?? vm.externalLink?.url ?? null;
 }
 
 /**

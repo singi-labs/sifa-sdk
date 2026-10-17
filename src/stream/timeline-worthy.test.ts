@@ -106,4 +106,41 @@ describe('isTimelineWorthy', () => {
   it('rejects a bare membership with no link', () => {
     expect(isTimelineWorthy(vm({ verb: 'joined', title: 'Joined' }))).toBe(false);
   });
+
+  // A profile or app homepage is not a link to what the person did.
+  it('rejects content whose only link is a profile fallback', () => {
+    expect(
+      isTimelineWorthy(
+        vm({
+          body: { kind: 'text', text: 'hello' },
+          sourceUrl: 'https://passports.social/profile/alice.test',
+          sourceUrlIsProfile: true,
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it('accepts a membership whose link is the community members page', () => {
+    expect(
+      isTimelineWorthy(
+        vm({
+          verb: 'joined',
+          title: 'Joined',
+          sourceUrl: 'https://atproto.eu/members',
+          sourceUrlIsProfile: true,
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects a post subject whose only link is a profile', () => {
+    const nested = vm({
+      body: { kind: 'text', text: 'quoted' },
+      sourceUrl: 'https://passports.social/profile/bob',
+      sourceUrlIsProfile: true,
+    });
+    expect(
+      isTimelineWorthy(vm({ verb: 'reposted', subject: { kind: 'post', post: nested } })),
+    ).toBe(false);
+  });
 });
