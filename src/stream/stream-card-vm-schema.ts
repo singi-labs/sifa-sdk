@@ -45,6 +45,7 @@ export const streamThemeSchema: z.ZodType<StreamTheme> = z.object({
   background: rgbColorSchema,
   foreground: rgbColorSchema,
   accent: rgbColorSchema,
+  accentForeground: rgbColorSchema.optional(),
 });
 
 const streamMediaResolvedSchema = z.object({
