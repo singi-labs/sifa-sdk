@@ -324,6 +324,33 @@ describe('resolveCardUrl', () => {
     });
   });
 
+  describe('bookhive', () => {
+    // A book log links to the book's page, not the reader's profile.
+    it("links a book to its page by the record's hiveId", () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/buzz.bookhive.book/3my2uok57h2c4',
+          rkey: '3my2uok57h2c4',
+          collection: 'buzz.bookhive.book',
+          record: { title: 'Orgulho e Preconceito', hiveId: 'bk_rckc5UpmZmJHgUnOzSLR' },
+        }),
+      ).toBe('https://bookhive.buzz/books/bk_rckc5UpmZmJHgUnOzSLR');
+    });
+
+    it('ignores a hiveId that is not a book id', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/buzz.bookhive.book/3k',
+          rkey: '3k',
+          collection: 'buzz.bookhive.book',
+          record: { title: 'x', hiveId: '../../evil' },
+        }),
+      ).toBe('https://bookhive.buzz/profile/alice.test');
+    });
+  });
+
   describe('kipclip / community.lexicon.bookmarks', () => {
     it('returns record.subject (the bookmarked URL) as the per-item URL', () => {
       expect(
