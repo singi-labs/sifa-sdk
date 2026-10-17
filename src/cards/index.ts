@@ -7,6 +7,7 @@ export {
   type CardHealth,
   type CardHealthStrategy,
 } from './resolve-card-url.js';
+export { appLinksItems } from './item-links.js';
 export { ACTIVITY_VISIBILITY_RULES, isVisibleActivityItem } from './visibility.js';
 export {
   ADULT_CONTENT_LABELS,

@@ -275,6 +275,12 @@ export interface StreamCardVM {
    * transform may not have. Consumers use this to make the card click through.
    */
   sourceUrl?: string;
+  /**
+   * True when `sourceUrl` is only the author's profile or the app's homepage
+   * (the record has no page of its own). The timeline does not count it as a
+   * link to what the person did.
+   */
+  sourceUrlIsProfile?: boolean;
   body?: StreamCardBody;
   media?: StreamMedia[];
   externalLink?: StreamExternalLink;

@@ -1,4 +1,4 @@
-import { resolveCardUrl } from '../cards/resolve-card-url.js';
+import { resolveCardHealth } from '../cards/resolve-card-url.js';
 import { isVisibleActivityItem } from '../cards/visibility.js';
 import { isValidRgbColor } from '../format/wcag-contrast.js';
 import { matchPublisherByUri } from '../publishing/index.js';
@@ -280,7 +280,7 @@ function recordHasSubjectRef(record: Record<string, unknown> | null | undefined)
 
 /**
  * The canonical http(s) permalink to this record on its source app, or
- * undefined. Delegates to the shared, pure {@link resolveCardUrl} using the
+ * undefined. Delegates to the shared, pure {@link resolveCardHealth} using the
  * author DID parsed from the uri and the author handle — the AppView-injected
  * {@link ActivityItem.authorHandle}, falling back to a handle the record itself
  * carries. With a handle, handle-keyed apps (Bluesky, Popfeed, Tangled, ...)
@@ -288,12 +288,17 @@ function recordHasSubjectRef(record: Record<string, unknown> | null | undefined)
  * Standard.site docs, ...) resolve from the uri alone. Only non-null http(s)
  * URLs are returned.
  */
-function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): string | undefined {
+function resolveSourceUrl(
+  item: ActivityItem,
+  record: Record<string, unknown>,
+): { url: string; isProfile: boolean } | undefined {
   // A marque domain registration ("Registered atmoco.at") has no app permalink;
   // the registered domain itself is the natural link, so point at it directly.
   if (item.collection === 'at.marque.domain') {
     const domain = asNonEmptyString(record.domain);
-    if (domain && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(domain)) return `https://${domain}`;
+    if (domain && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(domain)) {
+      return { url: `https://${domain}`, isProfile: false };
+    }
   }
   // A did-less uri does NOT mean no link: record-derived URLs (a Standard
   // site's siteUrl + path, an ad-hoc record.url) resolve without any author
@@ -303,7 +308,7 @@ function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): 
   // so did/handle-only apps (Bluesky) still yield no fabricated link.
   const authorDid = didFromUri(item.uri) ?? '';
   const authorHandle = asNonEmptyString(item.authorHandle) ?? asNonEmptyString(record.handle);
-  const url = resolveCardUrl({
+  const health = resolveCardHealth({
     collection: item.collection,
     record,
     uri: item.uri,
@@ -311,7 +316,9 @@ function resolveSourceUrl(item: ActivityItem, record: Record<string, unknown>): 
     authorDid,
     ...(authorHandle ? { authorHandle } : {}),
   });
-  return url && /^https?:\/\//i.test(url) ? url : undefined;
+  const url = health.url;
+  if (!url || !/^https?:\/\//i.test(url)) return undefined;
+  return { url, isProfile: health.isProfileFallback === true };
 }
 
 /** Per-record RGB theme (publication / standard-site cards). Validated. */
@@ -1165,8 +1172,11 @@ export function toStreamCardVM(
   // Link to the record on its source app. Set before the switch so every
   // body-variant return path (each mutates and returns this same vm) keeps it.
   if (record) {
-    const sourceUrl = resolveSourceUrl(item, record);
-    if (sourceUrl) vm.sourceUrl = sourceUrl;
+    const source = resolveSourceUrl(item, record);
+    if (source) {
+      vm.sourceUrl = source.url;
+      if (source.isProfile) vm.sourceUrlIsProfile = true;
+    }
   }
 
   // Hypercert credit roll + outbound links, resolved by sifa-api out of

@@ -326,6 +326,7 @@ export {
   ADULT_CONTENT_LABELS,
   APP_URL_PATTERNS,
   COLLECTION_TO_APP,
+  appLinksItems,
   getAppIdForCollection,
   hasAdultContent,
   isVisibleActivityItem,

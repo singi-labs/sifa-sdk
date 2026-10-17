@@ -283,6 +283,7 @@ export const streamCardVMSchema: z.ZodType<StreamCardVM> = z.lazy(() =>
     timestamp: z.string(),
     title: z.string(),
     sourceUrl: z.string().optional(),
+    sourceUrlIsProfile: z.boolean().optional(),
     body: streamCardBodySchema.optional(),
     media: z.array(streamMediaSchema).optional(),
     externalLink: streamExternalLinkSchema.optional(),

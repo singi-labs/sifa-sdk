@@ -58,11 +58,22 @@ export interface CardHealth {
   url: string | null;
   /** How the scanner should verify liveness. See {@link CardHealthStrategy}. */
   strategy: CardHealthStrategy;
+  /**
+   * True when `url` is only the author's profile or the app's homepage, used
+   * because the record has no page of its own. Such a link does not point at
+   * what the person did, so the timeline does not count it as one.
+   */
+  isProfileFallback?: true;
 }
 
 /** Build a `url`-strategy result (foreign/derived/profile target). */
 function urlHealth(url: string | null): CardHealth {
   return url ? { url, strategy: 'url' } : { url: null, strategy: 'none' };
+}
+
+/** Build a profile / app-homepage fallback result (not a link to the record itself). */
+function profileHealth(url: string | null): CardHealth {
+  return url ? { url, strategy: 'url', isProfileFallback: true } : { url: null, strategy: 'none' };
 }
 
 /** Build a `record`-strategy result (self-permalink of this record). */
@@ -119,7 +130,7 @@ function patternHealth(
   }
   if (patterns.profileUrlPattern) {
     const url = interpolate(patterns.profileUrlPattern, vars);
-    if (url) return urlHealth(url);
+    if (url) return profileHealth(url);
   }
   return { url: null, strategy: 'none' };
 }
@@ -234,7 +245,7 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
     // A repo link is this record's own page; a pull / issue / star links to a
     // different record (the target repo), so probe that page itself.
     if (tangled) return tangled.ownRecord ? recordHealth(tangled.url) : urlHealth(tangled.url);
-    if (!authorHandle && authorDid) return urlHealth(`${TANGLED}/${authorDid}`);
+    if (!authorHandle && authorDid) return profileHealth(`${TANGLED}/${authorDid}`);
     return patternHealth('tangled', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
@@ -280,7 +291,7 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
       const source = stringOrNull((target as Record<string, unknown>).source);
       if (source) return urlHealth(source);
     }
-    return urlHealth(APP_URL_PATTERNS.margin?.profileUrlPattern ?? null);
+    return profileHealth(APP_URL_PATTERNS.margin?.profileUrlPattern ?? null);
   }
 
   // Community-calendar RSVP: parse the linked event uri. The URL points at a
@@ -387,7 +398,7 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
         return urlHealth(`https://kut.social/community/${encodeURIComponent(parsed.rkey)}`);
       }
     }
-    return urlHealth(APP_URL_PATTERNS.kut?.profileUrlPattern ?? null);
+    return profileHealth(APP_URL_PATTERNS.kut?.profileUrlPattern ?? null);
   }
 
   // atstore reviews: no per-review URL exists on atstore.fyi, and user profile
@@ -401,7 +412,7 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
       const slug = stringOrNull((listingMeta as Record<string, unknown>).slug);
       if (slug) return urlHealth(`https://atstore.fyi/products/${encodeURIComponent(slug)}`);
     }
-    return urlHealth(APP_URL_PATTERNS.atstore?.profileUrlPattern ?? null);
+    return profileHealth(APP_URL_PATTERNS.atstore?.profileUrlPattern ?? null);
   }
 
   // Crate content: link to the canonical published location the maker
