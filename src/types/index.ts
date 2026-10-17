@@ -101,6 +101,19 @@ export interface ProfilePosition {
    * Domain only, never the address. Absent otherwise.
    */
   emailVerification?: PositionEmailVerification;
+  /**
+   * Verified colleagues vouched for the position (sifa-workspace#166): two
+   * of them, or one verified at the same organization. Absent otherwise.
+   */
+  peerVerification?: PositionPeerVerification;
+}
+
+/** Peer vouches lifting one position to the peer tier, as returned by the AppView. */
+export interface PositionPeerVerification {
+  /** Verified colleagues whose confirmation counts. */
+  vouchers: number;
+  /** At least one voucher is verified at the same organization. */
+  sameEntity: boolean;
 }
 
 /** An email verification backing one position, as returned by the AppView. */
