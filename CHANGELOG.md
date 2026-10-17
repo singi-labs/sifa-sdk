@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.107
+
+### Patch Changes
+
+- e242277: `StreamTheme` carries the publication's optional `accentForeground` (the text color on the accent), so themed stream cards can keep their publisher's colors with readable contrast.
+
 ## 0.19.106
 
 ### Patch Changes
