@@ -218,7 +218,7 @@ function resolveTangledUrl(
  * must be verified by record existence rather than an HTTP probe of the app.
  *
  * Resolution order:
- * 1. Per-collection bespoke logic (tangled, kipclip, margin, smokesignal
+ * 1. Per-collection bespoke logic (tangled, userinput, bookhive, kipclip, margin, smokesignal
  *    rsvp, standard documents). These mirror the inline logic in the
  *    individual card components.
  * 2. Generic `record.url` field (used by hyperboards and similar).
@@ -272,7 +272,7 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
   // reachability is probed as a URL.
   if (collection === 'buzz.bookhive.book') {
     const hiveId = stringOrNull(record.hiveId);
-    if (hiveId && /^bk_[A-Za-z0-9]+$/.test(hiveId)) {
+    if (hiveId && /^bk_[A-Za-z0-9_-]+$/.test(hiveId)) {
       return urlHealth(`https://bookhive.buzz/books/${hiveId}`);
     }
     return patternHealth('bookhive', { handle: authorHandle, did: authorDid, rkey }, collection);

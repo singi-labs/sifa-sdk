@@ -33,10 +33,13 @@ function isRich(vm: StreamCardVM): boolean {
   if (vm.media && vm.media.length > 0) return true;
   if (vm.externalLink) return true;
   if (vm.body && RICH_BODY_KINDS.has(vm.body.kind)) return true;
-  // A published document is rich when it has a title and a cover image to show
-  // (its own cover or the article's og:image). Without either it stays a
-  // compact line: an image with no headline says nothing on its own.
-  if (vm.body?.kind === 'standard-site' && vm.body.coverImageUrl && vm.body.title) return true;
+  // A published document is rich when it has a title and an http(s) cover image
+  // to show (`coverImageUrl`, which sifa-api fills from the document's own cover
+  // or the article's og:image). Without either it stays a compact line: an
+  // image with no headline says nothing on its own.
+  if (vm.body?.kind === 'standard-site') {
+    return Boolean(vm.body.title?.trim()) && /^https?:\/\//i.test(vm.body.coverImageUrl ?? '');
+  }
   return false;
 }
 

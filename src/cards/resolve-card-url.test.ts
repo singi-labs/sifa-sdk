@@ -338,6 +338,18 @@ describe('resolveCardUrl', () => {
       ).toBe('https://bookhive.buzz/books/bk_rckc5UpmZmJHgUnOzSLR');
     });
 
+    it('accepts the url-safe characters a book id can contain', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/buzz.bookhive.book/3k',
+          rkey: '3k',
+          collection: 'buzz.bookhive.book',
+          record: { title: 'x', hiveId: 'bk_aB3-x_Yz' },
+        }),
+      ).toBe('https://bookhive.buzz/books/bk_aB3-x_Yz');
+    });
+
     it('ignores a hiveId that is not a book id', () => {
       expect(
         resolveCardUrl({

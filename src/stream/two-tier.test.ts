@@ -23,7 +23,7 @@ describe('isSelfAuthoredRich: documents', () => {
       body: {
         kind: 'standard-site',
         title: 'An article',
-        ...(coverImageUrl ? { coverImageUrl } : {}),
+        ...(coverImageUrl !== undefined ? { coverImageUrl } : {}),
       },
     });
 
@@ -35,6 +35,19 @@ describe('isSelfAuthoredRich: documents', () => {
   it('is false for a document without a cover image (stays a line)', () => {
     expect(isSelfAuthoredRich(doc())).toBe(false);
     expect(isSelfAuthoredRich(doc(''))).toBe(false);
+  });
+
+  it('is false for a non-http cover or a blank title', () => {
+    expect(isSelfAuthoredRich(doc('bafkreicover'))).toBe(false);
+    expect(
+      isSelfAuthoredRich(
+        vm({
+          uri: 'at://did:plc:actor/site.standard.document/1',
+          verb: 'published',
+          body: { kind: 'standard-site', title: '  ', coverImageUrl: 'https://cdn.example/c.jpg' },
+        }),
+      ),
+    ).toBe(false);
   });
 
   it('is false for a document with a cover but no title', () => {
