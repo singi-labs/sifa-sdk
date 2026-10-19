@@ -23,6 +23,15 @@ const orgLinkSchema = z.object({
 });
 
 /**
+ * Lexicon string fields of `id.sifa.org.profile`: grapheme caps plus the
+ * `maxLength` bound. Shared by the record, write and request schemas so the
+ * limits live in one place (sifa-workspace#726).
+ */
+export const orgNameField = z.string().min(1).refine(maxGraphemes(200)).max(2000);
+export const orgDescriptionField = z.string().refine(maxGraphemes(5000)).max(50000);
+export const orgAliasField = z.string().refine(maxGraphemes(200)).max(2000);
+
+/**
  * Zod schema for `id.sifa.org.profile` records -- the self-declared
  * organization profile. Singleton (record key `self`), lives in the org's PDS.
  * Presence of this record marks the account as presenting as an organization;
@@ -33,8 +42,8 @@ const orgLinkSchema = z.object({
  * `@singi-labs/sifa-sdk/schemas/write` instead.
  */
 export const OrgProfileRecordSchema = z.object({
-  name: z.string().min(1).refine(maxGraphemes(200)).max(2000),
-  description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
+  name: orgNameField,
+  description: orgDescriptionField.optional(),
   /** Blob ref for the org logo (`image/png` | `image/jpeg`). Not deeply validated client-side. */
   logo: z.unknown().optional(),
   website: uriSchema.optional(),
@@ -69,10 +78,7 @@ export const OrgProfileRecordSchema = z.object({
   /** Self-declared founding date: a year (YYYY), month (YYYY-MM), or full date (YYYY-MM-DD). */
   founded: z.string().max(10).optional(),
   /** Self-declared alternative names / acronyms ("also known as"). */
-  aliases: z
-    .array(z.string().refine(maxGraphemes(200)).max(2000))
-    .max(20)
-    .optional(),
+  aliases: z.array(orgAliasField).max(20).optional(),
   /**
    * Whether the account holder's personal profile stays visible alongside this
    * org profile. For sole traders whose personal domain is also their trade

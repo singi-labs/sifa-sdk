@@ -47,7 +47,11 @@ export {
   OrgEmploymentAttestationWriteSchema,
   type OrgEmploymentAttestationWriteInput,
 } from './org-employment-attestation.js';
-export { OrgProfileWriteSchema, type OrgProfileWriteInput } from './org-profile.js';
+export {
+  OrgProfileWriteSchema,
+  orgFoundedSchema,
+  type OrgProfileWriteInput,
+} from './org-profile.js';
 export { OrgClaimRequestSchema, type OrgClaimRequestInput } from './org-claim.js';
 export {
   OrgProfileUpdateRequestSchema,

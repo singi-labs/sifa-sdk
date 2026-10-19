@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { orgAliasField, orgDescriptionField, orgNameField } from '../org-profile.js';
+import { orgFoundedSchema } from './org-profile.js';
+
 /**
  * Blob-ref passthrough for the org logo. Mirrors the `blobRefSchema` validated
  * by `PUT /api/org/profile` in sifa-api `src/routes/org-settings.ts` -- the
@@ -59,8 +62,8 @@ const orgLinkSchema = z.object({
  * omitted, driving the fresh-from-body PDS PUT -- no spread-merge).
  */
 export const OrgProfileUpdateRequestSchema = z.object({
-  name: z.string().min(1).max(2000),
-  description: z.string().max(50000).optional(),
+  name: orgNameField,
+  description: orgDescriptionField.optional(),
   website: z.string().max(2048).optional(),
   contact: z.string().max(320).optional(),
   entityRefs: z.array(z.string().min(1).max(2048)).min(1).max(20),
@@ -90,9 +93,9 @@ export const OrgProfileUpdateRequestSchema = z.object({
     .max(10)
     .optional(),
   /** Self-declared founding date: year (YYYY), month (YYYY-MM), or full date (YYYY-MM-DD). */
-  founded: z.string().max(10).optional(),
+  founded: orgFoundedSchema.optional(),
   /** Self-declared alternative names / acronyms ("also known as"). */
-  aliases: z.array(z.string().max(200)).max(20).optional(),
+  aliases: z.array(orgAliasField.min(1)).max(20).optional(),
   /** Sole-trader opt-in; see {@link OrgClaimRequestSchema}. Flippable after the claim. */
   personalProfileVisible: z.boolean().optional(),
 });
