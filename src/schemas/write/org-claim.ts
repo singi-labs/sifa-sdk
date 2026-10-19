@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { orgAliasField, orgDescriptionField, orgNameField } from '../org-profile.js';
+import { orgFoundedSchema } from './org-profile.js';
+
 /** Structured physical address (all fields optional). Mirrors sifa-api's
  * `orgAddressSchema`; country is free text, not ISO-gated at this layer. */
 const orgAddressSchema = z.object({
@@ -37,14 +40,6 @@ const orgIndustrySchema = z.object({
   domain: z.string().max(100).optional(),
 });
 
-/** Founding date: a year (YYYY), month (YYYY-MM), or full date (YYYY-MM-DD). */
-const orgFoundedSchema = z
-  .string()
-  .max(10)
-  .regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, {
-    message: 'Must be a year (YYYY), month (YYYY-MM), or date (YYYY-MM-DD)',
-  });
-
 /**
  * Body accepted by `POST /api/org/claim` (the org claim wizard finalize).
  *
@@ -58,8 +53,8 @@ const orgFoundedSchema = z
  * from firmographics at claim time.
  */
 export const OrgClaimRequestSchema = z.object({
-  name: z.string().min(1).max(2000),
-  description: z.string().max(50000).optional(),
+  name: orgNameField,
+  description: orgDescriptionField.optional(),
   website: z.string().max(2048).optional(),
   contact: z.string().max(320).optional(),
   entityRefs: z.array(z.string().min(1).max(2048)).min(1).max(20),
@@ -69,7 +64,7 @@ export const OrgClaimRequestSchema = z.object({
   links: z.array(orgLinkSchema).max(20).optional(),
   industries: z.array(orgIndustrySchema).max(10).optional(),
   founded: orgFoundedSchema.optional(),
-  aliases: z.array(z.string().min(1).max(200)).max(20).optional(),
+  aliases: z.array(orgAliasField.min(1)).max(20).optional(),
   /**
    * Sole-trader opt-in: keep the claimant's personal profile visible at `/p/`
    * alongside the new company page at `/c/`. Omitted or false presents the

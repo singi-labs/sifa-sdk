@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { orgAliasField, orgDescriptionField, orgNameField } from '../org-profile.js';
+import { isValidPartialDate } from './shared.js';
+
 /**
  * Schema enforced by the org-profile write endpoint on sifa-api.
  *
@@ -46,9 +49,20 @@ const orgLinkWriteSchema = z.object({
     ),
 });
 
+/**
+ * Self-declared founding date: a year (YYYY), a month (YYYY-MM) or a real date
+ * (YYYY-MM-DD). The lexicon only caps `founded` at 10 characters, so this is a
+ * request rule for write routes and editors, not part of the ingest gate below.
+ */
+export const orgFoundedSchema = z.string().max(10).refine(isValidPartialDate, {
+  message: 'Must be a year (YYYY), month (YYYY-MM), or date (YYYY-MM-DD)',
+});
+
 export const OrgProfileWriteSchema = z.object({
-  name: z.string().min(1).max(2000),
-  description: z.string().max(50000).nullable().optional(),
+  // The ingest gate: lexicon limits only (sifa-workspace#726), so a record
+  // written elsewhere is not dropped over a request-only rule.
+  name: orgNameField,
+  description: orgDescriptionField.nullable().optional(),
   logo: z.unknown().nullable().optional(),
   website: z.string().max(2048).nullable().optional(),
   entityRefs: z.array(z.string().max(2048)).max(20).nullable().optional(),
@@ -72,7 +86,7 @@ export const OrgProfileWriteSchema = z.object({
     .nullable()
     .optional(),
   founded: z.string().max(10).nullable().optional(),
-  aliases: z.array(z.string().max(200)).max(20).nullable().optional(),
+  aliases: z.array(orgAliasField).max(20).nullable().optional(),
   personalProfileVisible: z.boolean().nullable().optional(),
   createdAt: z.string(),
 });
