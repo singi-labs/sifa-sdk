@@ -113,7 +113,10 @@ export function buildGermMessageUrl(input: BuildGermMessageUrlInput): string | n
   const url = parseGermMessageUrl(messageMeUrl);
   if (!url) return null;
   if (platform) {
-    url.pathname = `${url.pathname.replace(/\/+$/, '')}/${platform}`;
+    const path = url.pathname;
+    let end = path.length;
+    while (end > 0 && path[end - 1] === '/') end--;
+    url.pathname = `${path.slice(0, end)}/${platform}`;
   }
   url.hash = viewerDid ? `${ownerDid}+${viewerDid}` : ownerDid;
   return url.toString();

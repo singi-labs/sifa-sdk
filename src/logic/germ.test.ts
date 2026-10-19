@@ -170,6 +170,14 @@ describe('buildGermMessageUrl', () => {
     );
   });
 
+  it('handles a path of many slashes quickly', () => {
+    const start = Date.now();
+    expect(build(`https://landing.ger.mx/${'/'.repeat(50_000)}`, { platform: 'iOS' })).toBe(
+      `https://landing.ger.mx/iOS#${OWNER}+${VIEWER}`,
+    );
+    expect(Date.now() - start).toBeLessThan(1000);
+  });
+
   it('keeps a query string', () => {
     expect(build(`${LANDING}?ref=x`, { platform: 'web' })).toBe(
       `https://landing.ger.mx/newUser/web?ref=x#${OWNER}+${VIEWER}`,
