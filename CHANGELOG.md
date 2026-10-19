@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.110
+
+### Patch Changes
+
+- e2e4f53: `fetchGermMessageLink` never caches (the answer depends on the viewer's device and each call counts as a shown button) and forwards the visitor's User-Agent via the new `viewerUserAgent` option.
+
 ## 0.19.109
 
 ### Patch Changes
