@@ -439,6 +439,16 @@ export {
   followingFeedFallbackApp,
   SELF_APP_ID,
   excludeSelfApp,
+  GERM_MESSAGE_HOSTS,
+  isStrictDid,
+  germButtonAudience,
+  shouldShowGermButton,
+  buildGermMessageUrl,
+  germPlatformFromUserAgent,
+  type GermPlatform,
+  type GermButtonAudience,
+  type ShouldShowGermButtonInput,
+  type BuildGermMessageUrlInput,
   actorShowsIdentity,
   EMPTY_SITE_ACTIVITY_PRESET,
   SITE_PRESET_TAG_CATEGORY,
@@ -640,6 +650,10 @@ export {
   type PublicationAuthor,
   agentRefSchema,
   type AgentRef,
+  GermDeclarationRecordSchema,
+  GERM_SHOW_BUTTON_TO_VALUES,
+  type GermDeclarationRecord,
+  type GermShowButtonTo,
 } from './schemas/index.js';
 
 export {

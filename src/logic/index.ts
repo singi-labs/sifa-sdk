@@ -72,6 +72,18 @@ export {
 export { countRecentActivity, type DailyActivityCount } from './recent-activity.js';
 export { followingFeedFallbackApp } from './following-feed-fallback.js';
 export { SELF_APP_ID, excludeSelfApp, type AppWithId } from './self-app.js';
+export {
+  GERM_MESSAGE_HOSTS,
+  isStrictDid,
+  germButtonAudience,
+  shouldShowGermButton,
+  buildGermMessageUrl,
+  germPlatformFromUserAgent,
+  type GermPlatform,
+  type GermButtonAudience,
+  type ShouldShowGermButtonInput,
+  type BuildGermMessageUrlInput,
+} from './germ.js';
 export { actorShowsIdentity } from './actor-identity.js';
 export {
   EMPTY_SITE_ACTIVITY_PRESET,
