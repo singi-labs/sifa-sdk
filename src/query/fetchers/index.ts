@@ -24,6 +24,12 @@ export {
 } from '../client.js';
 
 export { fetchAtFundLink, fetchProfile } from './profile.js';
+export {
+  fetchGermMessageLink,
+  germRedirectPath,
+  type FetchGermMessageLinkOptions,
+  type GermMessageLink,
+} from './germ.js';
 export { fetchGetProfileView } from './get-profile-view.js';
 export {
   deleteAvatarOverride,

@@ -23,6 +23,12 @@ export {
 } from './entity.js';
 export { EndorsementRecordSchema, type EndorsementRecord } from './endorsement.js';
 export {
+  GermDeclarationRecordSchema,
+  GERM_SHOW_BUTTON_TO_VALUES,
+  type GermDeclarationRecord,
+  type GermShowButtonTo,
+} from './germ-declaration.js';
+export {
   ConfirmationRecordSchema,
   CONFIRMATION_RELATIONS,
   type ConfirmationRecord,

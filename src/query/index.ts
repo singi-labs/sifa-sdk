@@ -12,6 +12,12 @@ export {
 export { SifaProvider, useSifaConfig, type SifaProviderProps } from './config.js';
 
 export { fetchAtFundLink, fetchProfile } from './fetchers/profile.js';
+export {
+  fetchGermMessageLink,
+  germRedirectPath,
+  type FetchGermMessageLinkOptions,
+  type GermMessageLink,
+} from './fetchers/germ.js';
 export { fetchGetProfileView } from './fetchers/get-profile-view.js';
 export { fetchProfileSummary } from './fetchers/profile-summary.js';
 export {
