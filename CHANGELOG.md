@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.109
+
+### Patch Changes
+
+- 28ac3cd: Add Germ DM support: `GermDeclarationRecordSchema` for `com.germnetwork.declaration`, the `germButtonAudience` / `shouldShowGermButton` predicates, `buildGermMessageUrl` with a Germ host allowlist and platform hint, `germPlatformFromUserAgent`, and the `fetchGermMessageLink` fetcher plus `germRedirectPath` for the "Message on Germ" profile button.
+
 ## 0.19.108
 
 ### Patch Changes
