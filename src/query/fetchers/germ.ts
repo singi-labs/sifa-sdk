@@ -21,12 +21,15 @@ export type GermMessageLink =
 export interface FetchGermMessageLinkOptions extends ApiFetchOptions {
   /** Raw `Cookie` header for RSC calls, so the API sees the viewer's session. */
   cookieHeader?: string;
+  /**
+   * The visitor's User-Agent, for RSC calls. The API uses it for the platform
+   * hint, the iPhone/iPad-only mode and bot-free show counts.
+   */
+  viewerUserAgent?: string;
 }
 
 // Below the profile page's patience: a slow lookup drops the button, not the page.
 const GERM_LINK_TIMEOUT_MS = 1500;
-// Logged-out results depend only on the owner, so they can be shared.
-const LOGGED_OUT_REVALIDATE_S = 900;
 
 function isShowButtonTo(value: unknown): value is GermShowButtonTo {
   return (GERM_SHOW_BUTTON_TO_VALUES as readonly unknown[]).includes(value);
@@ -47,21 +50,21 @@ function parseGermMessageLink(data: unknown): GermMessageLink | null {
 
 /**
  * Germ DM state for a profile (see {@link GermMessageLink}). Pass the viewer's
- * `cookieHeader` from server components; without it the result is the
- * logged-out view and may be cached. Returns `null` on any error.
+ * `cookieHeader` and `viewerUserAgent` from server components; without a
+ * cookie the result is the logged-out view. Returns `null` on any error.
  */
 export async function fetchGermMessageLink(
   config: SifaApiConfig,
   did: string,
   options: FetchGermMessageLinkOptions = {},
 ): Promise<GermMessageLink | null> {
-  const { cookieHeader, ...rest } = options;
+  const { cookieHeader, viewerUserAgent, ...rest } = options;
   const headers: Record<string, string> = { ...(rest.headers ?? {}) };
   if (cookieHeader) headers.cookie = cookieHeader;
-  // Applied last: a viewer-specific answer must never land in a shared cache.
-  const caching: ApiFetchOptions = cookieHeader
-    ? { cache: 'no-store', next: undefined }
-    : { next: { revalidate: LOGGED_OUT_REVALIDATE_S } };
+  if (viewerUserAgent) headers['x-viewer-user-agent'] = viewerUserAgent;
+  // Applied last, never cached: the answer depends on the viewer and device,
+  // and each call counts as a shown button. The API caches the lookups.
+  const caching: ApiFetchOptions = { cache: 'no-store', next: undefined };
   try {
     const data = await apiFetch<unknown>(
       config,

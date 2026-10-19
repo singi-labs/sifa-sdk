@@ -89,13 +89,23 @@ describe('fetchGermMessageLink', () => {
     expect(init.next).toBeUndefined();
   });
 
-  it('lets a logged-out result be cached and sends no cookie', async () => {
+  it('never caches a logged-out result either, and sends no cookie', async () => {
     const fetchImpl = jsonFetch({ status: 'eligible' });
     await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER);
     const [, init] = getCall(fetchImpl);
     expect(new Headers(init.headers).get('cookie')).toBeNull();
-    expect(init.cache).toBeUndefined();
-    expect(init.next).toEqual({ revalidate: 900 });
+    expect(init.cache).toBe('no-store');
+    expect(init.next).toBeUndefined();
+  });
+
+  it('forwards the visitor user-agent for platform checks and stats', async () => {
+    const fetchImpl = jsonFetch({ status: 'eligible' });
+    await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER, {
+      viewerUserAgent: 'Mozilla/5.0 (iPhone)',
+    });
+    expect(new Headers(getCall(fetchImpl)[1].headers).get('x-viewer-user-agent')).toBe(
+      'Mozilla/5.0 (iPhone)',
+    );
   });
 
   it('uses a short timeout so a slow lookup cannot hold up the profile page', async () => {
