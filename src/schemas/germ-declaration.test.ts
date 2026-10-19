@@ -18,7 +18,7 @@ describe('GermDeclarationRecordSchema', () => {
   it('parses a real record and keeps unknown keys', () => {
     const parsed = GermDeclarationRecordSchema.parse(REAL);
     expect(parsed.messageMe?.showButtonTo).toBe('usersIFollow');
-    expect(parsed.currentKey.$bytes).toBe('AQIDBA');
+    expect(parsed.currentKey).toEqual({ $bytes: 'AQIDBA' });
     expect((parsed as Record<string, unknown>).keyPackage).toEqual({ $bytes: 'BQYHCA' });
   });
 
@@ -39,6 +39,13 @@ describe('GermDeclarationRecordSchema', () => {
   it('rejects a record without currentKey', () => {
     const { currentKey: _omit, ...rest } = REAL;
     expect(GermDeclarationRecordSchema.safeParse(rest).success).toBe(false);
+  });
+
+  it('accepts currentKey as decoded bytes', () => {
+    expect(
+      GermDeclarationRecordSchema.safeParse({ ...REAL, currentKey: new Uint8Array([1, 2]) })
+        .success,
+    ).toBe(true);
   });
 
   it('rejects currentKey as a plain string', () => {

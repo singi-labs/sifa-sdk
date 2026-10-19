@@ -45,6 +45,8 @@ describe('isStrictDid', () => {
     'did:plc:abc/path',
     'did:plc:abc?q',
     'did:plc:a b',
+    'did:web:a%2Bb',
+    'did:web:a%',
     `did:plc:${'a'.repeat(2048)}`,
   ])('rejects %j', (did) => {
     expect(isStrictDid(did)).toBe(false);
@@ -58,6 +60,11 @@ describe('germButtonAudience', () => {
 
   it('is null when the key is empty (DID no longer bound to Germ)', () => {
     expect(germButtonAudience(declaration({ currentKey: { $bytes: '' } }))).toBeNull();
+  });
+
+  it('is null when a decoded key is empty', () => {
+    expect(germButtonAudience(declaration({ currentKey: new Uint8Array(0) }))).toBeNull();
+    expect(germButtonAudience(declaration({ currentKey: new Uint8Array([1]) }))).toBe('everyone');
   });
 
   it('is null without messageMe', () => {

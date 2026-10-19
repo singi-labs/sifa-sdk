@@ -31,20 +31,44 @@ describe('fetchGermMessageLink', () => {
     expect(result).toEqual({ status: 'owner', showButtonTo: 'usersIFollow' });
   });
 
+  it('treats an owner status without showButtonTo as no setting', async () => {
+    const fetchImpl = jsonFetch({ status: 'owner' });
+    expect(await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER)).toEqual({
+      status: 'owner',
+      showButtonTo: null,
+    });
+  });
+
+  it('keeps no-store for a logged-in viewer even when the caller passes cache options', async () => {
+    const fetchImpl = jsonFetch({ status: 'eligible' });
+    await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER, {
+      cookieHeader: 'session=abc',
+      cache: 'force-cache',
+      next: { tags: ['profile'] },
+    });
+    const [, init] = getCall(fetchImpl);
+    expect(init.cache).toBe('no-store');
+    expect(init.next).toBeUndefined();
+  });
+
+  it('sends credentials so browser callers carry the session', async () => {
+    const fetchImpl = jsonFetch({ status: 'eligible' });
+    await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER);
+    expect(getCall(fetchImpl)[1].credentials).toBe('include');
+  });
+
   it('returns null for a null body', async () => {
     const fetchImpl = jsonFetch(null);
     expect(await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER)).toBeNull();
   });
 
-  it.each([
-    { status: 'other' },
-    { status: 'owner' },
-    { status: 'owner', showButtonTo: 42 },
-    'eligible',
-  ])('returns null for an unexpected body %j', async (body) => {
-    const fetchImpl = jsonFetch(body);
-    expect(await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER)).toBeNull();
-  });
+  it.each([{ status: 'other' }, { status: 'owner', showButtonTo: 42 }, 'eligible'])(
+    'returns null for an unexpected body %j',
+    async (body) => {
+      const fetchImpl = jsonFetch(body);
+      expect(await fetchGermMessageLink({ ...baseConfig, fetch: fetchImpl }, OWNER)).toBeNull();
+    },
+  );
 
   it('returns null on an HTTP error or network failure', async () => {
     expect(

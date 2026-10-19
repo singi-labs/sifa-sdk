@@ -23,7 +23,8 @@ export type GermShowButtonTo = (typeof GERM_SHOW_BUTTON_TO_VALUES)[number];
 export const GermDeclarationRecordSchema = z
   .object({
     version: z.string().min(5).max(14),
-    currentKey: z.object({ $bytes: z.string() }),
+    // JSON form (`{ $bytes }`, PDS and Jetstream) or decoded CBOR (`Uint8Array`).
+    currentKey: z.union([z.object({ $bytes: z.string() }), z.instanceof(Uint8Array)]),
     messageMe: z
       .object({
         showButtonTo: z.string().min(1).max(100),

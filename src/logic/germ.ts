@@ -15,11 +15,14 @@ export type GermPlatform = 'iOS' | 'android' | 'web';
 export type GermButtonAudience = 'everyone' | 'usersIFollow';
 
 const MAX_DID_LENGTH = 2048;
-const STRICT_DID = /^did:[a-z]+:[A-Za-z0-9._:%-]*[A-Za-z0-9._%-]$/;
+// Stricter than `didSchema`: the value goes unescaped into the link fragment,
+// where Germ splits on `+` after decoding. Percent-encoding is allowed only as
+// `%3A` (the did:web port colon), so `%2B` cannot smuggle in a second `+`.
+const STRICT_DID = /^did:[a-z]+:(?:[A-Za-z0-9._:-]|%3A)*(?:[A-Za-z0-9._-]|%3A)$/;
 
 /**
  * Strict DID syntax check for values that end up in a Germ link fragment.
- * Rejects `+`, `#`, `/`, `?` and whitespace, so a crafted DID cannot add a
+ * Rejects `+`, `#`, `/`, `?`, whitespace and percent-encoding other than `%3A`, so a crafted DID cannot add a
  * second `+` segment or break out of the fragment.
  */
 export function isStrictDid(value: string): boolean {
@@ -54,7 +57,8 @@ export function germButtonAudience(
   declaration: GermDeclarationRecord | null,
 ): GermButtonAudience | null {
   if (!declaration) return null;
-  if (declaration.currentKey.$bytes === '') return null;
+  const key = declaration.currentKey;
+  if (key instanceof Uint8Array ? key.length === 0 : key.$bytes === '') return null;
   const messageMe = declaration.messageMe;
   if (!messageMe) return null;
   if (!parseGermMessageUrl(messageMe.messageMeUrl)) return null;

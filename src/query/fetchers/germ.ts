@@ -36,8 +36,11 @@ function parseGermMessageLink(data: unknown): GermMessageLink | null {
   if (typeof data !== 'object' || data === null) return null;
   const { status, showButtonTo } = data as { status?: unknown; showButtonTo?: unknown };
   if (status === 'eligible') return { status: 'eligible' };
-  if (status === 'owner' && (showButtonTo === null || isShowButtonTo(showButtonTo))) {
-    return { status: 'owner', showButtonTo };
+  if (status === 'owner') {
+    if (showButtonTo === undefined || showButtonTo === null) {
+      return { status: 'owner', showButtonTo: null };
+    }
+    if (isShowButtonTo(showButtonTo)) return { status: 'owner', showButtonTo };
   }
   return null;
 }
@@ -55,14 +58,15 @@ export async function fetchGermMessageLink(
   const { cookieHeader, ...rest } = options;
   const headers: Record<string, string> = { ...(rest.headers ?? {}) };
   if (cookieHeader) headers.cookie = cookieHeader;
+  // Applied last: a viewer-specific answer must never land in a shared cache.
   const caching: ApiFetchOptions = cookieHeader
-    ? { cache: 'no-store', credentials: 'include' }
+    ? { cache: 'no-store', next: undefined }
     : { next: { revalidate: LOGGED_OUT_REVALIDATE_S } };
   try {
     const data = await apiFetch<unknown>(
       config,
       `/api/profiles/${encodeIdentifier(did)}/germ-message-link`,
-      { timeoutMs: GERM_LINK_TIMEOUT_MS, ...caching, ...rest, headers },
+      { timeoutMs: GERM_LINK_TIMEOUT_MS, credentials: 'include', ...rest, ...caching, headers },
     );
     return parseGermMessageLink(data);
   } catch {
