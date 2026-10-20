@@ -681,3 +681,53 @@ describe('toStreamCardVM — birds.place sighting', () => {
     expectValid(vm);
   });
 });
+
+describe('toStreamCardVM — is/not review', () => {
+  it('reads the subject title and the adjective tags in is/not order', () => {
+    const vm = toStreamCardVM(
+      item('at.isnot.review', {
+        subject: { title: 'Time Flies', type: 'video-game', uri: 'at://did:web:g/game/1' },
+        tags: [
+          { adjective: 'whimsical', direction: 1 },
+          { adjective: 'good', direction: 2 },
+          { adjective: 'long', direction: -2 },
+        ],
+        locale: 'en',
+        createdAt: '2026-09-18T21:48:35.000Z',
+      }),
+    );
+    expect(vm.body).toEqual({
+      kind: 'text',
+      text: "Time Flies is really good, is whimsical and really isn't long",
+    });
+    expectValid(vm);
+  });
+
+  it('maps the middle directions and skips malformed tags', () => {
+    const vm = toStreamCardVM(
+      item('at.isnot.review', {
+        subject: { title: 'Valheim' },
+        tags: [
+          { adjective: 'cosy', direction: 0 },
+          { adjective: 'easy', direction: -1 },
+          { adjective: '', direction: 1 },
+          { adjective: 'odd', direction: 7 },
+        ],
+      }),
+    );
+    expect(vm.body).toEqual({ kind: 'text', text: 'Valheim may be cosy and is not easy' });
+    expectValid(vm);
+  });
+
+  it('shows the title alone when there are no usable tags', () => {
+    const vm = toStreamCardVM(item('at.isnot.review', { subject: { title: 'Valheim' } }));
+    expect(vm.body).toEqual({ kind: 'text', text: 'Valheim' });
+    expectValid(vm);
+  });
+
+  it('falls back to generic without a subject title', () => {
+    const vm = toStreamCardVM(item('at.isnot.review', { tags: [] }));
+    expect(vm.body).toEqual({ kind: 'generic' });
+    expectValid(vm);
+  });
+});

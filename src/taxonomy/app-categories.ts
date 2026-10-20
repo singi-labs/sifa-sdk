@@ -23,6 +23,7 @@ export const APP_CATEGORIES = {
   Domains: { phosphorIcon: 'Globe' },
   Endorsements: { phosphorIcon: 'HandHeart' },
   Events: { phosphorIcon: 'CalendarBlank' },
+  Flashcards: { phosphorIcon: 'Cards' },
   Impact: { phosphorIcon: 'Certificate' },
   Links: { phosphorIcon: 'LinkSimple' },
   Lists: { phosphorIcon: 'ListBullets' },

@@ -328,6 +328,36 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
     urlPattern: 'https://skymap.blue/users/{did}/maps/{rkey}',
     profileUrlPattern: 'https://skymap.blue/users/{did}',
   },
+  opendeck: {
+    // Nuxt SPA routes: /decks/:handle/:rkey and /profile/:handle. The shell
+    // returns 200 for any path, so the rkey itself is not checkable.
+    urlPattern: 'https://opendeck.space/decks/{handle}/{rkey}',
+    profileUrlPattern: 'https://opendeck.space/profile/{handle}',
+  },
+  chiverecipes: {
+    // Chive Recipes (not chive.pub, the preprint app above). Vite SPA routes: /recipe/:author/:rkey and /profile/:identifier. The shell
+    // returns 200 for any path. record.source is the imported original recipe,
+    // not the Chive page, so it never becomes the link.
+    urlPattern: 'https://chive.pages.dev/recipe/{handle}/{rkey}',
+    profileUrlPattern: 'https://chive.pages.dev/profile/{handle}',
+  },
+  atbb: {
+    // atBB forum pages are addressed by numeric appview ids (/topics/:id),
+    // which a record cannot supply, and there is no per-user page. Posts
+    // render non-clickable.
+  },
+  passingreads: {
+    // Verified live: /books/{bookId} server-renders the book page (bookId is
+    // the rkey of the org.passingreads.book.registration a note references;
+    // built in resolveCardUrl). /profiles/{handle} is the profile page.
+    profileUrlPattern: 'https://www.passingreads.org/profiles/{handle}',
+  },
+  isnot: {
+    // Verified live: GET /reviews/{did}/{rkey} server-renders the review; an
+    // unknown rkey 404s. /reviews/{did} lists the person's reviews.
+    urlPattern: 'https://isnot.at/reviews/{did}/{rkey}',
+    profileUrlPattern: 'https://isnot.at/reviews/{did}',
+  },
 });
 
 /**
@@ -434,4 +464,10 @@ export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: s
   ['supply.skillz.', 'skillz'],
   ['place.birds.', 'birdsplace'],
   ['blue.skymap.', 'skymap'],
+  // Onboard from the 2026-10-20 profile-of-the-day queue audit.
+  ['space.opendeck.', 'opendeck'],
+  ['com.chive.', 'chiverecipes'],
+  ['space.atbb.', 'atbb'],
+  ['org.passingreads.', 'passingreads'],
+  ['at.isnot.', 'isnot'],
 ];

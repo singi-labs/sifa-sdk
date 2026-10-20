@@ -23,6 +23,7 @@ describe('APP_CATEGORIES', () => {
   it('isAppCategory accepts known ids and rejects unknown', () => {
     expect(isAppCategory('Articles')).toBe(true);
     expect(isAppCategory('Verification')).toBe(true);
+    expect(isAppCategory('Flashcards')).toBe(true);
     expect(isAppCategory('articles')).toBe(false);
     expect(isAppCategory('Unknown')).toBe(false);
     expect(isAppCategory('toString')).toBe(false);
@@ -95,6 +96,11 @@ describe('APP_CATEGORY_MAP', () => {
     expect(categoryForApp('skillz')).toBe('Code');
     expect(categoryForApp('birdsplace')).toBe('Places');
     expect(categoryForApp('skymap')).toBe('Places');
+    expect(categoryForApp('opendeck')).toBe('Flashcards');
+    expect(categoryForApp('chiverecipes')).toBe('Recipes');
+    expect(categoryForApp('atbb')).toBe('Posts');
+    expect(categoryForApp('passingreads')).toBe('Reviews');
+    expect(categoryForApp('isnot')).toBe('Reviews');
   });
 
   it('categoryForApp returns undefined for unknown apps', () => {

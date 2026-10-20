@@ -79,6 +79,12 @@ describe('getActivityTier', () => {
     expect(getActivityTier('supply.skillz.skill')).toBe('creation');
     expect(getActivityTier('place.birds.sighting')).toBe('creation');
     expect(getActivityTier('blue.skymap.geo.map')).toBe('creation');
+    // 2026-10-20 profile-of-the-day queue onboards.
+    expect(getActivityTier('space.opendeck.deck')).toBe('creation');
+    expect(getActivityTier('com.chive.recipe')).toBe('creation');
+    expect(getActivityTier('space.atbb.post')).toBe('creation');
+    expect(getActivityTier('org.passingreads.book.note')).toBe('creation');
+    expect(getActivityTier('at.isnot.review')).toBe('creation');
   });
 
   it('returns "action" for a known action NSID', () => {
