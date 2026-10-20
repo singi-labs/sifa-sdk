@@ -929,6 +929,31 @@
       "tier": "creation",
       "app": "skymap",
       "notes": "An authored map with inline point features (title, description, tags)."
+    },
+    "space.opendeck.deck": {
+      "tier": "creation",
+      "app": "opendeck",
+      "notes": "An authored language-flashcard deck (title, summary, source and target language)."
+    },
+    "com.chive.recipe": {
+      "tier": "creation",
+      "app": "chiverecipes",
+      "notes": "An authored recipe with ingredients, steps, and an image."
+    },
+    "space.atbb.post": {
+      "tier": "creation",
+      "app": "atbb",
+      "notes": "A forum post or reply on an atBB forum."
+    },
+    "org.passingreads.book.note": {
+      "tier": "creation",
+      "app": "passingreads",
+      "notes": "A free-text note on a registered physical book that is passed on."
+    },
+    "at.isnot.review": {
+      "tier": "creation",
+      "app": "isnot",
+      "notes": "A micro-review of a subject (e.g. a game) as weighted is / is-not adjectives."
     }
   }
 }

@@ -842,6 +842,50 @@ function httpUrl(value: unknown): string | undefined {
  * external-feed items (Fediverse `fediverse.post`, RSS), which have no
  * `text`/`content` field.
  */
+/** is/not tag directions (+2..-2), worded as isnot.at renders them in English. */
+const ISNOT_DIRECTIONS: Record<string, string> = {
+  '2': 'is really',
+  '1': 'is',
+  '0': 'may be',
+  '-1': 'is not',
+  '-2': "really isn't",
+};
+
+/**
+ * at.isnot.review — a micro-review of a subject as weighted adjective tags.
+ * Renders the sentence isnot.at shows ("Time Flies is really good and is
+ * whimsical"), strongest direction first. Without a subject title there is
+ * nothing to anchor the sentence, so it falls back to generic.
+ */
+function applyIsnotReview(vm: StreamCardVM, record: Record<string, unknown>): StreamCardVM {
+  const subject = record.subject;
+  const title =
+    subject != null && typeof subject === 'object'
+      ? asNonEmptyString((subject as Record<string, unknown>).title)
+      : undefined;
+  if (!title) return withGeneric(vm);
+
+  const phrases = (Array.isArray(record.tags) ? record.tags : [])
+    .flatMap((tag): { direction: number; phrase: string }[] => {
+      if (tag == null || typeof tag !== 'object') return [];
+      const t = tag as Record<string, unknown>;
+      const adjective = asNonEmptyString(t.adjective);
+      const direction = asFiniteNumber(t.direction);
+      if (!adjective || direction === undefined) return [];
+      const wording = ISNOT_DIRECTIONS[String(direction)];
+      return wording ? [{ direction, phrase: `${wording} ${adjective}` }] : [];
+    })
+    .sort((a, b) => b.direction - a.direction)
+    .map((p) => p.phrase);
+
+  const joined =
+    phrases.length > 1
+      ? `${phrases.slice(0, -1).join(', ')} and ${phrases[phrases.length - 1]}`
+      : (phrases[0] ?? '');
+  vm.body = { kind: 'text', text: joined ? `${title} ${joined}` : title };
+  return vm;
+}
+
 const GENERIC_TEXT_ORDER = [
   'text',
   'title',
@@ -1225,6 +1269,8 @@ export function toStreamCardVM(
       return record ? applyFediversePost(vm, record) : withGeneric(vm);
     case 'place.birds.sighting':
       return record ? applyBirdSighting(vm, item, record) : withGeneric(vm);
+    case 'at.isnot.review':
+      return record ? applyIsnotReview(vm, record) : withGeneric(vm);
   }
 
   // social.popfeed.feed.{post,note,review} — registered by prefix in sifa-web.

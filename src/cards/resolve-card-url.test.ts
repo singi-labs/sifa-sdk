@@ -31,6 +31,11 @@ describe('getAppIdForCollection', () => {
     expect(getAppIdForCollection('supply.skillz.skill')).toBe('skillz');
     expect(getAppIdForCollection('place.birds.sighting')).toBe('birdsplace');
     expect(getAppIdForCollection('blue.skymap.geo.map')).toBe('skymap');
+    expect(getAppIdForCollection('space.opendeck.deck')).toBe('opendeck');
+    expect(getAppIdForCollection('com.chive.recipe')).toBe('chiverecipes');
+    expect(getAppIdForCollection('space.atbb.post')).toBe('atbb');
+    expect(getAppIdForCollection('org.passingreads.book.note')).toBe('passingreads');
+    expect(getAppIdForCollection('at.isnot.review')).toBe('isnot');
     expect(getAppIdForCollection('link.pastesphere.snippet')).toBe('pastesphere');
     expect(getAppIdForCollection('site.standard.document')).toBe('standard');
     expect(getAppIdForCollection('place.stream.livestream')).toBe('streamplace');
@@ -541,6 +546,86 @@ describe('resolveCardUrl', () => {
           record: { title: 'My gran Canaria', features: [] },
         }),
       ).toBe('https://skymap.blue/users/did%3Aplc%3Aabc/maps/3lrgylhlfpt2o');
+    });
+  });
+
+  describe('profile-of-the-day queue onboards (2026-10-20)', () => {
+    it('links an OpenDeck deck to its deck page by handle + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'space.opendeck.deck',
+          uri: 'at://did:plc:abc/space.opendeck.deck/3mw6u2semba26',
+          rkey: '3mw6u2semba26',
+          record: { title: 'Survival vocabulary', sourceLang: 'en', targetLang: 'fr' },
+        }),
+      ).toBe(`https://opendeck.space/decks/${baseItem.authorHandle}/3mw6u2semba26`);
+    });
+
+    it('links a Chive Recipes recipe to the Chive Recipes page, not the imported source URL', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'com.chive.recipe',
+          uri: 'at://did:plc:abc/com.chive.recipe/3mwa3nu2r6n25',
+          rkey: '3mwa3nu2r6n25',
+          record: { name: 'Crispy Gnocchi', source: 'https://cooking.nytimes.com/recipes/1' },
+        }),
+      ).toBe(`https://chive.pages.dev/recipe/${baseItem.authorHandle}/3mwa3nu2r6n25`);
+    });
+
+    it('renders an atBB post non-clickable (no per-record page)', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'space.atbb.post',
+          uri: 'at://did:plc:abc/space.atbb.post/3mfsczqtgvs2z',
+          rkey: '3mfsczqtgvs2z',
+          record: { text: 'Looking great' },
+        }),
+      ).toBeNull();
+    });
+
+    it('links a PassingReads note to the book page of the registration it references', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'org.passingreads.book.note',
+          uri: 'at://did:plc:abc/org.passingreads.book.note/3mvfrchk52z2b',
+          rkey: '3mvfrchk52z2b',
+          record: {
+            note: 'First French book',
+            book: {
+              uri: 'at://did:plc:abc/org.passingreads.book.registration/4ahdqwch6j1we614jx3bh36m0t',
+              cid: 'bafy',
+            },
+          },
+        }),
+      ).toBe('https://www.passingreads.org/books/4ahdqwch6j1we614jx3bh36m0t');
+    });
+
+    it('falls back to the PassingReads profile when a note has no book reference', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'org.passingreads.book.note',
+          uri: 'at://did:plc:abc/org.passingreads.book.note/3mvfrchk52z2b',
+          rkey: '3mvfrchk52z2b',
+          record: { note: 'Orphan note' },
+        }),
+      ).toBe(`https://www.passingreads.org/profiles/${baseItem.authorHandle}`);
+    });
+
+    it('links an is/not review to its review page by did + rkey', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          collection: 'at.isnot.review',
+          uri: 'at://did:plc:abc/at.isnot.review/3mvt5ifz2mc2c',
+          rkey: '3mvt5ifz2mc2c',
+          record: { subject: { title: 'Time Flies', type: 'video-game' }, tags: [] },
+        }),
+      ).toBe('https://isnot.at/reviews/did%3Aplc%3Aabc/3mvt5ifz2mc2c');
     });
   });
 

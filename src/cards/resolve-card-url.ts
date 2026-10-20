@@ -462,6 +462,25 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
     return patternHealth('recipe', { handle: authorHandle, did: authorDid, rkey }, collection);
   }
 
+  // PassingReads note: the note has no page of its own. It links to the book
+  // page of the registration it references (book.uri rkey is the bookId).
+  // Without a usable reference, fall through to the profile pattern.
+  if (collection === 'org.passingreads.book.note') {
+    const book = record.book;
+    if (book != null && typeof book === 'object') {
+      const bookUri = stringOrNull((book as Record<string, unknown>).uri);
+      const parsed = bookUri ? parseAtUri(bookUri) : null;
+      if (parsed) {
+        return urlHealth(`https://www.passingreads.org/books/${encodeURIComponent(parsed.rkey)}`);
+      }
+    }
+    return patternHealth(
+      'passingreads',
+      { handle: authorHandle, did: authorDid, rkey },
+      collection,
+    );
+  }
+
   // atmob paste (atmob.in): the SPA viewer renders any paste by its full at-uri
   // via a `?uri=` query param (verified in the app's app.js). Both
   // paste.document and paste.bundle share that viewer, so build the URL from the

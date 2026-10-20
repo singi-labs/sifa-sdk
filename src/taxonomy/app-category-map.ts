@@ -142,6 +142,12 @@ export const APP_CATEGORY_MAP = {
   skillz: 'Code', // supply.skillz.skill — authored agent skills (SKILL.md) on skillz.supply
   birdsplace: 'Places', // place.birds.sighting — logged bird sightings with photo, notes, and location
   skymap: 'Places', // blue.skymap.geo.map — authored maps of places (features inline)
+  // 2026-10-20 profile-of-the-day queue onboards.
+  opendeck: 'Flashcards', // space.opendeck.deck — authored language-flashcard decks
+  chiverecipes: 'Recipes', // com.chive.recipe — authored recipes on chive.pages.dev
+  atbb: 'Posts', // space.atbb.post — forum posts and replies on atBB forums
+  passingreads: 'Reviews', // org.passingreads.book.note — notes on shared physical books
+  isnot: 'Reviews', // at.isnot.review — adjective-tag micro-reviews (is / is not)
 } as const satisfies Record<string, AppCategoryId>;
 
 export type KnownAppId = keyof typeof APP_CATEGORY_MAP;
