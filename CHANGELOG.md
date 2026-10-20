@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.111
+
+### Patch Changes
+
+- eb766e3: Add OpenDeck, Chive Recipes, atBB, PassingReads and is/not to the app category map, activity tiers, URL patterns, and stream view-model. Adds a Flashcards app category.
+
 ## 0.19.110
 
 ### Patch Changes
