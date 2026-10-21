@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.19.112
+
+### Patch Changes
+
+- 92f7a22: Funder CV selections accept publication ids that contain `/`, so a Standard.site publication (keyed by its AT URI) can be picked.
+
 ## 0.19.111
 
 ### Patch Changes
