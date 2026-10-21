@@ -75,8 +75,11 @@ export function funderCvItemId(kind: FunderCvItemKind, rkey: string): string {
   return `${kind}:${rkey}`;
 }
 
-/** Record key syntax (atproto): 1-512 of A-Z a-z 0-9 . - _ : ~ */
-const ITEM_ID_RE = /^(publication|presentation|honor):[A-Za-z0-9._~:-]{1,512}$/;
+/**
+ * Record key syntax (atproto: 1-512 of A-Z a-z 0-9 . - _ : ~), plus `/`:
+ * publications from Standard.site are keyed by their AT URI (`std-at://...`).
+ */
+const ITEM_ID_RE = /^(publication|presentation|honor):[A-Za-z0-9._~:/-]{1,512}$/;
 
 function kindOf(id: string): FunderCvItemKind | undefined {
   const kind = id.slice(0, id.indexOf(':'));
