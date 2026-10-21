@@ -11,10 +11,13 @@
  * emitting it hands a user every JSON Resume theme, and the Typst CV templates
  * on Typst Universe, without Sifa writing a renderer for any of them.
  *
- * Fields Sifa holds that JSON Resume has no slot for -- endorsements,
- * confirmations, involvement, investments, presentations, courses -- are
- * dropped rather than smuggled into a nearby field. The loss is documented for
- * the user at the point of download.
+ * Involvement, talks and courses taken have no JSON Resume key of their own and
+ * go into the nearest standard section: involvement next to volunteering, talks
+ * as publications of type "Talks", courses as certificates. Strict consumers
+ * such as altacv refuse any unknown top-level key, so nothing new is added
+ * there. Fields with no reasonable slot -- endorsements, confirmations,
+ * investments, courses someone taught -- are dropped. The loss is documented
+ * for the user at the point of download.
  */
 
 import { parseLocationString } from '../format/location-utils.js';
@@ -30,16 +33,24 @@ import {
   sortPublications,
 } from '../profile/section-sorts.js';
 import { sortByActiveDateRange } from '../profile/range-sort.js';
+import { isTeachingCourse } from '../taxonomy/course-role.js';
+import { getInvolvementKindLabel } from '../taxonomy/involvement-kind.js';
+import { CATEGORY_LABELS } from '../taxonomy/skill-categories.js';
+import { groupSkillsByCategory } from '../taxonomy/skill-grouping.js';
 import type {
   ExternalAccount,
   LanguageProficiency,
   LocationValue,
   ProfileCertification,
+  ProfileCourse,
   ProfileEducation,
   ProfileHonor,
+  ProfileInvolvement,
   ProfileLanguage,
   ProfileLocation,
   ProfilePosition,
+  ProfilePresentation,
+  ProfilePresentationDelivery,
   ProfileProject,
   ProfilePublication,
   ProfileSkill,
@@ -99,6 +110,11 @@ export interface JsonResumeProfileInput {
   readonly projects?: ProfileProject[];
   readonly publications?: ProfilePublication[];
   readonly volunteering?: ProfileVolunteering[];
+  readonly involvement?: ProfileInvolvement[];
+  readonly courses?: ProfileCourse[];
+  readonly presentations?: ProfilePresentation[];
+  /** Deliveries not tied to a presentation record are listed here only. */
+  readonly presentationDeliveries?: ProfilePresentationDelivery[];
   readonly honors?: ProfileHonor[];
   readonly languages?: ProfileLanguage[];
   readonly externalAccounts?: ExternalAccount[];
@@ -182,10 +198,17 @@ export interface JsonResumePublication {
   readonly releaseDate?: string;
   readonly url?: string;
   readonly summary?: string;
+  /**
+   * "Talks" for a talk. Not in the JSON Resume schema, which allows extra
+   * fields; CV templates such as altacv group publications by it.
+   */
+  readonly type?: string;
 }
 
+/** A skill category, with the skills in it as keywords. */
 export interface JsonResumeSkill {
   readonly name: string;
+  readonly keywords: string[];
 }
 
 export interface JsonResumeLanguage {
@@ -341,6 +364,53 @@ function orgName(
   return text(entityName, s) ?? text(stored, s);
 }
 
+/** Event names a talk shows: the most recent ones, then how many more. */
+const TALK_EVENTS_SHOWN = 3;
+
+/** Newest first; undated last. */
+function byDateDesc(a: { date?: string | null }, b: { date?: string | null }): number {
+  return (b.date ?? '').localeCompare(a.date ?? '');
+}
+
+/**
+ * Talks as publications of type "Talks": one per talk, with the events it was
+ * given at (newest first) as the publisher and the latest date. A delivery not
+ * tied to a talk record is a talk of its own. Newest first.
+ */
+function mapTalks(profile: JsonResumeProfileInput, s: Sanitizer): JsonResumePublication[] {
+  const standalone = filterHidden(profile.presentationDeliveries).filter(
+    (d) => !d.presentationRkey,
+  );
+  const talks = filterHidden(profile.presentations).map((talk) => {
+    const deliveries = filterHidden(talk.deliveries).sort(byDateDesc);
+    const events = [
+      ...new Set(deliveries.map((d) => text(d.eventName ?? undefined, s)).filter(Boolean)),
+    ] as string[];
+    const shown = events.slice(0, TALK_EVENTS_SHOWN).join(', ');
+    const more = events.length - TALK_EVENTS_SHOWN;
+    return compact<JsonResumePublication>({
+      name: s(talk.title),
+      publisher: more > 0 ? `${shown} and ${more} more` : shown || undefined,
+      releaseDate: toResumeDate(deliveries[0]?.date ?? undefined),
+      url: link(talk.links?.[0]?.uri, s),
+      summary: text(talk.description ?? undefined, s),
+      type: 'Talks',
+    });
+  });
+  const loose = standalone.map((d) =>
+    compact<JsonResumePublication>({
+      name: s(d.title?.trim() || d.eventName?.trim() || ''),
+      publisher: text(d.eventName ?? undefined, s),
+      releaseDate: toResumeDate(d.date ?? undefined),
+      url: link(d.links?.[0]?.uri, s),
+      type: 'Talks',
+    }),
+  );
+  return [...talks, ...loose]
+    .filter((t) => t.name)
+    .sort((a, b) => byDateDesc({ date: a.releaseDate }, { date: b.releaseDate }));
+}
+
 /**
  * Build a JSON Resume v1.0.0 document from a Sifa profile.
  *
@@ -393,15 +463,24 @@ export function profileToJsonResume(
     }),
   );
 
-  const volunteer = sortByActiveDateRange(filterHidden(profile.volunteering)).map((entry) =>
-    compact<JsonResumeVolunteer>({
+  // Involvement (open source, communities, civic roles) has no JSON Resume key
+  // and sits next to volunteering, sorted together.
+  const volunteer = sortByActiveDateRange([
+    ...filterHidden(profile.volunteering).map((entry) => ({
       organization: orgName(entry.entityName, entry.organization, s),
       position: text(entry.role, s),
       summary: text(entry.description, s),
       startDate: toResumeDate(entry.startDate),
       endDate: toResumeDate(entry.endDate),
-    }),
-  );
+    })),
+    ...filterHidden(profile.involvement).map((entry) => ({
+      organization: orgName(entry.entityName, entry.upstream, s),
+      position: text(entry.role, s) ?? text(getInvolvementKindLabel(entry.kind), s),
+      summary: text(entry.description, s),
+      startDate: toResumeDate(entry.startedAt),
+      endDate: toResumeDate(entry.endedAt),
+    })),
+  ]).map((entry) => compact<JsonResumeVolunteer>(entry));
 
   const education = sortEducation(filterHidden(profile.education)).map((entry) =>
     compact<JsonResumeEducation>({
@@ -433,6 +512,21 @@ export function profileToJsonResume(
       url: link(cert.credentialUrl, s),
     }),
   );
+  // Courses taken, after the certifications. A course whose credential is
+  // already listed as a certification would print twice, and courses someone
+  // taught are not certificates.
+  const listedCredentials = new Set(filterHidden(profile.certifications).map((c) => c.rkey));
+  for (const course of filterHidden(profile.courses)) {
+    if (isTeachingCourse(course)) continue;
+    if (course.credentialRkey && listedCredentials.has(course.credentialRkey)) continue;
+    certificates.push(
+      compact<JsonResumeCertificate>({
+        name: s(course.name),
+        date: toResumeDate(course.completedAt),
+        issuer: orgName(course.entityName, course.institution, s),
+      }),
+    );
+  }
 
   const publications = sortPublications(filterHidden(profile.publications)).map((publication) =>
     compact<JsonResumePublication>({
@@ -443,13 +537,16 @@ export function profileToJsonResume(
       summary: text(publication.description, s),
     }),
   );
+  publications.push(...mapTalks(profile, s));
 
-  // One entry per skill rather than JSON Resume's grouped shape: Sifa stores one
-  // record per skill, and keeping the two symmetric is what makes a round-trip
-  // through a third-party editor safe. Category and endorsement counts have no
-  // JSON Resume slot and are dropped. Skill records carry no `hidden` flag, so
-  // there is nothing to filter here.
-  const skills = (profile.skills ?? []).map((skill) => ({ name: s(skill.name) }));
+  // JSON Resume's grouped shape: one group per category, in the profile's
+  // category order, named as the profile names it. CV templates print the
+  // group name as a label. Endorsement counts have no slot and are dropped.
+  // Skill records carry no `hidden` flag, so there is nothing to filter here.
+  const skills = groupSkillsByCategory(profile.skills ?? []).map(([category, items]) => ({
+    name: CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS] ?? category,
+    keywords: items.map((skill) => s(skill.name)),
+  }));
 
   const languages = sortLanguages(filterHidden(profile.languages)).map((language) =>
     compact<JsonResumeLanguage>({

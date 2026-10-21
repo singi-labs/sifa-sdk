@@ -25,6 +25,10 @@ interface SchemaNode {
 const schema = JSON.parse(
   readFileSync(join(FIXTURES, 'jsonresume-schema.json'), 'utf8'),
 ) as SchemaNode;
+// altacv's importer adds `type` to publications (it groups them by it), so it
+// accepts that key even though the JSON Resume schema does not declare it.
+const publicationProps = schema.properties?.publications?.items?.properties;
+if (publicationProps) publicationProps.type = { type: 'string' };
 
 /**
  * Keys the schema does not declare, at any depth. Deliberately stricter than
