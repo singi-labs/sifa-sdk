@@ -215,11 +215,29 @@ describe('funderCvSelectionSchema', () => {
   });
 
   it('rejects malformed ids', () => {
-    for (const id of ['publication:', 'nonsense:a', 'publication:a/b', 'at://x']) {
+    for (const id of ['publication:', 'nonsense:a', 'publication:a b', 'at://x']) {
       expect(funderCvSelectionSchema.safeParse({ format: 'erc', outputs: [id] }).success).toBe(
         false,
       );
     }
+  });
+
+  // Publications from Standard.site are keyed by their AT URI on the profile
+  // (`std-at://...`), so their ids contain slashes (sifa-workspace#700).
+  it('accepts a Standard.site publication id and keeps it in the CV', () => {
+    const id = 'publication:std-at://did:plc:abc/site.standard.document/3kxyz';
+    const parsed = funderCvSelectionSchema.safeParse({ format: 'erc', outputs: [id] });
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) return;
+    const profile: FunderCvProfileInput = {
+      ...PROFILE,
+      publications: [pub('std-at://did:plc:abc/site.standard.document/3kxyz', '2026')],
+    };
+    expect(findUnknownFunderCvItems(profile, parsed.data)).toEqual([]);
+    const doc = profileToFunderCv(profile, parsed.data);
+    expect(JSON.stringify(doc)).toContain(
+      'Paper std-at://did:plc:abc/site.standard.document/3kxyz',
+    );
   });
 
   it('rejects one product listed both as related and as other', () => {
