@@ -345,18 +345,24 @@ describe('profileToJsonResume education, awards, certificates', () => {
 });
 
 describe('profileToJsonResume skills, languages, projects, publications, volunteer', () => {
-  // Sifa stores one record per skill; JSON Resume groups skills. Emitting one
-  // entry per skill keeps export and import symmetric, which is what makes a
-  // round-trip through a third-party editor safe.
-  it('emits one entry per skill', () => {
+  // JSON Resume's own skill shape: one group per category, the skills as its
+  // keywords, in the profile's category order. CV templates print the group
+  // name as a label (sifa-workspace#681).
+  it('groups skills by category', () => {
     const r = profileToJsonResume({
       ...minimal,
       skills: [
-        { rkey: '1', name: 'TypeScript', category: 'engineering' },
-        { rkey: '2', name: 'Facilitation' },
+        { rkey: '1', name: 'Facilitation', category: 'interpersonal' },
+        { rkey: '2', name: 'TypeScript', category: 'id.sifa.defs#technical' },
+        { rkey: '3', name: 'Juggling' },
+        { rkey: '4', name: 'Rust', category: 'technical' },
       ],
     });
-    expect(r.skills).toEqual([{ name: 'TypeScript' }, { name: 'Facilitation' }]);
+    expect(r.skills).toEqual([
+      { name: 'Technical', keywords: ['Rust', 'TypeScript'] },
+      { name: 'Interpersonal', keywords: ['Facilitation'] },
+      { name: 'Other', keywords: ['Juggling'] },
+    ]);
   });
 
   it('maps languages with a human-readable fluency', () => {
@@ -711,5 +717,113 @@ describe('profileToJsonResume links', () => {
 
   it('leaves out a value that is not a link', () => {
     expect(r.basics?.profiles?.[1]).not.toHaveProperty('url');
+  });
+});
+
+// Sections JSON Resume has no key for go into the nearest standard section, so
+// strict consumers such as altacv accept the file (sifa-workspace#680).
+describe('profileToJsonResume involvement, talks and courses', () => {
+  it('lists involvement with volunteering, newest first', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [{ rkey: 'v1', organization: 'Food bank', role: 'Driver', startDate: '2019' }],
+      involvement: [
+        {
+          rkey: 'i1',
+          kind: 'id.sifa.defs#involvementCommunity',
+          upstream: 'Stored name',
+          entityName: 'AT Protocol community',
+          description: 'Runs the meetups.',
+          startedAt: '2024-05-01T00:00:00.000Z',
+        },
+        {
+          rkey: 'i2',
+          kind: 'id.sifa.defs#involvementOpenSource',
+          upstream: 'Typst',
+          role: 'Maintainer',
+          hidden: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([
+      {
+        organization: 'AT Protocol community',
+        position: 'Community',
+        summary: 'Runs the meetups.',
+        startDate: '2024-05-01',
+      },
+      { organization: 'Food bank', position: 'Driver', startDate: '2019' },
+    ]);
+  });
+
+  it('lists talks as publications of type Talks, one per talk', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      publications: [{ rkey: 'p1', title: 'On trust', date: '2020' }],
+      presentations: [
+        {
+          rkey: 't1',
+          title: 'Portable CVs',
+          description: 'Why CVs should move with you.',
+          links: [{ uri: 'https://example.com/slides', type: 'id.sifa.defs#linkSlides' }],
+          deliveries: [
+            { rkey: 'd1', presentationRkey: 't1', eventName: 'Conf A', date: '2025-03-01' },
+            { rkey: 'd2', presentationRkey: 't1', eventName: 'Conf B', date: '2026-02-01' },
+            {
+              rkey: 'd3',
+              presentationRkey: 't1',
+              eventName: 'Secret',
+              date: '2026-05-01',
+              hidden: true,
+            },
+          ],
+        },
+        { rkey: 't2', title: 'Hidden talk', hidden: true, deliveries: [] },
+      ],
+      presentationDeliveries: [
+        {
+          rkey: 'd4',
+          presentationRkey: null,
+          title: 'Lightning talk',
+          eventName: 'Meetup',
+          date: '2024-06-01',
+        },
+      ],
+    });
+    expect(r.publications).toEqual([
+      { name: 'On trust', releaseDate: '2020' },
+      {
+        name: 'Portable CVs',
+        publisher: 'Conf B, Conf A',
+        releaseDate: '2026-02-01',
+        url: 'https://example.com/slides',
+        summary: 'Why CVs should move with you.',
+        type: 'Talks',
+      },
+      { name: 'Lightning talk', publisher: 'Meetup', releaseDate: '2024-06-01', type: 'Talks' },
+    ]);
+  });
+
+  it('lists taken courses as certificates, not taught ones or ones with a listed credential', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      certifications: [{ rkey: 'c1', name: 'Typst certificate', issueDate: '2025' }],
+      courses: [
+        { rkey: 'k1', name: 'Typst basics', entityName: 'Typst GmbH', completedAt: '2024-09-01' },
+        { rkey: 'k2', name: 'Typst advanced', credentialRkey: 'c1', completedAt: '2025' },
+        { rkey: 'k3', name: 'Intro to CVs', role: 'id.sifa.defs#courseTaught' },
+      ],
+    });
+    expect(r.certificates?.map((c) => c.name)).toEqual(['Typst certificate', 'Typst basics']);
+    expect(r.certificates?.[1]).toEqual({
+      name: 'Typst basics',
+      issuer: 'Typst GmbH',
+      date: '2024-09-01',
+    });
+  });
+
+  it('drops investments', () => {
+    const r = profileToJsonResume({ ...minimal });
+    expect(JSON.stringify(r)).not.toContain('nvestment');
   });
 });
