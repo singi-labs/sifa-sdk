@@ -10,6 +10,10 @@ import {
   unfollowUser,
 } from './follow.js';
 import { type SifaApiConfig } from '../client.js';
+// Static, not `await import()` inside the test: a cold import of the whole
+// entry point can outlast the 5 s test timeout on a busy runner.
+import * as queryEntry from '../index.js';
+import * as fetchersEntry from './index.js';
 
 function jsonFetch(body: unknown, status = 200): typeof fetch {
   return vi.fn(() => Promise.resolve(new Response(JSON.stringify(body), { status })));
@@ -272,12 +276,10 @@ describe('isNewerFollowingFeed', () => {
 });
 
 describe('following feed version exports', () => {
-  it('are reachable from the /query and /query/fetchers entry points', async () => {
-    const query = await import('../index.js');
-    const fetchers = await import('./index.js');
-    expect(typeof query.fetchFollowingFeedVersion).toBe('function');
-    expect(typeof query.isNewerFollowingFeed).toBe('function');
-    expect(typeof query.useFollowingFeedVersion).toBe('function');
-    expect(typeof fetchers.fetchFollowingFeedVersion).toBe('function');
+  it('are reachable from the /query and /query/fetchers entry points', () => {
+    expect(typeof queryEntry.fetchFollowingFeedVersion).toBe('function');
+    expect(typeof queryEntry.isNewerFollowingFeed).toBe('function');
+    expect(typeof queryEntry.useFollowingFeedVersion).toBe('function');
+    expect(typeof fetchersEntry.fetchFollowingFeedVersion).toBe('function');
   });
 });
