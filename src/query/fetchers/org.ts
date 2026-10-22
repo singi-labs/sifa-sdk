@@ -72,7 +72,8 @@ export interface OrgNotificationEmailRemoveResult {
  * Finalize an org profile claim (`POST /api/org/claim`). Auth-gated (org-claim
  * JIT scope) and floor-checked server-side. Never throws -- returns the
  * structured {@link OrgClaimResult} folded into a {@link WriteResult} on success,
- * or `{ success: false, error, pdsHost? }` on failure.
+ * or `{ success: false, error, pdsHost?, code? }` on failure. A claim refused for
+ * a handle without a custom domain carries `code: 'CustomDomainRequired'`.
  */
 export function submitOrgClaim(
   config: SifaApiConfig,

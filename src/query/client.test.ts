@@ -211,6 +211,40 @@ describe('apiWrite failure shape', () => {
     expect(result.error).toBe('body/url must be a URL');
   });
 
+  it('passes a string body.code through on a failed write', async () => {
+    const fetchImpl = fixedFetch({
+      status: 403,
+      body: JSON.stringify({
+        error: 'Forbidden',
+        message: 'Claiming an organization requires a custom-domain handle',
+        code: 'CustomDomainRequired',
+      }),
+    });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/org/claim', 'POST');
+    expect(result).toEqual({
+      success: false,
+      status: 403,
+      error: 'Claiming an organization requires a custom-domain handle',
+      code: 'CustomDomainRequired',
+    });
+  });
+
+  it('omits code when the body has no code, an empty code or a non-string code', async () => {
+    const bodies: unknown[] = [
+      { error: 'Forbidden' },
+      { error: 'Forbidden', code: '' },
+      { error: 'Forbidden', code: 42 },
+      { error: 'Forbidden', code: null },
+      { error: 'Forbidden', code: { name: 'CustomDomainRequired' } },
+    ];
+    for (const body of bodies) {
+      const fetchImpl = fixedFetch({ status: 403, body: JSON.stringify(body) });
+      const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+      expect(result).toEqual({ success: false, status: 403, error: 'Forbidden' });
+      expect(result).not.toHaveProperty('code');
+    }
+  });
+
   it('does not set retryAfterSeconds on non-429 failures', async () => {
     const fetchImpl = fixedFetch({ status: 500, body: '{}', headers: { 'retry-after': '5' } });
     const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
