@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.20.0
+
+### Minor Changes
+
+- 8a788cc: The JSON Resume export groups skills by category (`{ name: "Technical", keywords: [...] }`), lists involvement with volunteering, talks as publications with `type: "Talks"`, and courses taken as certificates. Investments and courses someone taught stay out.
+
 ## 0.19.112
 
 ### Patch Changes
