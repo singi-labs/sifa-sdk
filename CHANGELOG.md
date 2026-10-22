@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.20.1
+
+### Patch Changes
+
+- 6bbff4c: Failed writes now carry the API's stable error `code` (for example `CustomDomainRequired`) on the result, when the server sends one.
+
 ## 0.20.0
 
 ### Minor Changes
