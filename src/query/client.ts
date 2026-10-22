@@ -243,6 +243,13 @@ export interface WriteFailure {
    * "try again in N seconds" instead of a generic failure.
    */
   retryAfterSeconds?: number;
+  /**
+   * Stable, machine-readable error code from the response body (for example
+   * `'CustomDomainRequired'`), when sifa-api sends one (sifa-workspace#736).
+   * Branch on this instead of matching the `error` text, which can change.
+   * Present only when the body carries a non-empty string `code`.
+   */
+  code?: string;
 }
 
 /**
@@ -273,6 +280,7 @@ interface ApiErrorBody {
   message?: string;
   error?: string;
   pdsHost?: string;
+  code?: unknown;
 }
 
 function extractWriteError(e: ApiError): Omit<WriteFailure, 'success'> {
@@ -284,6 +292,7 @@ function extractWriteError(e: ApiError): Omit<WriteFailure, 'success'> {
     status: e.status,
     ...(e.retryAfterSeconds !== undefined ? { retryAfterSeconds: e.retryAfterSeconds } : {}),
     ...(body.pdsHost ? { pdsHost: body.pdsHost } : {}),
+    ...(typeof body.code === 'string' && body.code !== '' ? { code: body.code } : {}),
   };
 }
 
@@ -292,12 +301,14 @@ function extractWriteError(e: ApiError): Omit<WriteFailure, 'success'> {
  * never-throws contract used by all sifa-web mutations: returns a
  * structured {@link WriteResult} on both success and failure, and
  * preserves the `pdsHost` field when the AppView reports a PDS-side
- * failure (issue #167).
+ * failure (issue #167) and the `code` field when the AppView sends a
+ * stable error code.
  *
  * On success: returns `{ success: true, ...payload }` where `payload` is
  * whatever the server returned in JSON (or `{}` for 204).
  *
- * On failure: returns `{ success: false, error, pdsHost? }`. Never throws.
+ * On failure: returns `{ success: false, error, status?, retryAfterSeconds?,
+ * pdsHost?, code? }`. Never throws.
  *
  * Use {@link apiWriteCreate} when you specifically need the `rkey` from a
  * create response folded into the result shape.

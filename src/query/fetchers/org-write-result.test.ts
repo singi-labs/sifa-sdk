@@ -41,6 +41,9 @@ describe('org write results keep the body status and the HTTP status apart', () 
     expectTypeOf<Extract<ClaimResult, { success: false }>['status']>().toEqualTypeOf<
       number | undefined
     >();
+    expectTypeOf<Extract<ClaimResult, { success: false }>['code']>().toEqualTypeOf<
+      string | undefined
+    >();
     expectTypeOf<Extract<VerifyResult, { success: true }>['status']>().toEqualTypeOf<
       'verified' | 'pending' | undefined
     >();
