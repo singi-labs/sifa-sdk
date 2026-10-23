@@ -39,49 +39,6 @@ export interface RoadmapVoteError {
 export type CastRoadmapVoteResult =
   { ok: true; data: RoadmapVoteResult } | { ok: false; error: RoadmapVoteError };
 
-async function castUpvote(
-  config: SifaApiConfig,
-  path: string,
-  options: ApiFetchOptions,
-): Promise<CastRoadmapVoteResult> {
-  const fetchFn = config.fetch ?? globalThis.fetch;
-  const url = `${config.baseUrl}${path}`;
-
-  try {
-    const res = await fetchFn(url, {
-      method: 'POST',
-      // No body: the item is in the URL. Do NOT declare a JSON content-type
-      // for an empty body — Fastify rejects that with a 400 before the handler
-      // runs. Only forward caller-provided headers.
-      ...(options.headers ? { headers: options.headers } : {}),
-      credentials: options.credentials ?? 'include',
-      signal: options.signal ?? AbortSignal.timeout(options.timeoutMs ?? 10_000),
-    });
-
-    if (!res.ok) {
-      if (res.status === 403) {
-        try {
-          const body = (await res.json()) as { error?: string; requiredScope?: string };
-          if (body.error === 'ScopeInsufficient') {
-            return {
-              ok: false,
-              error: { type: 'scope_insufficient', requiredScope: body.requiredScope },
-            };
-          }
-        } catch {
-          // Fall through to generic error.
-        }
-      }
-      return { ok: false, error: { type: 'error' } };
-    }
-
-    const data = (await res.json()) as RoadmapVoteResult;
-    return { ok: true, data };
-  } catch {
-    return { ok: false, error: { type: 'error' } };
-  }
-}
-
 /** Roadmap group of a board item (sifa-api `GET /api/roadmap`). */
 export type RoadmapBoardStatus = 'done' | 'in-progress' | 'planned' | 'later' | 'under-review';
 
@@ -187,12 +144,47 @@ function itemVotePath(item: RoadmapItemRef): string {
  *
  * Never throws.
  */
-export function castRoadmapItemVote(
+export async function castRoadmapItemVote(
   config: SifaApiConfig,
   item: RoadmapItemRef,
   options: ApiFetchOptions = {},
 ): Promise<CastRoadmapVoteResult> {
-  return castUpvote(config, itemVotePath(item), options);
+  const fetchFn = config.fetch ?? globalThis.fetch;
+  const url = `${config.baseUrl}${itemVotePath(item)}`;
+
+  try {
+    const res = await fetchFn(url, {
+      method: 'POST',
+      // No body: the item is in the URL. Do NOT declare a JSON content-type
+      // for an empty body — Fastify rejects that with a 400 before the handler
+      // runs. Only forward caller-provided headers.
+      ...(options.headers ? { headers: options.headers } : {}),
+      credentials: options.credentials ?? 'include',
+      signal: options.signal ?? AbortSignal.timeout(options.timeoutMs ?? 10_000),
+    });
+
+    if (!res.ok) {
+      if (res.status === 403) {
+        try {
+          const body = (await res.json()) as { error?: string; requiredScope?: string };
+          if (body.error === 'ScopeInsufficient') {
+            return {
+              ok: false,
+              error: { type: 'scope_insufficient', requiredScope: body.requiredScope },
+            };
+          }
+        } catch {
+          // Fall through to generic error.
+        }
+      }
+      return { ok: false, error: { type: 'error' } };
+    }
+
+    const data = (await res.json()) as RoadmapVoteResult;
+    return { ok: true, data };
+  } catch {
+    return { ok: false, error: { type: 'error' } };
+  }
 }
 
 /** Retract a vote on a roadmap board item. */

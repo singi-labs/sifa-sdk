@@ -104,6 +104,34 @@ describe('castRoadmapItemVote', () => {
   });
 });
 
+describe('castRoadmapItemVote request shape', () => {
+  it('sends no body and no application/json content-type (avoids Fastify empty-body 400)', async () => {
+    const fetchImpl = jsonFetch({ uri: 'at://x', rkey: 'r1' });
+    await castRoadmapItemVote({ ...baseConfig, fetch: fetchImpl }, ITEM);
+    const [, init] = getCall(fetchImpl);
+    expect(init.body).toBeUndefined();
+    const headers = (init.headers ?? {}) as Record<string, string>;
+    expect(headers['Content-Type'] ?? headers['content-type']).toBeUndefined();
+  });
+
+  it('forwards caller-provided headers', async () => {
+    const fetchImpl = jsonFetch({ uri: 'at://x', rkey: 'r1' });
+    await castRoadmapItemVote({ ...baseConfig, fetch: fetchImpl }, ITEM, {
+      headers: { 'x-test': '1' },
+    });
+    const [, init] = getCall(fetchImpl);
+    expect((init.headers as Record<string, string>)['x-test']).toBe('1');
+  });
+
+  it('returns a generic error when fetch throws', async () => {
+    const fetchImpl = vi.fn(() => Promise.reject(new Error('boom'))) as unknown as typeof fetch;
+    expect(await castRoadmapItemVote({ ...baseConfig, fetch: fetchImpl }, ITEM)).toEqual({
+      ok: false,
+      error: { type: 'error' },
+    });
+  });
+});
+
 describe('retractRoadmapItemVote', () => {
   it('DELETEs the item vote route', async () => {
     const fetchImpl = jsonFetch(null, 204);
@@ -112,5 +140,12 @@ describe('retractRoadmapItemVote', () => {
     expect(url).toBe('https://api.example/api/roadmap/items/did%3Aplc%3Aop/3abc/vote');
     expect(init.method).toBe('DELETE');
     expect(result.success).toBe(true);
+  });
+
+  it('returns a structured failure on error', async () => {
+    const fetchImpl = jsonFetch({ message: 'nope' }, 500);
+    const result = await retractRoadmapItemVote({ ...baseConfig, fetch: fetchImpl }, ITEM);
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('nope');
   });
 });
