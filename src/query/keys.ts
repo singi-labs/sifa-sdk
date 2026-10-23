@@ -185,12 +185,6 @@ export const sifaQueryKeys = {
     accountCheck: (appId: string) => ['sifa', 'reactions', 'account-check', appId] as const,
   },
 
-  roadmap: {
-    all: () => ['sifa', 'roadmap'] as const,
-    votes: () => ['sifa', 'roadmap', 'votes'] as const,
-    myVotes: () => ['sifa', 'roadmap', 'my-votes'] as const,
-  },
-
   bskyPreferences: {
     all: () => ['sifa', 'bsky-preferences'] as const,
     contentLabels: () => ['sifa', 'bsky-preferences', 'content-labels'] as const,
@@ -272,9 +266,6 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.reactions.all>
   | ReturnType<typeof sifaQueryKeys.reactions.status>
   | ReturnType<typeof sifaQueryKeys.reactions.accountCheck>
-  | ReturnType<typeof sifaQueryKeys.roadmap.all>
-  | ReturnType<typeof sifaQueryKeys.roadmap.votes>
-  | ReturnType<typeof sifaQueryKeys.roadmap.myVotes>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.all>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.contentLabels>
   | ReturnType<typeof sifaQueryKeys.userSettings.all>

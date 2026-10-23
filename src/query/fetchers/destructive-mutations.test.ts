@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { type SifaApiConfig } from '../client.js';
 import { deleteAccount, fetchWipePreview, resetProfile } from './destructive.js';
 import { createReaction, deleteReaction } from './reactions.js';
-import { castRoadmapVote, retractRoadmapVote } from './roadmap.js';
 
 const baseConfig: SifaApiConfig = { baseUrl: 'https://api.example' };
 
@@ -76,30 +75,6 @@ describe('deleteReaction', () => {
     const fetchImpl = jsonFetch({ message: 'Not found' }, 404);
     const result = await deleteReaction({ ...baseConfig, fetch: fetchImpl }, 'at://target', 'bsky');
     expect(result).toEqual({ success: false, status: 404, error: 'Not found' });
-  });
-});
-
-describe('roadmap vote mutations', () => {
-  it('castRoadmapVote POSTs to /api/roadmap/votes/<key>', async () => {
-    const fetchImpl = jsonFetch({});
-    await castRoadmapVote({ ...baseConfig, fetch: fetchImpl }, 'feature-x');
-    const [url, init] = getCall(fetchImpl);
-    expect(url).toBe('https://api.example/api/roadmap/votes/feature-x');
-    expect(init.method).toBe('POST');
-  });
-
-  it('retractRoadmapVote DELETEs /api/roadmap/votes/<key>', async () => {
-    const fetchImpl = jsonFetch({});
-    await retractRoadmapVote({ ...baseConfig, fetch: fetchImpl }, 'feature-x');
-    const [, init] = getCall(fetchImpl);
-    expect(init.method).toBe('DELETE');
-  });
-
-  it('URL-encodes the vote key', async () => {
-    const fetchImpl = jsonFetch({});
-    await castRoadmapVote({ ...baseConfig, fetch: fetchImpl }, 'feature/x y');
-    const [url] = getCall(fetchImpl);
-    expect(url).toBe('https://api.example/api/roadmap/votes/feature%2Fx%20y');
   });
 });
 

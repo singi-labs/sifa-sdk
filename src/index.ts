@@ -656,12 +656,7 @@ export {
   type GermShowButtonTo,
 } from './schemas/index.js';
 
-export {
-  ROADMAP_ITEM_META,
-  ROADMAP_ISSUES_REPO,
-  roadmapIssueUrl,
-  type RoadmapItemMeta,
-} from './roadmap/index.js';
+export { ROADMAP_ISSUES_REPO, roadmapIssueUrl } from './roadmap/index.js';
 export {
   splitRoadmapBody,
   type RoadmapBodyParts,

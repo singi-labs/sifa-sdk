@@ -182,13 +182,7 @@ export {
   type CreateReactionVariables,
   type DeleteReactionVariables,
 } from './use-reaction-mutations.js';
-export { useMyRoadmapVotes, useRoadmapVotes } from './use-roadmap.js';
-export {
-  useCastRoadmapItemVote,
-  useCastRoadmapVote,
-  useRetractRoadmapItemVote,
-  useRetractRoadmapVote,
-} from './use-roadmap-mutations.js';
+export { useCastRoadmapItemVote, useRetractRoadmapItemVote } from './use-roadmap-mutations.js';
 export { useDeleteAccount, useResetProfile, useWipePreview } from './use-destructive.js';
 export { useDeleteRepoRecords, useRepoInventory } from './use-repo-inventory.js';
 
