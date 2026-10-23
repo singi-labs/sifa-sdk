@@ -6,9 +6,7 @@ import { type WriteResult } from '../client.js';
 import { useSifaConfig } from '../config.js';
 import {
   castRoadmapItemVote,
-  castRoadmapVote,
   retractRoadmapItemVote,
-  retractRoadmapVote,
   type CastRoadmapVoteResult,
   type RoadmapItemRef,
 } from '../fetchers/roadmap.js';
@@ -19,55 +17,9 @@ async function invalidateRoadmap(queryClient: ReturnType<typeof useQueryClient>)
 }
 
 /**
- * React hook for casting a roadmap vote. Variable: the item key.
- *
- * Returns the discriminated-union result so callers can detect
- * `scope_insufficient` and trigger an OAuth scope-upgrade flow
- * (see {@link castRoadmapVote}).
- */
-export function useCastRoadmapVote(
-  options?: Omit<UseMutationOptions<CastRoadmapVoteResult, Error, string>, 'mutationFn'>,
-) {
-  const config = useSifaConfig();
-  const queryClient = useQueryClient();
-  return useMutation({
-    // Spread first: a consumer-supplied onSuccess would otherwise replace the
-    // handler below and silently drop cache invalidation (#453).
-    ...options,
-    mutationFn: (key: string) => castRoadmapVote(config, key),
-    onSuccess: async (result, variables, onMutateResult, context) => {
-      if (result.ok) {
-        await invalidateRoadmap(queryClient);
-      }
-      await options?.onSuccess?.(result, variables, onMutateResult, context);
-    },
-  });
-}
-
-/** React hook for retracting a previously-cast roadmap vote. */
-export function useRetractRoadmapVote(
-  options?: Omit<UseMutationOptions<WriteResult, Error, string>, 'mutationFn'>,
-) {
-  const config = useSifaConfig();
-  const queryClient = useQueryClient();
-  return useMutation({
-    // Spread first: a consumer-supplied onSuccess would otherwise replace the
-    // handler below and silently drop cache invalidation (#453).
-    ...options,
-    mutationFn: (key: string) => retractRoadmapVote(config, key),
-    onSuccess: async (result, variables, onMutateResult, context) => {
-      if (result.success) {
-        await invalidateRoadmap(queryClient);
-      }
-      await options?.onSuccess?.(result, variables, onMutateResult, context);
-    },
-  });
-}
-
-/**
  * React hook for voting on a roadmap board item. Variable: the item's
- * `{ did, rkey }`. Returns the same discriminated-union result as
- * {@link useCastRoadmapVote}.
+ * `{ did, rkey }`. Returns the discriminated-union result so callers can
+ * detect `scope_insufficient` and trigger an OAuth scope-upgrade flow.
  *
  * Board data from `fetchRoadmap` is usually server-rendered, so the
  * invalidation here does not refresh it: keep optimistic local state or call

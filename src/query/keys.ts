@@ -187,8 +187,6 @@ export const sifaQueryKeys = {
 
   roadmap: {
     all: () => ['sifa', 'roadmap'] as const,
-    votes: () => ['sifa', 'roadmap', 'votes'] as const,
-    myVotes: () => ['sifa', 'roadmap', 'my-votes'] as const,
   },
 
   bskyPreferences: {
@@ -273,8 +271,6 @@ export type SifaQueryKey =
   | ReturnType<typeof sifaQueryKeys.reactions.status>
   | ReturnType<typeof sifaQueryKeys.reactions.accountCheck>
   | ReturnType<typeof sifaQueryKeys.roadmap.all>
-  | ReturnType<typeof sifaQueryKeys.roadmap.votes>
-  | ReturnType<typeof sifaQueryKeys.roadmap.myVotes>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.all>
   | ReturnType<typeof sifaQueryKeys.bskyPreferences.contentLabels>
   | ReturnType<typeof sifaQueryKeys.userSettings.all>

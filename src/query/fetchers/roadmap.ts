@@ -14,65 +14,13 @@ export interface RoadmapVoter {
   avatarUrl?: string;
 }
 
-/** Map of item key -> vote tally and voter list. */
-export type RoadmapVotesResponse = Record<string, { count: number; voters: RoadmapVoter[] }>;
-
-/**
- * Public roadmap vote tallies, keyed by item. Returns `{}` on any error.
- */
-export async function fetchRoadmapVotes(
-  config: SifaApiConfig,
-  options: ApiFetchOptions = {},
-): Promise<RoadmapVotesResponse> {
-  try {
-    return await apiFetch<RoadmapVotesResponse>(config, '/api/roadmap/votes', {
-      cache: 'no-store',
-      ...options,
-    });
-  } catch {
-    return {};
-  }
-}
-
-export interface FetchMyRoadmapVotesOptions extends ApiFetchOptions {
-  /**
-   * Pass the caller's `Cookie` header on Next.js RSC server-side calls.
-   * Required for authenticated server fetches because `credentials: 'include'`
-   * does not propagate browser cookies in RSC.
-   */
-  cookieHeader?: string;
-}
-
-/**
- * Roadmap items the authenticated user has voted on. Returns `[]` on any
- * error or when the response payload is shaped unexpectedly.
- */
-export async function fetchMyRoadmapVotes(
-  config: SifaApiConfig,
-  options: FetchMyRoadmapVotesOptions = {},
-): Promise<string[]> {
-  const headers: Record<string, string> = { ...(options.headers ?? {}) };
-  if (options.cookieHeader) headers.cookie = options.cookieHeader;
-
-  try {
-    const data = await apiFetch<{ voted?: string[] }>(config, '/api/roadmap/votes/me', {
-      credentials: 'include',
-      ...options,
-      headers,
-    });
-    return data.voted ?? [];
-  } catch {
-    return [];
-  }
-}
-
-/** Result of a successful {@link castRoadmapVote} -- the created upvote record. */
+/** Result of a successful roadmap vote -- the created upvote record. */
 export interface RoadmapVoteResult {
   uri: string;
   rkey: string;
 }
 
-/** Structured error returned by {@link castRoadmapVote} on failure. */
+/** Structured error returned by {@link castRoadmapItemVote} on failure. */
 export interface RoadmapVoteError {
   type: 'scope_insufficient' | 'error';
   /**
@@ -84,32 +32,12 @@ export interface RoadmapVoteError {
 }
 
 /**
- * Discriminated-union result of {@link castRoadmapVote}. Exported so the
- * `useCastRoadmapVote` hook and SDK consumers can type mutation handlers
+ * Discriminated-union result of {@link castRoadmapItemVote}. Exported so the
+ * `useCastRoadmapItemVote` hook and SDK consumers can type mutation handlers
  * against a single source of truth.
  */
 export type CastRoadmapVoteResult =
   { ok: true; data: RoadmapVoteResult } | { ok: false; error: RoadmapVoteError };
-
-/**
- * Cast a vote on a roadmap item by its key.
- *
- * Writes an `app.userinput.upvote` record into the viewer's PDS (server-side,
- * via their OAuth session). Returns a discriminated-union result rather than
- * the generic {@link WriteResult} because a first-time voter's PDS grant may
- * not yet include the `app.userinput.upvote` collection: the AppView responds
- * 403 `ScopeInsufficient`, which the caller handles by triggering an OAuth
- * scope upgrade rather than showing an error. Mirrors {@link createReaction}.
- *
- * Never throws.
- */
-export function castRoadmapVote(
-  config: SifaApiConfig,
-  key: string,
-  options: ApiFetchOptions = {},
-): Promise<CastRoadmapVoteResult> {
-  return castUpvote(config, `/api/roadmap/votes/${encodeURIComponent(key)}`, options);
-}
 
 async function castUpvote(
   config: SifaApiConfig,
@@ -152,15 +80,6 @@ async function castUpvote(
   } catch {
     return { ok: false, error: { type: 'error' } };
   }
-}
-
-/** Retract a previously-cast roadmap vote. */
-export function retractRoadmapVote(
-  config: SifaApiConfig,
-  key: string,
-  options: ApiFetchOptions = {},
-): Promise<WriteResult> {
-  return apiWrite(config, `/api/roadmap/votes/${encodeURIComponent(key)}`, 'DELETE', options);
 }
 
 /** Roadmap group of a board item (sifa-api `GET /api/roadmap`). */
@@ -257,8 +176,16 @@ function itemVotePath(item: RoadmapItemRef): string {
 }
 
 /**
- * Vote on a roadmap board item. Same result shape and scope handling as
- * {@link castRoadmapVote}. Never throws.
+ * Vote on a roadmap board item, identified by its `{ did, rkey }`.
+ *
+ * Writes an `app.userinput.upvote` record into the viewer's PDS (server-side,
+ * via their OAuth session). Returns a discriminated-union result rather than
+ * the generic {@link WriteResult} because a first-time voter's PDS grant may
+ * not yet include the `app.userinput.upvote` collection: the AppView responds
+ * 403 `ScopeInsufficient`, which the caller handles by triggering an OAuth
+ * scope upgrade rather than showing an error. Mirrors {@link createReaction}.
+ *
+ * Never throws.
  */
 export function castRoadmapItemVote(
   config: SifaApiConfig,

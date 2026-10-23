@@ -12,7 +12,6 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
   it('re-exports a representative sample of fetchers across domains', () => {
     expect(typeof Fetchers.fetchProfile).toBe('function');
     expect(typeof Fetchers.fetchStats).toBe('function');
-    expect(typeof Fetchers.fetchRoadmapVotes).toBe('function');
     expect(typeof Fetchers.fetchRoadmap).toBe('function');
     expect(typeof Fetchers.castRoadmapItemVote).toBe('function');
     expect(typeof Fetchers.retractRoadmapItemVote).toBe('function');
@@ -39,7 +38,6 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
   it('re-exports a representative sample of mutation fetchers', () => {
     expect(typeof Fetchers.createPosition).toBe('function');
     expect(typeof Fetchers.updateProfileSelf).toBe('function');
-    expect(typeof Fetchers.castRoadmapVote).toBe('function');
     expect(typeof Fetchers.deleteAccount).toBe('function');
     expect(typeof Fetchers.fetchWipePreview).toBe('function');
   });
@@ -55,7 +53,7 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
     expect(exported.SifaProvider).toBeUndefined();
     expect(exported.useSifaConfig).toBeUndefined();
     expect(exported.useProfile).toBeUndefined();
-    expect(exported.useCastRoadmapVote).toBeUndefined();
+    expect(exported.useCastRoadmapItemVote).toBeUndefined();
     expect(exported.useCreatePosition).toBeUndefined();
   });
 });

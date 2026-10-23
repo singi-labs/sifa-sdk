@@ -386,14 +386,9 @@ export {
 } from './fetchers/quoted-posts.js';
 export {
   castRoadmapItemVote,
-  castRoadmapVote,
-  fetchMyRoadmapVotes,
   fetchRoadmap,
-  fetchRoadmapVotes,
   retractRoadmapItemVote,
-  retractRoadmapVote,
   type CastRoadmapVoteResult,
-  type FetchMyRoadmapVotesOptions,
   type FetchRoadmapOptions,
   type RoadmapBoardItem,
   type RoadmapBoardSize,
@@ -402,7 +397,6 @@ export {
   type RoadmapVoteError,
   type RoadmapVoteResult,
   type RoadmapVoter,
-  type RoadmapVotesResponse,
 } from './fetchers/roadmap.js';
 export {
   deleteAccount,
@@ -626,12 +620,9 @@ export {
   type CreateReactionVariables,
   type DeleteReactionVariables,
 } from './hooks/use-reaction-mutations.js';
-export { useMyRoadmapVotes, useRoadmapVotes } from './hooks/use-roadmap.js';
 export {
   useCastRoadmapItemVote,
-  useCastRoadmapVote,
   useRetractRoadmapItemVote,
-  useRetractRoadmapVote,
 } from './hooks/use-roadmap-mutations.js';
 export { useDeleteAccount, useResetProfile, useWipePreview } from './hooks/use-destructive.js';
 export { useDeleteRepoRecords, useRepoInventory } from './hooks/use-repo-inventory.js';

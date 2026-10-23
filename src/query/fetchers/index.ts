@@ -328,14 +328,9 @@ export {
 } from './quoted-posts.js';
 export {
   castRoadmapItemVote,
-  castRoadmapVote,
-  fetchMyRoadmapVotes,
   fetchRoadmap,
-  fetchRoadmapVotes,
   retractRoadmapItemVote,
-  retractRoadmapVote,
   type CastRoadmapVoteResult,
-  type FetchMyRoadmapVotesOptions,
   type FetchRoadmapOptions,
   type RoadmapBoardItem,
   type RoadmapBoardSize,
@@ -344,7 +339,6 @@ export {
   type RoadmapVoteError,
   type RoadmapVoteResult,
   type RoadmapVoter,
-  type RoadmapVotesResponse,
 } from './roadmap.js';
 export {
   deleteAccount,
