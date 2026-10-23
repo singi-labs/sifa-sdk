@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import {
   apiFetch,
   apiWrite,
@@ -193,6 +195,24 @@ export interface RoadmapItemRef {
   rkey: string;
 }
 
+const roadmapBoardItemSchema: z.ZodType<RoadmapBoardItem> = z.object({
+  uri: z.string(),
+  did: z.string(),
+  rkey: z.string(),
+  title: z.string(),
+  body: z.string().nullable(),
+  tags: z.array(z.string()),
+  size: z.enum(['small', 'medium', 'epic']).nullable(),
+  status: z.enum(['done', 'in-progress', 'planned', 'later', 'under-review']),
+  votable: z.boolean(),
+  votes: z.object({
+    count: z.number(),
+    voters: z.array(z.object({ did: z.string(), avatarUrl: z.string().optional() })),
+  }),
+  createdAt: z.string(),
+  viewerVoted: z.boolean(),
+});
+
 export interface FetchRoadmapOptions extends ApiFetchOptions {
   /**
    * Pass the caller's `Cookie` header on Next.js RSC server-side calls so
@@ -221,7 +241,12 @@ export async function fetchRoadmap(
       ...rest,
       headers,
     });
-    return Array.isArray(data.items) ? (data.items as RoadmapBoardItem[]) : null;
+    if (!Array.isArray(data.items)) return null;
+    // Drop items with an unexpected shape rather than failing the whole roadmap.
+    return data.items.flatMap((raw) => {
+      const parsed = roadmapBoardItemSchema.safeParse(raw);
+      return parsed.success ? [parsed.data] : [];
+    });
   } catch {
     return null;
   }

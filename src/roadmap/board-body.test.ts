@@ -23,8 +23,29 @@ describe('splitRoadmapBody', () => {
     });
   });
 
-  it('only turns GitHub issue URLs into issue links', () => {
-    expect(splitRoadmapBody('Idea.\n\nTracking: https://evil.example/issues/1').issues).toEqual([]);
+  it('only links issues in the roadmap issues repo, and keeps other lines as text', () => {
+    expect(splitRoadmapBody('Idea.\n\nTracking: https://evil.example/issues/1')).toEqual({
+      description: 'Idea.\n\nTracking: https://evil.example/issues/1',
+      issues: [],
+    });
+    expect(
+      splitRoadmapBody('Idea.\nTracking: https://github.com/attacker/phish/issues/1').issues,
+    ).toEqual([]);
+  });
+
+  it('keeps a "Tracking:" line that holds no issue link', () => {
+    expect(splitRoadmapBody('Tracking: my reading progress across devices')).toEqual({
+      description: 'Tracking: my reading progress across devices',
+      issues: [],
+    });
+  });
+
+  it('tolerates trailing punctuation and angle brackets around issue links', () => {
+    expect(
+      splitRoadmapBody(
+        'X.\nTracking: <https://github.com/singi-labs/sifa-workspace/issues/7>, https://github.com/singi-labs/sifa-workspace/issues/8.',
+      ).issues.map((i) => i.number),
+    ).toEqual([7, 8]);
   });
 
   it('handles a missing body', () => {

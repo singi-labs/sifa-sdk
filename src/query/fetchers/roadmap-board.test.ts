@@ -51,6 +51,19 @@ describe('fetchRoadmap', () => {
     expect(headers.get('cookie')).toBe('session=abc');
   });
 
+  it('sends credentials so a browser call carries the session', async () => {
+    const fetchImpl = jsonFetch({ items: [] });
+    await fetchRoadmap({ ...baseConfig, fetch: fetchImpl });
+    expect(getCall(fetchImpl)[1].credentials).toBe('include');
+  });
+
+  it('drops items that do not match the expected shape', async () => {
+    const fetchImpl = jsonFetch({
+      items: [item, { ...item, uri: 'x', status: 'shipped' }, { ...item, votes: null }],
+    });
+    expect(await fetchRoadmap({ ...baseConfig, fetch: fetchImpl })).toEqual([item]);
+  });
+
   it('returns null on error so the page can tell an outage from an empty roadmap', async () => {
     expect(await fetchRoadmap({ ...baseConfig, fetch: jsonFetch({}, 500) })).toBeNull();
     expect(await fetchRoadmap({ ...baseConfig, fetch: jsonFetch({ nope: 1 }) })).toBeNull();

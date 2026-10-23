@@ -13,6 +13,9 @@ describe('@singi-labs/sifa-sdk/query/fetchers barrel', () => {
     expect(typeof Fetchers.fetchProfile).toBe('function');
     expect(typeof Fetchers.fetchStats).toBe('function');
     expect(typeof Fetchers.fetchRoadmapVotes).toBe('function');
+    expect(typeof Fetchers.fetchRoadmap).toBe('function');
+    expect(typeof Fetchers.castRoadmapItemVote).toBe('function');
+    expect(typeof Fetchers.retractRoadmapItemVote).toBe('function');
     expect(typeof Fetchers.fetchActivityFeed).toBe('function');
     expect(typeof Fetchers.fetchActivityPreferences).toBe('function');
     expect(typeof Fetchers.updateActivityPreferences).toBe('function');

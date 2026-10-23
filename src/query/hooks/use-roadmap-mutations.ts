@@ -68,6 +68,10 @@ export function useRetractRoadmapVote(
  * React hook for voting on a roadmap board item. Variable: the item's
  * `{ did, rkey }`. Returns the same discriminated-union result as
  * {@link useCastRoadmapVote}.
+ *
+ * Board data from `fetchRoadmap` is usually server-rendered, so the
+ * invalidation here does not refresh it: keep optimistic local state or call
+ * `router.refresh()`. Voting twice is safe; the API answers 200.
  */
 export function useCastRoadmapItemVote(
   options?: Omit<UseMutationOptions<CastRoadmapVoteResult, Error, RoadmapItemRef>, 'mutationFn'>,
