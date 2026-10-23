@@ -16,7 +16,8 @@ on:
 # Skip bot-created issues (Dependabot, GitHub Actions) like auto-add-to-project.yml
 if: github.actor != 'dependabot[bot]' && github.actor != 'github-actions[bot]'
 
-runs-on: ${{ vars.CI_RUNNER || 'self-hosted-sifa' }}
+# Public repo: GitHub-hosted runner (free here). Self-hosted runners are for private repos only.
+runs-on: ubuntu-latest
 
 permissions:
   contents: read
