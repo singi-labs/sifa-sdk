@@ -5,9 +5,12 @@ import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/
 import { type WriteResult } from '../client.js';
 import { useSifaConfig } from '../config.js';
 import {
+  castRoadmapItemVote,
   castRoadmapVote,
+  retractRoadmapItemVote,
   retractRoadmapVote,
   type CastRoadmapVoteResult,
+  type RoadmapItemRef,
 } from '../fetchers/roadmap.js';
 import { sifaQueryKeys } from '../keys.js';
 
@@ -52,6 +55,50 @@ export function useRetractRoadmapVote(
     // handler below and silently drop cache invalidation (#453).
     ...options,
     mutationFn: (key: string) => retractRoadmapVote(config, key),
+    onSuccess: async (result, variables, onMutateResult, context) => {
+      if (result.success) {
+        await invalidateRoadmap(queryClient);
+      }
+      await options?.onSuccess?.(result, variables, onMutateResult, context);
+    },
+  });
+}
+
+/**
+ * React hook for voting on a roadmap board item. Variable: the item's
+ * `{ did, rkey }`. Returns the same discriminated-union result as
+ * {@link useCastRoadmapVote}.
+ */
+export function useCastRoadmapItemVote(
+  options?: Omit<UseMutationOptions<CastRoadmapVoteResult, Error, RoadmapItemRef>, 'mutationFn'>,
+) {
+  const config = useSifaConfig();
+  const queryClient = useQueryClient();
+  return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
+    mutationFn: (item: RoadmapItemRef) => castRoadmapItemVote(config, item),
+    onSuccess: async (result, variables, onMutateResult, context) => {
+      if (result.ok) {
+        await invalidateRoadmap(queryClient);
+      }
+      await options?.onSuccess?.(result, variables, onMutateResult, context);
+    },
+  });
+}
+
+/** React hook for retracting a vote on a roadmap board item. */
+export function useRetractRoadmapItemVote(
+  options?: Omit<UseMutationOptions<WriteResult, Error, RoadmapItemRef>, 'mutationFn'>,
+) {
+  const config = useSifaConfig();
+  const queryClient = useQueryClient();
+  return useMutation({
+    // Spread first: a consumer-supplied onSuccess would otherwise replace the
+    // handler below and silently drop cache invalidation (#453).
+    ...options,
+    mutationFn: (item: RoadmapItemRef) => retractRoadmapItemVote(config, item),
     onSuccess: async (result, variables, onMutateResult, context) => {
       if (result.success) {
         await invalidateRoadmap(queryClient);

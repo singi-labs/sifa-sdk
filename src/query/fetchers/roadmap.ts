@@ -101,18 +101,26 @@ export type CastRoadmapVoteResult =
  *
  * Never throws.
  */
-export async function castRoadmapVote(
+export function castRoadmapVote(
   config: SifaApiConfig,
   key: string,
   options: ApiFetchOptions = {},
 ): Promise<CastRoadmapVoteResult> {
+  return castUpvote(config, `/api/roadmap/votes/${encodeURIComponent(key)}`, options);
+}
+
+async function castUpvote(
+  config: SifaApiConfig,
+  path: string,
+  options: ApiFetchOptions,
+): Promise<CastRoadmapVoteResult> {
   const fetchFn = config.fetch ?? globalThis.fetch;
-  const url = `${config.baseUrl}/api/roadmap/votes/${encodeURIComponent(key)}`;
+  const url = `${config.baseUrl}${path}`;
 
   try {
     const res = await fetchFn(url, {
       method: 'POST',
-      // No body: the item key is in the URL. Do NOT declare a JSON content-type
+      // No body: the item is in the URL. Do NOT declare a JSON content-type
       // for an empty body — Fastify rejects that with a 400 before the handler
       // runs. Only forward caller-provided headers.
       ...(options.headers ? { headers: options.headers } : {}),
@@ -151,4 +159,95 @@ export function retractRoadmapVote(
   options: ApiFetchOptions = {},
 ): Promise<WriteResult> {
   return apiWrite(config, `/api/roadmap/votes/${encodeURIComponent(key)}`, 'DELETE', options);
+}
+
+/** Roadmap group of a board item (sifa-api `GET /api/roadmap`). */
+export type RoadmapBoardStatus = 'done' | 'in-progress' | 'planned' | 'later' | 'under-review';
+
+export type RoadmapBoardSize = 'small' | 'medium' | 'epic';
+
+/** One item on the roadmap, read from Sifa's userinput.app board. */
+export interface RoadmapBoardItem {
+  /** The `app.userinput.discussion` record URI. */
+  uri: string;
+  /** Author of the discussion (sifa.id or anyone who posted an idea). */
+  did: string;
+  rkey: string;
+  title: string;
+  /** Free text from the record. Render as plain text. */
+  body: string | null;
+  /** Tags without the size tag. */
+  tags: string[];
+  size: RoadmapBoardSize | null;
+  status: RoadmapBoardStatus;
+  votable: boolean;
+  votes: { count: number; voters: RoadmapVoter[] };
+  createdAt: string;
+  /** Whether the signed-in viewer voted. False without a session. */
+  viewerVoted: boolean;
+}
+
+/** Identifies a board item for voting. */
+export interface RoadmapItemRef {
+  did: string;
+  rkey: string;
+}
+
+export interface FetchRoadmapOptions extends ApiFetchOptions {
+  /**
+   * Pass the caller's `Cookie` header on Next.js RSC server-side calls so
+   * `viewerVoted` reflects the viewer.
+   */
+  cookieHeader?: string;
+}
+
+/**
+ * The roadmap as built from Sifa's userinput.app board, grouped and ordered
+ * by the API. Returns `null` on any error, so callers can tell an outage from
+ * an empty roadmap.
+ */
+export async function fetchRoadmap(
+  config: SifaApiConfig,
+  options: FetchRoadmapOptions = {},
+): Promise<RoadmapBoardItem[] | null> {
+  const { cookieHeader, ...rest } = options;
+  const headers: Record<string, string> = { ...(rest.headers ?? {}) };
+  if (cookieHeader) headers.cookie = cookieHeader;
+
+  try {
+    const data = await apiFetch<{ items?: unknown }>(config, '/api/roadmap', {
+      cache: 'no-store',
+      credentials: 'include',
+      ...rest,
+      headers,
+    });
+    return Array.isArray(data.items) ? (data.items as RoadmapBoardItem[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function itemVotePath(item: RoadmapItemRef): string {
+  return `/api/roadmap/items/${encodeURIComponent(item.did)}/${encodeURIComponent(item.rkey)}/vote`;
+}
+
+/**
+ * Vote on a roadmap board item. Same result shape and scope handling as
+ * {@link castRoadmapVote}. Never throws.
+ */
+export function castRoadmapItemVote(
+  config: SifaApiConfig,
+  item: RoadmapItemRef,
+  options: ApiFetchOptions = {},
+): Promise<CastRoadmapVoteResult> {
+  return castUpvote(config, itemVotePath(item), options);
+}
+
+/** Retract a vote on a roadmap board item. */
+export function retractRoadmapItemVote(
+  config: SifaApiConfig,
+  item: RoadmapItemRef,
+  options: ApiFetchOptions = {},
+): Promise<WriteResult> {
+  return apiWrite(config, itemVotePath(item), 'DELETE', options);
 }

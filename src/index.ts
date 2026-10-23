@@ -662,6 +662,11 @@ export {
   roadmapIssueUrl,
   type RoadmapItemMeta,
 } from './roadmap/index.js';
+export {
+  splitRoadmapBody,
+  type RoadmapBodyParts,
+  type RoadmapIssueLink,
+} from './roadmap/board-body.js';
 
 export type {
   LocationSegment,
