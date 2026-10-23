@@ -19,6 +19,20 @@ export function maxGraphemes(max: number) {
   };
 }
 
+/**
+ * Byte-length refinement matching the AT Protocol lexicon string `maxLength`
+ * constraint, which counts UTF-8 bytes (not UTF-16 code units). Uses
+ * `TextEncoder` rather than `Buffer` so it also runs in browsers.
+ */
+export function maxBytes(max: number) {
+  const encoder = new TextEncoder();
+  return (value: string): boolean => {
+    // UTF-8 uses at most 3 bytes per UTF-16 unit, so short strings cannot exceed `max`.
+    if (value.length * 3 <= max) return true;
+    return encoder.encode(value).length <= max;
+  };
+}
+
 /** Decentralized identifier, AT Protocol `format: did`. */
 export const didSchema = z.string().regex(/^did:[a-z]+:[a-zA-Z0-9._:%-]+$/, 'Invalid DID');
 

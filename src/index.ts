@@ -596,6 +596,7 @@ export {
   externalRecordRefSchema,
   languageTagSchema,
   makeGraphFollowRecordSchema,
+  maxBytes,
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,
