@@ -18,20 +18,42 @@ export interface RoadmapBodyParts {
   issues: RoadmapIssueLink[];
 }
 
-const TRACKING_LINE = /^tracking:\s*(.+)$/i;
-const ISSUE_URL = new RegExp(
-  `^https://github\\.com/${ROADMAP_ISSUES_REPO.replace(/[.-]/g, '\\$&')}/issues/(\\d+)$`,
-);
+const TRACKING_PREFIX = 'tracking:';
+const ISSUE_PATH_PREFIX = `/${ROADMAP_ISSUES_REPO}/issues/`;
+const TRAILING_PUNCTUATION = new Set(['>', '.', ',', ';', ')']);
+
+/** The issue number when `candidate` is an issue URL in the roadmap repo. */
+function roadmapIssueNumber(candidate: string): number | null {
+  let url: URL;
+  try {
+    url = new URL(candidate);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'https:' || url.hostname !== 'github.com') return null;
+  if (url.search || url.hash || !url.pathname.startsWith(ISSUE_PATH_PREFIX)) return null;
+  const rest = url.pathname.slice(ISSUE_PATH_PREFIX.length);
+  if (rest.length === 0 || rest.length > 9) return null;
+  for (const ch of rest) if (ch < '0' || ch > '9') return null;
+  return Number(rest);
+}
+
+function trimEntry(raw: string): string {
+  const start = raw.startsWith('<') ? 1 : 0;
+  let end = raw.length;
+  while (end > start && TRAILING_PUNCTUATION.has(raw[end - 1] ?? '')) end--;
+  return raw.slice(start, end);
+}
 
 /** Issue numbers on a tracking line, or null when any entry is not a roadmap issue. */
 function parseTrackingLine(entries: string): number[] | null {
   const numbers: number[] = [];
-  for (const raw of entries.split(/[,\s]+/)) {
-    const candidate = raw.replace(/^</, '').replace(/[>.,;)]+$/, '');
+  for (const raw of entries.split(',').flatMap((part) => part.split(' '))) {
+    const candidate = trimEntry(raw.trim());
     if (!candidate) continue;
-    const match = ISSUE_URL.exec(candidate);
-    if (!match) return null;
-    numbers.push(Number(match[1]));
+    const number = roadmapIssueNumber(candidate);
+    if (number === null) return null;
+    numbers.push(number);
   }
   return numbers.length > 0 ? numbers : null;
 }
@@ -40,8 +62,10 @@ export function splitRoadmapBody(body: string | null | undefined): RoadmapBodyPa
   const issues: RoadmapIssueLink[] = [];
   const kept: string[] = [];
   for (const line of (body ?? '').split('\n')) {
-    const tracking = TRACKING_LINE.exec(line.trim());
-    const numbers = tracking ? parseTrackingLine(tracking[1] ?? '') : null;
+    const trimmed = line.trim();
+    const numbers = trimmed.toLowerCase().startsWith(TRACKING_PREFIX)
+      ? parseTrackingLine(trimmed.slice(TRACKING_PREFIX.length))
+      : null;
     if (!numbers) {
       kept.push(line);
       continue;
