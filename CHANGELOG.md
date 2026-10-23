@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.20.2
+
+### Patch Changes
+
+- e77ba2a: Add `fetchRoadmap`, `castRoadmapItemVote`, `retractRoadmapItemVote`, the `useCastRoadmapItemVote` / `useRetractRoadmapItemVote` hooks and `splitRoadmapBody` for the roadmap read from Sifa's userinput.app board (`GET /api/roadmap`, votes per `{ did, rkey }`). The key-based roadmap vote functions are unchanged.
+
 ## 0.20.1
 
 ### Patch Changes
