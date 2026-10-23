@@ -8,9 +8,15 @@ on:
 permissions:
   contents: read
 
+# Superseded PR runs are cancelled; pushes to main always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check:
-    runs-on: ${{ vars.CI_RUNNER || 'self-hosted-sifa' }}
+    # Public repo: pull requests (including forks) run on GitHub-hosted runners.
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -27,9 +33,7 @@ jobs:
         run: npm install -g --ignore-scripts pnpm@10.30.1
 
       - name: Install
-        # Retry transient pnpm copyfile ENOENT races on the shared self-hosted
-        # pnpm store (the host's default store is shared across jobs).
-        # See sifa-web#1261.
+        # Retry transient registry or store errors (see sifa-web#1261).
         run: |
           attempt=1
           max=3
