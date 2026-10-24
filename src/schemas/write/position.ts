@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-import { entityRefSchema, skillRefSchema, writeLocationSchema } from './shared.js';
+import {
+  entityRefSchema,
+  partialDateFieldSchema,
+  skillRefSchema,
+  writeLocationSchema,
+} from './shared.js';
 
 /**
  * Schema enforced by `POST /profile/positions` on sifa-api.
@@ -28,8 +33,8 @@ export const PositionWriteSchema = z.object({
   onBehalfOfEntityRef: entityRefSchema.nullable(),
   workplaceType: z.string().nullable().optional(),
   location: writeLocationSchema,
-  startedAt: z.string().nullable().optional(),
-  endedAt: z.string().nullable().optional(),
+  startedAt: partialDateFieldSchema,
+  endedAt: partialDateFieldSchema,
   skills: z.array(skillRefSchema).max(50).nullable().optional(),
 });
 
