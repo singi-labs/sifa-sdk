@@ -134,6 +134,26 @@ export function isValidPartialDate(input: unknown): boolean {
   return PARTIAL_DATE_RE.test(input) || isValidDateOnly(input);
 }
 
+const DATETIME_DAY_RE = /^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}/;
+
+/**
+ * Optional, clearable partial-date field (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`,
+ * no time) shared by the dated profile sections. `null` clears the date.
+ *
+ * Older records hold RFC 3339 datetimes and the editor sends a stored value
+ * back unchanged, so a datetime is shortened to its calendar day rather than
+ * rejected. An empty string stays accepted, as before this field was checked.
+ */
+export const partialDateFieldSchema = z
+  .string()
+  .transform((v) => DATETIME_DAY_RE.exec(v)?.[1] ?? v)
+  .refine(
+    (v) => v === '' || isValidPartialDate(v),
+    'must be a valid YYYY, YYYY-MM or YYYY-MM-DD date',
+  )
+  .nullable()
+  .optional();
+
 // ---- shared write-schema fragments used by multiple sections ----
 
 /**

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { externalRecordRefSchema, optionalUrl } from './shared.js';
+import { externalRecordRefSchema, optionalUrl, partialDateFieldSchema } from './shared.js';
 
 /**
  * A person named as a member of the project. Naming someone is a claim: they
@@ -37,8 +37,8 @@ export const ProjectWriteSchema = z.object({
   sameAs: externalRecordRefSchema.optional(),
   /** Calendar events this project organized or hosted. An empty list clears them. */
   events: z.array(projectEventWriteSchema).max(200).optional(),
-  startedAt: z.string().nullable().optional(),
-  endedAt: z.string().nullable().optional(),
+  startedAt: partialDateFieldSchema,
+  endedAt: partialDateFieldSchema,
 });
 
 export type ProjectWriteInput = z.infer<typeof ProjectWriteSchema>;

@@ -7,6 +7,7 @@ import {
   entityRefSchema,
   externalRecordRefSchema,
   optionalUrl,
+  partialDateFieldSchema,
   skillRefSchema,
   writeLocationSchema,
 } from './shared.js';
@@ -30,9 +31,8 @@ export const InvolvementWriteSchema = z.object({
   upstreamUrl: optionalUrl(),
   role: z.string().max(2560).nullable().optional(),
   description: z.string().max(50000).nullable().optional(),
-  // Freeform YYYY / YYYY-MM / YYYY-MM-DD; validated loosely so partial dates pass.
-  startedAt: z.string().max(32).nullable().optional(),
-  endedAt: z.string().max(32).nullable().optional(),
+  startedAt: partialDateFieldSchema,
+  endedAt: partialDateFieldSchema,
   links: z.array(artifactLinkSchema).max(50).nullable().optional(),
   /** Other people who worked on this alongside you. Same shape as project members. */
   collaborators: z.array(projectMemberWriteSchema).max(50).optional(),

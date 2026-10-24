@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { normalizeDoi } from '../../format/doi.js';
-import { optionalUrl } from './shared.js';
+import { optionalUrl, partialDateFieldSchema } from './shared.js';
 
 /**
  * A co-author named on the publication.
@@ -46,7 +46,7 @@ export const PublicationWriteSchema = z.object({
   publisher: z.string().max(256).nullable().optional(),
   url: optionalUrl(),
   description: z.string().max(50000).nullable().optional(),
-  publishedAt: z.string().nullable().optional(),
+  publishedAt: partialDateFieldSchema,
   // Absent here until now, so the write route stripped every co-author before
   // it reached the PDS: the lexicon field, the indexer, the claim flattening
   // and the editor all existed, and nothing joined them. An object schema
