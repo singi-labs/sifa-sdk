@@ -13,14 +13,14 @@
  *
  * Involvement, talks and courses taken have no JSON Resume key of their own and
  * go into the nearest standard section: involvement next to volunteering, talks
- * as publications of type "Talks", courses as certificates. Strict consumers
- * such as altacv refuse any unknown top-level key, so nothing new is added
- * there. Fields with no reasonable slot -- endorsements, confirmations,
+ * as publications of type "Talks", courses as certificates of type "Courses".
+ * Strict consumers such as altacv refuse any unknown top-level key, so nothing
+ * new is added there. Fields with no reasonable slot -- endorsements, confirmations,
  * investments, courses someone taught -- are dropped. The loss is documented
  * for the user at the point of download.
  */
 
-import { parseLocationString } from '../format/location-utils.js';
+import { formatLocation, parseLocationString } from '../format/location-utils.js';
 import { formatStructuredName } from '../format/pds-utils.js';
 import { filterHidden } from '../profile/section-model.js';
 import {
@@ -150,6 +150,8 @@ export interface JsonResumeBasics {
 export interface JsonResumeWork {
   readonly name?: string;
   readonly position: string;
+  /** The position's location as one display line ("Kyiv, Ukraine"). */
+  readonly location?: string;
   readonly summary?: string;
   readonly startDate?: string;
   readonly endDate?: string;
@@ -190,6 +192,14 @@ export interface JsonResumeCertificate {
   readonly endDate?: string;
   readonly issuer?: string;
   readonly url?: string;
+  /**
+   * "Courses" for a course taken, which has no JSON Resume section of its own.
+   * Not in the JSON Resume schema, which allows extra fields; sifa-api's
+   * typeset CV lists these under their own "Courses" heading.
+   */
+  readonly type?: string;
+  /** A course's number ("CTFL-01"). Not in the schema either; see `type`. */
+  readonly number?: string;
 }
 
 export interface JsonResumePublication {
@@ -457,6 +467,7 @@ export function profileToJsonResume(
     compact<JsonResumeWork>({
       name: orgName(position.entityName, position.company, s),
       position: s(position.title),
+      location: text(formatLocation(position.location), s),
       summary: text(position.description, s),
       startDate: toResumeDate(position.startedAt),
       endDate: toResumeDate(position.endedAt),
@@ -464,7 +475,14 @@ export function profileToJsonResume(
   );
 
   // Involvement (open source, communities, civic roles) has no JSON Resume key
-  // and sits next to volunteering, sorted together.
+  // and sits next to volunteering, sorted together. The profile API also lists
+  // each legacy volunteering record in `involvement`, marked `legacy` and under
+  // the same rkey; that copy is left out when `volunteering` lists the record
+  // as visible, since that copy also has the resolved organization name.
+  const volunteeringRkeys = new Set(filterHidden(profile.volunteering).map((v) => v.rkey));
+  const involvement = filterHidden(profile.involvement).filter(
+    (entry) => !(entry.legacy && volunteeringRkeys.has(entry.rkey)),
+  );
   const volunteer = sortByActiveDateRange([
     ...filterHidden(profile.volunteering).map((entry) => ({
       organization: orgName(entry.entityName, entry.organization, s),
@@ -473,7 +491,7 @@ export function profileToJsonResume(
       startDate: toResumeDate(entry.startDate),
       endDate: toResumeDate(entry.endDate),
     })),
-    ...filterHidden(profile.involvement).map((entry) => ({
+    ...involvement.map((entry) => ({
       organization: orgName(entry.entityName, entry.upstream, s),
       position: text(entry.role, s) ?? text(getInvolvementKindLabel(entry.kind), s),
       summary: text(entry.description, s),
@@ -512,9 +530,9 @@ export function profileToJsonResume(
       url: link(cert.credentialUrl, s),
     }),
   );
-  // Courses taken, after the certifications. A course whose credential is
-  // already listed as a certification would print twice, and courses someone
-  // taught are not certificates.
+  // Courses taken, after the certifications, marked as courses. A course whose
+  // credential is already listed as a certification would print twice, and
+  // courses someone taught are not certificates.
   const listedCredentials = new Set(filterHidden(profile.certifications).map((c) => c.rkey));
   for (const course of filterHidden(profile.courses)) {
     if (isTeachingCourse(course)) continue;
@@ -524,6 +542,8 @@ export function profileToJsonResume(
         name: s(course.name),
         date: toResumeDate(course.completedAt),
         issuer: orgName(course.entityName, course.institution, s),
+        number: text(course.number, s),
+        type: 'Courses',
       }),
     );
   }

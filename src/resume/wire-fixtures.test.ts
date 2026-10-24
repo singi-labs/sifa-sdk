@@ -29,6 +29,13 @@ const schema = JSON.parse(
 // accepts that key even though the JSON Resume schema does not declare it.
 const publicationProps = schema.properties?.publications?.items?.properties;
 if (publicationProps) publicationProps.type = { type: 'string' };
+// altacv refuses these certificate keys, but sifa-api's typeset CV template
+// (typst/sifa-cv.typ) takes them out before altacv's check and prints them
+// itself: the expiry, and a course's marker and number.
+const certificateProps = schema.properties?.certificates?.items?.properties;
+if (certificateProps) {
+  for (const key of ['endDate', 'type', 'number']) certificateProps[key] = { type: 'string' };
+}
 
 /**
  * Keys the schema does not declare, at any depth. Deliberately stricter than

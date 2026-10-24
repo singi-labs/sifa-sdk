@@ -229,6 +229,24 @@ describe('profileToJsonResume work', () => {
     ]);
   });
 
+  it("prints the position's location", () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      positions: [
+        {
+          rkey: '1',
+          company: 'Acme',
+          title: 'Engineer',
+          startedAt: '2020-03',
+          location: { locality: 'Kyiv', country: 'Ukraine', countryCode: 'UA' },
+        },
+        { rkey: '2', company: 'Beta', title: 'Tester', startedAt: '2018', location: null },
+      ],
+    });
+    expect(r.work?.[0]?.location).toBe('Kyiv, Ukraine');
+    expect(r.work?.[1]).not.toHaveProperty('location');
+  });
+
   it('falls back to the stored company name when nothing is linked', () => {
     const r = profileToJsonResume({
       ...minimal,
@@ -819,7 +837,130 @@ describe('profileToJsonResume involvement, talks and courses', () => {
       name: 'Typst basics',
       issuer: 'Typst GmbH',
       date: '2024-09-01',
+      type: 'Courses',
     });
+  });
+
+  // The profile API sends each legacy volunteering record twice: in
+  // `volunteering` and, marked `legacy`, in `involvement` (sifa-workspace#680).
+  it('lists a legacy volunteering record once, not again as involvement', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [
+        {
+          rkey: 'v1',
+          organization: 'Local Food Bank',
+          entityName: 'Food Bank NL',
+          role: 'Volunteer Tester',
+          startDate: '2024-01',
+        },
+        { rkey: 'v2', organization: 'Open Source Org', role: 'Contributor', startDate: '2022-03' },
+      ],
+      involvement: [
+        {
+          rkey: 'i1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Volunteering',
+          startedAt: '2031-01',
+        },
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Local Food Bank',
+          role: 'Volunteer Tester',
+          startedAt: '2024-01',
+          legacy: true,
+        },
+        {
+          rkey: 'v2',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Open Source Org',
+          role: 'Contributor',
+          startedAt: '2022-03',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([
+      { organization: 'Volunteering', position: 'Volunteering', startDate: '2031-01' },
+      { organization: 'Food Bank NL', position: 'Volunteer Tester', startDate: '2024-01' },
+      { organization: 'Open Source Org', position: 'Contributor', startDate: '2022-03' },
+    ]);
+  });
+
+  it('keeps a legacy involvement row when the volunteering list does not carry it', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      involvement: [
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Local Food Bank',
+          role: 'Driver',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([{ organization: 'Local Food Bank', position: 'Driver' }]);
+  });
+
+  it('leaves out the legacy copy of a hidden volunteering record', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [{ rkey: 'v1', organization: 'Secret', hidden: true }],
+      involvement: [
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Secret',
+          legacy: true,
+          hidden: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toBeUndefined();
+  });
+
+  it('keeps the visible legacy copy when only the volunteering copy is hidden', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [{ rkey: 'v1', organization: 'Food bank', hidden: true }],
+      involvement: [
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Food bank',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([{ organization: 'Food bank', position: 'Volunteering' }]);
+  });
+
+  it('marks courses with type Courses and carries the course number', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      courses: [
+        {
+          rkey: 'k1',
+          name: 'Testing basics',
+          institution: 'Test Academy',
+          number: ' CTFL-01 ',
+          completedAt: '2024-01-15',
+        },
+        { rkey: 'k2', name: 'Courses', institution: 'A11Y.nl', number: 'A11Y-2' },
+      ],
+    });
+    expect(r.certificates).toEqual([
+      {
+        name: 'Testing basics',
+        issuer: 'Test Academy',
+        date: '2024-01-15',
+        number: 'CTFL-01',
+        type: 'Courses',
+      },
+      { name: 'Courses', issuer: 'A11Y.nl', number: 'A11Y-2', type: 'Courses' },
+    ]);
   });
 
   it('drops investments', () => {
