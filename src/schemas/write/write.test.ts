@@ -950,14 +950,26 @@ describe('partial-date fields on profile write schemas (sifa-workspace#745)', ()
       }
     });
 
+    it.each(fields)(
+      '%s keeps an empty string, which earlier clients send for a cleared date',
+      (field) => {
+        const parsed = schema.safeParse({ ...base, [field]: '' });
+        expect(parsed.success && (parsed.data as Record<string, unknown>)[field]).toBe('');
+      },
+    );
+
+    it.each(fields)('%s shortens a stored datetime to its calendar day', (field) => {
+      const parsed = schema.safeParse({ ...base, [field]: '2024-01-15T00:00:00.000Z' });
+      expect(parsed.success && (parsed.data as Record<string, unknown>)[field]).toBe('2024-01-15');
+    });
+
     it.each(fields)('%s rejects malformed values', (field) => {
       for (const value of [
-        '',
         '19',
         '2019-9',
         '2019-13',
         '2019-02-30',
-        '2019-09-01T00:00:00Z',
+        '2019-02-30T00:00:00Z',
         'last year',
       ]) {
         expect(schema.safeParse({ ...base, [field]: value }).success).toBe(false);
