@@ -12,7 +12,7 @@ export type SearchMatchReason =
   | { kind: 'role'; value: string; current: boolean }
   /** ISO 3166-1 alpha-2 code when one resolves, else the country as given. */
   | { kind: 'location'; value: string }
-  | { kind: 'text'; field: 'name' | 'headline' | 'about' }
+  | { kind: 'text'; field: 'name' | 'handle' | 'headline' | 'about' }
   | {
       kind: 'connection';
       /**
