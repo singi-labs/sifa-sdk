@@ -165,6 +165,10 @@ describe('formatLocation', () => {
     expect(formatLocation({ postalCode: '1011', country: 'NL' })).toBe('1011, NL');
   });
 
+  it('prints a postal code alone when the country is blank', () => {
+    expect(formatLocation({ postalCode: '1011', country: '' })).toBe('1011');
+  });
+
   it('returns "" for null/undefined', () => {
     expect(formatLocation(null)).toBe('');
     expect(formatLocation(undefined)).toBe('');

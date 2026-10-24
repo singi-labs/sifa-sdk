@@ -477,9 +477,9 @@ export function profileToJsonResume(
   // Involvement (open source, communities, civic roles) has no JSON Resume key
   // and sits next to volunteering, sorted together. The profile API also lists
   // each legacy volunteering record in `involvement`, marked `legacy` and under
-  // the same rkey; that copy is left out when `volunteering` carries the record,
-  // which also has the resolved organization name.
-  const volunteeringRkeys = new Set((profile.volunteering ?? []).map((v) => v.rkey));
+  // the same rkey; that copy is left out when `volunteering` lists the record
+  // as visible, since that copy also has the resolved organization name.
+  const volunteeringRkeys = new Set(filterHidden(profile.volunteering).map((v) => v.rkey));
   const involvement = filterHidden(profile.involvement).filter(
     (entry) => !(entry.legacy && volunteeringRkeys.has(entry.rkey)),
   );

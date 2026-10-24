@@ -909,10 +909,32 @@ describe('profileToJsonResume involvement, talks and courses', () => {
       ...minimal,
       volunteering: [{ rkey: 'v1', organization: 'Secret', hidden: true }],
       involvement: [
-        { rkey: 'v1', kind: 'id.sifa.defs#involvementCharity', upstream: 'Secret', legacy: true },
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Secret',
+          legacy: true,
+          hidden: true,
+        },
       ],
     });
     expect(r.volunteer).toBeUndefined();
+  });
+
+  it('keeps the visible legacy copy when only the volunteering copy is hidden', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [{ rkey: 'v1', organization: 'Food bank', hidden: true }],
+      involvement: [
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Food bank',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([{ organization: 'Food bank', position: 'Volunteering' }]);
   });
 
   it('marks courses with type Courses and carries the course number', () => {
