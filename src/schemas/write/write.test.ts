@@ -6,6 +6,7 @@ import {
   EducationWriteSchema,
   ExternalAccountWriteSchema,
   HonorWriteSchema,
+  InvestmentWriteSchema,
   InvolvementWriteSchema,
   LanguageWriteSchema,
   OrgEmploymentAttestationWriteSchema,
@@ -589,7 +590,7 @@ describe('CourseWriteSchema (credential + completedAt added in this PR)', () => 
       CourseWriteSchema.safeParse({
         name: 'Algorithms',
         credential: 'at://did:plc:x/id.sifa.profile.certification/y',
-        completedAt: '2024-01-15T00:00:00.000Z',
+        completedAt: '2024-01-15',
       }).success,
     ).toBe(true);
   });
@@ -895,5 +896,72 @@ describe('OrgEmploymentAttestationWriteSchema', () => {
         createdAt: '2024-01-01T00:00:00Z',
       }).success,
     ).toBe(false);
+  });
+});
+
+describe('partial-date fields on profile write schemas (sifa-workspace#745)', () => {
+  const cases = [
+    ['PositionWriteSchema', PositionWriteSchema, { title: 'Engineer' }, ['startedAt', 'endedAt']],
+    [
+      'EducationWriteSchema',
+      EducationWriteSchema,
+      { institution: 'Uni' },
+      ['startedAt', 'endedAt'],
+    ],
+    ['ProjectWriteSchema', ProjectWriteSchema, { name: 'Sifa' }, ['startedAt', 'endedAt']],
+    ['HonorWriteSchema', HonorWriteSchema, { title: 'Award' }, ['awardedAt']],
+    ['PublicationWriteSchema', PublicationWriteSchema, { title: 'Paper' }, ['publishedAt']],
+    [
+      'CertificationWriteSchema',
+      CertificationWriteSchema,
+      { name: 'Cert' },
+      ['issuedAt', 'expiresAt'],
+    ],
+    [
+      'VolunteeringWriteSchema',
+      VolunteeringWriteSchema,
+      { organization: 'Org' },
+      ['startedAt', 'endedAt'],
+    ],
+    [
+      'InvolvementWriteSchema',
+      InvolvementWriteSchema,
+      { kind: 'id.sifa.defs#maintainer' },
+      ['startedAt', 'endedAt'],
+    ],
+    [
+      'InvestmentWriteSchema',
+      InvestmentWriteSchema,
+      { company: 'Acme', entityRef: null, viaEntityRef: null },
+      ['startedAt', 'endedAt'],
+    ],
+    [
+      'CourseWriteSchema',
+      CourseWriteSchema,
+      { name: 'Algorithms' },
+      ['completedAt', 'startedAt', 'endedAt'],
+    ],
+  ] as const;
+
+  describe.each(cases)('%s', (_name, schema, base, fields) => {
+    it.each(fields)('%s accepts year, month and day precision, null and absent', (field) => {
+      for (const value of ['2019', '2019-09', '2019-09-12', null, undefined]) {
+        expect(schema.safeParse({ ...base, [field]: value }).success).toBe(true);
+      }
+    });
+
+    it.each(fields)('%s rejects malformed values', (field) => {
+      for (const value of [
+        '',
+        '19',
+        '2019-9',
+        '2019-13',
+        '2019-02-30',
+        '2019-09-01T00:00:00Z',
+        'last year',
+      ]) {
+        expect(schema.safeParse({ ...base, [field]: value }).success).toBe(false);
+      }
+    });
   });
 });

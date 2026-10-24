@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { artifactLinkSchema, entityRefSchema } from './shared.js';
+import { artifactLinkSchema, entityRefSchema, partialDateFieldSchema } from './shared.js';
 
 /**
  * Schema enforced by `POST /profile/investment` on sifa-api.
@@ -35,8 +35,8 @@ export const InvestmentWriteSchema = z.object({
     })
     .nullable()
     .optional(),
-  startedAt: z.string().nullable().optional(),
-  endedAt: z.string().nullable().optional(),
+  startedAt: partialDateFieldSchema,
+  endedAt: partialDateFieldSchema,
   description: z.string().max(50000).nullable().optional(),
   links: z.array(artifactLinkSchema).max(50).nullable().optional(),
 });

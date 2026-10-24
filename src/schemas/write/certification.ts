@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { entityRefSchema, optionalUrl } from './shared.js';
+import { entityRefSchema, optionalUrl, partialDateFieldSchema } from './shared.js';
 
 /** Schema enforced by the generic-record write endpoint for `id.sifa.profile.certification`. */
 export const CertificationWriteSchema = z.object({
@@ -9,8 +9,8 @@ export const CertificationWriteSchema = z.object({
   entityRef: entityRefSchema,
   credentialId: z.string().max(256).nullable().optional(),
   credentialUrl: optionalUrl(),
-  issuedAt: z.string().nullable().optional(),
-  expiresAt: z.string().nullable().optional(),
+  issuedAt: partialDateFieldSchema,
+  expiresAt: partialDateFieldSchema,
 });
 
 export type CertificationWriteInput = z.infer<typeof CertificationWriteSchema>;

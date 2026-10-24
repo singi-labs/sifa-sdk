@@ -134,6 +134,16 @@ export function isValidPartialDate(input: unknown): boolean {
   return PARTIAL_DATE_RE.test(input) || isValidDateOnly(input);
 }
 
+/**
+ * Optional, clearable partial-date field (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`,
+ * no time) shared by the dated profile sections. `null` clears the date.
+ */
+export const partialDateFieldSchema = z
+  .string()
+  .refine(isValidPartialDate, 'must be a valid YYYY, YYYY-MM or YYYY-MM-DD date')
+  .nullable()
+  .optional();
+
 // ---- shared write-schema fragments used by multiple sections ----
 
 /**
