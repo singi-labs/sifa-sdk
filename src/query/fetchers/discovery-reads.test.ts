@@ -52,6 +52,35 @@ describe('fetchSearchProfiles', () => {
     expect(url).toContain('offset=20');
   });
 
+  it('sends a role filter on its own', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    await fetchSearchProfiles({ ...baseConfig, fetch: fetchImpl }, { role: 'UX designer' });
+    const [url] = getCall(fetchImpl);
+    expect(url).toContain('role=UX+designer');
+  });
+
+  it('sends hideFollowing only when true, and never as the only param', async () => {
+    const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
+    const alone = await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { hideFollowing: true },
+    );
+    expect(alone.profiles).toEqual([]);
+    expect(fetchImpl).not.toHaveBeenCalled();
+
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { q: 'go', hideFollowing: true },
+    );
+    expect(getCall(fetchImpl)[0]).toContain('hideFollowing=true');
+
+    await fetchSearchProfiles(
+      { ...baseConfig, fetch: fetchImpl },
+      { q: 'go', hideFollowing: false },
+    );
+    expect(getCall(fetchImpl, 1)[0]).not.toContain('hideFollowing');
+  });
+
   it('omits offset when it is zero', async () => {
     const fetchImpl = jsonFetch({ profiles: [], total: 0, limit: 20, offset: 0 });
     await fetchSearchProfiles({ ...baseConfig, fetch: fetchImpl }, { q: 'engineer', offset: 0 });

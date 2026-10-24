@@ -2,6 +2,28 @@ import type { AccountVerification } from '../../taxonomy/verification-providers.
 import type { SkillSuggestion } from '../../types/index.js';
 import { apiFetch, type ApiFetchOptions, type SifaApiConfig } from '../client.js';
 
+/**
+ * Why a profile appears in people search. Descriptive only: the matched skill,
+ * role, country, text field or connection path. The API never returns a score.
+ */
+export type SearchMatchReason =
+  | { kind: 'skill'; value: string }
+  /** `current` is false when only a past position matched. */
+  | { kind: 'role'; value: string; current: boolean }
+  /** ISO 3166-1 alpha-2 code when one resolves, else the country as given. */
+  | { kind: 'location'; value: string }
+  | { kind: 'text'; field: 'name' | 'headline' | 'about' }
+  | {
+      kind: 'connection';
+      /**
+       * From the signed-in viewer's Sifa follows: `mutual`, `following` (the
+       * viewer follows them), `followedBy` (they follow the viewer), or
+       * `network` (someone the viewer follows follows them, named in `via`).
+       */
+      relation: 'mutual' | 'following' | 'followedBy' | 'network';
+      via?: { did: string; handle: string; displayName: string | null };
+    };
+
 /** Profile entry returned by the search endpoint. */
 export interface ProfileSearchResult {
   did?: string;
@@ -32,6 +54,8 @@ export interface ProfileSearchResult {
    * exposes. Empty when none are set; absent on older API responses.
    */
   openTo?: string[];
+  /** Why this profile matched. Absent on older API responses. */
+  matchReasons?: SearchMatchReason[];
 }
 
 /** "Did you mean" entry returned alongside a zero-result text search. */
@@ -44,6 +68,11 @@ export interface ProfileSearchSuggestion {
 
 export interface SearchFilters {
   q?: string;
+  /**
+   * Role filter: a substring of any position title. Current roles rank above
+   * past ones.
+   */
+  role?: string;
   /**
    * Skill filter. An array is sent as repeated `skill` params; the API
    * OR-combines values within the facet and ANDs across facets (max 10).
@@ -62,6 +91,11 @@ export interface SearchFilters {
    * OR-combined (profile matches if any selected token is set).
    */
   openTo?: string[];
+  /**
+   * Leave out people the signed-in viewer follows on Sifa. Narrows a search
+   * but is not one on its own; ignored for signed-out requests.
+   */
+  hideFollowing?: boolean;
   limit?: number;
   /** Number of results to skip, for paging past the first `limit` results. */
   offset?: number;
@@ -148,6 +182,7 @@ export async function fetchSearchProfiles(
 ): Promise<SearchResponse> {
   const params = new URLSearchParams();
   if (filters.q) params.set('q', filters.q);
+  if (filters.role) params.set('role', filters.role);
   appendAll(params, 'skill', filters.skill);
   appendAll(params, 'country', filters.country);
   if (filters.industry) params.set('industry', filters.industry);
@@ -163,6 +198,7 @@ export async function fetchSearchProfiles(
   // limit/offset never triggers an unfiltered search.
   if (params.size === 0) return EMPTY_SEARCH;
 
+  if (filters.hideFollowing) params.set('hideFollowing', 'true');
   if (filters.limit !== undefined) params.set('limit', String(filters.limit));
   if (filters.offset) params.set('offset', String(filters.offset));
 
