@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.22.0
+
+### Minor Changes
+
+- e1e0e93: Validate date fields on the profile write schemas. Position, education, project, honor, publication, certification, volunteering, involvement, investment and course dates now accept only `YYYY`, `YYYY-MM` or a real `YYYY-MM-DD` day, through the shared `partialDateFieldSchema`. `null` clears a date and an empty string is still accepted. An RFC 3339 datetime is shortened to its `YYYY-MM-DD` day. Any other value, which these schemas used to accept, is now rejected.
+
 ## 0.21.0
 
 ### Minor Changes
