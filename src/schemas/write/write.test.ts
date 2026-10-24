@@ -944,6 +944,9 @@ describe('partial-date fields on profile write schemas (sifa-workspace#745)', ()
   ] as const;
 
   describe.each(cases)('%s', (_name, schema, base, fields) => {
+    // `parsed.data` is the schema's concrete object type; the field name is dynamic here.
+    const fieldOf = (data: unknown, field: string) => (data as Record<string, unknown>)[field];
+
     it.each(fields)('%s accepts year, month and day precision, null and absent', (field) => {
       for (const value of ['2019', '2019-09', '2019-09-12', null, undefined]) {
         expect(schema.safeParse({ ...base, [field]: value }).success).toBe(true);
@@ -954,13 +957,13 @@ describe('partial-date fields on profile write schemas (sifa-workspace#745)', ()
       '%s keeps an empty string, which earlier clients send for a cleared date',
       (field) => {
         const parsed = schema.safeParse({ ...base, [field]: '' });
-        expect(parsed.success && (parsed.data as Record<string, unknown>)[field]).toBe('');
+        expect(parsed.success && fieldOf(parsed.data, field)).toBe('');
       },
     );
 
     it.each(fields)('%s shortens a stored datetime to its calendar day', (field) => {
       const parsed = schema.safeParse({ ...base, [field]: '2024-01-15T00:00:00.000Z' });
-      expect(parsed.success && (parsed.data as Record<string, unknown>)[field]).toBe('2024-01-15');
+      expect(parsed.success && fieldOf(parsed.data, field)).toBe('2024-01-15');
     });
 
     it.each(fields)('%s rejects malformed values', (field) => {
@@ -970,6 +973,8 @@ describe('partial-date fields on profile write schemas (sifa-workspace#745)', ()
         '2019-13',
         '2019-02-30',
         '2019-02-30T00:00:00Z',
+        '2019-09-01T',
+        '2019-09-01Tnonsense',
         'last year',
       ]) {
         expect(schema.safeParse({ ...base, [field]: value }).success).toBe(false);

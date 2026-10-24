@@ -134,7 +134,7 @@ export function isValidPartialDate(input: unknown): boolean {
   return PARTIAL_DATE_RE.test(input) || isValidDateOnly(input);
 }
 
-const DATETIME_DAY_RE = /^(\d{4}-\d{2}-\d{2})T/;
+const DATETIME_DAY_RE = /^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}/;
 
 /**
  * Optional, clearable partial-date field (`YYYY`, `YYYY-MM` or `YYYY-MM-DD`,
