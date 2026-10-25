@@ -24,3 +24,9 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      # gh-aw lock files must be recompiled by the gh-aw CLI of the same
+      # version as the setup action they pin. A bare Dependabot bump of the
+      # action skews the two and breaks safe outputs. Upgrade with
+      # `gh aw upgrade` + `gh aw compile` instead.
+      - dependency-name: 'github/gh-aw-actions*'
