@@ -52,14 +52,34 @@ export function lexiconString(graphemes: number, bytes: number) {
 }
 
 /**
+ * Lexicon limits for the `id.sifa.profile.self` text fields: `graphemes` is the
+ * `maxGraphemes` cap (user-perceived characters), `bytes` the `maxLength` cap
+ * (UTF-8 bytes). The field schemas below are built from these numbers, so
+ * forms can show counters and caps without duplicating them.
+ */
+export const PROFILE_TEXT_LIMITS = {
+  displayName: { graphemes: 64, bytes: 640 },
+  givenName: { graphemes: 64, bytes: 640 },
+  familyName: { graphemes: 64, bytes: 640 },
+  namePronunciation: { graphemes: 64, bytes: 640 },
+  pronouns: { graphemes: 20, bytes: 200 },
+  headline: { graphemes: 120, bytes: 1200 },
+  about: { graphemes: 5000, bytes: 50000 },
+} as const;
+
+function profileText(limit: { readonly graphemes: number; readonly bytes: number }) {
+  return lexiconString(limit.graphemes, limit.bytes);
+}
+
+/**
  * Field schemas for `id.sifa.profile.self`, shared by the record schema and the
  * write schemas so the lexicon limits live in one place.
  */
-export const profileDisplayNameSchema = lexiconString(64, 640);
-export const profileNameSchema = lexiconString(64, 640);
-export const profilePronounsSchema = lexiconString(20, 200);
-export const profileHeadlineSchema = lexiconString(120, 1200);
-export const profileAboutSchema = lexiconString(5000, 50000);
+export const profileDisplayNameSchema = profileText(PROFILE_TEXT_LIMITS.displayName);
+export const profileNameSchema = profileText(PROFILE_TEXT_LIMITS.givenName);
+export const profilePronounsSchema = profileText(PROFILE_TEXT_LIMITS.pronouns);
+export const profileHeadlineSchema = profileText(PROFILE_TEXT_LIMITS.headline);
+export const profileAboutSchema = profileText(PROFILE_TEXT_LIMITS.about);
 
 /** Decentralized identifier, AT Protocol `format: did`. */
 export const didSchema = z.string().regex(/^did:[a-z]+:[a-zA-Z0-9._:%-]+$/, 'Invalid DID');

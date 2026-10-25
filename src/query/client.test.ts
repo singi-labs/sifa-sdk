@@ -211,6 +211,53 @@ describe('apiWrite failure shape', () => {
     expect(result.error).toBe('body/url must be a URL');
   });
 
+  it('passes validation issues through on a 400', async () => {
+    const issues = [
+      { path: ['headline'], message: 'Must be at most 120 characters', code: 'custom' },
+      { path: ['positions', 0, 'title'], message: 'Required' },
+    ];
+    const fetchImpl = fixedFetch({
+      status: 400,
+      body: JSON.stringify({ error: 'ValidationError', issues }),
+    });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/profile/self', 'POST');
+    expect(result).toEqual({ success: false, status: 400, error: 'ValidationError', issues });
+  });
+
+  it('drops malformed validation issues', async () => {
+    const fetchImpl = fixedFetch({
+      status: 400,
+      body: JSON.stringify({
+        error: 'ValidationError',
+        issues: [
+          { path: ['a'], message: 'ok' },
+          { path: 'a', message: 'path not an array' },
+          { path: ['a'], message: 5 },
+          { path: ['a', true], message: 'bad path segment' },
+          { path: ['a'], message: 'bad code', code: 7 },
+          'nope',
+          null,
+        ],
+      }),
+    });
+    const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+    expect(result.issues).toEqual([
+      { path: ['a'], message: 'ok' },
+      { path: ['a'], message: 'bad code' },
+    ]);
+  });
+
+  it('omits issues when absent or not an array', async () => {
+    for (const issues of [undefined, 'x', { path: [], message: 'm' }]) {
+      const fetchImpl = fixedFetch({
+        status: 400,
+        body: JSON.stringify({ error: 'ValidationError', issues }),
+      });
+      const result = await apiWrite({ ...config, fetch: fetchImpl }, '/api/x', 'POST');
+      expect(result).toEqual({ success: false, status: 400, error: 'ValidationError' });
+    }
+  });
+
   it('passes a string body.code through on a failed write', async () => {
     const fetchImpl = fixedFetch({
       status: 403,

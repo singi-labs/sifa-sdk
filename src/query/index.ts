@@ -7,6 +7,8 @@ export {
   type ApiFetchOptions,
   type CreateResult,
   type SifaApiConfig,
+  type WriteFailure,
+  type WriteIssue,
   type WriteResult,
 } from './client.js';
 export { SifaProvider, useSifaConfig, type SifaProviderProps } from './config.js';
