@@ -250,6 +250,19 @@ export interface WriteFailure {
    * Present only when the body carries a non-empty string `code`.
    */
   code?: string;
+  /**
+   * Field-level validation problems from a 400 `ValidationError` body (the
+   * Zod `error.issues` of sifa-api). Present only when the body carries an
+   * array; malformed entries are dropped. `path` locates the field.
+   */
+  issues?: WriteIssue[];
+}
+
+/** One validation problem reported by sifa-api, shaped like a Zod issue. */
+export interface WriteIssue {
+  path: (string | number)[];
+  message: string;
+  code?: string;
 }
 
 /**
@@ -281,10 +294,30 @@ interface ApiErrorBody {
   error?: string;
   pdsHost?: string;
   code?: unknown;
+  issues?: unknown;
+}
+
+function parseWriteIssues(raw: unknown): WriteIssue[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const issues: WriteIssue[] = [];
+  for (const entry of raw as unknown[]) {
+    if (!entry || typeof entry !== 'object') continue;
+    const { path, message, code } = entry as { path?: unknown; message?: unknown; code?: unknown };
+    if (typeof message !== 'string' || !Array.isArray(path)) continue;
+    const segments: unknown[] = path;
+    if (!segments.every((p) => typeof p === 'string' || typeof p === 'number')) continue;
+    issues.push({
+      path: segments,
+      message,
+      ...(typeof code === 'string' ? { code } : {}),
+    });
+  }
+  return issues;
 }
 
 function extractWriteError(e: ApiError): Omit<WriteFailure, 'success'> {
   const body = (e.body && typeof e.body === 'object' ? e.body : {}) as ApiErrorBody;
+  const issues = parseWriteIssues(body.issues);
   return {
     // Fastify puts the detail in `message` and the status phrase in `error`;
     // sifa-api's own handlers (and the rate limiter) only set `error`.
@@ -293,6 +326,7 @@ function extractWriteError(e: ApiError): Omit<WriteFailure, 'success'> {
     ...(e.retryAfterSeconds !== undefined ? { retryAfterSeconds: e.retryAfterSeconds } : {}),
     ...(body.pdsHost ? { pdsHost: body.pdsHost } : {}),
     ...(typeof body.code === 'string' && body.code !== '' ? { code: body.code } : {}),
+    ...(issues ? { issues } : {}),
   };
 }
 
