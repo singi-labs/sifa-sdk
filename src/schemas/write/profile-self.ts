@@ -1,24 +1,14 @@
 import { z } from 'zod';
 
 import { RPG_AVATAR_SOURCE } from '../../rpg/avatar.js';
-import { maxBytes, maxGraphemes } from '../shared.js';
+import {
+  profileAboutSchema,
+  profileDisplayNameSchema,
+  profileHeadlineSchema,
+  profileNameSchema,
+  profilePronounsSchema,
+} from '../shared.js';
 import { writeLocationSchema } from './shared.js';
-
-/**
- * A string capped by the `id.sifa.profile.self` lexicon limits: `maxGraphemes`
- * (user-perceived characters) and `maxLength` (UTF-8 bytes). Both are enforced
- * so a value that passes here is also valid against the lexicon.
- */
-function lexiconString(graphemes: number, bytes: number) {
-  return z
-    .string()
-    .refine(maxGraphemes(graphemes), { message: `Must be at most ${graphemes} characters` })
-    .refine(maxBytes(bytes), { message: `Must be at most ${bytes} bytes of text` });
-}
-
-const headlineSchema = lexiconString(120, 1200);
-const aboutSchema = lexiconString(5000, 50000);
-const nameSchema = lexiconString(64, 640);
 
 /**
  * Schema enforced by `POST /profile/self` on sifa-api.
@@ -28,17 +18,17 @@ const nameSchema = lexiconString(64, 640);
  * between web/api). Note this means client validation on this schema will
  * NEVER reject "unknown" fields — the divergence is intentional.
  *
- * headline, about, givenName, familyName and namePronunciation enforce the
- * exact `id.sifa.profile.self` lexicon limits (graphemes and UTF-8 bytes), so
- * the AppView's lexicon gate never rejects a record this schema accepted.
+ * headline, about, givenName, familyName and namePronunciation match the
+ * `id.sifa.profile.self` lexicon's grapheme and UTF-8 byte limits. Other fields
+ * (for example `langs` formats) are not checked against the lexicon here.
  */
 export const ProfileSelfWriteSchema = z
   .object({
-    headline: headlineSchema.optional(),
-    about: aboutSchema.optional(),
-    givenName: nameSchema.optional(),
-    familyName: nameSchema.optional(),
-    namePronunciation: nameSchema.optional(),
+    headline: profileHeadlineSchema.optional(),
+    about: profileAboutSchema.optional(),
+    givenName: profileNameSchema.optional(),
+    familyName: profileNameSchema.optional(),
+    namePronunciation: profileNameSchema.optional(),
     industries: z
       .array(
         z.object({
@@ -73,10 +63,10 @@ export type ProfileSelfWriteInput = z.infer<typeof ProfileSelfWriteSchema>;
  * nullish (`null` clears an override). Limits mirror `id.sifa.profile.self`.
  */
 export const ProfileOverrideWriteSchema = z.object({
-  headline: headlineSchema.nullish(),
-  about: aboutSchema.nullish(),
-  displayName: nameSchema.nullish(),
-  pronouns: lexiconString(20, 200).nullish(),
+  headline: profileHeadlineSchema.nullish(),
+  about: profileAboutSchema.nullish(),
+  displayName: profileDisplayNameSchema.nullish(),
+  pronouns: profilePronounsSchema.nullish(),
 });
 
 export type ProfileOverrideWriteInput = z.infer<typeof ProfileOverrideWriteSchema>;

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { ProfileSelfRecordSchema } from '../profile-self.js';
 import { maxBytes } from '../shared.js';
 import { ProfileOverrideWriteSchema, ProfileSelfWriteSchema } from './index.js';
 
@@ -82,6 +83,25 @@ for (const { name, schema, fields } of SUITES) {
           expect(ok(E_COMBINING.repeat(graphemes + 1))).toBe(false);
         });
 
+        it('reports only the character error for an over-long value', () => {
+          const result = schema.safeParse({ [field]: FAMILY_ZWJ.repeat(graphemes + 1) });
+          expect(result.success).toBe(false);
+          if (!result.success) {
+            expect(result.error.issues).toHaveLength(1);
+          }
+        });
+
+        it('explains a byte overflow in plain words', () => {
+          const wide = Math.floor(bytes / 25) + 1;
+          const result = schema.safeParse({ [field]: FAMILY_ZWJ.repeat(wide) });
+          expect(result.success).toBe(false);
+          if (!result.success) {
+            expect(result.error.issues[0]?.message).toBe(
+              'This text is too long. Emoji and some scripts take more space, so shorten it a little.',
+            );
+          }
+        });
+
         it('reads as a character limit in the error message', () => {
           const result = schema.safeParse({ [field]: 'a'.repeat(graphemes + 1) });
           expect(result.success).toBe(false);
@@ -113,4 +133,25 @@ describe('ProfileSelfWriteSchema passthrough', () => {
     const parsed = ProfileSelfWriteSchema.safeParse({ headline: 'x', futureKey: 1 });
     expect(parsed.success && (parsed.data as Record<string, unknown>).futureKey).toBe(1);
   });
+});
+
+describe('ProfileSelfRecordSchema lexicon limits', () => {
+  const RECORD_FIELDS = [
+    ...SELF_FIELDS,
+    { field: 'displayName', graphemes: 64, bytes: 640 },
+    { field: 'pronouns', graphemes: 20, bytes: 200 },
+  ] as const;
+
+  for (const { field, graphemes, bytes } of RECORD_FIELDS) {
+    it(`${field}: enforces ${graphemes} graphemes and ${bytes} bytes`, () => {
+      const ok = (value: string) =>
+        ProfileSelfRecordSchema.safeParse({ createdAt: '2026-01-01T00:00:00.000Z', [field]: value })
+          .success;
+      expect(ok('a'.repeat(graphemes))).toBe(true);
+      expect(ok('a'.repeat(graphemes + 1))).toBe(false);
+      const wide = Math.floor(bytes / 25) + 1;
+      expect(ok(FAMILY_ZWJ.repeat(wide))).toBe(false);
+      expect(ok(FAMILY_ZWJ.repeat(wide - 1))).toBe(true);
+    });
+  }
 });

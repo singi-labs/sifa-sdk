@@ -8,8 +8,8 @@ import { z } from 'zod';
  * count as one unit each. We use `Intl.Segmenter` to enforce this correctly.
  */
 export function maxGraphemes(max: number) {
+  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
   return (value: string): boolean => {
-    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
     let count = 0;
     for (const _ of segmenter.segment(value)) {
       count++;
@@ -32,6 +32,34 @@ export function maxBytes(max: number) {
     return encoder.encode(value).length <= max;
   };
 }
+
+/**
+ * A string capped by a lexicon `maxGraphemes` (user-perceived characters) and
+ * `maxLength` (UTF-8 bytes) pair. The grapheme check aborts first, so an
+ * over-long value reports only the character error.
+ */
+export function lexiconString(graphemes: number, bytes: number) {
+  return z
+    .string()
+    .refine(maxGraphemes(graphemes), {
+      message: `Must be at most ${graphemes} characters`,
+      abort: true,
+    })
+    .refine(maxBytes(bytes), {
+      message:
+        'This text is too long. Emoji and some scripts take more space, so shorten it a little.',
+    });
+}
+
+/**
+ * Field schemas for `id.sifa.profile.self`, shared by the record schema and the
+ * write schemas so the lexicon limits live in one place.
+ */
+export const profileDisplayNameSchema = lexiconString(64, 640);
+export const profileNameSchema = lexiconString(64, 640);
+export const profilePronounsSchema = lexiconString(20, 200);
+export const profileHeadlineSchema = lexiconString(120, 1200);
+export const profileAboutSchema = lexiconString(5000, 50000);
 
 /** Decentralized identifier, AT Protocol `format: did`. */
 export const didSchema = z.string().regex(/^did:[a-z]+:[a-zA-Z0-9._:%-]+$/, 'Invalid DID');
