@@ -12,7 +12,11 @@ export type SearchMatchReason =
   | { kind: 'role'; value: string; current: boolean }
   /** ISO 3166-1 alpha-2 code when one resolves, else the country as given. */
   | { kind: 'location'; value: string }
-  | { kind: 'text'; field: 'name' | 'handle' | 'headline' | 'about' }
+  /**
+   * Which part of the profile the text query hit. `title` is a current job
+   * title; `words` means the query words were spread across several fields.
+   */
+  | { kind: 'text'; field: 'name' | 'handle' | 'headline' | 'title' | 'about' | 'words' }
   | {
       kind: 'connection';
       /**
@@ -69,8 +73,9 @@ export interface ProfileSearchSuggestion {
 export interface SearchFilters {
   q?: string;
   /**
-   * Role filter: a substring of any position title. Current roles rank above
-   * past ones.
+   * Role filter, matched as whole words against job titles and, failing
+   * that, the headline. Current titles rank above past ones, both above a
+   * headline-only match.
    */
   role?: string;
   /**
