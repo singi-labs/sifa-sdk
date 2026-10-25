@@ -132,6 +132,7 @@ export {
   didSchema,
   externalRecordRefSchema,
   languageTagSchema,
+  maxBytes,
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,

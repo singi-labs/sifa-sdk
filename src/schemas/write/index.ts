@@ -70,7 +70,12 @@ export {
 } from './presentation-delivery.js';
 export { PresentationWriteSchema, type PresentationWriteInput } from './presentation.js';
 export { ProfileLocationWriteSchema, type ProfileLocationWriteInput } from './profile-location.js';
-export { ProfileSelfWriteSchema, type ProfileSelfWriteInput } from './profile-self.js';
+export {
+  ProfileOverrideWriteSchema,
+  ProfileSelfWriteSchema,
+  type ProfileOverrideWriteInput,
+  type ProfileSelfWriteInput,
+} from './profile-self.js';
 export { ProjectWriteSchema, type ProjectWriteInput } from './project.js';
 export {
   PublicationWriteSchema,

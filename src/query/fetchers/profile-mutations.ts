@@ -1,4 +1,5 @@
 import { apiWrite, type ApiFetchOptions, type SifaApiConfig, type WriteResult } from '../client.js';
+import type { ProfileOverrideWriteInput } from '../../schemas/write/profile-self.js';
 
 /** Industry/domain entry on the profile self record. */
 export interface ProfileIndustryInput {
@@ -55,12 +56,7 @@ export function updateProfileSelf(
 }
 
 /** Body accepted by {@link updateProfileOverride}. */
-export interface UpdateProfileOverrideInput {
-  headline?: string | null;
-  about?: string | null;
-  displayName?: string | null;
-  pronouns?: string | null;
-}
+export type UpdateProfileOverrideInput = ProfileOverrideWriteInput;
 
 /**
  * Override aggregated profile fields with sifa-specific values. `null`

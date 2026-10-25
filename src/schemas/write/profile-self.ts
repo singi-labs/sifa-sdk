@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
 import { RPG_AVATAR_SOURCE } from '../../rpg/avatar.js';
+import {
+  profileAboutSchema,
+  profileDisplayNameSchema,
+  profileHeadlineSchema,
+  profileNameSchema,
+  profilePronounsSchema,
+} from '../shared.js';
 import { writeLocationSchema } from './shared.js';
 
 /**
@@ -11,16 +18,17 @@ import { writeLocationSchema } from './shared.js';
  * between web/api). Note this means client validation on this schema will
  * NEVER reject "unknown" fields — the divergence is intentional.
  *
- * Grapheme caps (e.g. 64 on given/familyName) are enforced client-side by the
- * SDK's lexicon schema; the write schema only guards the byte-length ceiling.
+ * headline, about, givenName, familyName and namePronunciation match the
+ * `id.sifa.profile.self` lexicon's grapheme and UTF-8 byte limits. Other fields
+ * (for example `langs` formats) are not checked against the lexicon here.
  */
 export const ProfileSelfWriteSchema = z
   .object({
-    headline: z.string().max(300).optional(),
-    about: z.string().max(50000).optional(),
-    givenName: z.string().max(640).optional(),
-    familyName: z.string().max(640).optional(),
-    namePronunciation: z.string().max(640).optional(),
+    headline: profileHeadlineSchema.optional(),
+    about: profileAboutSchema.optional(),
+    givenName: profileNameSchema.optional(),
+    familyName: profileNameSchema.optional(),
+    namePronunciation: profileNameSchema.optional(),
     industries: z
       .array(
         z.object({
@@ -48,3 +56,17 @@ export const ProfileSelfWriteSchema = z
   .passthrough();
 
 export type ProfileSelfWriteInput = z.infer<typeof ProfileSelfWriteSchema>;
+
+/**
+ * Override fields validated by sifa-api's profile override route. `displayName`
+ * and `pronouns` are not part of `ProfileSelfWriteSchema`; every field is
+ * nullish (`null` clears an override). Limits mirror `id.sifa.profile.self`.
+ */
+export const ProfileOverrideWriteSchema = z.object({
+  headline: profileHeadlineSchema.nullish(),
+  about: profileAboutSchema.nullish(),
+  displayName: profileDisplayNameSchema.nullish(),
+  pronouns: profilePronounsSchema.nullish(),
+});
+
+export type ProfileOverrideWriteInput = z.infer<typeof ProfileOverrideWriteSchema>;
