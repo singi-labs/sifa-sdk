@@ -399,8 +399,9 @@ describe('ProfileSelfWriteSchema', () => {
     }
   });
 
-  it('caps headline at 120 graphemes', () => {
-    expect(ProfileSelfWriteSchema.safeParse({ headline: 'x'.repeat(121) }).success).toBe(false);
+  it('caps headline at 220 graphemes', () => {
+    expect(ProfileSelfWriteSchema.safeParse({ headline: 'x'.repeat(220) }).success).toBe(true);
+    expect(ProfileSelfWriteSchema.safeParse({ headline: 'x'.repeat(221) }).success).toBe(false);
   });
 
   it('accepts avatarSource actor.rpg.sprite, and null to clear it', () => {

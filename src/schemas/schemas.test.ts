@@ -265,8 +265,8 @@ describe('ProfileSelfRecordSchema', () => {
     expect(ProfileSelfRecordSchema.safeParse({ createdAt: NOW }).success).toBe(true);
   });
 
-  it('rejects headline over 120 graphemes', () => {
-    const headline = 'x'.repeat(121);
+  it('rejects headline over 220 graphemes', () => {
+    const headline = 'x'.repeat(221);
     expect(ProfileSelfRecordSchema.safeParse({ headline, createdAt: NOW }).success).toBe(false);
   });
 
