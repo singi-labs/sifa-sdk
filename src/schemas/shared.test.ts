@@ -29,7 +29,7 @@ describe('PROFILE_TEXT_LIMITS', () => {
       familyName: { graphemes: 64, bytes: 640 },
       namePronunciation: { graphemes: 64, bytes: 640 },
       pronouns: { graphemes: 20, bytes: 200 },
-      headline: { graphemes: 120, bytes: 1200 },
+      headline: { graphemes: 220, bytes: 2200 },
       about: { graphemes: 5000, bytes: 50000 },
     });
   });

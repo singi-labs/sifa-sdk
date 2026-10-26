@@ -11,7 +11,7 @@ const E_COMBINING = 'é'; // 1 grapheme, 3 UTF-8 bytes
 const GRINNING = '😀'; // 1 grapheme, 4 UTF-8 bytes
 
 const SELF_FIELDS = [
-  { field: 'headline', graphemes: 120, bytes: 1200 },
+  { field: 'headline', graphemes: 220, bytes: 2200 },
   { field: 'about', graphemes: 5000, bytes: 50000 },
   { field: 'givenName', graphemes: 64, bytes: 640 },
   { field: 'familyName', graphemes: 64, bytes: 640 },
@@ -21,7 +21,7 @@ const SELF_FIELDS = [
 const OVERRIDE_FIELDS = [
   { field: 'displayName', graphemes: 64, bytes: 640 },
   { field: 'pronouns', graphemes: 20, bytes: 200 },
-  { field: 'headline', graphemes: 120, bytes: 1200 },
+  { field: 'headline', graphemes: 220, bytes: 2200 },
   { field: 'about', graphemes: 5000, bytes: 50000 },
 ] as const;
 
