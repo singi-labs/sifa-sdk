@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.2
+
+### Patch Changes
+
+- 906582f: Allow headlines up to 220 characters (2200 bytes), matching the `id.sifa.profile.self` lexicon in `@singi-labs/sifa-lexicons` 0.15.4. `PROFILE_TEXT_LIMITS.headline` and every schema built from it follow.
+
 ## 0.23.1
 
 ### Patch Changes
