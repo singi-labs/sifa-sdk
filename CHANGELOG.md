@@ -1,5 +1,12 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.3
+
+### Patch Changes
+
+- f3a6c7f: Add `fetchLatestFeaturedProfile`, which reads `/api/featured-profile/latest` (most recent featured profile, also on weekends).
+- 62629a2: People search: `SearchFilters` gains `role` (any position title, current roles first) and `hideFollowing` (leave out people the signed-in viewer follows on Sifa). Results carry optional `matchReasons` (`SearchMatchReason`): the matched skill, role, country, text field or Sifa connection path.
+
 ## 0.23.2
 
 ### Patch Changes
