@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { type SifaApiConfig } from '../client.js';
 import {
   fetchFeaturedProfile,
+  fetchLatestFeaturedProfile,
   fetchSimilarProfiles,
   fetchSuggestionCount,
   fetchSuggestions,
@@ -269,6 +270,22 @@ describe('fetchFeaturedProfile', () => {
   it('returns null on error', async () => {
     const fetchImpl = jsonFetch({}, 500);
     const result = await fetchFeaturedProfile({ ...baseConfig, fetch: fetchImpl });
+    expect(result).toBeNull();
+  });
+});
+
+describe('fetchLatestFeaturedProfile', () => {
+  it('requests the latest featured profile endpoint', async () => {
+    const fetchImpl = jsonFetch({ handle: 'alice.example', featuredDate: '2026-10-23' });
+    const result = await fetchLatestFeaturedProfile({ ...baseConfig, fetch: fetchImpl });
+    const [url] = getCall(fetchImpl);
+    expect(url).toBe('https://api.example/api/featured-profile/latest');
+    expect(result).toMatchObject({ handle: 'alice.example', featuredDate: '2026-10-23' });
+  });
+
+  it('returns null on error', async () => {
+    const fetchImpl = jsonFetch({}, 500);
+    const result = await fetchLatestFeaturedProfile({ ...baseConfig, fetch: fetchImpl });
     expect(result).toBeNull();
   });
 });

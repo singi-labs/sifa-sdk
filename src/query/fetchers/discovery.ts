@@ -161,3 +161,22 @@ export async function fetchFeaturedProfile(
     return null;
   }
 }
+
+/**
+ * Most recent featured profile on or before today, skipping profiles that have
+ * since opted out. Unlike {@link fetchFeaturedProfile} this still returns the
+ * last weekday's feature on weekends. Returns `null` when none.
+ */
+export async function fetchLatestFeaturedProfile(
+  config: SifaApiConfig,
+  options: ApiFetchOptions = {},
+): Promise<FeaturedProfile | null> {
+  try {
+    return await apiFetch<FeaturedProfile>(config, '/api/featured-profile/latest', {
+      next: { revalidate: 600 },
+      ...options,
+    });
+  } catch {
+    return null;
+  }
+}

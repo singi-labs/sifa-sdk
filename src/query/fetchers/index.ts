@@ -225,6 +225,7 @@ export {
 } from './speakers.js';
 export {
   fetchFeaturedProfile,
+  fetchLatestFeaturedProfile,
   fetchSimilarProfiles,
   fetchSuggestionCount,
   fetchSuggestions,
