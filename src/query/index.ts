@@ -260,6 +260,7 @@ export {
   type ProfileSearchResult,
   type ProfileSearchSuggestion,
   type SearchFilters,
+  type SearchMatchReason,
   type SearchResponse,
   type SkillSearchResult,
 } from './fetchers/search.js';
