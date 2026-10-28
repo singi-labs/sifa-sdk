@@ -284,6 +284,7 @@ export {
 } from './fetchers/entities.js';
 export {
   fetchFeaturedProfile,
+  fetchLatestFeaturedProfile,
   fetchSimilarProfiles,
   fetchSuggestionCount,
   fetchSuggestions,
