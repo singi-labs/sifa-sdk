@@ -153,8 +153,11 @@ export interface CompanySearchResult {
 
 export interface CompanySearchFilters {
   q?: string;
-  /** ISO 3166-1 alpha-2. */
-  country?: string;
+  /**
+   * ISO 3166-1 alpha-2 country filter. An array is sent as repeated params; an
+   * organization matches when it is in any of them.
+   */
+  country?: string | string[];
   industry?: string;
   limit?: number;
 }
@@ -164,9 +167,16 @@ export interface CompanySearchResponse {
   hasMore: boolean;
 }
 
+/** Filter facets for company search (workspace#759). */
+export interface CompanyFilterOptions {
+  /** Organizations per country, catalogue-wide; not people. */
+  countries: { countryCode: string; country: string; count: number }[];
+}
+
 const EMPTY_SEARCH: SearchResponse = { profiles: [], total: 0, limit: 20, offset: 0 };
 const EMPTY_FILTERS: FilterOptions = { countries: [], industries: [], apps: [], openTo: [] };
 const EMPTY_COMPANY_SEARCH: CompanySearchResponse = { results: [], hasMore: false };
+const EMPTY_COMPANY_FILTERS: CompanyFilterOptions = { countries: [] };
 
 function appendAll(params: URLSearchParams, key: string, value: string | string[] | undefined) {
   if (!value) return;
@@ -233,7 +243,7 @@ export async function fetchSearchCompanies(
   if (!q) return EMPTY_COMPANY_SEARCH;
 
   const params = new URLSearchParams({ q });
-  if (filters.country) params.set('country', filters.country);
+  appendAll(params, 'country', filters.country);
   if (filters.industry) params.set('industry', filters.industry);
   if (filters.limit !== undefined) params.set('limit', String(filters.limit));
 
@@ -273,6 +283,25 @@ export async function fetchSearchFilters(
     });
   } catch {
     return EMPTY_FILTERS;
+  }
+}
+
+/**
+ * Country facets for company search: how many organizations each country has,
+ * so a company filter does not show people counts (workspace#759). Returns no
+ * countries on error, like {@link fetchSearchFilters}.
+ */
+export async function fetchSearchCompanyFilters(
+  config: SifaApiConfig,
+  options: ApiFetchOptions = {},
+): Promise<CompanyFilterOptions> {
+  try {
+    return await apiFetch<CompanyFilterOptions>(config, '/api/search/companies/filters', {
+      next: { revalidate: 300 },
+      ...options,
+    });
+  } catch {
+    return EMPTY_COMPANY_FILTERS;
   }
 }
 
