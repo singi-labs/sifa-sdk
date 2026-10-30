@@ -1084,6 +1084,12 @@ export interface Profile {
    * records that predate this field).
    */
   discoverable?: boolean;
+  /**
+   * User-set flag from `id.sifa.profile.self.showActivity`. When `false`, the
+   * profile shows no activity from any app, including apps recognized later.
+   * Absent means default-true.
+   */
+  showActivity?: boolean;
   isOwnProfile?: boolean;
   createdAt?: string;
   trustStats?: TrustStat[];
