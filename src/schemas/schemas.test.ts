@@ -301,6 +301,19 @@ describe('ProfileSelfRecordSchema', () => {
     );
   });
 
+  it('accepts showActivity as an optional boolean', () => {
+    expect(ProfileSelfRecordSchema.safeParse({ showActivity: false, createdAt: NOW }).success).toBe(
+      true,
+    );
+    expect(ProfileSelfRecordSchema.parse({ createdAt: NOW }).showActivity).toBeUndefined();
+  });
+
+  it('rejects non-boolean showActivity values', () => {
+    expect(
+      ProfileSelfRecordSchema.safeParse({ showActivity: 'false', createdAt: NOW }).success,
+    ).toBe(false);
+  });
+
   it('accepts avatarSource as an open string capped at 128', () => {
     expect(
       ProfileSelfRecordSchema.safeParse({ avatarSource: 'actor.rpg.sprite', createdAt: NOW })

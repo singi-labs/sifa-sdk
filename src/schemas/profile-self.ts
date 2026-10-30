@@ -34,6 +34,8 @@ export const ProfileSelfRecordSchema = z.object({
   langs: z.array(languageTagSchema).max(3).optional(),
   labels: selfLabelsSchema.optional(),
   discoverable: z.boolean().optional(),
+  /** Absent means true. When false, no app activity shows on the profile. */
+  showActivity: z.boolean().optional(),
   /**
    * Where the avatar comes from instead of the avatar blob. Open per the
    * lexicon (`knownValues`); Sifa renders `actor.rpg.sprite`, the user's
