@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchSearchCompanies, type CompanySearchResponse } from './search.js';
+import {
+  fetchSearchCompanies,
+  fetchSearchCompanyFilters,
+  type CompanySearchResponse,
+} from './search.js';
 import { type SifaApiConfig } from '../client.js';
 
 function jsonFetch(body: unknown, status = 200): typeof fetch {
@@ -54,6 +58,14 @@ describe('fetchSearchCompanies (workspace#299)', () => {
     expect(url).toContain('industry=security');
   });
 
+  it('sends several countries as repeated params (workspace#759)', async () => {
+    const f = jsonFetch(RESPONSE);
+    vi.stubGlobal('fetch', f);
+    await fetchSearchCompanies(config, { q: 'sophos', country: ['DE', 'NL'] });
+    const url = new URL(getCall(f)[0]);
+    expect(url.searchParams.getAll('country')).toEqual(['DE', 'NL']);
+  });
+
   it('trims the query rather than sending padding', async () => {
     const f = jsonFetch(RESPONSE);
     vi.stubGlobal('fetch', f);
@@ -92,5 +104,21 @@ describe('fetchSearchCompanies (workspace#299)', () => {
     const res = await fetchSearchCompanies(config, { q: 'book' });
     expect(res.results.map((r) => r.domain)).toEqual(['booking.com', 'bookis.com']);
     expect(res.hasMore).toBe(true);
+  });
+});
+
+describe('fetchSearchCompanyFilters (workspace#759)', () => {
+  it('reads the organization country counts', async () => {
+    const body = { countries: [{ countryCode: 'NL', country: 'Netherlands', count: 12 }] };
+    const f = jsonFetch(body);
+    vi.stubGlobal('fetch', f);
+    const res = await fetchSearchCompanyFilters(config);
+    expect(getCall(f)[0]).toContain('/api/search/companies/filters');
+    expect(res).toEqual(body);
+  });
+
+  it('returns no countries on error, so the filter degrades instead of failing', async () => {
+    vi.stubGlobal('fetch', jsonFetch({}, 500));
+    expect(await fetchSearchCompanyFilters(config)).toEqual({ countries: [] });
   });
 });

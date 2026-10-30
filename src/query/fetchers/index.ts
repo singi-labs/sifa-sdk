@@ -196,10 +196,12 @@ export {
 } from './accounts.js';
 export {
   fetchSearchCompanies,
+  fetchSearchCompanyFilters,
   fetchSearchFilters,
   fetchSearchProfiles,
   fetchSkillSuggestions,
   searchSkills,
+  type CompanyFilterOptions,
   type CompanySearchFilters,
   type CompanySearchResponse,
   type CompanySearchResult,
