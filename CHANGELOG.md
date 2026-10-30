@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.4
+
+### Patch Changes
+
+- b953761: `fetchSearchCompanies` accepts several countries (`country: string | string[]`, sent as repeated params). Add `fetchSearchCompanyFilters`, which reads the organization country counts from `/api/search/companies/filters`.
+
 ## 0.23.3
 
 ### Patch Changes
