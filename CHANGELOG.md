@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.5
+
+### Patch Changes
+
+- 3c77d5d: Add optional `showActivity` to `ProfileSelfRecordSchema` and the `Profile` type. Mirrors `id.sifa.profile.self.showActivity` (sifa-lexicons 0.15.5). Absence is treated as true.
+
 ## 0.23.4
 
 ### Patch Changes
