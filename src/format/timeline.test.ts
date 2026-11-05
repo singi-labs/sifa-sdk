@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  formatCompactDateRange,
   formatCredentialDateRange,
   formatDateRange,
   formatPositionDateRange,
@@ -73,5 +74,22 @@ describe('formatCredentialDateRange', () => {
 
   it('is empty with no dates', () => {
     expect(formatCredentialDateRange(undefined, null)).toBe('');
+  });
+});
+
+describe('formatCompactDateRange', () => {
+  it('drops the repeated year within one year', () => {
+    expect(formatCompactDateRange('2024-06', '2024-12')).toBe('Jun - Dec 2024');
+    expect(formatCompactDateRange('2024-06-30', '2024-12-01')).toBe('Jun - Dec 2024');
+  });
+
+  it('keeps both years across years', () => {
+    expect(formatCompactDateRange('2023-06', '2024-12')).toBe('Jun 2023 - Dec 2024');
+  });
+
+  it('collapses one month and handles year-only dates', () => {
+    expect(formatCompactDateRange('2024-06', '2024-06')).toBe('Jun 2024');
+    expect(formatCompactDateRange('2024-06', '2024')).toBe('Jun 2024 - 2024');
+    expect(formatCompactDateRange('2023', '2024')).toBe('2023 - 2024');
   });
 });

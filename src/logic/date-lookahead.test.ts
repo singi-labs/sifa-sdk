@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { DATE_LOOKAHEAD_MONTHS, isBeyondLookahead, isUpcomingStart } from './date-lookahead.js';
+import {
+  DATE_LOOKAHEAD_MONTHS,
+  hasPositionEnded,
+  isBeyondLookahead,
+  isUpcomingStart,
+} from './date-lookahead.js';
 
 const now = new Date(2026, 8, 15); // September 2026
 
@@ -58,5 +63,28 @@ describe('DATE_LOOKAHEAD_MONTHS', () => {
       educationStart: 12,
       educationEnd: 96,
     });
+  });
+});
+
+describe('hasPositionEnded', () => {
+  const now = new Date(2026, 10, 5); // 5 Nov 2026
+
+  it('is false without an end date, or when the end month has not passed', () => {
+    expect(hasPositionEnded(undefined, now)).toBe(false);
+    expect(hasPositionEnded(null, now)).toBe(false);
+    expect(hasPositionEnded('', now)).toBe(false);
+    expect(hasPositionEnded('2026-11', now)).toBe(false);
+    expect(hasPositionEnded('2027-03', now)).toBe(false);
+    expect(hasPositionEnded('2026', now)).toBe(false);
+  });
+
+  it('is true once the end month is behind us', () => {
+    expect(hasPositionEnded('2026-10', now)).toBe(true);
+    expect(hasPositionEnded('2024-12-15', now)).toBe(true);
+    expect(hasPositionEnded('2025', now)).toBe(true);
+  });
+
+  it('never calls a malformed value ended', () => {
+    expect(hasPositionEnded('soon', now)).toBe(false);
   });
 });

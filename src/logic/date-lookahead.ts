@@ -48,3 +48,19 @@ export function isBeyondLookahead(value: string, months: number, now: Date = new
 export function isUpcomingStart(startedAt: string | undefined, now: Date = new Date()): boolean {
   return !!startedAt && isBeyondLookahead(startedAt, 0, now);
 }
+
+/**
+ * Has a position's end month passed? A role ending this month or later (notice
+ * period, fixed-term contract) is still current, so the person still has its
+ * resources, such as the work mailbox. A bare year runs through December. A
+ * missing or malformed value is never ended.
+ */
+export function hasPositionEnded(
+  endedAt: string | null | undefined,
+  now: Date = new Date(),
+): boolean {
+  const match = endedAt ? /^(\d{4})(?:-(\d{2}))?/.exec(endedAt) : null;
+  if (!match) return false;
+  const index = Number(match[1]) * 12 + (match[2] ? Number(match[2]) : 12);
+  return index < now.getFullYear() * 12 + now.getMonth() + 1;
+}
