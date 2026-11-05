@@ -367,6 +367,7 @@ export const APP_URL_PATTERNS: Readonly<Record<string, AppUrlPatterns>> = Object
 export const COLLECTION_TO_APP: ReadonlyArray<readonly [prefix: string, appId: string]> = [
   ['app.bsky.', 'bluesky'],
   ['sh.tangled.', 'tangled'],
+  ['org.tangled.', 'tangled'],
   ['events.smokesignal.', 'smokesignal'],
   ['community.lexicon.calendar.', 'smokesignal'],
   ['community.lexicon.bookmarks.', 'kipclip'],

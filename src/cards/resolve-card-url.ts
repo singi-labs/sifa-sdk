@@ -194,6 +194,11 @@ function resolveTangledUrl(
     const list = collection === 'sh.tangled.repo.pull' ? 'pulls' : 'issues';
     return { url: `${base}/${list}`, ownRecord: false };
   }
+  if (collection === 'org.tangled.repo.declaration') {
+    // The repo has its own DID; the declaration in the owner's repo names it.
+    const declared = tangledRepoBase(record.repo);
+    return declared ? { url: declared, ownRecord: true } : null;
+  }
   if (collection === 'sh.tangled.feed.star') {
     const starred = tangledRepoBase(record.subjectDid) ?? tangledRepoBase(record.subject);
     return starred ? { url: starred, ownRecord: false } : null;
@@ -239,8 +244,9 @@ export function resolveCardHealth(item: ActivityItemForUrl): CardHealth {
   // - a pull / issue: the target repo's pulls / issues list. The record carries
   //   no PR or issue number, so the single item is not addressable.
   // - a star: the starred repo.
+  // - an org.tangled repo declaration: the repo DID it declares.
   // Anything else falls back to the owner's profile.
-  if (collection.startsWith('sh.tangled.')) {
+  if (collection.startsWith('sh.tangled.') || collection.startsWith('org.tangled.')) {
     const tangled = resolveTangledUrl(collection, record, rkey, authorHandle ?? authorDid);
     // A repo link is this record's own page; a pull / issue / star links to a
     // different record (the target repo), so probe that page itself.

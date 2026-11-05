@@ -10,6 +10,7 @@ import { getAppIdForCollection, resolveCardUrl } from './resolve-card-url.js';
 describe('getAppIdForCollection', () => {
   it('maps known collection prefixes to app ids', () => {
     expect(getAppIdForCollection('sh.tangled.graph.repo')).toBe('tangled');
+    expect(getAppIdForCollection('org.tangled.repo.declaration')).toBe('tangled');
     expect(getAppIdForCollection('com.whtwnd.blog.entry')).toBe('whitewind');
     expect(getAppIdForCollection('fyi.unravel.frontpage.post')).toBe('frontpage');
     expect(getAppIdForCollection('community.lexicon.calendar.event')).toBe('smokesignal');
@@ -185,6 +186,30 @@ describe('resolveCardUrl', () => {
           authorHandle: undefined,
         }),
       ).toBe('https://tangled.sh/did:plc:abc/aip-lite');
+    });
+
+    it('links an org.tangled repo declaration by the repo DID it declares', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/org.tangled.repo.declaration/3mabc',
+          rkey: '3mabc',
+          collection: 'org.tangled.repo.declaration',
+          record: { repo: 'did:plc:repo3', createdAt: '2026-10-31T15:57:27Z' },
+        }),
+      ).toBe('https://tangled.sh/did:plc:repo3');
+    });
+
+    it('falls back to the owner profile for a declaration without a repo DID', () => {
+      expect(
+        resolveCardUrl({
+          ...baseItem,
+          uri: 'at://did:plc:abc/org.tangled.repo.declaration/3mabc',
+          rkey: '3mabc',
+          collection: 'org.tangled.repo.declaration',
+          record: { createdAt: '2026-10-31T15:57:27Z' },
+        }),
+      ).toBe('https://tangled.sh/alice.test');
     });
 
     it("links a pull to its target repo's pulls page", () => {

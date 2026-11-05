@@ -55,6 +55,8 @@ describe('getActivityTier', () => {
     expect(getActivityTier('app.bsky.feed.post')).toBe('creation');
     // Pixl photos are creation-tier (scanned by the pixl app, must not be filtered).
     expect(getActivityTier('pics.pixl.image')).toBe('creation');
+    // Tangled repos in the org.tangled namespace (repo has its own DID).
+    expect(getActivityTier('org.tangled.repo.declaration')).toBe('creation');
     // Dropanchor check-ins are authored location entries.
     expect(getActivityTier('app.dropanchor.checkin')).toBe('creation');
     // Ask Everything answers are authored responses to community questions.

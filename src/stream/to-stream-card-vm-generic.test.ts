@@ -88,6 +88,20 @@ describe('applyGeneric — Tangled (sh.tangled.*)', () => {
     expectValid(vm);
   });
 
+  it('shows the repo name the API copies onto an org.tangled declaration', () => {
+    const vm = toStreamCardVM(
+      item('org.tangled.repo.declaration', {
+        repo: 'did:plc:repo3',
+        name: 'ssh-merge-config',
+        description: 'Merge ssh config files',
+        createdAt: '2026-10-31T15:57:27Z',
+      }),
+    );
+    expect(vm.verb).toBe('shipped');
+    expect(vm.body).toEqual({ kind: 'text', text: 'ssh-merge-config' });
+    expectValid(vm);
+  });
+
   it('falls back to `title` for an issue record', () => {
     const vm = toStreamCardVM(
       item('sh.tangled.issue', {

@@ -685,6 +685,11 @@
       "tier": "creation",
       "app": "atmorsvp"
     },
+    "org.tangled.repo.declaration": {
+      "tier": "creation",
+      "app": "tangled",
+      "notes": "Repo in the org.tangled namespace: the record names the repo DID; the API copies name and description from the repo manifest."
+    },
     "sh.tangled.actor.profile": {
       "tier": "filtered",
       "app": "tangled",
