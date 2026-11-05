@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
+import { skillRefSchema } from '../shared.js';
+
 import {
   externalRecordRefSchema,
   optionalUrl,
   partialDateFieldSchema,
-  skillRefSchema,
   toolRefSchema,
 } from './shared.js';
 

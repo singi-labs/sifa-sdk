@@ -1047,6 +1047,10 @@ describe('tool and skill link fields', () => {
       expect(parsed.data?.skills).toHaveLength(50);
       expect(schema.safeParse({ ...base, skills: refs(51, skillUri) }).success).toBe(false);
     });
+
+    it('rejects a skill ref without an at-uri', () => {
+      expect(schema.safeParse({ ...base, skills: [{ uri: 'not a uri' }] }).success).toBe(false);
+    });
   });
 
   describe('SkillWriteSchema contexts', () => {

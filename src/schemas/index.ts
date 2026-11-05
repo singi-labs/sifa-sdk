@@ -145,6 +145,7 @@ export {
   selfLabelsSchema,
   skillRefSchema,
   strongRefSchema,
+  toolRefSchema,
   uriSchema,
   type AgentRef,
 } from './shared.js';

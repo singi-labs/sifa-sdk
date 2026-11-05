@@ -6,6 +6,8 @@ import {
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,
+  skillRefSchema,
+  toolRefSchema,
 } from './shared.js';
 
 /** Zod schema for `id.sifa.profile.education` records. */
@@ -30,6 +32,8 @@ export const ProfileEducationRecordSchema = z.object({
   location: z.unknown().optional(),
   startedAt: partialDateSchema.optional(),
   endedAt: partialDateSchema.optional(),
+  skills: z.array(skillRefSchema).max(50).optional(),
+  tools: z.array(toolRefSchema).max(50).optional(),
   labels: selfLabelsSchema.optional(),
   isPrimary: z.boolean().optional(),
   createdAt: datetimeSchema,

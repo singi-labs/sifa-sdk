@@ -7,7 +7,9 @@ import {
   partialDateSchema,
   externalRecordRefSchema,
   selfLabelsSchema,
+  skillRefSchema,
   strongRefSchema,
+  toolRefSchema,
   uriSchema,
 } from './shared.js';
 
@@ -50,6 +52,8 @@ export const ProfileProjectRecordSchema = z.object({
   position: strongRefSchema.optional(),
   startedAt: partialDateSchema.optional(),
   endedAt: partialDateSchema.optional(),
+  skills: z.array(skillRefSchema).max(50).optional(),
+  tools: z.array(toolRefSchema).max(50).optional(),
   labels: selfLabelsSchema.optional(),
   isPrimary: z.boolean().optional(),
   createdAt: datetimeSchema,

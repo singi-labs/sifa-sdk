@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { atUriSchema } from '../shared.js';
-
 /** Prepend `https://` if no scheme is present. */
 export function normalizeUrl(val: string): string {
   const trimmed = val.trim();
@@ -64,14 +62,7 @@ export const skillRefSchema = z.object({
   uri: z.string(),
 });
 
-/**
- * Reference to one of the owner's tool item records by AT-URI. Mirrors
- * `id.sifa.defs#toolRef`: no CID, since tool items are mutable records in the
- * same repo.
- */
-export const toolRefSchema = z.object({
-  uri: atUriSchema,
-});
+export { toolRefSchema } from '../shared.js';
 
 /**
  * Platforms accepted by the external-account write endpoint.

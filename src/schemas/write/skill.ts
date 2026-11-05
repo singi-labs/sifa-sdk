@@ -21,7 +21,7 @@ export const SkillWriteSchema = z.object({
    * `id.sifa.defs#contextPersonal`, or both. Open set, so other tokens pass.
    * Set by the owner, never inferred; a display hint, not a privacy control.
    */
-  contexts: z.array(z.string().min(1)).max(2).nullable().optional(),
+  contexts: z.array(z.string().min(1).max(640)).max(2).nullable().optional(),
 });
 
 export type SkillWriteInput = z.infer<typeof SkillWriteSchema>;

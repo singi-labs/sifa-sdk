@@ -1,11 +1,8 @@
 import { z } from 'zod';
 
-import {
-  entityRefSchema,
-  partialDateFieldSchema,
-  skillRefSchema,
-  toolRefSchema,
-} from './shared.js';
+import { skillRefSchema } from '../shared.js';
+
+import { entityRefSchema, partialDateFieldSchema, toolRefSchema } from './shared.js';
 
 /** Schema enforced by `POST /profile/education` on sifa-api. */
 export const EducationWriteSchema = z.object({
