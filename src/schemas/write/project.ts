@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-import { externalRecordRefSchema, optionalUrl, partialDateFieldSchema } from './shared.js';
+import { skillRefSchema } from '../shared.js';
+
+import {
+  externalRecordRefSchema,
+  optionalUrl,
+  partialDateFieldSchema,
+  toolRefSchema,
+} from './shared.js';
 
 /**
  * A person named as a member of the project. Naming someone is a claim: they
@@ -39,6 +46,8 @@ export const ProjectWriteSchema = z.object({
   events: z.array(projectEventWriteSchema).max(200).optional(),
   startedAt: partialDateFieldSchema,
   endedAt: partialDateFieldSchema,
+  skills: z.array(skillRefSchema).max(50).nullable().optional(),
+  tools: z.array(toolRefSchema).max(50).nullable().optional(),
 });
 
 export type ProjectWriteInput = z.infer<typeof ProjectWriteSchema>;

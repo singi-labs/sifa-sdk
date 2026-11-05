@@ -136,6 +136,15 @@ export const skillRefSchema = z.object({
 });
 
 /**
+ * Reference to one of the owner's tool item records by AT-URI. Mirrors
+ * `id.sifa.defs#toolRef`: no CID, since tool items are mutable records in the
+ * same repo.
+ */
+export const toolRefSchema = z.object({
+  uri: atUriSchema,
+});
+
+/**
  * Reference to a record by AT-URI, with an optional CID. Mirrors
  * `id.sifa.defs#externalRecordRef`. Unlike a strongRef the CID is optional:
  * consumers resolve the AT-URI live so the reference tracks edits to the

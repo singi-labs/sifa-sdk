@@ -9,6 +9,7 @@ import {
   optionalUrl,
   partialDateFieldSchema,
   skillRefSchema,
+  toolRefSchema,
   writeLocationSchema,
 } from './shared.js';
 
@@ -41,6 +42,7 @@ export const InvolvementWriteSchema = z.object({
   entityRef: entityRefSchema,
   location: writeLocationSchema,
   skills: z.array(skillRefSchema).max(50).nullable().optional(),
+  tools: z.array(toolRefSchema).max(50).nullable().optional(),
 });
 
 export type InvolvementWriteInput = z.infer<typeof InvolvementWriteSchema>;

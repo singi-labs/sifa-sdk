@@ -62,6 +62,8 @@ export const skillRefSchema = z.object({
   uri: z.string(),
 });
 
+export { toolRefSchema } from '../shared.js';
+
 /**
  * Platforms accepted by the external-account write endpoint.
  *

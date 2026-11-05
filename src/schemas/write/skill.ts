@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { maxGraphemes } from '../shared.js';
 
+import { toolRefSchema } from './shared.js';
+
 /** Schema enforced by `POST /profile/skills` on sifa-api. */
 export const SkillWriteSchema = z.object({
   name: z.string().min(1).max(100),
@@ -13,6 +15,13 @@ export const SkillWriteSchema = z.object({
     (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
     z.string().refine(maxGraphemes(64)).max(640).optional(),
   ),
+  tools: z.array(toolRefSchema).max(50).nullable().optional(),
+  /**
+   * Where the owner uses the skill: `id.sifa.defs#contextProfessional`,
+   * `id.sifa.defs#contextPersonal`, or both. Open set, so other tokens pass.
+   * Set by the owner, never inferred; a display hint, not a privacy control.
+   */
+  contexts: z.array(z.string().min(1).max(640)).max(2).nullable().optional(),
 });
 
 export type SkillWriteInput = z.infer<typeof SkillWriteSchema>;

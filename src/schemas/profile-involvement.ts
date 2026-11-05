@@ -7,6 +7,7 @@ import {
   maxGraphemes,
   partialDateSchema,
   selfLabelsSchema,
+  toolRefSchema,
   uriSchema,
 } from './shared.js';
 import { projectMemberRefSchema } from './profile-project.js';
@@ -63,6 +64,7 @@ export const ProfileInvolvementRecordSchema = z
       .array(z.object({ uri: z.string() }))
       .max(50)
       .optional(),
+    tools: z.array(toolRefSchema).max(50).optional(),
     labels: selfLabelsSchema.optional(),
     collaborators: z.array(projectMemberRefSchema).max(50).optional(),
     sameAs: externalRecordRefSchema.optional(),
