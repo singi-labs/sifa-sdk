@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.8
+
+### Patch Changes
+
+- dafa331: Add `hasPositionEnded` (a role ending this month or later is still current) and `formatCompactDateRange` (`Jun - Dec 2024`).
+
 ## 0.23.7
 
 ### Patch Changes
