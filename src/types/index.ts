@@ -106,7 +106,25 @@ export interface ProfilePosition {
    * of them, or one verified at the same organization. Absent otherwise.
    */
   peerVerification?: PositionPeerVerification;
+  /**
+   * The owner's own request for the organization to confirm this position
+   * (sifa-workspace#779, #785). Owner view only: `pending` while the
+   * organization has not answered, `declined` during the wait after a
+   * decline, with the date a new request becomes possible. Absent otherwise.
+   */
+  orgRequest?: PositionOrgRequest;
 }
+
+/** State of the owner's confirmation request for one position, owner view only. */
+export type PositionOrgRequest =
+  | { status: 'pending' }
+  | {
+      status: 'declined';
+      /** When the organization declined (ISO). */
+      decidedAt: string;
+      /** When the owner can ask again (ISO). */
+      canRequestAgainAt: string;
+    };
 
 /** Peer vouches lifting one position to the peer tier, as returned by the AppView. */
 export interface PositionPeerVerification {

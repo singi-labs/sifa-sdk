@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import type {
   ActorCard,
   PositionConfirmations,
+  PositionOrgRequest,
   PositionOrgVerification,
   PositionViewerConfirmation,
   ProfilePosition,
@@ -59,5 +60,29 @@ describe('ProfilePosition confirmations', () => {
       PositionOrgVerification | undefined
     >();
     expectTypeOf<PositionOrgVerification['status']>().toEqualTypeOf<'current' | 'past'>();
+  });
+
+  it('carries the owner-only state of a confirmation request (#779, #785)', () => {
+    const pending: ProfilePosition = {
+      rkey: 'p1',
+      title: 'Engineer',
+      company: 'Acme',
+      startedAt: '2021-03',
+      orgRequest: { status: 'pending' },
+    };
+    const declined: ProfilePosition = {
+      rkey: 'p2',
+      title: 'QA',
+      company: 'Acme',
+      startedAt: '2024-06',
+      orgRequest: {
+        status: 'declined',
+        decidedAt: '2026-10-23T00:00:00.000Z',
+        canRequestAgainAt: '2027-01-21T00:00:00.000Z',
+      },
+    };
+    expect(pending.orgRequest?.status).toBe('pending');
+    expect(declined.orgRequest?.status).toBe('declined');
+    expectTypeOf<ProfilePosition['orgRequest']>().toEqualTypeOf<PositionOrgRequest | undefined>();
   });
 });

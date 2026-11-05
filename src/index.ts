@@ -42,6 +42,7 @@ export type {
   ProfilePosition,
   PositionConfirmations,
   PositionViewerConfirmation,
+  PositionOrgRequest,
   PositionOrgVerification,
   PositionEmailVerification,
   PositionPeerVerification,
