@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-import { entityRefSchema, partialDateFieldSchema } from './shared.js';
+import {
+  entityRefSchema,
+  partialDateFieldSchema,
+  skillRefSchema,
+  toolRefSchema,
+} from './shared.js';
 
 /** Schema enforced by `POST /profile/education` on sifa-api. */
 export const EducationWriteSchema = z.object({
@@ -13,6 +18,8 @@ export const EducationWriteSchema = z.object({
   activities: z.string().max(1000).nullable().optional(),
   startedAt: partialDateFieldSchema,
   endedAt: partialDateFieldSchema,
+  skills: z.array(skillRefSchema).max(50).nullable().optional(),
+  tools: z.array(toolRefSchema).max(50).nullable().optional(),
 });
 
 export type EducationWriteInput = z.infer<typeof EducationWriteSchema>;

@@ -30,6 +30,7 @@ export {
   optionalUrl,
   presentationLinkSchema,
   skillRefSchema,
+  toolRefSchema,
   VALID_PLATFORMS,
   writeLocationSchema,
   type ValidPlatform,

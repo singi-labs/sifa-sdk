@@ -26,6 +26,7 @@ import {
   isValidPartialDate,
   normalizeUrl,
   optionalUrl,
+  toolRefSchema,
 } from './index.js';
 
 describe('PositionWriteSchema', () => {
@@ -980,6 +981,98 @@ describe('partial-date fields on profile write schemas (sifa-workspace#745)', ()
       ]) {
         expect(schema.safeParse({ ...base, [field]: value }).success).toBe(false);
       }
+    });
+  });
+});
+
+describe('tool and skill link fields', () => {
+  const toolUri = 'at://did:plc:abc123/com.example.tool/3kabctool01';
+  const skillUri = 'at://did:plc:abc123/id.sifa.profile.skill/3kabcskill1';
+  const refs = (n: number, uri: string) => Array.from({ length: n }, () => ({ uri }));
+
+  it('toolRefSchema requires an at-uri and carries no cid', () => {
+    expect(toolRefSchema.safeParse({ uri: toolUri }).success).toBe(true);
+    expect(toolRefSchema.safeParse({}).success).toBe(false);
+    expect(toolRefSchema.safeParse({ uri: 'https://example.com/tool' }).success).toBe(false);
+    expect(toolRefSchema.parse({ uri: toolUri, cid: 'bafy' })).toEqual({ uri: toolUri });
+  });
+
+  const withTools: Array<
+    [
+      string,
+      (
+        | typeof ProjectWriteSchema
+        | typeof EducationWriteSchema
+        | typeof InvolvementWriteSchema
+        | typeof SkillWriteSchema
+      ),
+      Record<string, unknown>,
+    ]
+  > = [
+    ['ProjectWriteSchema', ProjectWriteSchema, { name: 'Portal' }],
+    ['EducationWriteSchema', EducationWriteSchema, { institution: 'Utrecht University' }],
+    [
+      'InvolvementWriteSchema',
+      InvolvementWriteSchema,
+      { kind: 'id.sifa.defs#involvementOpenSource' },
+    ],
+    ['SkillWriteSchema', SkillWriteSchema, { name: 'Photo editing' }],
+  ];
+
+  describe.each(withTools)('%s tools', (_name, schema, base) => {
+    it('keeps up to 50 tool refs and rejects 51', () => {
+      const parsed = schema.safeParse({ ...base, tools: refs(50, toolUri) });
+      expect(parsed.success).toBe(true);
+      expect((parsed.data as { tools?: unknown[] } | undefined)?.tools).toHaveLength(50);
+      expect(schema.safeParse({ ...base, tools: refs(51, toolUri) }).success).toBe(false);
+    });
+
+    it('rejects a tool ref without an at-uri', () => {
+      expect(schema.safeParse({ ...base, tools: [{}] }).success).toBe(false);
+      expect(schema.safeParse({ ...base, tools: [{ uri: 'not a uri' }] }).success).toBe(false);
+    });
+
+    it('stays optional', () => {
+      expect(schema.safeParse(base).success).toBe(true);
+    });
+  });
+
+  describe.each([
+    ['ProjectWriteSchema', ProjectWriteSchema, { name: 'Portal' }],
+    ['EducationWriteSchema', EducationWriteSchema, { institution: 'Utrecht University' }],
+  ] as const)('%s skills', (_name, schema, base) => {
+    it('keeps up to 50 skill refs and rejects 51', () => {
+      const parsed = schema.safeParse({ ...base, skills: refs(50, skillUri) });
+      expect(parsed.success).toBe(true);
+      expect(parsed.data?.skills).toHaveLength(50);
+      expect(schema.safeParse({ ...base, skills: refs(51, skillUri) }).success).toBe(false);
+    });
+  });
+
+  describe('SkillWriteSchema contexts', () => {
+    const base = { name: 'Photo editing' };
+    const professional = 'id.sifa.defs#contextProfessional';
+    const personal = 'id.sifa.defs#contextPersonal';
+
+    it('keeps one or two contexts', () => {
+      expect(SkillWriteSchema.parse({ ...base, contexts: [personal] }).contexts).toEqual([
+        personal,
+      ]);
+      expect(
+        SkillWriteSchema.parse({ ...base, contexts: [professional, personal] }).contexts,
+      ).toEqual([professional, personal]);
+    });
+
+    it('accepts an unknown context token (open set)', () => {
+      const other = 'com.example.defs#contextOther';
+      expect(SkillWriteSchema.parse({ ...base, contexts: [other] }).contexts).toEqual([other]);
+    });
+
+    it('rejects three contexts and non-string values', () => {
+      expect(
+        SkillWriteSchema.safeParse({ ...base, contexts: [professional, personal, 'x#y'] }).success,
+      ).toBe(false);
+      expect(SkillWriteSchema.safeParse({ ...base, contexts: [1] }).success).toBe(false);
     });
   });
 });
