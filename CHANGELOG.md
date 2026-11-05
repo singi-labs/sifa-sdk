@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.7
+
+### Patch Changes
+
+- cef85fa: Added optional `orgRequest` field to `ProfilePosition`, typed as `PositionOrgRequest`, exposing the profile owner's pending or declined position confirmation request, with `decidedAt` and `canRequestAgainAt` dates.
+
 ## 0.23.6
 
 ### Patch Changes
