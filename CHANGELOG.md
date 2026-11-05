@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.6
+
+### Patch Changes
+
+- 79c73e6: Map the `org.tangled.*` namespace to Tangled: `org.tangled.repo.declaration` is a creation-tier "shipped" repo that links to its repo DID on tangled.sh.
+
 ## 0.23.5
 
 ### Patch Changes
