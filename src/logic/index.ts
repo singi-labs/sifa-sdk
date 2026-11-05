@@ -24,6 +24,7 @@ export { pickPrimaryPosition, type PrimaryPositionCandidate } from './primary-po
 export {
   DATE_LOOKAHEAD_MONTHS,
   isBeyondLookahead,
+  hasPositionEnded,
   isUpcomingStart,
   type DateLookaheadKind,
 } from './date-lookahead.js';

@@ -6,6 +6,7 @@ export { formatPresentationDuration } from './format-duration.js';
 export {
   formatCredentialDateRange,
   formatDateRange,
+  formatCompactDateRange,
   formatPositionDateRange,
   formatTimelineDate,
 } from './timeline.js';
