@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { ArtifactLinkSchema } from './profile-involvement.js';
 import { datetimeSchema, didSchema, maxGraphemes, partialDateSchema } from './shared.js';
 
 /** Zod schema for `id.sifa.profile.honor` records. */
@@ -17,6 +18,9 @@ export const ProfileHonorRecordSchema = z.object({
     .optional(),
   description: z.string().refine(maxGraphemes(5000)).max(50000).optional(),
   awardedAt: partialDateSchema.optional(),
+  // Open set: the id.sifa.defs#honor* tokens are known, other tokens pass.
+  kind: z.string().optional(),
+  links: z.array(ArtifactLinkSchema).max(50).optional(),
   createdAt: datetimeSchema,
 });
 

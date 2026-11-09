@@ -510,7 +510,17 @@ export interface ProfileHonor {
   agentRef?: AgentRef;
   date?: string;
   description?: string;
+  /** `id.sifa.defs#honor*` token (open set). Absent means unspecified. */
+  kind?: string;
+  /** Public sources for the honor. */
+  links?: ProfileHonorLink[];
   hidden?: boolean;
+}
+
+export interface ProfileHonorLink {
+  url: string;
+  kind?: string;
+  label?: string;
 }
 
 /**

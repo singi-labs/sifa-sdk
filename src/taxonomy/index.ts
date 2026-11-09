@@ -143,6 +143,12 @@ export {
   type InvolvementKindOption,
 } from './involvement-kind.js';
 export {
+  HONOR_KIND_LABELS,
+  HONOR_KIND_OPTIONS,
+  getHonorKindLabel,
+  type HonorKindOption,
+} from './honor-kind.js';
+export {
   COURSE_ROLE_OPTIONS,
   COURSE_ROLE_LABELS,
   COURSE_ROLE_TAKEN,
