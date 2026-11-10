@@ -51,6 +51,22 @@ describe('isCompanyPageIndexable', () => {
     ).toBe(false);
   });
 
+  it('indexes an unclaimed page exactly at the roster threshold', () => {
+    expect(
+      isCompanyPageIndexable({
+        canonicalName: 'Acme',
+        memberCount: COMPANY_PAGE_ROSTER_MIN_MEMBERS,
+        claimed: false,
+      }),
+    ).toBe(true);
+  });
+
+  it('does not count a non-finite member count', () => {
+    for (const memberCount of [Number.NaN, Number.POSITIVE_INFINITY]) {
+      expect(isCompanyPageIndexable({ canonicalName: 'Acme', memberCount })).toBe(false);
+    }
+  });
+
   it('does NOT index when the canonical name is missing or blank', () => {
     expect(isCompanyPageIndexable({ canonicalName: undefined, claimed: true })).toBe(false);
     expect(

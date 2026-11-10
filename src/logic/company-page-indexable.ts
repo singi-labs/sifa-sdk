@@ -36,5 +36,10 @@ export function isCompanyPageIndexable(company: CompanyPageIndexFacts): boolean 
     return false;
   }
   if (company.claimed === true) return true;
-  return (company.memberCount ?? 0) >= COMPANY_PAGE_ROSTER_MIN_MEMBERS;
+  const members = company.memberCount;
+  return (
+    typeof members === 'number' &&
+    Number.isFinite(members) &&
+    members >= COMPANY_PAGE_ROSTER_MIN_MEMBERS
+  );
 }
