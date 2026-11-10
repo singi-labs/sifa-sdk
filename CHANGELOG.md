@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.25.0
+
+### Minor Changes
+
+- b10b0d6: Behaviour change in `formatNameWithHonorifics`: the suffix is joined with a space (`Jane Doe PhD`, `John Smith OBE`) instead of always with a comma; a suffix that starts with a comma (`, PhD`) keeps it. Honorifics the name already starts or ends with are not repeated, comparing loosely (`Dr` / `Dr.`, `PhD` / `Ph.D.`). The name is trimmed and an empty name stays empty. JSON Resume no longer puts honorifics around a bare handle. Callers that expect `Dr. Jane Doe, PhD` need updating.
+
 ## 0.24.3
 
 ### Patch Changes
