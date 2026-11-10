@@ -429,13 +429,17 @@ export function profileToJsonResume(
   const canonical = options.canonicalUrl ?? profileUrl(baseUrl, profile.handle);
   const contact = normalizeExportContact(options.contact ?? {});
 
-  const name = formatNameWithHonorifics(
-    formatStructuredName(profile.givenName, profile.familyName) ??
-      text(profile.displayName, s) ??
-      profile.handle,
-    text(profile.honorificPrefix, s),
-    text(profile.honorificSuffix, s),
-  );
+  // Honorifics wrap a real name only: around a bare handle they do not read
+  // as one (same rule as sifa-web's page title).
+  const realName =
+    formatStructuredName(profile.givenName, profile.familyName) ?? text(profile.displayName, s);
+  const name = realName
+    ? formatNameWithHonorifics(
+        realName,
+        text(profile.honorificPrefix, s),
+        text(profile.honorificSuffix, s),
+      )
+    : profile.handle;
 
   const profiles = filterHidden(profile.externalAccounts).map((account) =>
     compact<JsonResumeProfileLink>({

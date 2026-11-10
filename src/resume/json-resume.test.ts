@@ -837,6 +837,15 @@ describe('profileToJsonResume honorifics', () => {
       honorificPrefix: 'Dr.',
       honorificSuffix: 'PhD',
     });
-    expect(r.basics?.name).toBe('Dr. Jane Doe, PhD');
+    expect(r.basics?.name).toBe('Dr. Jane Doe PhD');
+  });
+
+  it('leaves a handle fallback undecorated', () => {
+    const r = profileToJsonResume({
+      handle: 'jane.example',
+      honorificPrefix: 'Dr.',
+      honorificSuffix: 'PhD',
+    });
+    expect(r.basics?.name).toBe('jane.example');
   });
 });

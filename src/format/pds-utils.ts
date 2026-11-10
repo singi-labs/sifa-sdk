@@ -70,17 +70,53 @@ export function formatStructuredName(
 }
 
 /**
- * A name with its honorifics: `Dr. Jane Doe, PhD`. The prefix goes before the
- * name, the suffix after a comma. Blank honorifics are ignored.
+ * Words of a name or honorific, compared loosely: case and the dots and commas
+ * people write inconsistently (`Dr` / `Dr.`, `PhD` / `Ph.D.`) are ignored.
+ */
+function honorificWords(text: string): string[] {
+  return text
+    .split(/[\s,]+/)
+    .map((word) => word.replace(/[.,]/g, '').toLowerCase())
+    .filter(Boolean);
+}
+
+function sameWords(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  const sortedA = [...a].sort();
+  const sortedB = [...b].sort();
+  return sortedA.every((word, i) => word === sortedB[i]);
+}
+
+/**
+ * A name with its honorifics: `Dr. Jane Doe PhD`. The prefix goes before the
+ * name and the suffix after it, separated by spaces. A suffix the user starts
+ * with a comma (`, PhD`) keeps it, so the US `Jane Doe, PhD` style stays
+ * available without forcing it on everyone. Honorifics the name already starts
+ * or ends with (a display name written as `Dr. Jane Doe`) are not repeated; for
+ * a suffix with several parts, only when all of them are there. An empty name
+ * stays empty, and blank honorifics are ignored.
  */
 export function formatNameWithHonorifics(
   name: string,
   honorificPrefix: string | undefined,
   honorificSuffix: string | undefined,
 ): string {
-  const prefix = honorificPrefix?.trim();
-  const suffix = honorificSuffix?.trim();
-  return `${prefix ? `${prefix} ` : ''}${name}${suffix ? `, ${suffix}` : ''}`;
+  const base = name.trim();
+  if (!base) return base;
+  const nameWords = honorificWords(base);
+
+  const prefix = honorificPrefix?.trim() ?? '';
+  const prefixWords = honorificWords(prefix);
+  const hasPrefix = prefixWords.length > 0 && prefixWords.every((word, i) => nameWords[i] === word);
+  const withPrefix = prefixWords.length > 0 && !hasPrefix ? `${prefix} ${base}` : base;
+
+  const rawSuffix = honorificSuffix?.trim() ?? '';
+  const leadingComma = rawSuffix.startsWith(',');
+  const suffix = rawSuffix.replace(/^,\s*/, '');
+  const suffixWords = honorificWords(suffix);
+  if (suffixWords.length === 0) return withPrefix;
+  if (sameWords(nameWords.slice(-suffixWords.length), suffixWords)) return withPrefix;
+  return leadingComma ? `${withPrefix}, ${suffix}` : `${withPrefix} ${suffix}`;
 }
 
 const PDS_DISPLAY_NAMES: Record<string, string> = {
