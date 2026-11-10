@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.24.2
+
+### Patch Changes
+
+- 4582f75: Add `honorificPrefix` and `honorificSuffix` to `UpdateProfileSelfInput`, so `updateProfileSelf` and `useUpdateProfileSelf` accept the name honorifics added in 0.24.1.
+
 ## 0.24.1
 
 ### Patch Changes
