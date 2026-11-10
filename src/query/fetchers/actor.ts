@@ -20,6 +20,9 @@ export async function fetchResolveActor(
   });
 }
 
+/** Optional result scope for {@link fetchTypeaheadActors}. */
+export type TypeaheadActorScope = 'discovery';
+
 /**
  * Typeahead over indexed Sifa profiles by partial name or handle, for the
  * co-speaker, login and search comboboxes. Matches display name and handle only
@@ -28,21 +31,27 @@ export async function fetchResolveActor(
  * and a partial name surfaces its prefix match rather than an unrelated
  * account. Returns an empty array on a blank query or a failed request; use
  * {@link fetchResolveActor} on Enter to reach a handle that is not on Sifa.
+ *
+ * Pass `scope: 'discovery'` for discovery surfaces (people search): the API
+ * then leaves out internal test accounts. Without a scope (login, co-speaker
+ * pickers) every indexed profile can match.
  */
 export async function fetchTypeaheadActors(
   config: SifaApiConfig,
   query: string,
   limit = 8,
-  options: ApiFetchOptions = {},
+  options: ApiFetchOptions & { scope?: TypeaheadActorScope } = {},
 ): Promise<ActorCard[]> {
   const q = query.trim().replace(/^@/, '');
   if (!q) return [];
+  const { scope, ...fetchOptions } = options;
   const params = new URLSearchParams({ q, limit: String(limit) });
+  if (scope) params.set('scope', scope);
   try {
     const res = await apiFetch<{ actors: ActorCard[] }>(
       config,
       `/api/actor/typeahead?${params.toString()}`,
-      { cache: 'no-store', ...options },
+      { cache: 'no-store', ...fetchOptions },
     );
     return res.actors ?? [];
   } catch {

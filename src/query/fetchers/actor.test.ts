@@ -37,6 +37,22 @@ describe('fetchTypeaheadActors', () => {
     expect(getUrl(fetchImpl)).toContain('limit=8');
   });
 
+  it('omits the scope param by default', async () => {
+    const fetchImpl = jsonFetch({ actors: [] });
+    await fetchTypeaheadActors({ ...baseConfig, fetch: fetchImpl }, 'ariel');
+    expect(getUrl(fetchImpl)).not.toContain('scope=');
+  });
+
+  it('passes scope=discovery through as a query param', async () => {
+    const fetchImpl = jsonFetch({ actors: [] });
+    await fetchTypeaheadActors({ ...baseConfig, fetch: fetchImpl }, 'ariel', 8, {
+      scope: 'discovery',
+    });
+    const url = getUrl(fetchImpl);
+    expect(url).toContain('scope=discovery');
+    expect(url).toContain('q=ariel');
+  });
+
   it('returns the actors array from the response envelope', async () => {
     const actors = [{ did: 'did:plc:x', handle: 'byarielm.fyi', displayName: 'Ariel M' }];
     const fetchImpl = jsonFetch({ actors });

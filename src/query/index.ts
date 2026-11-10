@@ -192,7 +192,11 @@ export {
   type FetchProfileCompletenessOptions,
   type DismissCompletenessSignalInput,
 } from './fetchers/profile-completeness.js';
-export { fetchResolveActor, fetchTypeaheadActors } from './fetchers/actor.js';
+export {
+  fetchResolveActor,
+  fetchTypeaheadActors,
+  type TypeaheadActorScope,
+} from './fetchers/actor.js';
 export { hideKeytraceClaim, unhideKeytraceClaim } from './fetchers/keytrace-claims.js';
 export { revealMarqueDomain, unrevealMarqueDomain } from './fetchers/marque-domains.js';
 export {
