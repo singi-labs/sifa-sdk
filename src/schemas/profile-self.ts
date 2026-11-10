@@ -39,6 +39,8 @@ export const ProfileSelfRecordSchema = z.object({
   discoverable: z.boolean().optional(),
   /** Absent means true. When false, no app activity shows on the profile. */
   showActivity: z.boolean().optional(),
+  /** Absent means true. When false, the profile shows the name without honorifics. */
+  showHonorifics: z.boolean().optional(),
   /**
    * Where the avatar comes from instead of the avatar blob. Open per the
    * lexicon (`knownValues`); Sifa renders `actor.rpg.sprite`, the user's

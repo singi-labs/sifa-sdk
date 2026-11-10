@@ -31,6 +31,8 @@ export const ProfileSelfWriteSchema = z
     familyName: profileNameSchema.optional(),
     honorificPrefix: profileHonorificSchema.optional(),
     honorificSuffix: profileHonorificSchema.optional(),
+    /** Absent means true. When false, the profile shows the name without honorifics. */
+    showHonorifics: z.boolean().optional(),
     namePronunciation: profileNameSchema.optional(),
     industries: z
       .array(

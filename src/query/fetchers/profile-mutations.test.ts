@@ -93,12 +93,13 @@ describe('updateProfileSelf', () => {
     const fetchImpl = jsonFetch({});
     await updateProfileSelf(
       { ...baseConfig, fetch: fetchImpl },
-      { honorificPrefix: 'Dr.', honorificSuffix: 'PhD' },
+      { honorificPrefix: 'Dr.', honorificSuffix: 'PhD', showHonorifics: false },
     );
     const [, init] = getCall(fetchImpl);
     expect(JSON.parse(init.body as string)).toEqual({
       honorificPrefix: 'Dr.',
       honorificSuffix: 'PhD',
+      showHonorifics: false,
     });
   });
 
