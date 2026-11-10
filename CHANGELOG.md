@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.24.3
+
+### Patch Changes
+
+- 1ce96e9: Add optional `showHonorifics` (absent = true) to the profile self record and write schemas, the `Profile` and profile view types, and `UpdateProfileSelfInput`. Matches sifa-lexicons 0.15.11.
+
 ## 0.24.2
 
 ### Patch Changes
