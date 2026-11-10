@@ -3,13 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { HONOR_KIND_OPTIONS, getHonorKindLabel } from './index.js';
 
 describe('honor kind taxonomy', () => {
-  it('mirrors the five id.sifa.defs honor tokens in order', () => {
+  it('mirrors the six id.sifa.defs honor tokens in order', () => {
     expect(HONOR_KIND_OPTIONS.map((o) => o.value)).toEqual([
       'id.sifa.defs#honorAward',
       'id.sifa.defs#honorNomination',
       'id.sifa.defs#honorChampionship',
       'id.sifa.defs#honorRecord',
       'id.sifa.defs#honorRecognition',
+      'id.sifa.defs#honorDecoration',
     ]);
   });
 
@@ -21,5 +22,7 @@ describe('honor kind taxonomy', () => {
     expect(getHonorKindLabel(undefined)).toBeUndefined();
     expect(getHonorKindLabel('')).toBeUndefined();
     expect(getHonorKindLabel('com.example.defs#honorScholarship')).toBeUndefined();
+    expect(getHonorKindLabel('toString')).toBeUndefined();
+    expect(getHonorKindLabel('constructor')).toBeUndefined();
   });
 });

@@ -58,6 +58,8 @@ export interface JsonLdProfileInput {
   readonly displayName?: string;
   readonly givenName?: string;
   readonly familyName?: string;
+  readonly honorificPrefix?: string;
+  readonly honorificSuffix?: string;
   readonly headline?: string;
   readonly about?: string;
   readonly avatar?: string;
@@ -268,6 +270,8 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
   // consistent with the explicit givenName/familyName properties.
   const givenTrimmed = profile.givenName?.trim();
   const familyTrimmed = profile.familyName?.trim();
+  const prefixTrimmed = profile.honorificPrefix?.trim();
+  const suffixTrimmed = profile.honorificSuffix?.trim();
   const structuredName =
     givenTrimmed && familyTrimmed ? `${givenTrimmed} ${familyTrimmed}` : undefined;
 
@@ -317,6 +321,8 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
     name: s(structuredName ?? profile.displayName ?? profile.handle),
     ...(givenTrimmed && { givenName: s(givenTrimmed) }),
     ...(familyTrimmed && { familyName: s(familyTrimmed) }),
+    ...(prefixTrimmed && { honorificPrefix: s(prefixTrimmed) }),
+    ...(suffixTrimmed && { honorificSuffix: s(suffixTrimmed) }),
     jobTitle: hasMeaningfulText(profile.headline)
       ? s(profile.headline)
       : currentPosition?.title

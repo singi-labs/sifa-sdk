@@ -61,6 +61,8 @@ export const PROFILE_TEXT_LIMITS = {
   displayName: { graphemes: 64, bytes: 640 },
   givenName: { graphemes: 64, bytes: 640 },
   familyName: { graphemes: 64, bytes: 640 },
+  honorificPrefix: { graphemes: 64, bytes: 640 },
+  honorificSuffix: { graphemes: 64, bytes: 640 },
   namePronunciation: { graphemes: 64, bytes: 640 },
   pronouns: { graphemes: 20, bytes: 200 },
   headline: { graphemes: 220, bytes: 2200 },
@@ -77,6 +79,8 @@ function profileText(limit: { readonly graphemes: number; readonly bytes: number
  */
 export const profileDisplayNameSchema = profileText(PROFILE_TEXT_LIMITS.displayName);
 export const profileNameSchema = profileText(PROFILE_TEXT_LIMITS.givenName);
+/** Title before or post-nominal letters after the name (Dr., PhD, OBE). */
+export const profileHonorificSchema = profileText(PROFILE_TEXT_LIMITS.honorificPrefix);
 export const profilePronounsSchema = profileText(PROFILE_TEXT_LIMITS.pronouns);
 export const profileHeadlineSchema = profileText(PROFILE_TEXT_LIMITS.headline);
 export const profileAboutSchema = profileText(PROFILE_TEXT_LIMITS.about);

@@ -69,6 +69,20 @@ export function formatStructuredName(
   return given || family || undefined;
 }
 
+/**
+ * A name with its honorifics: `Dr. Jane Doe, PhD`. The prefix goes before the
+ * name, the suffix after a comma. Blank honorifics are ignored.
+ */
+export function formatNameWithHonorifics(
+  name: string,
+  honorificPrefix: string | undefined,
+  honorificSuffix: string | undefined,
+): string {
+  const prefix = honorificPrefix?.trim();
+  const suffix = honorificSuffix?.trim();
+  return `${prefix ? `${prefix} ` : ''}${name}${suffix ? `, ${suffix}` : ''}`;
+}
+
 const PDS_DISPLAY_NAMES: Record<string, string> = {
   bluesky: 'Bluesky',
   blacksky: 'BlackSky',
