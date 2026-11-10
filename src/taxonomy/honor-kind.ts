@@ -15,6 +15,7 @@ export const HONOR_KIND_OPTIONS: HonorKindOption[] = [
   { value: 'id.sifa.defs#honorChampionship', label: 'Championship' },
   { value: 'id.sifa.defs#honorRecord', label: 'Record' },
   { value: 'id.sifa.defs#honorRecognition', label: 'Recognition' },
+  { value: 'id.sifa.defs#honorDecoration', label: 'Decoration' },
 ];
 
 export const HONOR_KIND_LABELS: Record<string, string> = Object.fromEntries(
@@ -27,5 +28,6 @@ export const HONOR_KIND_LABELS: Record<string, string> = Object.fromEntries(
  */
 export function getHonorKindLabel(value: string | undefined | null): string | undefined {
   if (!value) return undefined;
-  return HONOR_KIND_LABELS[value];
+  // Own keys only: a record's token like `toString` must not hit Object.prototype.
+  return Object.hasOwn(HONOR_KIND_LABELS, value) ? HONOR_KIND_LABELS[value] : undefined;
 }

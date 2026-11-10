@@ -530,3 +530,26 @@ describe('alternateName', () => {
     expect(buildPersonJsonLd({ handle: 'gui.do' }).alternateName).toBe('@gui.do');
   });
 });
+
+describe('buildPersonJsonLd honorifics', () => {
+  it('emits honorificPrefix and honorificSuffix and keeps name plain', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'gui.do',
+      givenName: 'Jane',
+      familyName: 'Doe',
+      honorificPrefix: ' Dr. ',
+      honorificSuffix: 'PhD',
+    }) as Record<string, unknown>;
+    expect(ld.name).toBe('Jane Doe');
+    expect(ld.honorificPrefix).toBe('Dr.');
+    expect(ld.honorificSuffix).toBe('PhD');
+  });
+
+  it('omits blank honorifics', () => {
+    const ld = buildPersonJsonLd({ handle: 'gui.do', honorificPrefix: ' ' }) as Record<
+      string,
+      unknown
+    >;
+    expect('honorificPrefix' in ld).toBe(false);
+  });
+});

@@ -27,6 +27,8 @@ describe('PROFILE_TEXT_LIMITS', () => {
       displayName: { graphemes: 64, bytes: 640 },
       givenName: { graphemes: 64, bytes: 640 },
       familyName: { graphemes: 64, bytes: 640 },
+      honorificPrefix: { graphemes: 64, bytes: 640 },
+      honorificSuffix: { graphemes: 64, bytes: 640 },
       namePronunciation: { graphemes: 64, bytes: 640 },
       pronouns: { graphemes: 20, bytes: 200 },
       headline: { graphemes: 220, bytes: 2200 },

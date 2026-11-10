@@ -44,6 +44,7 @@ export type {
 } from './location-segments.js';
 export {
   detectPdsProvider,
+  formatNameWithHonorifics,
   formatStructuredName,
   getDisplayLabel,
   getHandleStem,

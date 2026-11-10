@@ -5,6 +5,7 @@ import {
   profileAboutSchema,
   profileDisplayNameSchema,
   profileHeadlineSchema,
+  profileHonorificSchema,
   profileNameSchema,
   profilePronounsSchema,
 } from '../shared.js';
@@ -28,6 +29,8 @@ export const ProfileSelfWriteSchema = z
     about: profileAboutSchema.optional(),
     givenName: profileNameSchema.optional(),
     familyName: profileNameSchema.optional(),
+    honorificPrefix: profileHonorificSchema.optional(),
+    honorificSuffix: profileHonorificSchema.optional(),
     namePronunciation: profileNameSchema.optional(),
     industries: z
       .array(

@@ -266,6 +266,7 @@ export {
   formatRelativeTime,
   formatTimelineDate,
   getDisplayLabel,
+  formatNameWithHonorifics,
   getHandleStem,
   getPdsDisplayName,
   isValidRgbColor,

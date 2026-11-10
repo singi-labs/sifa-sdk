@@ -21,7 +21,7 @@
  */
 
 import { parseLocationString } from '../format/location-utils.js';
-import { formatStructuredName } from '../format/pds-utils.js';
+import { formatNameWithHonorifics, formatStructuredName } from '../format/pds-utils.js';
 import { filterHidden } from '../profile/section-model.js';
 import {
   sortCertifications,
@@ -93,6 +93,8 @@ export interface JsonResumeProfileInput {
   readonly displayName?: string;
   readonly givenName?: string;
   readonly familyName?: string;
+  readonly honorificPrefix?: string;
+  readonly honorificSuffix?: string;
   readonly avatar?: string;
   readonly headline?: string;
   readonly about?: string;
@@ -427,10 +429,13 @@ export function profileToJsonResume(
   const canonical = options.canonicalUrl ?? profileUrl(baseUrl, profile.handle);
   const contact = normalizeExportContact(options.contact ?? {});
 
-  const name =
+  const name = formatNameWithHonorifics(
     formatStructuredName(profile.givenName, profile.familyName) ??
-    text(profile.displayName, s) ??
-    profile.handle;
+      text(profile.displayName, s) ??
+      profile.handle,
+    text(profile.honorificPrefix, s),
+    text(profile.honorificSuffix, s),
+  );
 
   const profiles = filterHidden(profile.externalAccounts).map((account) =>
     compact<JsonResumeProfileLink>({

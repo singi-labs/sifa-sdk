@@ -827,3 +827,16 @@ describe('profileToJsonResume involvement, talks and courses', () => {
     expect(JSON.stringify(r)).not.toContain('nvestment');
   });
 });
+
+describe('profileToJsonResume honorifics', () => {
+  it('puts honorifics around the name', () => {
+    const r = profileToJsonResume({
+      handle: 'gui.do',
+      givenName: 'Jane',
+      familyName: 'Doe',
+      honorificPrefix: 'Dr.',
+      honorificSuffix: 'PhD',
+    });
+    expect(r.basics?.name).toBe('Dr. Jane Doe, PhD');
+  });
+});

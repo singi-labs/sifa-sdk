@@ -1042,6 +1042,17 @@ export interface Profile {
    */
   familyName?: string;
   /**
+   * Title shown before the name (Dr., Prof., Sir) from
+   * `id.sifa.profile.self.honorificPrefix`. Schema.org `Person.honorificPrefix`.
+   * Render with `formatNameWithHonorifics`.
+   */
+  honorificPrefix?: string;
+  /**
+   * Post-nominal letters shown after the name (PhD, OBE) from
+   * `id.sifa.profile.self.honorificSuffix`. Schema.org `Person.honorificSuffix`.
+   */
+  honorificSuffix?: string;
+  /**
    * Free-form phonetic respelling of the user's name from
    * `id.sifa.profile.self.namePronunciation` (e.g. `Foo-kuh`). Optional; a
    * native field with no `app.bsky.actor.profile` equivalent. Text only.

@@ -391,6 +391,18 @@
     },
     {
       "lexicon": "id.sifa.profile.self",
+      "field": "honorificPrefix",
+      "match": "exactMatch",
+      "terms": ["schema:honorificPrefix"]
+    },
+    {
+      "lexicon": "id.sifa.profile.self",
+      "field": "honorificSuffix",
+      "match": "exactMatch",
+      "terms": ["schema:honorificSuffix"]
+    },
+    {
+      "lexicon": "id.sifa.profile.self",
       "field": "location",
       "match": "closeMatch",
       "terms": ["schema:homeLocation"]
@@ -421,6 +433,11 @@
     {
       "lexicon": "id.sifa.profile.self",
       "field": "avatarSource",
+      "reason": "Rendering instruction for apps, not a fact about the person."
+    },
+    {
+      "lexicon": "id.sifa.profile.self",
+      "field": "showActivity",
       "reason": "Rendering instruction for apps, not a fact about the person."
     },
     {
