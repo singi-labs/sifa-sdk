@@ -837,6 +837,6 @@ describe('profileToJsonResume honorifics', () => {
       honorificPrefix: 'Dr.',
       honorificSuffix: 'PhD',
     });
-    expect(r.basics?.name).toBe('Dr. Jane Doe, PhD');
+    expect(r.basics?.name).toBe('Dr. Jane Doe PhD');
   });
 });

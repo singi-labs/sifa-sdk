@@ -69,9 +69,31 @@ export function formatStructuredName(
   return given || family || undefined;
 }
 
+/** True when `name` already starts with `prefix` as a whole word (case-insensitive). */
+function startsWithWord(name: string, prefix: string): boolean {
+  const head = name.slice(0, prefix.length);
+  const next = name.charAt(prefix.length);
+  return head.toLowerCase() === prefix.toLowerCase() && (next === '' || /\s/.test(next));
+}
+
+/** True when `name` already ends with `suffix` as a whole word (case-insensitive). */
+function endsWithWord(name: string, suffix: string): boolean {
+  const tail = name.slice(name.length - suffix.length);
+  const before = name.charAt(name.length - suffix.length - 1);
+  return (
+    name.length >= suffix.length &&
+    tail.toLowerCase() === suffix.toLowerCase() &&
+    (before === '' || /[\s,]/.test(before))
+  );
+}
+
 /**
- * A name with its honorifics: `Dr. Jane Doe, PhD`. The prefix goes before the
- * name, the suffix after a comma. Blank honorifics are ignored.
+ * A name with its honorifics: `Dr. Jane Doe PhD`. The prefix goes before the
+ * name and the suffix after it, each separated by a space. A suffix the user
+ * starts with a comma (`, PhD`) is attached as typed, so the US `Jane Doe, PhD`
+ * style stays available without forcing it on everyone. An honorific the name
+ * already carries (a display name written as `Dr. Jane Doe`) is not repeated.
+ * Blank honorifics are ignored.
  */
 export function formatNameWithHonorifics(
   name: string,
@@ -80,7 +102,10 @@ export function formatNameWithHonorifics(
 ): string {
   const prefix = honorificPrefix?.trim();
   const suffix = honorificSuffix?.trim();
-  return `${prefix ? `${prefix} ` : ''}${name}${suffix ? `, ${suffix}` : ''}`;
+  const suffixWord = suffix?.replace(/^,\s*/, '');
+  const withPrefix = prefix && !startsWithWord(name, prefix) ? `${prefix} ${name}` : name;
+  if (!suffix || !suffixWord || endsWithWord(name, suffixWord)) return withPrefix;
+  return suffix.startsWith(',') ? `${withPrefix}${suffix}` : `${withPrefix} ${suffix}`;
 }
 
 const PDS_DISPLAY_NAMES: Record<string, string> = {
