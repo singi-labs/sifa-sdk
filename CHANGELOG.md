@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.12
+
+### Patch Changes
+
+- ccb48f9: Add `fetchUnlinkedRecords` and `dismissUnlinkedRecord` for unlinked organizations on education, certification, volunteering, course, award and involvement records.
+
 ## 0.23.11
 
 ### Patch Changes
