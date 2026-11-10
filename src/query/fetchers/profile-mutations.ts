@@ -34,6 +34,8 @@ export interface UpdateProfileSelfInput {
   honorificPrefix?: string;
   /** Post-nominal letters (PhD, OBE), id.sifa.profile.self.honorificSuffix. */
   honorificSuffix?: string;
+  /** Absent means true. False hides the honorifics next to the name on the profile. */
+  showHonorifics?: boolean;
   /** Free-form phonetic respelling of the name from id.sifa.profile.self.namePronunciation. */
   namePronunciation?: string;
   industries?: ProfileIndustryInput[];

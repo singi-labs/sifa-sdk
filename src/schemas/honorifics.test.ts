@@ -23,3 +23,13 @@ describe('profile self honorifics', () => {
     expect(PROFILE_TEXT_LIMITS.honorificSuffix).toEqual({ graphemes: 64, bytes: 640 });
   });
 });
+
+describe('profile self showHonorifics', () => {
+  it('keeps the flag on the record schema and accepts it on the write schema', () => {
+    expect(ProfileSelfRecordSchema.parse({ showHonorifics: false, createdAt }).showHonorifics).toBe(
+      false,
+    );
+    expect(ProfileSelfWriteSchema.safeParse({ showHonorifics: true }).success).toBe(true);
+    expect(ProfileSelfWriteSchema.safeParse({ showHonorifics: 'no' }).success).toBe(false);
+  });
+});

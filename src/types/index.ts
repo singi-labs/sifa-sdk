@@ -1053,6 +1053,12 @@ export interface Profile {
    */
   honorificSuffix?: string;
   /**
+   * From `id.sifa.profile.self.showHonorifics`. Absent means true. When
+   * `false`, the profile shows the name without the honorifics; exports and
+   * structured data may still use them.
+   */
+  showHonorifics?: boolean;
+  /**
    * Free-form phonetic respelling of the user's name from
    * `id.sifa.profile.self.namePronunciation` (e.g. `Foo-kuh`). Optional; a
    * native field with no `app.bsky.actor.profile` equivalent. Text only.

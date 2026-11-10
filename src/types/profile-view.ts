@@ -326,6 +326,7 @@ export interface ProfileView {
   familyName?: string;
   honorificPrefix?: string;
   honorificSuffix?: string;
+  showHonorifics?: boolean;
   avatar?: string;
   pronouns?: string;
   headline?: string;
