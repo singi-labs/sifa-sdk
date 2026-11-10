@@ -89,6 +89,19 @@ describe('updateProfileSelf', () => {
     });
   });
 
+  it('includes honorifics in the body when provided', async () => {
+    const fetchImpl = jsonFetch({});
+    await updateProfileSelf(
+      { ...baseConfig, fetch: fetchImpl },
+      { honorificPrefix: 'Dr.', honorificSuffix: 'PhD' },
+    );
+    const [, init] = getCall(fetchImpl);
+    expect(JSON.parse(init.body as string)).toEqual({
+      honorificPrefix: 'Dr.',
+      honorificSuffix: 'PhD',
+    });
+  });
+
   it('returns { success: false, error } on HTTP failure', async () => {
     const fetchImpl = jsonFetch({ message: 'Unauthorized' }, 401);
     const result = await updateProfileSelf({ ...baseConfig, fetch: fetchImpl }, {});

@@ -30,6 +30,10 @@ export interface UpdateProfileSelfInput {
   givenName?: string;
   /** Schema.org Person.familyName from id.sifa.profile.self.familyName. */
   familyName?: string;
+  /** Title before the name (Dr., Prof.), id.sifa.profile.self.honorificPrefix. */
+  honorificPrefix?: string;
+  /** Post-nominal letters (PhD, OBE), id.sifa.profile.self.honorificSuffix. */
+  honorificSuffix?: string;
   /** Free-form phonetic respelling of the name from id.sifa.profile.self.namePronunciation. */
   namePronunciation?: string;
   industries?: ProfileIndustryInput[];
