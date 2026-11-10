@@ -183,6 +183,15 @@ export {
   type DismissUnlinkedPositionInput,
 } from './fetchers/unlinked-positions.js';
 export {
+  fetchUnlinkedRecords,
+  dismissUnlinkedRecord,
+  type UnlinkedRecord,
+  type UnlinkedRecordCollection,
+  type UnlinkedRecordsResult,
+  type FetchUnlinkedRecordsOptions,
+  type DismissUnlinkedRecordInput,
+} from './fetchers/unlinked-records.js';
+export {
   fetchProfileCompleteness,
   dismissCompletenessSignal,
   clearCompletenessDismissals,
