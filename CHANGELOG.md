@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.23.11
+
+### Patch Changes
+
+- 221a299: Add an optional `scope: 'discovery'` option to `fetchTypeaheadActors`, sent as the `scope` query param so discovery surfaces can leave out internal test accounts. Export the `TypeaheadActorScope` type.
+
 ## 0.23.10
 
 ### Patch Changes
