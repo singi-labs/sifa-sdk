@@ -1,5 +1,13 @@
 # @singi-labs/sifa-sdk
 
+## 0.25.1
+
+### Patch Changes
+
+- c2e8c0d: JSON Resume: a legacy volunteering record is listed once in `volunteer`, not again from its `involvement` copy. Each `work` entry carries the position's location as `location`, a standard JSON Resume key.
+
+  `formatLocation` no longer prints a trailing comma for a postal code without a country.
+
 ## 0.25.0
 
 ### Minor Changes
