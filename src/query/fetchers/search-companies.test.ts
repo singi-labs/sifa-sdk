@@ -31,20 +31,49 @@ const RESPONSE: CompanySearchResponse = {
   ],
   hasMore: false,
 };
+const RESPONSE_EMPTY: CompanySearchResponse = { results: [], hasMore: false };
 
 afterEach(() => vi.restoreAllMocks());
 
 describe('fetchSearchCompanies (workspace#299)', () => {
-  it('returns empty without a network call for a blank query', async () => {
-    // The API rejects a blank q rather than scanning ~200k rows, so asking
-    // would only spend a round trip to be told no.
+  it('returns empty without a network call for a blank query and no country', async () => {
+    // The API rejects a blank q with no country rather than scanning ~200k
+    // rows, so asking would only spend a round trip to be told no.
     const f = jsonFetch(RESPONSE);
     vi.stubGlobal('fetch', f);
     for (const q of [undefined, '', '   ']) {
       const res = await fetchSearchCompanies(config, { q });
       expect(res).toEqual({ results: [], hasMore: false });
     }
+    expect(await fetchSearchCompanies(config, { country: [] })).toEqual(RESPONSE_EMPTY);
     expect(f).not.toHaveBeenCalled();
+  });
+
+  it('lists organizations by country without a query (workspace#759)', async () => {
+    const f = jsonFetch({ ...RESPONSE, total: 1 });
+    vi.stubGlobal('fetch', f);
+    const res = await fetchSearchCompanies(config, { country: ['DE', 'NL'], limit: 20 });
+    const url = new URL(getCall(f)[0]);
+    expect(url.pathname).toBe('/api/search/companies');
+    expect(url.searchParams.has('q')).toBe(false);
+    expect(url.searchParams.getAll('country')).toEqual(['DE', 'NL']);
+    expect(res.total).toBe(1);
+  });
+
+  it('lists a single country given as a string, with a blank query', async () => {
+    const f = jsonFetch(RESPONSE);
+    vi.stubGlobal('fetch', f);
+    await fetchSearchCompanies(config, { q: '  ', country: 'DE' });
+    const url = new URL(getCall(f)[0]);
+    expect(url.searchParams.has('q')).toBe(false);
+    expect(url.searchParams.getAll('country')).toEqual(['DE']);
+  });
+
+  it('passes the offset through for the country listing', async () => {
+    const f = jsonFetch(RESPONSE);
+    vi.stubGlobal('fetch', f);
+    await fetchSearchCompanies(config, { country: 'DE', offset: 20 });
+    expect(getCall(f)[0]).toContain('offset=20');
   });
 
   it('sends the query and both filters', async () => {
@@ -81,6 +110,7 @@ describe('fetchSearchCompanies (workspace#299)', () => {
     expect(url).not.toContain('country=');
     expect(url).not.toContain('industry=');
     expect(url).not.toContain('limit=');
+    expect(url).not.toContain('offset=');
   });
 
   it('passes the limit through', async () => {
