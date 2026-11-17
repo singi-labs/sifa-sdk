@@ -265,6 +265,26 @@ describe('profileToJsonResume work', () => {
     });
     expect('work' in r).toBe(false);
   });
+
+  // The profile API sends a position's location as the nested shape with the
+  // alpha-2 code in `country`, the same line the profile page prints.
+  it("prints the position's location", () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      positions: [
+        {
+          rkey: '1',
+          company: 'Sample Labs',
+          title: 'Junior QA Engineer',
+          startedAt: '2020-03',
+          location: { locality: 'Kyiv', city: 'Kyiv', country: 'UA', countryCode: 'UA' },
+        },
+        { rkey: '2', company: 'Beta', title: 'Tester', startedAt: '2018', location: null },
+      ],
+    });
+    expect(r.work?.[0]?.location).toBe('Kyiv, UA');
+    expect(r.work?.[1]).not.toHaveProperty('location');
+  });
 });
 
 describe('profileToJsonResume education, awards, certificates', () => {
@@ -443,6 +463,85 @@ describe('profileToJsonResume skills, languages, projects, publications, volunte
         summary: 'Governance.',
       },
     ]);
+  });
+
+  // The profile API sends each legacy volunteering record twice: in
+  // `volunteering` and, marked `legacy` under the same rkey, in `involvement`.
+  it('lists a legacy volunteering record once', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [
+        {
+          rkey: 'v1',
+          organization: 'Local Food Bank',
+          entityName: 'Food Bank NL',
+          role: 'Volunteer Tester',
+          startDate: '2024-01',
+        },
+        { rkey: 'v2', organization: 'Open Source Org', role: 'Contributor', startDate: '2022-03' },
+      ],
+      involvement: [
+        {
+          rkey: 'i1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Volunteering',
+          startedAt: '2031-01',
+        },
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Local Food Bank',
+          role: 'Volunteer Tester',
+          startedAt: '2024-01',
+          legacy: true,
+        },
+        {
+          rkey: 'v2',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Open Source Org',
+          role: 'Contributor',
+          startedAt: '2022-03',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([
+      { organization: 'Volunteering', position: 'Volunteering', startDate: '2031-01' },
+      { organization: 'Food Bank NL', position: 'Volunteer Tester', startDate: '2024-01' },
+      { organization: 'Open Source Org', position: 'Contributor', startDate: '2022-03' },
+    ]);
+  });
+
+  it('keeps a legacy involvement row that the volunteering list does not carry', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      involvement: [
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Local Food Bank',
+          role: 'Driver',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([{ organization: 'Local Food Bank', position: 'Driver' }]);
+  });
+
+  it('keeps the visible legacy copy when only the volunteering copy is hidden', () => {
+    const r = profileToJsonResume({
+      ...minimal,
+      volunteering: [{ rkey: 'v1', organization: 'Food bank', hidden: true }],
+      involvement: [
+        {
+          rkey: 'v1',
+          kind: 'id.sifa.defs#involvementCharity',
+          upstream: 'Food bank',
+          legacy: true,
+        },
+      ],
+    });
+    expect(r.volunteer).toEqual([{ organization: 'Food bank', position: 'Volunteering' }]);
   });
 });
 

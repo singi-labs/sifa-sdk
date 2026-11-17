@@ -13,7 +13,7 @@ export function formatLocation(loc: LocationValue | null | undefined): string {
   const locality = loc.locality ?? loc.city;
   const parts = [locality, loc.region, loc.country].filter(Boolean);
   if (loc.postalCode && !locality) {
-    return `${loc.postalCode}, ${loc.country}`;
+    return [loc.postalCode, loc.country].filter(Boolean).join(', ');
   }
   return parts.join(', ');
 }
