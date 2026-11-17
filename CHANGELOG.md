@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.25.2
+
+### Patch Changes
+
+- 39e25b0: Person JSON-LD keeps a display name that extends the structured name (for example "Guido X Jansen" with given name "Guido" and family name "Jansen") instead of dropping the middle part. The profile meta description skips a location that formats to an empty string, so it no longer ends in a dangling separator.
+
 ## 0.25.1
 
 ### Patch Changes
