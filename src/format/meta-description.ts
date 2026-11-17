@@ -65,9 +65,10 @@ export function buildMetaDescription(profile: MetaDescriptionInput): string {
     }
   }
 
-  if (profile.location) {
-    parts.push(formatLocation(profile.location));
-  }
+  // Skip a location that formats to nothing so the description never ends in a
+  // dangling separator.
+  const location = profile.location ? formatLocation(profile.location) : '';
+  if (location) parts.push(location);
 
   if (parts.length === 0) {
     return `${profile.displayName ?? profile.handle} on Sifa`;

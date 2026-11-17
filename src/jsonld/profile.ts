@@ -274,6 +274,17 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
   const suffixTrimmed = profile.honorificSuffix?.trim();
   const structuredName =
     givenTrimmed && familyTrimmed ? `${givenTrimmed} ${familyTrimmed}` : undefined;
+  // A display name that starts with the given name and ends with the family
+  // name (e.g. "Guido X Jansen") already says more than the joined parts; the
+  // structured name would silently drop its middle part.
+  const displayTrimmed = profile.displayName?.trim();
+  const displayExtendsStructured =
+    !!displayTrimmed &&
+    !!givenTrimmed &&
+    !!familyTrimmed &&
+    displayTrimmed.length > (structuredName?.length ?? 0) &&
+    displayTrimmed.toLowerCase().startsWith(givenTrimmed.toLowerCase()) &&
+    displayTrimmed.toLowerCase().endsWith(familyTrimmed.toLowerCase());
 
   // A sole trader who kept both faces is one legal person and one business on
   // a single DID. Without an explicit link a crawler reads the /p/ Person and
@@ -318,7 +329,11 @@ export function buildPersonJsonLd(profile: JsonLdProfileInput, options: JsonLdOp
     '@type': 'Person',
     // Stable identifier so a /c/ Organization's `founder` can point back here.
     '@id': canonical,
-    name: s(structuredName ?? profile.displayName ?? profile.handle),
+    name: s(
+      (displayExtendsStructured ? displayTrimmed : structuredName) ??
+        profile.displayName ??
+        profile.handle,
+    ),
     ...(givenTrimmed && { givenName: s(givenTrimmed) }),
     ...(familyTrimmed && { familyName: s(familyTrimmed) }),
     ...(prefixTrimmed && { honorificPrefix: s(prefixTrimmed) }),
