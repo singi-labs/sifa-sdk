@@ -152,6 +152,7 @@ export interface CompanySearchResult {
 }
 
 export interface CompanySearchFilters {
+  /** Text query. Blank with a `country` set lists that country's organizations. */
   q?: string;
   /**
    * ISO 3166-1 alpha-2 country filter. An array is sent as repeated params; an
@@ -160,11 +161,19 @@ export interface CompanySearchFilters {
   country?: string | string[];
   industry?: string;
   limit?: number;
+  /** Rows to skip. Pages the no-query country listing; a text search ignores it. */
+  offset?: number;
 }
 
 export interface CompanySearchResponse {
   results: CompanySearchResult[];
   hasMore: boolean;
+  /**
+   * Organizations matching the filters across every page. Only the no-query
+   * country listing has one: a text search is ranked over a bounded candidate
+   * set and has no meaningful total.
+   */
+  total?: number;
 }
 
 /** Filter facets for company search (workspace#759). */
@@ -230,9 +239,11 @@ export async function fetchSearchProfiles(
  * differently and carry different filters, and a slow category should not hold
  * up the rest of a blended results page.
  *
- * An empty query returns nothing without a network call. The API rejects a
- * blank `q` rather than scanning ~200k rows, so asking would only spend a round
- * trip to be told no.
+ * A blank query with a country lists that country's organizations, largest
+ * first, with a `total` for paging (workspace#759). A blank query with no
+ * country returns nothing without a network call: the API rejects it rather
+ * than scanning ~200k rows, so asking would only spend a round trip to be told
+ * no.
  */
 export async function fetchSearchCompanies(
   config: SifaApiConfig,
@@ -240,12 +251,14 @@ export async function fetchSearchCompanies(
   options: ApiFetchOptions = {},
 ): Promise<CompanySearchResponse> {
   const q = filters.q?.trim();
-  if (!q) return EMPTY_COMPANY_SEARCH;
-
-  const params = new URLSearchParams({ q });
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
   appendAll(params, 'country', filters.country);
+  if (!q && !params.has('country')) return EMPTY_COMPANY_SEARCH;
+
   if (filters.industry) params.set('industry', filters.industry);
   if (filters.limit !== undefined) params.set('limit', String(filters.limit));
+  if (filters.offset !== undefined) params.set('offset', String(filters.offset));
 
   return apiFetch<CompanySearchResponse>(config, `/api/search/companies?${params.toString()}`, {
     cache: 'no-store',
