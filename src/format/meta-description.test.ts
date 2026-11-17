@@ -130,3 +130,14 @@ describe('buildMetaDescription', () => {
     expect(desc).toContain('Engineer at PublicCo');
   });
 });
+
+describe('buildMetaDescription empty location', () => {
+  it('omits a location that formats to an empty string instead of leaving a trailing separator', () => {
+    const description = buildMetaDescription({
+      handle: 'jane.example.com',
+      headline: 'Web Developer',
+      location: { country: '' },
+    });
+    expect(description).toBe('Web Developer');
+  });
+});

@@ -107,6 +107,18 @@ describe('buildPersonJsonLd structured name (ported)', () => {
     expect(ld.name).toBe('Aisha García');
   });
 
+  it('keeps a display name that carries a middle part when it starts and ends with the structured name', () => {
+    const ld = buildPersonJsonLd({
+      handle: 'gui.do',
+      displayName: 'Guido X Jansen',
+      givenName: 'Guido',
+      familyName: 'Jansen',
+    });
+    expect(ld.name).toBe('Guido X Jansen');
+    expect(ld.givenName).toBe('Guido');
+    expect(ld.familyName).toBe('Jansen');
+  });
+
   it('falls back to displayName when only one half is set', () => {
     const ld = buildPersonJsonLd({
       handle: 'aisha.bsky.social',
