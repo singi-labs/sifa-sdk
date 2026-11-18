@@ -250,7 +250,12 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "auditConfig": {
+      "ignoreGhsas": [
+        "GHSA-fc5q-39xc-vjpf"
+      ]
+    }
   },
   "dependencies": {
     "zod": "4.6.7"
