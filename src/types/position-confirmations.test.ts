@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import type {
   ActorCard,
   PositionConfirmations,
+  PositionConfirmer,
   PositionOrgRequest,
   PositionOrgVerification,
   PositionViewerConfirmation,
@@ -27,6 +28,21 @@ describe('ProfilePosition confirmations', () => {
     expect(position.confirmations?.confirmers[0]?.handle).toBe('alice.test');
   });
 
+  // The profile shows when each colleague confirmed, next to who (sifa-workspace#787).
+  it('dates each confirmer, optionally, so older AppView responses still type-check', () => {
+    const dated: PositionConfirmer = {
+      did: 'did:plc:alice',
+      handle: 'alice.test',
+      confirmed: true,
+      confirmedAt: '2026-11-05T09:30:00.000Z',
+    };
+    const undated: PositionConfirmer = { did: 'did:plc:bob', handle: 'bob.test', confirmed: true };
+    expect(dated.confirmedAt).toBe('2026-11-05T09:30:00.000Z');
+    expect(undated.confirmedAt).toBeUndefined();
+    expectTypeOf<PositionConfirmer['confirmedAt']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<PositionConfirmer>().toMatchTypeOf<ActorCard>();
+  });
+
   it('types the new fields as optional', () => {
     expectTypeOf<ProfilePosition['confirmations']>().toEqualTypeOf<
       PositionConfirmations | undefined
@@ -34,7 +50,7 @@ describe('ProfilePosition confirmations', () => {
     expectTypeOf<ProfilePosition['viewerConfirmation']>().toEqualTypeOf<
       PositionViewerConfirmation | undefined
     >();
-    expectTypeOf<PositionConfirmations['confirmers']>().toEqualTypeOf<ActorCard[]>();
+    expectTypeOf<PositionConfirmations['confirmers']>().toEqualTypeOf<PositionConfirmer[]>();
     expectTypeOf<PositionViewerConfirmation>().toEqualTypeOf<'available' | 'confirmed'>();
   });
 

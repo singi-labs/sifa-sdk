@@ -42,6 +42,7 @@ export type {
   ProfileOverrideSource,
   ProfilePosition,
   PositionConfirmations,
+  PositionConfirmer,
   PositionViewerConfirmation,
   PositionOrgRequest,
   PositionOrgVerification,
