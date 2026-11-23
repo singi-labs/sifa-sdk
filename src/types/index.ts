@@ -160,12 +160,22 @@ export interface PositionOrgVerification {
   attestationUri: string;
 }
 
+/** A colleague who confirmed a position (sifa-workspace#163). */
+export interface PositionConfirmer extends ActorCard {
+  /**
+   * When they confirmed: the confirmation record's own `createdAt`, ISO 8601.
+   * Served by sifa-api since the fix for sifa-workspace#787; absent from older
+   * AppView responses.
+   */
+  confirmedAt?: string;
+}
+
 /** Confirmations of one position, as returned by the AppView. */
 export interface PositionConfirmations {
   /** Number of visible confirmers. Equal to `confirmers.length`. */
   count: number;
   /** The confirmers, oldest first. Blocked and suppressed accounts are left out. */
-  confirmers: ActorCard[];
+  confirmers: PositionConfirmer[];
 }
 
 /** See {@link ProfilePosition.viewerConfirmation}. */
