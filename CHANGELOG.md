@@ -1,5 +1,11 @@
 # @singi-labs/sifa-sdk
 
+## 0.25.4
+
+### Patch Changes
+
+- 82662c6: Add `PositionConfirmer` with optional `confirmedAt`, used by `PositionConfirmations.confirmers`
+
 ## 0.25.3
 
 ### Patch Changes
